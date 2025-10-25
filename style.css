@@ -6,22 +6,22 @@
 
 @font-face {
     font-family: font;
-    src: url('/font/font.ttf');
+    src: url('font/font.ttf');
 }
 
 @font-face {
     font-family: fonti;
-    src: url('/font/fonti.ttf');
+    src: url('font/fonti.ttf');
 }
 
 @font-face {
     font-family: fontb;
-    src: url('/font/fontb.ttf');
+    src: url('font/fontb.ttf');
 }
 
 @font-face {
     font-family: fontbi;
-    src: url('/font/fontbi.ttf');
+    src: url('font/fontbi.ttf');
 }
 
 :root {
@@ -3641,7 +3641,7 @@ select:focus {
     display: none;
 }
 
-/* Isolate each browser view completely */
+
 .browser-view {
     display: none;
     width: 100%;
@@ -3660,7 +3660,7 @@ select:focus {
     z-index: 2;
 }
 
-/* Create a scoping container for styles */
+
 .browser-content-container {
     position: absolute !important;
     top: 0 !important;
@@ -3684,7 +3684,7 @@ select:focus {
     outline: none !important;
 }
 
-/* Prevent any styles from escaping */
+
 .browser-content-container>div {
     position: relative !important;
     isolation: isolate !important;
@@ -5853,7 +5853,7 @@ select:focus {
     display: inline-block;
 }
 
-/* Input */
+
 .cl-checkbox>input {
     appearance: none;
     -moz-appearance: none;
@@ -5876,21 +5876,21 @@ select:focus {
     transition: opacity 0.3s, transform 0.2s;
 }
 
-/* Span */
+
 .cl-checkbox>span {
     display: inline-block;
     width: 100%;
     cursor: pointer;
 }
 
-/* Box */
+
 .cl-checkbox>span::before {
     content: "";
     display: inline-block;
     box-sizing: border-box;
     margin: 2px 11px 3px 1px;
     border: solid 2px;
-    /* Safari */
+    
     border-color: rgba(255, 255, 255, 0.6);
     border-radius: 2px;
     width: 18px;
@@ -5899,7 +5899,7 @@ select:focus {
     transition: border-color 0.2s, background-color 0.2s;
 }
 
-/* Checkmark */
+
 .cl-checkbox>span::after {
     content: "";
     display: block;
@@ -5914,7 +5914,7 @@ select:focus {
     transform: translate(3px, 4px) rotate(-45deg);
 }
 
-/* Checked, Indeterminate */
+
 .cl-checkbox>input:checked,
 .cl-checkbox>input:indeterminate {
     background-color: var(--accent);
@@ -5936,7 +5936,7 @@ select:focus {
     transform: translate(4px, 3px);
 }
 
-/* Hover, Focus */
+
 .cl-checkbox:hover>input {
     opacity: 0.04;
 }
@@ -5949,7 +5949,7 @@ select:focus {
     opacity: 0.16;
 }
 
-/* Active */
+
 .cl-checkbox>input:active {
     opacity: 1;
     transform: scale(0);
@@ -5965,7 +5965,7 @@ select:focus {
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* Disabled */
+
 .cl-checkbox>input:disabled {
     opacity: 0;
 }

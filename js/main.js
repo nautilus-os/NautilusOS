@@ -3732,6 +3732,38 @@ alt="favicon">
       width: 900,
       height: 600,
     },
+    snake: {
+      title: "Snake",
+      icon: "fas fa-gamepad",
+      content: `
+        <div class="snake-game" id="snakeGameContainer" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #00d4ff; margin: 0 0 10px 0;">Snake Game</h2>
+            <div style="color: #888; font-size: 14px; margin-bottom: 15px;">Use arrow keys or WASD to move</div>
+          </div>
+          <div style="display: flex; gap: 30px; margin-bottom: 20px; align-items: center;">
+            <div style="text-align: center;">
+              <div style="color: #888; font-size: 12px;">Score</div>
+              <div id="snakeScore" style="color: #00d4ff; font-size: 24px; font-weight: bold;">0</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: #888; font-size: 12px;">High Score</div>
+              <div id="snakeHighScore" style="color: #ffaa00; font-size: 24px; font-weight: bold;">0</div>
+            </div>
+            <div style="text-align: center;">
+              <button id="snakeStartBtn" class="editor-btn" onclick="startSnakeGame()" style="background: #00d4ff; color: #000; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Start Game</button>
+            </div>
+          </div>
+          <canvas id="snakeCanvas" width="400" height="400" style="background: #0f0f0f; border: 2px solid #00d4ff; border-radius: 4px;"></canvas>
+          <div style="color: #888; font-size: 12px; margin-top: 15px; text-align: center;">
+            Press SPACE to pause/resume • Press R to restart
+          </div>
+        </div>
+      `,
+      noPadding: true,
+      width: 550,
+      height: 700,
+    },
   };
 
   if (appName === "achievements") {
@@ -3773,6 +3805,17 @@ alt="favicon">
     }
     if (appName === "whatsnew") {
       currentSlide = 0;
+    }
+    if (appName === "snake") {
+      setTimeout(() => {
+        snakeGame.canvas = document.getElementById('snakeCanvas');
+        if (snakeGame.canvas) {
+          snakeGame.ctx = snakeGame.canvas.getContext('2d');
+          snakeGame.highScore = localStorage.getItem('snakeHighScore') ? parseInt(localStorage.getItem('snakeHighScore')) : 0;
+          document.getElementById('snakeHighScore').textContent = snakeGame.highScore;
+          drawSnakeGame();
+        }
+      }, 50);
     }
   }
 }
@@ -5038,12 +5081,18 @@ function switchAppStoreSection(section, element) {
               <div class="appstore-grid">
                   <div class="appstore-item">
                       <div class="appstore-item-icon">
-                          <i class="fas fa-snake"></i>
+                          <i class="fas fa-gamepad"></i>
                       </div>
                       <div class="appstore-item-name">Snake by lanefiedler-731</div>
                       <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
-                      <button class="appstore-item-btn" onclick="openApp('snake')">
-                          Play
+                      <button class="appstore-item-btn ${
+                        installedGames.includes('snake') ? "installed" : ""
+                      }" onclick="${
+                        installedGames.includes('snake') 
+                          ? "openApp('snake')" 
+                          : "installGame('snake')"
+                      }">
+                          ${installedGames.includes('snake') ? "Play" : "Install"}
                       </button>
                   </div>
               </div>
@@ -5486,6 +5535,10 @@ async function loadBrowserPage(url) {
       doc.head.prepend(baseEl);
     }
     viewEl.innerHTML = doc.documentElement.innerHTML;
+    const links = viewEl.querySelectorAll("a[target]");
+    links.forEach((link) => link.removeAttribute("target"));
+    const forms = viewEl.querySelectorAll("form[target]");
+    forms.forEach((form) => form.removeAttribute("target"));
     const scripts = Array.from(viewEl.querySelectorAll("script"));
     for (const script of scripts) {
       const replacement = document.createElement("script");
@@ -5519,6 +5572,40 @@ async function loadBrowserPage(url) {
       }
       navigateBrowser(targetUrl);
     };
+    viewEl.addEventListener(
+      "submit",
+      (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement)) {
+          return;
+        }
+        const method = (form.getAttribute("method") || "GET").toUpperCase();
+        if (method !== "GET") {
+          return;
+        }
+        event.preventDefault();
+        let action = form.getAttribute("action") || url;
+        let targetUrl;
+        try {
+          targetUrl = new URL(action, url);
+        } catch (_) {
+          return;
+        }
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+        for (const [key, value] of formData.entries()) {
+          if (typeof value === "string") {
+            params.append(key, value);
+          }
+        }
+        const queryString = params.toString();
+        if (queryString) {
+          targetUrl.search = queryString;
+        }
+        navigateBrowser(targetUrl.toString());
+      },
+      true
+    );
     updateBrowserNavButtons();
   } catch (error) {
     console.error("Browser error:", error);
@@ -6138,7 +6225,6 @@ function setupComplete() {
     }, 100);
   }
   
-  // easteregg!!
   let welcomeMessage = "Setup complete! Welcome to NautilusOS";
   let toastIcon = "fa-check-circle";
   if (username.toLowerCase() === "dinguschan") {
@@ -6273,7 +6359,6 @@ function loadInstalledThemes() {
       console.error("Failed to load themes:", e);
     }
   }
-  // Ensure dark theme is always included
   if (!installedThemes.includes("dark")) {
     installedThemes.unshift("dark");
   }
@@ -6284,6 +6369,7 @@ window.addEventListener("DOMContentLoaded", () => {
   loadInstalledThemes();
   loadAndApplyTheme();
   loadInstalledApps();
+  loadInstalledGames();
   loadAchievements();
   achievementsData.lastUptimeUpdate = Date.now();
 
@@ -6298,6 +6384,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
   installedApps.forEach((appName) => {
     addDesktopIcon(appName);
+  });
+  installedGames.forEach((gameName) => {
+    addDesktopIcon(gameName);
   });
   applyUserBackgrounds();
   applyProfilePicture();
@@ -6485,8 +6574,8 @@ window.prompt = async (message, defaultValue = "") => {
 };
 let installedApps = [];
 let startupApps = [];
+let installedGames = [];
 
-// Password hashing utility
 function hashPassword(password) {
   const salt = "NautilusOS_Salt_2024"; // Simple salt for demo
   let hash = 0;
@@ -6579,6 +6668,252 @@ function uninstallApp(appName) {
   }
 }
 
+function installGame(gameName) {
+  if (installedGames.includes(gameName)) {
+    showToast("Game already installed", "fa-info-circle");
+    return;
+  }
+
+  installedGames.push(gameName);
+  localStorage.setItem(
+    "nautilusOS_installedGames",
+    JSON.stringify(installedGames)
+  );
+
+  addDesktopIcon(gameName);
+  updateStartMenu();
+
+  showToast(
+    "Game installed! Check your desktop and start menu to launch it.",
+    "fa-check-circle"
+  );
+  refreshAppStore();
+}
+
+function uninstallGame(gameName) {
+  const index = installedGames.indexOf(gameName);
+  if (index > -1) {
+    installedGames.splice(index, 1);
+    localStorage.setItem(
+      "nautilusOS_installedGames",
+      JSON.stringify(installedGames)
+    );
+
+    removeDesktopIcon(gameName);
+    updateStartMenu();
+
+    if (windows[gameName]) {
+      closeWindowByAppName(gameName);
+    }
+
+    showToast("Game uninstalled", "fa-trash");
+    refreshAppStore();
+  }
+}
+
+function loadInstalledGames() {
+  const saved = localStorage.getItem("nautilusOS_installedGames");
+  if (saved) {
+    try {
+      installedGames = JSON.parse(saved);
+    } catch (e) {
+      console.error("Failed to load games:", e);
+    }
+  }
+
+}
+
+let snakeGame = {
+  canvas: null,
+  ctx: null,
+  snake: [{x: 10, y: 10}],
+  food: {x: 15, y: 15},
+  direction: {x: 1, y: 0},
+  nextDirection: {x: 1, y: 0},
+  score: 0,
+  gameRunning: false,
+  gamePaused: false,
+  gameOver: false,
+  gridSize: 20,
+  tileCount: 20,
+  gameSpeed: 100,
+  highScore: localStorage.getItem('snakeHighScore') ? parseInt(localStorage.getItem('snakeHighScore')) : 0
+};
+
+function startSnakeGame() {
+  if (!snakeGame.canvas) {
+    snakeGame.canvas = document.getElementById('snakeCanvas');
+    snakeGame.ctx = snakeGame.canvas.getContext('2d');
+  }
+  
+  if (snakeGame.gameRunning && !snakeGame.gamePaused) {
+    return;
+  }
+  
+  if (!snakeGame.gameRunning) {
+    snakeGame.snake = [{x: 10, y: 10}];
+    snakeGame.food = generateFood();
+    snakeGame.direction = {x: 1, y: 0};
+    snakeGame.nextDirection = {x: 1, y: 0};
+    snakeGame.score = 0;
+    snakeGame.gameOver = false;
+    snakeGame.gameRunning = true;
+    document.getElementById('snakeScore').textContent = '0';
+    document.getElementById('snakeStartBtn').textContent = 'Pause';
+    
+    attachSnakeKeyListeners();
+    gameLoop();
+  } else if (snakeGame.gamePaused) {
+    snakeGame.gamePaused = false;
+    document.getElementById('snakeStartBtn').textContent = 'Pause';
+    gameLoop();
+  }
+}
+
+function attachSnakeKeyListeners() {
+  document.addEventListener('keydown', handleSnakeKeyPress);
+}
+
+function handleSnakeKeyPress(e) {
+  if (!snakeGame.gameRunning) return;
+  
+  if (e.key === ' ') {
+    e.preventDefault();
+    snakeGame.gamePaused = !snakeGame.gamePaused;
+    document.getElementById('snakeStartBtn').textContent = snakeGame.gamePaused ? 'Resume' : 'Pause';
+    if (!snakeGame.gamePaused) gameLoop();
+    return;
+  }
+  
+  if (e.key === 'r' || e.key === 'R') {
+    startSnakeGame();
+    return;
+  }
+  
+  const key = e.key.toLowerCase();
+  if (key === 'arrowup' || key === 'w') {
+    if (snakeGame.direction.y === 0) snakeGame.nextDirection = {x: 0, y: -1};
+    e.preventDefault();
+  } else if (key === 'arrowdown' || key === 's') {
+    if (snakeGame.direction.y === 0) snakeGame.nextDirection = {x: 0, y: 1};
+    e.preventDefault();
+  } else if (key === 'arrowleft' || key === 'a') {
+    if (snakeGame.direction.x === 0) snakeGame.nextDirection = {x: -1, y: 0};
+    e.preventDefault();
+  } else if (key === 'arrowright' || key === 'd') {
+    if (snakeGame.direction.x === 0) snakeGame.nextDirection = {x: 1, y: 0};
+    e.preventDefault();
+  }
+}
+
+function generateFood() {
+  let newFood;
+  let foodOnSnake = true;
+  while (foodOnSnake) {
+    newFood = {
+      x: Math.floor(Math.random() * snakeGame.tileCount),
+      y: Math.floor(Math.random() * snakeGame.tileCount)
+    };
+    foodOnSnake = snakeGame.snake.some(segment => segment.x === newFood.x && segment.y === newFood.y);
+  }
+  return newFood;
+}
+
+function gameLoop() {
+  if (!snakeGame.gameRunning || snakeGame.gamePaused || snakeGame.gameOver) {
+    return;
+  }
+  
+  snakeGame.direction = snakeGame.nextDirection;
+  
+  const head = snakeGame.snake[0];
+  const newHead = {
+    x: (head.x + snakeGame.direction.x + snakeGame.tileCount) % snakeGame.tileCount,
+    y: (head.y + snakeGame.direction.y + snakeGame.tileCount) % snakeGame.tileCount
+  };
+  
+  if (snakeGame.snake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
+    endSnakeGame();
+    return;
+  }
+  
+  snakeGame.snake.unshift(newHead);
+  
+  if (newHead.x === snakeGame.food.x && newHead.y === snakeGame.food.y) {
+    snakeGame.score += 10;
+    document.getElementById('snakeScore').textContent = snakeGame.score;
+    snakeGame.food = generateFood();
+  } else {
+    snakeGame.snake.pop();
+  }
+  
+  drawSnakeGame();
+  setTimeout(gameLoop, snakeGame.gameSpeed);
+}
+
+function drawSnakeGame() {
+  const canvas = snakeGame.canvas;
+  const ctx = snakeGame.ctx;
+  
+  ctx.fillStyle = '#0f0f0f';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.strokeStyle = '#1a3a3a';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= snakeGame.tileCount; i++) {
+    const pos = i * snakeGame.gridSize;
+    ctx.beginPath();
+    ctx.moveTo(pos, 0);
+    ctx.lineTo(pos, canvas.height);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(0, pos);
+    ctx.lineTo(canvas.width, pos);
+    ctx.stroke();
+  }
+  
+  snakeGame.snake.forEach((segment, index) => {
+    if (index === 0) {
+      ctx.fillStyle = '#00ff00';
+    } else {
+      ctx.fillStyle = '#00cc00';
+    }
+    ctx.fillRect(
+      segment.x * snakeGame.gridSize + 1,
+      segment.y * snakeGame.gridSize + 1,
+      snakeGame.gridSize - 2,
+      snakeGame.gridSize - 2
+    );
+  });
+  
+  ctx.fillStyle = '#ff4444';
+  ctx.fillRect(
+    snakeGame.food.x * snakeGame.gridSize + 1,
+    snakeGame.food.y * snakeGame.gridSize + 1,
+    snakeGame.gridSize - 2,
+    snakeGame.gridSize - 2
+  );
+}
+
+function endSnakeGame() {
+  snakeGame.gameRunning = false;
+  snakeGame.gameOver = true;
+  
+  if (snakeGame.score > snakeGame.highScore) {
+    snakeGame.highScore = snakeGame.score;
+    localStorage.setItem('snakeHighScore', snakeGame.highScore);
+    document.getElementById('snakeHighScore').textContent = snakeGame.highScore;
+  }
+  
+  document.getElementById('snakeStartBtn').textContent = 'Start Game';
+  
+  document.removeEventListener('keydown', handleSnakeKeyPress);
+  
+  showToast('Game Over! Score: ' + snakeGame.score + ' | High Score: ' + snakeGame.highScore, 'fa-skull');
+}
+
+
 function addDesktopIcon(appName) {
   const iconsContainer = document.getElementById("desktopIcons");
   if (!iconsContainer) {
@@ -6594,6 +6929,8 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-tasks", label: "Task Manager" };
   } else if (appName === "snap-manager") {
     iconConfig = { icon: "fa-border-all", label: "Snap Manager" };
+  } else if (appName === "snake") {
+    iconConfig = { icon: "fa-gamepad", label: "Snake" };
   } else {
     return;
   }
@@ -6619,7 +6956,6 @@ function removeDesktopIcon(appName) {
 }
 
 function openStartupApps() {
-  // Combine preinstalled apps with installed apps
   const preinstalledApps = [
     { id: "files", name: "Files", icon: "fa-folder" },
     { id: "terminal", name: "Terminal", icon: "fa-terminal" },
@@ -6635,7 +6971,6 @@ function openStartupApps() {
     { id: "achievements", name: "Achievements", icon: "fa-trophy" },
   ];
 
-  // Add installed apps from app store
   const installedAppsData = [];
   installedApps.forEach((appName) => {
     if (appName === "startup-apps") {
@@ -6645,7 +6980,6 @@ function openStartupApps() {
     }
   });
 
-  // Combine all available apps
   const availableApps = [...preinstalledApps, ...installedAppsData];
 
   const itemsHtml = availableApps
@@ -6736,7 +7070,6 @@ function toggleStartupApp(appId) {
   if (windows["startup-apps"]) {
     const content = windows["startup-apps"].querySelector(".window-content");
     if (content) {
-      // Combine preinstalled apps with installed apps
       const preinstalledApps = [
         { id: "files", name: "Files", icon: "fa-folder" },
         { id: "terminal", name: "Terminal", icon: "fa-terminal" },
@@ -6752,7 +7085,6 @@ function toggleStartupApp(appId) {
         { id: "achievements", name: "Achievements", icon: "fa-trophy" },
       ];
 
-      // Add installed apps from app store
       const installedAppsData = [];
       installedApps.forEach((appName) => {
         if (appName === "startup-apps") {
@@ -6762,7 +7094,6 @@ function toggleStartupApp(appId) {
         }
       });
 
-      // Combine all available apps
       const availableApps = [...preinstalledApps, ...installedAppsData];
 
       const itemsHtml = availableApps
@@ -7045,13 +7376,11 @@ function updateStartMenu() {
   const appGrid = document.querySelector(".app-grid");
   if (!appGrid) return;
 
-  // Remove existing installed apps from grid
   const existingInstalledApps = appGrid.querySelectorAll(
     '.app-item[data-installed="true"]'
   );
   existingInstalledApps.forEach((el) => el.remove());
 
-  // Add installed apps at the end
   installedApps.forEach((appName) => {
     let appConfig = {};
     if (appName === "startup-apps") {
@@ -7154,11 +7483,9 @@ function importProfile(event) {
         return;
       }
 
-      // Import profile data
       localStorage.setItem("nautilusOS_username", profile.username);
       localStorage.setItem("nautilusOS_password", profile.password || "");
       
-      // Handle isPasswordless for both old and new profiles
       const isPasswordless = profile.isPasswordless !== undefined 
         ? String(profile.isPasswordless) 
         : (profile.password === "" ? "true" : "false");
@@ -7166,7 +7493,6 @@ function importProfile(event) {
       
       localStorage.setItem("nautilusOS_setupComplete", "true");
       
-      // Update local variables
       settings = profile.settings || settings;
       installedThemes = profile.installedThemes || [];
       installedApps = profile.installedApps || [];
@@ -7189,7 +7515,6 @@ function importProfile(event) {
         JSON.stringify(startupApps)
       );
       
-      // Handle useSameBackground for both old and new profiles
       if (profile.useSameBackground !== null && profile.useSameBackground !== undefined) {
         localStorage.setItem(
           "nautilusOS_useSameBackground",
@@ -7232,7 +7557,6 @@ function importProfile(event) {
         fileSystem = cleanedFileSystem;
       }
       
-      // Check and trigger achievements for imported themes/apps
       checkImportedAchievements();
       
       applyUserBackgrounds();
