@@ -16,6 +16,7 @@ There’s a ton to play with, but here’s a quick rundown (seriously, check the
 - start menu with user info and apps grid  
 - file explorer with folders, files, and side tree  
 - built-in text editor  
+- super duper cool proxied browser
 - cloaking and various other settings 
 - terminal
 - built-in app store
