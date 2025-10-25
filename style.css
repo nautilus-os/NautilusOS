@@ -1171,6 +1171,370 @@ select:focus {
     min-height: 300px;
 }
 
+.snap-overlay {
+    position: absolute;
+    pointer-events: none;
+    border: 2px solid rgba(59, 130, 246, 0.6);
+    border-radius: 14px;
+    background: rgba(59, 130, 246, 0.35);
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 5000;
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25);
+}
+
+.snap-overlay.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.snap-overlay.animate {
+    animation: snapPulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes snapPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25);
+    }
+    100% {
+        box-shadow: 0 0 24px 0 rgba(59, 130, 246, 0.45);
+    }
+}
+
+.snap-manager {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: var(--text-primary);
+}
+
+.snap-section {
+    background: rgba(16, 20, 32, 0.8);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.snap-section-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.snap-section-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.snap-section-title i {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(125, 211, 192, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 1.25rem;
+}
+
+.snap-section-title h2 {
+    font-size: 1.35rem;
+    font-family: fontb;
+    margin-bottom: 0.25rem;
+}
+
+.snap-section-title p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.snap-section-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.snap-color-picker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.snap-color-picker input {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.snap-color-picker span {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+}
+
+.snap-section-heading h3 {
+    font-size: 1.05rem;
+    font-family: fontb;
+    margin-bottom: 0.3rem;
+}
+
+.snap-section-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.snap-section-heading p {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.snap-layout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.snap-layout-card {
+    background: rgba(10, 14, 26, 0.75);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.snap-layout-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.snap-layout-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.snap-layout-title input {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-primary);
+    font-family: fontb;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s ease, background 0.2s ease;
+}
+
+.snap-layout-title input:focus {
+    border-color: var(--accent);
+    background: rgba(125, 211, 192, 0.12);
+}
+
+.snap-layout-title span {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.snap-remove-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.snap-remove-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.snap-remove-btn:not(:disabled):hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.snap-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+.snap-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.snap-field label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.snap-field input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0.5rem 0.6rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border 0.2s ease, background 0.2s ease;
+}
+
+.snap-field input:focus {
+    border-color: var(--accent);
+    background: rgba(125, 211, 192, 0.12);
+}
+
+.snap-layout-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.snap-layout-actions select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0.55rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    min-width: 180px;
+}
+
+.snap-layout-actions select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.snap-hotkey-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.snap-hotkey-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    min-width: 160px;
+    text-align: center;
+    cursor: pointer;
+    transition: border 0.2s ease, background 0.2s ease;
+}
+
+.snap-hotkey-input.capturing {
+    border-color: var(--accent);
+    background: rgba(125, 211, 192, 0.15);
+}
+
+.snap-clear-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 0.45rem 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.snap-clear-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.snap-clear-btn:not(:disabled):hover {
+    color: var(--text-primary);
+    background: rgba(125, 211, 192, 0.18);
+    border-color: rgba(125, 211, 192, 0.35);
+}
+
+.snap-add-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.snap-add-grid input,
+.snap-add-grid select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border 0.2s ease, background 0.2s ease;
+}
+
+.snap-add-grid input:focus,
+.snap-add-grid select:focus {
+    border-color: var(--accent);
+    background: rgba(125, 211, 192, 0.12);
+}
+
+.snap-add-btn {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-family: fontb;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.snap-add-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(125, 211, 192, 0.25);
+}
+
+.snap-empty {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text-secondary);
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+}
+
 @keyframes windowOpen {
     from {
         transform: scale(0.95);
@@ -3269,7 +3633,7 @@ select:focus {
     top: 0;
     left: 0;
     background: #fff;
-    overflow: hidden;
+    overflow: auto;
     isolation: isolate;
 }
 
@@ -3286,7 +3650,7 @@ select:focus {
     top: 0;
     left: 0;
     background: var(--pure-white);
-    overflow: hidden;
+    overflow: auto;
     isolation: isolate;
     contain: strict;
 }

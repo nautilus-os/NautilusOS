@@ -45,6 +45,7 @@ Basically... a whole little OS in your browser :D
 - [ ] make tabs and stuff work
 - [ ] Add feature to confirm page closing to stop Securly, GoGuardian etc.
 - [ ] Add option to increase/decrease window transparancy 
+- [ ] Add setting for avg background color to equal accent color or manually set
 
 ---
 
