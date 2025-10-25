@@ -38,6 +38,13 @@ Basically... a whole little OS in your browser :D
 - [ ] Fix browser; it doesn’t really work as a proxy right now because it’s broken
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, etc.
 - [ ] Add an option to increase or decrease window transparency 
+- [x] make wallpaper customizable  
+- [ ] actually make themes work
+- [ ] app store improvements  (rn can only install built in apps)
+- [x] FIX BROWSER it doesnt rly work as a proxy rn due to it being broken
+- [ ] make tabs and stuff work
+- [ ] Add feature to confirm page closing to stop Securly, GoGuardian etc.
+- [ ] Add option to increase/decrease window transparancy 
 
 ---
 
