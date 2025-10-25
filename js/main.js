@@ -17,6 +17,13 @@ let settings = {
   showDesktopIcons: true,
 };
 let bootSelectedIndex = 0;
+let snapSettings = null;
+let snapOverlay = null;
+let snapCandidate = null;
+let snapTrackingWindow = null;
+let snapKeyCapture = null;
+let snapNewLayoutKeybind = "";
+let snapNewLayoutInput = null;
 
 let loginStartTime = localStorage.getItem("nautilusOS_bootTime");
 if (!loginStartTime) {
@@ -86,7 +93,802 @@ const appMetadata = {
     icon: "fa-tasks",
     preinstalled: false,
   },
+  "snap-manager": {
+    name: "Snap Manager",
+    icon: "fa-border-all",
+    preinstalled: false,
+  },
 };
+
+function getDefaultSnapSettings() {
+  return {
+    enabled: false,
+    highlightColor: "#3b82f6",
+    layouts: [
+      {
+        id: "edge-left",
+        name: "Left Half",
+        x: 0,
+        y: 0,
+        width: 50,
+        height: 100,
+        trigger: "edge-left",
+        keybind: "Ctrl+Alt+ArrowLeft",
+        builtin: true,
+      },
+      {
+        id: "edge-right",
+        name: "Right Half",
+        x: 50,
+        y: 0,
+        width: 50,
+        height: 100,
+        trigger: "edge-right",
+        keybind: "Ctrl+Alt+ArrowRight",
+        builtin: true,
+      },
+      {
+        id: "edge-top",
+        name: "Top Half",
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 50,
+        trigger: "edge-top",
+        keybind: "Ctrl+Alt+ArrowUp",
+        builtin: true,
+      },
+      {
+        id: "edge-bottom",
+        name: "Bottom Half",
+        x: 0,
+        y: 50,
+        width: 100,
+        height: 50,
+        trigger: "edge-bottom",
+        keybind: "Ctrl+Alt+ArrowDown",
+        builtin: true,
+      },
+      {
+        id: "edge-top-left",
+        name: "Top Left Quarter",
+        x: 0,
+        y: 0,
+        width: 50,
+        height: 50,
+        trigger: "edge-top-left",
+        keybind: "",
+        builtin: true,
+      },
+      {
+        id: "edge-top-right",
+        name: "Top Right Quarter",
+        x: 50,
+        y: 0,
+        width: 50,
+        height: 50,
+        trigger: "edge-top-right",
+        keybind: "",
+        builtin: true,
+      },
+      {
+        id: "edge-bottom-left",
+        name: "Bottom Left Quarter",
+        x: 0,
+        y: 50,
+        width: 50,
+        height: 50,
+        trigger: "edge-bottom-left",
+        keybind: "",
+        builtin: true,
+      },
+      {
+        id: "edge-bottom-right",
+        name: "Bottom Right Quarter",
+        x: 50,
+        y: 50,
+        width: 50,
+        height: 50,
+        trigger: "edge-bottom-right",
+        keybind: "",
+        builtin: true,
+      },
+    ],
+  };
+}
+
+const snapTriggerOptions = [
+  { value: "keyboard", label: "Keyboard Only" },
+  { value: "edge-left", label: "Left Edge" },
+  { value: "edge-right", label: "Right Edge" },
+  { value: "edge-top", label: "Top Edge" },
+  { value: "edge-bottom", label: "Bottom Edge" },
+  { value: "edge-top-left", label: "Top Left Corner" },
+  { value: "edge-top-right", label: "Top Right Corner" },
+  { value: "edge-bottom-left", label: "Bottom Left Corner" },
+  { value: "edge-bottom-right", label: "Bottom Right Corner" },
+];
+
+function ensureSnapSettingsDefaults() {
+  const defaults = getDefaultSnapSettings();
+  if (!snapSettings) {
+    snapSettings = defaults;
+    return;
+  }
+
+  if (typeof snapSettings.enabled !== "boolean") {
+    snapSettings.enabled = defaults.enabled;
+  }
+
+  if (!snapSettings.highlightColor) {
+    snapSettings.highlightColor = defaults.highlightColor;
+  }
+
+  if (!Array.isArray(snapSettings.layouts)) {
+    snapSettings.layouts = [];
+  }
+
+  const existingMap = new Map();
+  snapSettings.layouts.forEach((layout) => {
+    existingMap.set(layout.id, layout);
+  });
+
+  defaults.layouts.forEach((layout) => {
+    if (existingMap.has(layout.id)) {
+      const current = existingMap.get(layout.id);
+      current.id = layout.id;
+      current.trigger = layout.trigger;
+      current.builtin = true;
+      if (typeof current.x !== "number") current.x = layout.x;
+      if (typeof current.y !== "number") current.y = layout.y;
+      if (typeof current.width !== "number") current.width = layout.width;
+      if (typeof current.height !== "number") current.height = layout.height;
+      if (typeof current.name !== "string" || !current.name) {
+        current.name = layout.name;
+      }
+      if (typeof current.keybind !== "string") {
+        current.keybind = layout.keybind;
+      }
+    } else {
+      snapSettings.layouts.push({ ...layout });
+    }
+  });
+
+  snapSettings.layouts = snapSettings.layouts.map((layout) => {
+    return {
+      ...layout,
+      x: typeof layout.x === "number" ? layout.x : parseFloat(layout.x) || 0,
+      y: typeof layout.y === "number" ? layout.y : parseFloat(layout.y) || 0,
+      width:
+        typeof layout.width === "number"
+          ? layout.width
+          : parseFloat(layout.width) || 50,
+      height:
+        typeof layout.height === "number"
+          ? layout.height
+          : parseFloat(layout.height) || 50,
+      keybind: layout.keybind || "",
+      trigger: layout.trigger || "",
+      name: layout.name || "Layout",
+      builtin: !!layout.builtin,
+    };
+  });
+}
+
+function loadSnapSettings() {
+  const saved = localStorage.getItem("nautilusOS_snapSettings");
+  if (saved) {
+    try {
+      snapSettings = JSON.parse(saved);
+    } catch (e) {
+      snapSettings = null;
+    }
+  }
+  ensureSnapSettingsDefaults();
+}
+
+function saveSnapSettings() {
+  if (!snapSettings) return;
+  localStorage.setItem("nautilusOS_snapSettings", JSON.stringify(snapSettings));
+}
+
+function initializeSnapOverlay() {
+  if (snapOverlay) return;
+  const desktop = document.getElementById("desktop");
+  if (!desktop) return;
+  snapOverlay = document.createElement("div");
+  snapOverlay.className = "snap-overlay";
+  desktop.appendChild(snapOverlay);
+  updateSnapOverlayStyles();
+}
+
+function updateSnapOverlayStyles() {
+  if (!snapOverlay || !snapSettings) return;
+  const fill = hexToRgba(snapSettings.highlightColor || "#3b82f6", 0.35);
+  const border = hexToRgba(snapSettings.highlightColor || "#3b82f6", 0.6);
+  snapOverlay.style.background = fill;
+  snapOverlay.style.borderColor = border;
+}
+
+function hexToRgba(hex, alpha) {
+  if (!hex) return `rgba(59, 130, 246, ${alpha})`;
+  let value = hex.replace("#", "").trim();
+  if (value.length === 3) {
+    value = value
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  }
+  if (value.length !== 6) {
+    return `rgba(59, 130, 246, ${alpha})`;
+  }
+  const int = parseInt(value, 16);
+  const r = (int >> 16) & 255;
+  const g = (int >> 8) & 255;
+  const b = int & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function hideSnapPreview() {
+  if (!snapOverlay) return;
+  snapOverlay.classList.remove("visible");
+  snapOverlay.classList.remove("animate");
+  snapOverlay.style.width = "0px";
+  snapOverlay.style.height = "0px";
+  snapCandidate = null;
+  snapTrackingWindow = null;
+}
+
+function showSnapPreview(layout) {
+  if (!snapOverlay || !layout) return;
+  const width = (window.innerWidth * layout.width) / 100;
+  const height = (window.innerHeight * layout.height) / 100;
+  const left = (window.innerWidth * layout.x) / 100;
+  const top = (window.innerHeight * layout.y) / 100;
+  snapOverlay.style.width = width + "px";
+  snapOverlay.style.height = height + "px";
+  snapOverlay.style.left = left + "px";
+  snapOverlay.style.top = top + "px";
+  snapOverlay.classList.add("visible");
+  snapOverlay.classList.add("animate");
+}
+
+function detectEdgeTrigger(x, y) {
+  const edgeThreshold = Math.max(40, window.innerWidth * 0.02);
+  const topThreshold = Math.max(40, window.innerHeight * 0.02);
+  const nearLeft = x <= edgeThreshold;
+  const nearRight = x >= window.innerWidth - edgeThreshold;
+  const nearTop = y <= topThreshold;
+  const nearBottom = y >= window.innerHeight - topThreshold;
+
+  if (nearTop && nearLeft) return "edge-top-left";
+  if (nearTop && nearRight) return "edge-top-right";
+  if (nearBottom && nearLeft) return "edge-bottom-left";
+  if (nearBottom && nearRight) return "edge-bottom-right";
+  if (nearTop) return "edge-top";
+  if (nearBottom) return "edge-bottom";
+  if (nearLeft) return "edge-left";
+  if (nearRight) return "edge-right";
+  return null;
+}
+
+function findSnapLayoutByTrigger(trigger) {
+  if (!snapSettings || !trigger) return null;
+  const layouts = snapSettings.layouts.slice().sort((a, b) => {
+    if (a.builtin === b.builtin) return 0;
+    return a.builtin ? 1 : -1;
+  });
+  for (let layout of layouts) {
+    if (layout.trigger === trigger) {
+      return layout;
+    }
+  }
+  return null;
+}
+
+function determineSnapCandidate(x, y) {
+  const trigger = detectEdgeTrigger(x, y);
+  if (!trigger) return null;
+  return findSnapLayoutByTrigger(trigger);
+}
+
+function applySnapLayout(element, layout) {
+  const width = (window.innerWidth * layout.width) / 100;
+  const height = (window.innerHeight * layout.height) / 100;
+  const left = (window.innerWidth * layout.x) / 100;
+  const top = (window.innerHeight * layout.y) / 100;
+  element.style.width = width + "px";
+  element.style.height = height + "px";
+  element.style.left = left + "px";
+  element.style.top = top + "px";
+  element.dataset.maximized = "false";
+  element.style.display = "block";
+  element.classList.remove("minimized");
+  focusWindow(element);
+}
+
+function updateSnapPreview(clientX, clientY, element) {
+  if (!snapSettings || !snapSettings.enabled) return;
+  if (!snapOverlay) return;
+  const layout = determineSnapCandidate(clientX, clientY);
+  if (layout) {
+    snapCandidate = layout;
+    snapTrackingWindow = element;
+    showSnapPreview(layout);
+  } else {
+    hideSnapPreview();
+  }
+}
+
+function finalizeSnap(element) {
+  if (!snapSettings || !snapSettings.enabled) {
+    hideSnapPreview();
+    return;
+  }
+  if (snapTrackingWindow !== element || !snapCandidate) {
+    hideSnapPreview();
+    return;
+  }
+  const layout = snapCandidate;
+  hideSnapPreview();
+  applySnapLayout(element, layout);
+  showSnapPreview(layout);
+  setTimeout(() => {
+    hideSnapPreview();
+  }, 200);
+}
+
+function normalizeKeybind(text) {
+  if (!text) return "";
+  return text.replace(/\s+/g, "").toLowerCase();
+}
+
+function buildKeyComboFromEvent(event) {
+  const parts = [];
+  if (event.ctrlKey) parts.push("Ctrl");
+  if (event.metaKey) parts.push("Meta");
+  if (event.altKey) parts.push("Alt");
+  if (event.shiftKey) parts.push("Shift");
+  let key = event.key;
+  if (key === " ") key = "Space";
+  if (key === "Escape") return "";
+  if (
+    key === "Shift" ||
+    key === "Control" ||
+    key === "Alt" ||
+    key === "Meta"
+  ) {
+    return "";
+  }
+  if (key.length === 1) {
+    key = key.toUpperCase();
+  } else {
+    key = key.charAt(0).toUpperCase() + key.slice(1);
+  }
+  parts.push(key);
+  return parts.join("+");
+}
+
+function handleSnapHotkeys(event) {
+  if (!snapSettings || !snapSettings.enabled) return;
+  if (!focusedWindow) return;
+  if (!snapSettings.layouts || !snapSettings.layouts.length) return;
+  const activeElement = document.activeElement;
+  if (
+    activeElement &&
+    (activeElement.tagName === "INPUT" ||
+      activeElement.tagName === "TEXTAREA" ||
+      activeElement.isContentEditable)
+  ) {
+    if (!snapKeyCapture) return;
+  }
+  const combo = buildKeyComboFromEvent(event);
+  if (!combo) return;
+  const normalized = normalizeKeybind(combo);
+  const layout = snapSettings.layouts.find(
+    (item) => normalizeKeybind(item.keybind) === normalized && item.keybind
+  );
+  if (!layout) return;
+  const windowEl = windows[focusedWindow];
+  if (!windowEl) return;
+  event.preventDefault();
+  applySnapLayout(windowEl, layout);
+  showSnapPreview(layout);
+  setTimeout(() => {
+    hideSnapPreview();
+  }, 200);
+}
+
+function getSnapTriggerLabel(trigger) {
+  const option = snapTriggerOptions.find((item) => item.value === trigger);
+  if (option) return option.label;
+  return "Custom";
+}
+
+function escapeHtml(text) {
+  if (text === null || text === undefined) return "";
+  return text
+    .toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderSnapManager() {
+  ensureSnapSettingsDefaults();
+  const enabledClass = snapSettings.enabled ? "active" : "";
+  const highlightColor =
+    (snapSettings.highlightColor || "#3b82f6").toUpperCase();
+  const layoutCards = snapSettings.layouts
+    .map((layout) => {
+      const triggerOptions = snapTriggerOptions
+        .map((option) => {
+          const selected = option.value === layout.trigger ? "selected" : "";
+          return `<option value="${option.value}" ${selected}>${option.label}</option>`;
+        })
+        .join("");
+      const layoutId = layout.id;
+      const hotkeyValue = layout.keybind
+        ? escapeHtml(layout.keybind)
+        : "Not Set";
+      const capturingClass = snapKeyCapture === layoutId ? " capturing" : "";
+      const removeDisabled = layout.builtin ? "disabled" : "";
+      const triggerDisabled = layout.builtin ? "disabled" : "";
+      return `
+            <div class="snap-layout-card" data-layout="${escapeHtml(layoutId)}">
+                <div class="snap-layout-header">
+                    <div class="snap-layout-title">
+                        <input type="text" value="${escapeHtml(
+                          layout.name
+                        )}" onblur="handleSnapLayoutField('${layoutId}', 'name', this.value)">
+                        <span>${getSnapTriggerLabel(layout.trigger)}</span>
+                    </div>
+                    <button class="snap-remove-btn" onclick="removeSnapLayout('${layoutId}')" ${removeDisabled}>
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="snap-layout-grid">
+                    <div class="snap-field">
+                        <label>X (%)</label>
+                        <input type="number" min="0" max="100" step="1" value="${Math.round(layout.x * 100) / 100}" onchange="handleSnapLayoutField('${layoutId}', 'x', this.value)">
+                    </div>
+                    <div class="snap-field">
+                        <label>Y (%)</label>
+                        <input type="number" min="0" max="100" step="1" value="${Math.round(layout.y * 100) / 100}" onchange="handleSnapLayoutField('${layoutId}', 'y', this.value)">
+                    </div>
+                    <div class="snap-field">
+                        <label>Width (%)</label>
+                        <input type="number" min="10" max="100" step="1" value="${Math.round(layout.width * 100) / 100}" onchange="handleSnapLayoutField('${layoutId}', 'width', this.value)">
+                    </div>
+                    <div class="snap-field">
+                        <label>Height (%)</label>
+                        <input type="number" min="10" max="100" step="1" value="${Math.round(layout.height * 100) / 100}" onchange="handleSnapLayoutField('${layoutId}', 'height', this.value)">
+                    </div>
+                </div>
+                <div class="snap-layout-actions">
+                    <select onchange="handleSnapTriggerChange('${layoutId}', this.value)" ${triggerDisabled}>
+                        ${triggerOptions}
+                    </select>
+                    <div class="snap-hotkey-row">
+                        <input type="text" class="snap-hotkey-input${capturingClass}" value="${hotkeyValue}" readonly onfocus="beginSnapKeyCapture('${layoutId}', this)" onkeydown="captureSnapHotkey(event, '${layoutId}', this)" onblur="endSnapKeyCapture('${layoutId}', this)">
+                        <button class="snap-clear-btn" onclick="clearSnapHotkey('${layoutId}')" ${layout.keybind ? "" : "disabled"}>Clear</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    })
+    .join("");
+
+  const triggerOptions = snapTriggerOptions
+    .map(
+      (option) =>
+        `<option value="${option.value}">${option.label}</option>`
+    )
+    .join("");
+
+  return `
+        <div class="snap-manager">
+            <div class="snap-section snap-section-header">
+                <div class="snap-section-title">
+                    <i class="fas fa-border-all"></i>
+                    <div>
+                        <h2>Window Snapping</h2>
+                        <p>Drag windows to the edges to snap them into place or use custom shortcuts.</p>
+                    </div>
+                </div>
+                <div class="toggle-switch ${enabledClass}" onclick="toggleSnapEnabled()"></div>
+            </div>
+            <div class="snap-section">
+                <div class="snap-section-row">
+                    <div>
+                        <h3>Highlight Color</h3>
+                        <p>Select the accent color used for snap previews.</p>
+                    </div>
+                    <div class="snap-color-picker">
+                        <input type="color" value="${highlightColor}" onchange="updateSnapHighlightColor(this.value)">
+                        <span>${highlightColor}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="snap-section">
+                <div class="snap-section-heading">
+                    <h3>Layouts</h3>
+                    <p>Adjust existing snap zones or create new layouts.</p>
+                </div>
+                <div class="snap-layout-list">
+                    ${layoutCards || '<div class="snap-empty">No layouts configured.</div>'}
+                </div>
+            </div>
+            <div class="snap-section">
+                <div class="snap-section-heading">
+                    <h3>Create Layout</h3>
+                    <p>Design a custom layout and assign a shortcut.</p>
+                </div>
+                <div class="snap-add-grid">
+                    <input type="text" id="snapNewName" placeholder="Name">
+                    <input type="number" id="snapNewX" placeholder="X (%)" min="0" max="100" value="0">
+                    <input type="number" id="snapNewY" placeholder="Y (%)" min="0" max="100" value="0">
+                    <input type="number" id="snapNewWidth" placeholder="Width (%)" min="10" max="100" value="50">
+                    <input type="number" id="snapNewHeight" placeholder="Height (%)" min="10" max="100" value="50">
+                    <select id="snapNewTrigger">
+                        ${triggerOptions}
+                    </select>
+                    <div class="snap-hotkey-row">
+                        <input type="text" id="snapNewHotkey" class="snap-hotkey-input" placeholder="Press shortcut" readonly onfocus="beginNewSnapKeyCapture(this)" onkeydown="captureNewSnapHotkey(event, this)" onblur="endNewSnapKeyCapture(this)">
+                        <button class="snap-clear-btn" onclick="clearNewSnapHotkey()">Clear</button>
+                    </div>
+                    <button class="snap-add-btn" onclick="addSnapLayoutFromForm()">
+                        <i class="fas fa-plus"></i> Add Layout
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function refreshSnapManagerWindow() {
+  if (!windows["snap-manager"]) return;
+  const content = windows["snap-manager"].querySelector(".window-content");
+  if (!content) return;
+  content.innerHTML = renderSnapManager();
+}
+
+function toggleSnapEnabled() {
+  ensureSnapSettingsDefaults();
+  snapSettings.enabled = !snapSettings.enabled;
+  saveSnapSettings();
+  refreshSnapManagerWindow();
+}
+
+function updateSnapHighlightColor(value) {
+  ensureSnapSettingsDefaults();
+  if (!value) return;
+  snapSettings.highlightColor = value;
+  saveSnapSettings();
+  updateSnapOverlayStyles();
+  refreshSnapManagerWindow();
+}
+
+function handleSnapLayoutField(layoutId, field, value) {
+  ensureSnapSettingsDefaults();
+  const layout = snapSettings.layouts.find((item) => item.id === layoutId);
+  if (!layout) return;
+  if (field === "name") {
+    layout.name = value.trim() || "Layout";
+  } else {
+    let parsed = parseFloat(value);
+    if (isNaN(parsed)) parsed = 0;
+    if (field === "width" || field === "height") {
+      parsed = Math.min(100, Math.max(10, parsed));
+    } else {
+      parsed = Math.min(100, Math.max(0, parsed));
+    }
+    layout[field] = Math.round(parsed * 100) / 100;
+  }
+  saveSnapSettings();
+  refreshSnapManagerWindow();
+}
+
+function handleSnapTriggerChange(layoutId, trigger) {
+  ensureSnapSettingsDefaults();
+  const layout = snapSettings.layouts.find((item) => item.id === layoutId);
+  if (!layout) return;
+  layout.trigger = trigger;
+  saveSnapSettings();
+  refreshSnapManagerWindow();
+}
+
+function beginSnapKeyCapture(layoutId, input) {
+  input.dataset.originalValue = input.value;
+  snapKeyCapture = layoutId;
+  input.classList.add("capturing");
+  input.value = "Press shortcut";
+}
+
+function captureSnapHotkey(event, layoutId, input) {
+  if (snapKeyCapture !== layoutId) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const combo = buildKeyComboFromEvent(event);
+  if (!combo && event.key !== "Escape") {
+    return;
+  }
+  const layout = snapSettings.layouts.find((item) => item.id === layoutId);
+  if (!layout) return;
+  if (event.key === "Escape") {
+    layout.keybind = "";
+    input.value = "Not Set";
+  } else {
+    layout.keybind = combo;
+    input.value = combo;
+  }
+  input.dataset.originalValue = input.value;
+  snapKeyCapture = null;
+  input.classList.remove("capturing");
+  input.blur();
+  saveSnapSettings();
+  refreshSnapManagerWindow();
+}
+
+function endSnapKeyCapture(layoutId, input) {
+  if (snapKeyCapture === layoutId) {
+    const original =
+      input && input.dataset ? input.dataset.originalValue : null;
+    snapKeyCapture = null;
+    if (input) {
+      input.value = original && original.length ? original : "Not Set";
+    }
+  }
+  if (input) {
+    input.classList.remove("capturing");
+  }
+}
+
+function clearSnapHotkey(layoutId) {
+  ensureSnapSettingsDefaults();
+  const layout = snapSettings.layouts.find((item) => item.id === layoutId);
+  if (!layout) return;
+  layout.keybind = "";
+  saveSnapSettings();
+  refreshSnapManagerWindow();
+}
+
+function removeSnapLayout(layoutId) {
+  ensureSnapSettingsDefaults();
+  const layout = snapSettings.layouts.find((item) => item.id === layoutId);
+  if (!layout || layout.builtin) return;
+  snapSettings.layouts = snapSettings.layouts.filter(
+    (item) => item.id !== layoutId
+  );
+  saveSnapSettings();
+  refreshSnapManagerWindow();
+}
+
+function beginNewSnapKeyCapture(input) {
+  input.dataset.originalValue = input.value;
+  snapKeyCapture = "new";
+  snapNewLayoutInput = input;
+  input.classList.add("capturing");
+  input.value = "Press shortcut";
+}
+
+function captureNewSnapHotkey(event, input) {
+  if (snapKeyCapture !== "new") return;
+  event.preventDefault();
+  event.stopPropagation();
+  const combo = buildKeyComboFromEvent(event);
+  if (!combo && event.key !== "Escape") {
+    return;
+  }
+  if (event.key === "Escape") {
+    snapNewLayoutKeybind = "";
+    input.value = "";
+  } else {
+    snapNewLayoutKeybind = combo;
+    input.value = combo;
+  }
+  input.dataset.originalValue = input.value;
+  snapKeyCapture = null;
+  if (snapNewLayoutInput) {
+    snapNewLayoutInput.classList.remove("capturing");
+    snapNewLayoutInput.blur();
+  }
+}
+
+function endNewSnapKeyCapture(input) {
+  if (snapKeyCapture === "new") {
+    const original =
+      input && input.dataset ? input.dataset.originalValue : "";
+    snapKeyCapture = null;
+    if (!snapNewLayoutKeybind && input) {
+      input.value = original;
+    }
+  }
+  if (input) {
+    input.classList.remove("capturing");
+  }
+  snapNewLayoutInput = null;
+}
+
+function clearNewSnapHotkey() {
+  snapNewLayoutKeybind = "";
+  const input = document.getElementById("snapNewHotkey");
+  if (input) {
+    input.value = "";
+    input.classList.remove("capturing");
+    input.dataset.originalValue = "";
+  }
+  snapKeyCapture = null;
+  snapNewLayoutInput = null;
+}
+
+function generateSnapLayoutId(base) {
+  const suffix = Math.random().toString(36).slice(2, 8);
+  return `${base}-${suffix}`;
+}
+
+function addSnapLayoutFromForm() {
+  ensureSnapSettingsDefaults();
+  const nameInput = document.getElementById("snapNewName");
+  const xInput = document.getElementById("snapNewX");
+  const yInput = document.getElementById("snapNewY");
+  const widthInput = document.getElementById("snapNewWidth");
+  const heightInput = document.getElementById("snapNewHeight");
+  const triggerSelect = document.getElementById("snapNewTrigger");
+  if (
+    !nameInput ||
+    !xInput ||
+    !yInput ||
+    !widthInput ||
+    !heightInput ||
+    !triggerSelect
+  ) {
+    return;
+  }
+
+  const name = nameInput.value.trim() || "Custom Layout";
+  let x = parseFloat(xInput.value);
+  let y = parseFloat(yInput.value);
+  let width = parseFloat(widthInput.value);
+  let height = parseFloat(heightInput.value);
+
+  if (isNaN(x)) x = 0;
+  if (isNaN(y)) y = 0;
+  if (isNaN(width)) width = 50;
+  if (isNaN(height)) height = 50;
+
+  x = Math.min(100, Math.max(0, x));
+  y = Math.min(100, Math.max(0, y));
+  width = Math.min(100, Math.max(10, width));
+  height = Math.min(100, Math.max(10, height));
+
+  const trigger = triggerSelect.value;
+  const layoutId = generateSnapLayoutId("layout");
+  snapSettings.layouts.push({
+    id: layoutId,
+    name: name,
+    x: Math.round(x * 100) / 100,
+    y: Math.round(y * 100) / 100,
+    width: Math.round(width * 100) / 100,
+    height: Math.round(height * 100) / 100,
+    trigger: trigger,
+    keybind: snapNewLayoutKeybind || "",
+    builtin: false,
+  });
+
+  nameInput.value = "";
+  xInput.value = "0";
+  yInput.value = "0";
+  widthInput.value = "50";
+  heightInput.value = "50";
+  triggerSelect.value = "keyboard";
+  clearNewSnapHotkey();
+
+  saveSnapSettings();
+  refreshSnapManagerWindow();
+}
 function updateUptime() {
   const elapsed = Math.floor((Date.now() - loginStartTime) / 1000 / 60);
   const uptimeEl = document.getElementById("uptime");
@@ -1096,6 +1898,7 @@ function makeDraggable(element) {
     pos2 = 0,
     pos3 = 0,
     pos4 = 0;
+  let dragging = false;
 
   header.onmousedown = dragMouseDown;
 
@@ -1106,6 +1909,12 @@ function makeDraggable(element) {
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
     document.onmousemove = elementDrag;
+    dragging = true;
+    if (snapSettings && snapSettings.enabled) {
+      snapTrackingWindow = element;
+    } else {
+      snapTrackingWindow = null;
+    }
   }
 
   function elementDrag(e) {
@@ -1123,11 +1932,18 @@ function makeDraggable(element) {
     element.style.left =
       Math.max(0, Math.min(window.innerWidth - element.offsetWidth, newLeft)) +
       "px";
+    if (dragging) {
+      updateSnapPreview(e.clientX, e.clientY, element);
+    }
   }
 
   function closeDragElement() {
     document.onmouseup = null;
     document.onmousemove = null;
+    if (dragging) {
+      finalizeSnap(element);
+    }
+    dragging = false;
   }
 }
 
@@ -2800,6 +3616,14 @@ alt="favicon">
       width: 400,
       height: 600,
     },
+    "snap-manager": {
+      title: "Snap Manager",
+      icon: "fas fa-border-all",
+      content: renderSnapManager(),
+      noPadding: true,
+      width: 820,
+      height: 640,
+    },
     appstore: {
       title: "App Store",
       icon: "fas fa-store",
@@ -4015,6 +4839,7 @@ function switchAppStoreSection(section, element) {
   } else if (section === "apps") {
     const startupInstalled = installedApps.includes("startup-apps");
     const taskmanagerInstalled = installedApps.includes("task-manager");
+    const snapManagerInstalled = installedApps.includes("snap-manager");
 
     mainContent.innerHTML = `
                   <div class="appstore-header">
@@ -4059,7 +4884,7 @@ function switchAppStoreSection(section, element) {
                       </div>
 
                       <div class="appstore-item">
-                <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
     <div class="illustration-taskmanager">
                                       <div class="illustration-taskmanager-header">
                                           <div class="illustration-taskmanager-title">Task Manager</div>
@@ -4100,6 +4925,22 @@ function switchAppStoreSection(section, element) {
         : "installApp('task-manager')"
     }">
                               ${taskmanagerInstalled ? "Uninstall" : "Install"}
+                          </button>
+                      </div>
+                      <div class="appstore-item">
+                          <div class="appstore-item-icon">
+                              <i class="fas fa-border-all"></i>
+                          </div>
+                          <div class="appstore-item-name">Snap Manager by Nautilus Labs</div>
+                          <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
+                          <button class="appstore-item-btn ${
+                            snapManagerInstalled ? "installed" : ""
+                          }" onclick="${
+      snapManagerInstalled
+        ? "uninstallApp('snap-manager')"
+        : "installApp('snap-manager')"
+    }">
+                              ${snapManagerInstalled ? "Uninstall" : "Install"}
                           </button>
                       </div>
                                                 </div>
@@ -4496,47 +5337,60 @@ async function loadBrowserPage(url) {
   try {
     viewEl.innerHTML = "";
 
-    const iframe = document.createElement("iframe");
-    iframe.style.cssText =
-      "width: 100%; height: 100%; border: none; background: #fff;";
-    iframe.sandbox =
-      "allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox";
-
-    iframe.src = url;
-
-    iframe.onload = () => {
-      try {
-        const iframeDoc =
-          iframe.contentDocument || iframe.contentWindow.document;
-        const title = iframeDoc.title || new URL(url).hostname;
-        currentTab.title = title;
-
-        const tabEl = document.querySelector(
-          `.browser-tab[data-tab-id="${activeBrowserTab}"]`
-        );
-        if (tabEl) {
-          const titleEl = tabEl.querySelector(".browser-tab-title");
-          if (titleEl) titleEl.textContent = title;
-        }
-      } catch (err) {
-        const title = new URL(url).hostname;
-        currentTab.title = title;
-
-        const tabEl = document.querySelector(
-          `.browser-tab[data-tab-id="${activeBrowserTab}"]`
-        );
-        if (tabEl) {
-          const titleEl = tabEl.querySelector(".browser-tab-title");
-          if (titleEl) titleEl.textContent = title;
-        }
+    const proxiedUrl =
+      "https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(url);
+    const response = await fetch(proxiedUrl);
+    if (!response.ok) throw new Error("Failed to load page");
+    const rawHtml = await response.text();
+    const urlObj = new URL(url);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(rawHtml, "text/html");
+    if (!doc || !doc.documentElement) {
+      throw new Error("Failed to parse page");
+    }
+    if (doc && doc.head) {
+      const baseEl = doc.createElement("base");
+      let baseHref = urlObj.origin + urlObj.pathname.replace(/[^/]*$/, "");
+      if (!baseHref.endsWith("/")) {
+        baseHref += "/";
       }
+      baseEl.setAttribute("href", baseHref);
+      doc.head.prepend(baseEl);
+    }
+    viewEl.innerHTML = doc.documentElement.innerHTML;
+    const scripts = Array.from(viewEl.querySelectorAll("script"));
+    for (const script of scripts) {
+      const replacement = document.createElement("script");
+      for (const attr of script.attributes) {
+        replacement.setAttribute(attr.name, attr.value);
+      }
+      replacement.textContent = script.textContent;
+      script.replaceWith(replacement);
+    }
+    const title = new URL(url).hostname;
+    currentTab.title = title;
+    const tabEl = document.querySelector(
+      `.browser-tab[data-tab-id="${activeBrowserTab}"]`
+    );
+    if (tabEl) {
+      const titleEl = tabEl.querySelector(".browser-tab-title");
+      if (titleEl) titleEl.textContent = currentTab.title;
+    }
+    viewEl.scrollTop = 0;
+    viewEl.onclick = (event) => {
+      const link = event.target.closest("a[href]");
+      if (!link) return;
+      const href = link.getAttribute("href");
+      if (!href || href.startsWith("javascript:")) return;
+      event.preventDefault();
+      let targetUrl;
+      try {
+        targetUrl = new URL(href, url).toString();
+      } catch (_) {
+        return;
+      }
+      navigateBrowser(targetUrl);
     };
-
-    iframe.onerror = () => {
-      throw new Error("Failed to load page");
-    };
-
-    viewEl.appendChild(iframe);
     updateBrowserNavButtons();
   } catch (error) {
     console.error("Browser error:", error);
@@ -5287,6 +6141,7 @@ function loadInstalledThemes() {
   }
 }
 window.addEventListener("DOMContentLoaded", () => {
+  loadSnapSettings();
   loadSettingsFromLocalStorage();
   loadInstalledThemes();
   loadInstalledApps();
@@ -5297,6 +6152,10 @@ window.addEventListener("DOMContentLoaded", () => {
     const icons = document.getElementById("desktopIcons");
     if (icons) icons.classList.add("hidden");
   }
+
+  initializeSnapOverlay();
+  updateSnapOverlayStyles();
+  document.addEventListener("keydown", handleSnapHotkeys);
 
   installedApps.forEach((appName) => {
     addDesktopIcon(appName);
@@ -5537,6 +6396,14 @@ function installApp(appName) {
 
   updateStartMenu();
 
+  if (appName === "snap-manager") {
+    ensureSnapSettingsDefaults();
+    snapSettings.enabled = true;
+    saveSnapSettings();
+    initializeSnapOverlay();
+    updateSnapOverlayStyles();
+  }
+
   showToast(
     "App installed! Check your desktop and start menu to launch it.",
     "fa-check-circle"
@@ -5561,6 +6428,13 @@ function uninstallApp(appName) {
       closeWindowByAppName(appName);
     }
 
+    if (appName === "snap-manager") {
+      ensureSnapSettingsDefaults();
+      snapSettings.enabled = false;
+      saveSnapSettings();
+      hideSnapPreview();
+    }
+
     showToast("App uninstalled", "fa-trash");
     refreshAppStore();
   }
@@ -5579,6 +6453,8 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-rocket", label: "Startup Apps" };
   } else if (appName === "task-manager") {
     iconConfig = { icon: "fa-tasks", label: "Task Manager" };
+  } else if (appName === "snap-manager") {
+    iconConfig = { icon: "fa-border-all", label: "Snap Manager" };
   } else {
     return;
   }
@@ -6043,6 +6919,8 @@ function updateStartMenu() {
       appConfig = { icon: "fa-rocket", label: "Startup Apps" };
     } else if (appName === "task-manager") {
       appConfig = { icon: "fa-tasks", label: "Task Manager" };
+    } else if (appName === "snap-manager") {
+      appConfig = { icon: "fa-border-all", label: "Snap Manager" };
     } else {
       return;
     }
