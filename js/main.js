@@ -1392,6 +1392,18 @@ function openApp(appName, editorContent = "", filename = "") {
       "settings"
     );
   }
+  const sameBackgroundSetting = localStorage.getItem(
+    "nautilusOS_useSameBackground"
+  );
+  const useSameBackground =
+    sameBackgroundSetting === null || sameBackgroundSetting === "true";
+  const hasWallpaper = !!localStorage.getItem("nautilusOS_wallpaper");
+  const hasLoginWallpaper = !!localStorage.getItem(
+    "nautilusOS_loginBackground"
+  );
+  const hasProfilePicture = !!localStorage.getItem(
+    "nautilusOS_profilePicture"
+  );
   const apps = {
     files: {
       title: "Files",
@@ -1952,6 +1964,58 @@ alt="favicon">
                 <h2><i class="fas fa-palette"></i> Appearance</h2>
                 <div class="settings-card">
                     <div class="settings-card-header">
+                        <i class="fas fa-image"></i>
+                        <span>Wallpaper</span>
+                    </div>
+                    <div class="settings-card-body">
+                        <p class="settings-description">
+                            Set custom images for the desktop and login screen.
+                        </p>
+                        <div id="imageErrorMessage" style="display:none;color:var(--error-red);font-size:0.85rem;margin-bottom:1rem;"></div>
+                        <input type="file" id="wallpaperInput" accept="image/png, image/jpeg, image/gif" onchange="handleWallpaperUpload(event)" style="display: none;">
+                        <input type="file" id="loginWallpaperInput" accept="image/png, image/jpeg, image/gif" onchange="handleLoginBackgroundUpload(event)" style="display: none;">
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <button class="settings-action-btn" id="desktopWallpaperButton" onclick="document.getElementById('wallpaperInput').click()">
+                                <i class="fas fa-upload"></i> ${
+                                  hasWallpaper
+                                    ? "Change Desktop Wallpaper"
+                                    : "Set Desktop Wallpaper"
+                                }
+                            </button>
+                            <button class="settings-action-btn" onclick="clearWallpaper()">
+                                <i class="fas fa-undo"></i> Reset Desktop Wallpaper
+                            </button>
+                        </div>
+                        <div class="settings-item" style="margin-bottom: 1rem;">
+                            <div class="settings-item-text">
+                                <div class="settings-item-title">Use same for login screen</div>
+                                <div class="settings-item-desc">Mirror the desktop wallpaper on the login page</div>
+                            </div>
+                            <div class="toggle-switch ${
+                              useSameBackground ? "active" : ""
+                            }" id="loginWallpaperToggle" onclick="toggleLoginWallpaperLink(this)"></div>
+                        </div>
+                        <div id="loginWallpaperControls" style="${
+                          useSameBackground ? "display: none;" : ""
+                        }">
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                                <button class="settings-action-btn" id="loginWallpaperButton" onclick="document.getElementById('loginWallpaperInput').click()">
+                                    <i class="fas fa-upload"></i> ${
+                                      hasLoginWallpaper
+                                        ? "Change Login Wallpaper"
+                                        : "Set Login Wallpaper"
+                                    }
+                                </button>
+                                <button class="settings-action-btn" onclick="clearLoginWallpaper()">
+                                    <i class="fas fa-undo"></i> Reset Login Wallpaper
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-card">
+                    <div class="settings-card-header">
                         <i class="fas fa-palette"></i>
                         <span>Themes</span>
                     </div>
@@ -2036,6 +2100,31 @@ alt="favicon">
                                 <div class="settings-item-desc">Permission level</div>
                             </div>
                             <div class="settings-item-value">Standard User</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-image"></i>
+                        <span>Profile Picture</span>
+                    </div>
+                    <div class="settings-card-body">
+                        <p class="settings-description">
+                            Upload a PNG, JPG, or GIF to personalize your account.
+                        </p>
+                        <input type="file" id="profilePictureInput" accept="image/png, image/jpeg, image/gif" onchange="handleProfilePictureUpload(event)" style="display: none;">
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                            <button class="settings-action-btn" id="profilePictureButton" onclick="document.getElementById('profilePictureInput').click()">
+                                <i class="fas fa-upload"></i> ${
+                                  hasProfilePicture
+                                    ? "Change Profile Picture"
+                                    : "Set Profile Picture"
+                                }
+                            </button>
+                            <button class="settings-action-btn" onclick="clearProfilePicture()">
+                                <i class="fas fa-undo"></i> Reset Profile Picture
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2746,6 +2835,11 @@ alt="favicon">
       app.noPadding || false
     );
 
+    if (appName === "settings") {
+      setTimeout(() => {
+        initializeAppearanceSettings();
+      }, 50);
+    }
     if (appName === "terminal") {
       setTimeout(() => {
         const input = document.getElementById("terminalInput");
@@ -2935,6 +3029,230 @@ document.addEventListener("click", (e) => {
     startMenu.classList.remove("active");
   }
 });
+
+function readImageFile(file, onLoad) {
+  const allowedTypes = ["image/png", "image/jpeg", "image/gif"];
+  if (!file) return false;
+  if (!allowedTypes.includes(file.type)) {
+    showToast("Please choose a PNG, JPG, or GIF image.", "fa-exclamation-circle");
+    setImageError("Only PNG, JPG, or GIF files are supported.");
+    return false;
+  }
+  const maxBytes = 3 * 1024 * 1024;
+  if (file.size > maxBytes) {
+    showToast("Image must be smaller than 3MB.", "fa-exclamation-circle");
+    setImageError("Image must be smaller than 3MB.");
+    return false;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    setImageError("");
+    onLoad(reader.result);
+  };
+  reader.readAsDataURL(file);
+  return true;
+}
+
+function setImageError(message) {
+  const el = document.getElementById("imageErrorMessage");
+  if (!el) return;
+  if (message) {
+    el.textContent = message;
+    el.style.display = "block";
+  } else {
+    el.textContent = "";
+    el.style.display = "none";
+  }
+}
+
+function applyUserBackgrounds() {
+  const desktop = document.getElementById("desktop");
+  const login = document.getElementById("login");
+  const wallpaperLayer = document.querySelector(".wallpaper");
+  const wallpaperData = localStorage.getItem("nautilusOS_wallpaper");
+  const loginBackgroundData = localStorage.getItem("nautilusOS_loginBackground");
+  const sameSetting = localStorage.getItem("nautilusOS_useSameBackground");
+  const useSame = sameSetting === null || sameSetting === "true";
+  const loginData = useSame ? wallpaperData : loginBackgroundData;
+
+  if (desktop) {
+    if (wallpaperData) {
+      desktop.style.background = `center / cover no-repeat url(${wallpaperData})`;
+    } else {
+      desktop.style.background =
+        "linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)";
+    }
+  }
+
+  if (wallpaperLayer) {
+    wallpaperLayer.style.display = wallpaperData ? "none" : "";
+  }
+
+  if (login) {
+    if (loginData) {
+      login.style.background = `center / cover no-repeat url(${loginData})`;
+    } else {
+      login.style.background =
+        "linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)";
+    }
+  }
+}
+
+function initializeAppearanceSettings() {
+  const sameSetting = localStorage.getItem("nautilusOS_useSameBackground");
+  const useSame = sameSetting === null || sameSetting === "true";
+  const toggle = document.getElementById("loginWallpaperToggle");
+  const controls = document.getElementById("loginWallpaperControls");
+  const desktopButton = document.getElementById("desktopWallpaperButton");
+  const loginButton = document.getElementById("loginWallpaperButton");
+  const profileButton = document.getElementById("profilePictureButton");
+  const hasWallpaper = !!localStorage.getItem("nautilusOS_wallpaper");
+  const hasLoginWallpaper = !!localStorage.getItem("nautilusOS_loginBackground");
+  const hasProfile = !!localStorage.getItem("nautilusOS_profilePicture");
+
+  if (toggle) {
+    if (useSame) {
+      toggle.classList.add("active");
+    } else {
+      toggle.classList.remove("active");
+    }
+  }
+
+  if (controls) {
+    controls.style.display = useSame ? "none" : "";
+  }
+
+  if (desktopButton) {
+    desktopButton.innerHTML = `<i class="fas fa-upload"></i> ${
+      hasWallpaper ? "Change Desktop Wallpaper" : "Set Desktop Wallpaper"
+    }`;
+  }
+
+  if (loginButton) {
+    loginButton.innerHTML = `<i class="fas fa-upload"></i> ${
+      hasLoginWallpaper ? "Change Login Wallpaper" : "Set Login Wallpaper"
+    }`;
+  }
+
+  if (profileButton) {
+    profileButton.innerHTML = `<i class="fas fa-upload"></i> ${
+      hasProfile ? "Change Profile Picture" : "Set Profile Picture"
+    }`;
+  }
+}
+
+function handleWallpaperUpload(event) {
+  const file = event.target.files[0];
+  if (!readImageFile(file, (data) => {
+    localStorage.setItem("nautilusOS_wallpaper", data);
+    applyUserBackgrounds();
+    initializeAppearanceSettings();
+    showToast("Desktop wallpaper updated!", "fa-check-circle");
+  })) {
+    return;
+  }
+  event.target.value = "";
+}
+
+function clearWallpaper() {
+  if (!localStorage.getItem("nautilusOS_wallpaper")) {
+    showToast("No desktop wallpaper is set.", "fa-info-circle");
+    return;
+  }
+  localStorage.removeItem("nautilusOS_wallpaper");
+  applyUserBackgrounds();
+  initializeAppearanceSettings();
+  const input = document.getElementById("wallpaperInput");
+  if (input) input.value = "";
+  showToast("Desktop wallpaper reset.", "fa-check-circle");
+}
+
+function toggleLoginWallpaperLink(element) {
+  const sameSetting = localStorage.getItem("nautilusOS_useSameBackground");
+  const useSame = sameSetting === null || sameSetting === "true";
+  const newValue = !useSame;
+  localStorage.setItem("nautilusOS_useSameBackground", newValue ? "true" : "false");
+  if (element) {
+    if (newValue) {
+      element.classList.add("active");
+    } else {
+      element.classList.remove("active");
+    }
+  }
+  const controls = document.getElementById("loginWallpaperControls");
+  if (controls) {
+    controls.style.display = newValue ? "none" : "";
+  }
+  applyUserBackgrounds();
+  initializeAppearanceSettings();
+}
+
+function handleLoginBackgroundUpload(event) {
+  const file = event.target.files[0];
+  if (!readImageFile(file, (data) => {
+    localStorage.setItem("nautilusOS_loginBackground", data);
+    applyUserBackgrounds();
+    initializeAppearanceSettings();
+    showToast("Login wallpaper updated!", "fa-check-circle");
+  })) {
+    return;
+  }
+  event.target.value = "";
+}
+
+function clearLoginWallpaper() {
+  if (!localStorage.getItem("nautilusOS_loginBackground")) {
+    showToast("No login wallpaper is set.", "fa-info-circle");
+    return;
+  }
+  localStorage.removeItem("nautilusOS_loginBackground");
+  applyUserBackgrounds();
+  initializeAppearanceSettings();
+  const input = document.getElementById("loginWallpaperInput");
+  if (input) input.value = "";
+  showToast("Login wallpaper reset.", "fa-check-circle");
+}
+
+function handleProfilePictureUpload(event) {
+  const file = event.target.files[0];
+  if (!readImageFile(file, (data) => {
+    localStorage.setItem("nautilusOS_profilePicture", data);
+    applyProfilePicture();
+    initializeAppearanceSettings();
+    showToast("Profile picture updated!", "fa-check-circle");
+  })) {
+    return;
+  }
+  event.target.value = "";
+}
+
+function clearProfilePicture() {
+  if (!localStorage.getItem("nautilusOS_profilePicture")) {
+    showToast("No profile picture is set.", "fa-info-circle");
+    return;
+  }
+  localStorage.removeItem("nautilusOS_profilePicture");
+  applyProfilePicture();
+  initializeAppearanceSettings();
+  const input = document.getElementById("profilePictureInput");
+  if (input) input.value = "";
+  showToast("Profile picture reset.", "fa-check-circle");
+}
+
+function applyProfilePicture() {
+  const data = localStorage.getItem("nautilusOS_profilePicture");
+  const avatars = document.querySelectorAll(".login-avatar, .start-avatar");
+  avatars.forEach((avatar) => {
+    if (data) {
+      avatar.style.background = `center / cover no-repeat url(${data})`;
+      avatar.classList.add("has-image");
+    } else {
+      avatar.style.background = "";
+      avatar.classList.remove("has-image");
+    }
+  });
+}
 
 function updateLoginGreeting() {
   const now = new Date();
@@ -4923,6 +5241,8 @@ window.addEventListener("DOMContentLoaded", () => {
   installedApps.forEach((appName) => {
     addDesktopIcon(appName);
   });
+  applyUserBackgrounds();
+  applyProfilePicture();
 });
 async function signOutToLogin() {
   const confirmed = await confirm("Are you sure you want to sign out?");
@@ -5661,6 +5981,14 @@ function exportProfile() {
     showWhatsNew: localStorage.getItem("nautilusOS_showWhatsNew"),
     exportDate: new Date().toISOString(),
   };
+  const wallpaper = localStorage.getItem("nautilusOS_wallpaper");
+  const loginWallpaper = localStorage.getItem("nautilusOS_loginBackground");
+  const useSame = localStorage.getItem("nautilusOS_useSameBackground");
+  const profilePicture = localStorage.getItem("nautilusOS_profilePicture");
+  profile.wallpaper = wallpaper || null;
+  profile.loginWallpaper = loginWallpaper || null;
+  profile.useSameBackground = useSame === null ? "true" : useSame;
+  profile.profilePicture = profilePicture || null;
 
   const profileJson = JSON.stringify(profile, null, 2);
   const blob = new Blob([profileJson], { type: "application/json" });
@@ -5736,6 +6064,35 @@ function importProfile(event) {
         "nautilusOS_startupApps",
         JSON.stringify(profile.startupApps || [])
       );
+      if (
+        profile.useSameBackground !== null &&
+        profile.useSameBackground !== undefined
+      ) {
+        localStorage.setItem(
+          "nautilusOS_useSameBackground",
+          String(profile.useSameBackground)
+        );
+      } else {
+        localStorage.removeItem("nautilusOS_useSameBackground");
+      }
+      if (profile.wallpaper) {
+        localStorage.setItem("nautilusOS_wallpaper", profile.wallpaper);
+      } else {
+        localStorage.removeItem("nautilusOS_wallpaper");
+      }
+      if (profile.loginWallpaper) {
+        localStorage.setItem(
+          "nautilusOS_loginBackground",
+          profile.loginWallpaper
+        );
+      } else {
+        localStorage.removeItem("nautilusOS_loginBackground");
+      }
+      if (profile.profilePicture) {
+        localStorage.setItem("nautilusOS_profilePicture", profile.profilePicture);
+      } else {
+        localStorage.removeItem("nautilusOS_profilePicture");
+      }
 
       if (profile.showWhatsNew !== null && profile.showWhatsNew !== undefined) {
         localStorage.setItem("nautilusOS_showWhatsNew", profile.showWhatsNew);
@@ -5748,6 +6105,9 @@ function importProfile(event) {
         }
         fileSystem = cleanedFileSystem;
       }
+      applyUserBackgrounds();
+      applyProfilePicture();
+      initializeAppearanceSettings();
 
       showToast(
         "Profile imported successfully! Redirecting to login...",

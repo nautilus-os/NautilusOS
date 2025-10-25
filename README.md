@@ -1,13 +1,13 @@
 ## NautilusOS
 
-NautilusOS is a web based operating system built entirely in html, css, and js and my biggest project yet!!  
-boot it up, log in, and mess around like it’s a real desktop with apps, an app store, windows, a file explorer, taskbar, and more.
+NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS—and it’s my biggest project yet!!  
+Boot it up, log in, and mess around like it’s a real desktop with apps, an app store, windows, a file explorer, taskbar, and more.
 
 ---
 
 ## ✨ features
 
-there’s a ton to play with, but heres a quick rundown (but fr check them all out yourself):
+There’s a ton to play with, but here’s a quick rundown (seriously, check them all out yourself):
 
 - bootloader, account setup, and login screen  
 - fully animated desktop environment  
@@ -19,18 +19,25 @@ there’s a ton to play with, but heres a quick rundown (but fr check them all o
 - super duper cool proxied browser
 - cloaking and various other settings 
 - terminal
-- built in app store
+- built-in app store
 - exportable profiles
 - context menus  
 - startup and tools panels  
-- smooth transitions, gradients, and clean ui  
+- smooth transitions, gradients, and clean UI  
 
-basically... a whole little os in your browser :D
+Basically... a whole little OS in your browser :D
 
 ---
 
-## 🚧 todo
+## 🚧 todos
 
+- [x] Make the app store actually work
+- [x] Add a way to change the theme/color scheme
+- [ ] Actually make themes work
+- [ ] App store improvements (right now it can only install built-in apps)
+- [ ] Fix browser; it doesn’t really work as a proxy right now because it’s broken
+- [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, etc.
+- [ ] Add an option to increase or decrease window transparency 
 - [x] make wallpaper customizable  
 - [ ] actually make themes work
 - [ ] app store improvements  (rn can only install built in apps)
@@ -41,7 +48,7 @@ basically... a whole little os in your browser :D
 
 ---
 
-## 🖼 screenshots (this is like 5% of the entire projet, check it out to see it all yourself!!)
+## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)
 
 <img width="1918" height="897" alt="image" src="https://github.com/user-attachments/assets/c8911ec5-7748-4287-ba48-4370a44608be" />
 <img width="1917" height="906" alt="image" src="https://github.com/user-attachments/assets/8d853477-0fb4-45f1-a3cb-3e88169eb765" />
@@ -56,15 +63,15 @@ basically... a whole little os in your browser :D
 
 ## 💡 more about
 
-this is mostly just a fun ui sandbox with no backend and no external data storage, it just seemed liek the logical next step after Helios Browser  
-everything runs client-side.  
-built just with html, css, and js (no frameworks, no cdns except icons/fonts)
+This is mostly just a fun UI sandbox with no backend or external data storage. It just seemed like the logical next step after Helios Browser.  
+Everything runs client-side.  
+Built with just HTML, CSS, and JS (no frameworks, no CDNs except icons/fonts)
 
 ---
 
 ## 🧠 try it
 
-open the html file in your browser. that’s it. 
+Open the HTML file in your browser. That’s it. 
 
 ---
 
