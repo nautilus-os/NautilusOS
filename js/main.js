@@ -2662,6 +2662,51 @@ alt="favicon">
         <p>Track your progress with a comprehensive achievement system! Unlock badges for reaching milestones, exploring features, and discovering hidden Easter eggs. Achievement data persists even after system resets!</p>
     </div>
 </div>
+<div class="carousel-slide" data-slide="14">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 2rem; align-items: center; justify-content: center;">
+            <div style="width: 120px; height: 120px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--accent); animation: float 3s ease-in-out infinite; position: relative; overflow: hidden;">
+                <i class="fas fa-image"></i>
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: rgba(125, 211, 192, 0.4), transparent);"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--bg-primary); animation: float 3s ease-in-out infinite; animation-delay: 0.3s; box-shadow: 0 4px 12px rgba(125, 211, 192, 0.4);">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div style="width: 90px; height: 12px; background: rgba(125, 211, 192, 0.3); border-radius: 6px; animation: float 3s ease-in-out infinite; animation-delay: 0.6s;">
+                    <div style="width: 100%; height: 100%; background: var(--accent); border-radius: 6px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Personalization & Wallpapers</h2>
+        <p>Make NautilusOS truly yours! Upload custom wallpapers for both desktop and login screen, set a profile picture to personalize your account, and choose whether to use the same background everywhere or different ones for each screen.</p>
+    </div>
+</div>
+<div class="carousel-slide" data-slide="15">
+    <div class="carousel-illustration">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+            <div style="width: 240px; height: 50px; background: rgba(255, 255, 255, 0.05); border: 2px solid var(--accent); border-bottom: none; border-radius: 10px 10px 0 0; display: flex; align-items: center; padding: 0 1rem; gap: 0.75rem; animation: float 3s ease-in-out infinite;">
+                <div style="width: 18px; height: 18px; background: var(--accent); border-radius: 50%; flex-shrink: 0;"></div>
+                <div style="flex: 1; height: 10px; background: rgba(125, 211, 192, 0.4); border-radius: 5px;"></div>
+            </div>
+            <div style="width: 240px; background: rgba(21, 25, 35, 0.95); border-left: 2px solid var(--accent); border-right: 2px solid var(--accent); border-top: 2px solid var(--accent); border-bottom: 2px solid var(--accent); border-radius: 0 0 12px 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; animation: float 3s ease-in-out infinite;">
+                <div style="width: 60px; height: 60px; background: rgba(125, 211, 192, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); flex-shrink: 0; border: 2px solid var(--accent);">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="height: 12px; background: rgba(125, 211, 192, 0.4); border-radius: 6px; width: 100%;"></div>
+                    <div style="height: 12px; background: rgba(125, 211, 192, 0.3); border-radius: 6px; width: 85%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Advanced Tab Cloaking</h2>
+        <p>Stay under the radar with powerful disguise tools! Auto-rotate through multiple tab disguises, set custom rotation speeds, configure panic keys for instant redirects, and use preset templates for popular sites like Google Classroom and Drive.</p>
+    </div>
+</div>
 
 <div class="carousel-controls">
                           <div class="carousel-btn" onclick="changeSlide(-1)">
@@ -2686,7 +2731,9 @@ alt="favicon">
           <div class="carousel-dot" onclick="goToSlide(10)"></div>
           <div class="carousel-dot" onclick="goToSlide(11)"></div>
           <div class="carousel-dot" onclick="goToSlide(12)"></div>
-                    <div class="carousel-dot" onclick="goToSlide(13)"></div>
+          <div class="carousel-dot" onclick="goToSlide(13)"></div>
+          <div class="carousel-dot" onclick="goToSlide(14)"></div>
+          <div class="carousel-dot" onclick="goToSlide(15)"></div>
 
       </div>
                           </div>
