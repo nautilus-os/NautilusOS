@@ -4073,6 +4073,7 @@ function installTheme(themeName) {
     JSON.stringify(installedThemes)
   );
   showToast("Theme installed! Go to Settings to apply it.", "fa-check-circle");
+  
   unlockAchievement("theme-changer");
 
   refreshAppStore();
@@ -5090,12 +5091,24 @@ function setupComplete() {
     "nautilusOS_installedThemes",
     JSON.stringify(installedThemes)
   );
+  localStorage.setItem(
+    "nautilusOS_installedApps",
+    JSON.stringify(installedApps)
+  );
+  localStorage.setItem(
+    "nautilusOS_startupApps",
+    JSON.stringify(startupApps)
+  );
   saveSettingsToLocalStorage();
-  localStorage.setItem("nautilusOS_installedTools", JSON.stringify([]));
-  localStorage.setItem("nautilusOS_startupApps", JSON.stringify([]));
 
   currentUsername = username;
 
+   if (selectedThemes.length > 0) {
+    setTimeout(() => {
+      unlockAchievement("theme-changer");
+    }, 100);
+  }
+  
   // easteregg!!
   let welcomeMessage = "Setup complete! Welcome to NautilusOS";
   let toastIcon = "fa-check-circle";
@@ -5973,6 +5986,7 @@ function exportProfile() {
     version: "1.0",
     username: localStorage.getItem("nautilusOS_username"),
     password: localStorage.getItem("nautilusOS_password"),
+    isPasswordless: localStorage.getItem("nautilusOS_isPasswordless") === "true",
     settings: settings,
     installedThemes: installedThemes,
     installedApps: installedApps,
@@ -6023,7 +6037,7 @@ function importProfile(event) {
     try {
       const profile = JSON.parse(e.target.result);
 
-      if (!profile.version || !profile.username || !profile.password) {
+      if (!profile.version || !profile.username) {
         throw new Error("Invalid profile format");
       }
 
@@ -6046,28 +6060,41 @@ function importProfile(event) {
 
       // Import profile data
       localStorage.setItem("nautilusOS_username", profile.username);
-      localStorage.setItem("nautilusOS_password", profile.password);
+      localStorage.setItem("nautilusOS_password", profile.password || "");
+      
+      // Handle isPasswordless for both old and new profiles
+      const isPasswordless = profile.isPasswordless !== undefined 
+        ? String(profile.isPasswordless) 
+        : (profile.password === "" ? "true" : "false");
+      localStorage.setItem("nautilusOS_isPasswordless", isPasswordless);
+      
       localStorage.setItem("nautilusOS_setupComplete", "true");
+      
+      // Update local variables
+      settings = profile.settings || settings;
+      installedThemes = profile.installedThemes || [];
+      installedApps = profile.installedApps || [];
+      startupApps = profile.startupApps || [];
+      
       localStorage.setItem(
         "nautilusOS_settings",
-        JSON.stringify(profile.settings || settings)
+        JSON.stringify(settings)
       );
       localStorage.setItem(
         "nautilusOS_installedThemes",
-        JSON.stringify(profile.installedThemes || [])
+        JSON.stringify(installedThemes)
       );
       localStorage.setItem(
         "nautilusOS_installedApps",
-        JSON.stringify(profile.installedApps || [])
+        JSON.stringify(installedApps)
       );
       localStorage.setItem(
         "nautilusOS_startupApps",
-        JSON.stringify(profile.startupApps || [])
+        JSON.stringify(startupApps)
       );
-      if (
-        profile.useSameBackground !== null &&
-        profile.useSameBackground !== undefined
-      ) {
+      
+      // Handle useSameBackground for both old and new profiles
+      if (profile.useSameBackground !== null && profile.useSameBackground !== undefined) {
         localStorage.setItem(
           "nautilusOS_useSameBackground",
           String(profile.useSameBackground)
@@ -6075,11 +6102,13 @@ function importProfile(event) {
       } else {
         localStorage.removeItem("nautilusOS_useSameBackground");
       }
+      
       if (profile.wallpaper) {
         localStorage.setItem("nautilusOS_wallpaper", profile.wallpaper);
       } else {
         localStorage.removeItem("nautilusOS_wallpaper");
       }
+      
       if (profile.loginWallpaper) {
         localStorage.setItem(
           "nautilusOS_loginBackground",
@@ -6088,6 +6117,7 @@ function importProfile(event) {
       } else {
         localStorage.removeItem("nautilusOS_loginBackground");
       }
+      
       if (profile.profilePicture) {
         localStorage.setItem("nautilusOS_profilePicture", profile.profilePicture);
       } else {
@@ -6105,6 +6135,10 @@ function importProfile(event) {
         }
         fileSystem = cleanedFileSystem;
       }
+      
+      // Check and trigger achievements for imported themes/apps
+      checkImportedAchievements();
+      
       applyUserBackgrounds();
       applyProfilePicture();
       initializeAppearanceSettings();
@@ -6123,6 +6157,7 @@ function importProfile(event) {
           const login = document.getElementById("login");
           login.classList.add("active");
           document.getElementById("username").value = profile.username;
+          updateLoginScreen();
           startLoginClock();
           displayBrowserInfo();
           updateLoginGreeting();
@@ -7622,4 +7657,41 @@ function applyPreset(presetName) {
 
   showToast(`Applied ${preset.title} preset!`, "fa-check-circle");
   unlockAchievement("stealth-mode");
+}
+
+function checkImportedAchievements() {
+  if (installedThemes.length > 0) {
+    unlockAchievement("theme-changer");
+  }
+  
+  const preinstalledApps = [
+    "files",
+    "terminal",
+    "browser",
+    "settings",
+    "editor",
+    "music",
+    "photos",
+    "help",
+    "whatsnew",
+    "appstore",
+    "calculator",
+    "cloaking",
+  ];
+  
+  installedApps.forEach((appName) => {
+    if (!preinstalledApps.includes(appName)) {
+      achievementsData.openedApps.add(appName);
+    }
+  });
+  
+  const allAppsAchievement = achievementsData.achievements["all-apps"];
+  if (allAppsAchievement) {
+    allAppsAchievement.progress = achievementsData.openedApps.size;
+    if (achievementsData.openedApps.size >= allAppsAchievement.target) {
+      unlockAchievement("all-apps");
+    }
+  }
+  
+  saveAchievements();
 }
