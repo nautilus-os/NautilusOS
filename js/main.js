@@ -5557,7 +5557,8 @@ function removeDesktopIcon(appName) {
 }
 
 function openStartupApps() {
-  const availableApps = [
+  // Combine preinstalled apps with installed apps
+  const preinstalledApps = [
     { id: "files", name: "Files", icon: "fa-folder" },
     { id: "terminal", name: "Terminal", icon: "fa-terminal" },
     { id: "browser", name: "Nautilus Browser", icon: "fa-globe" },
@@ -5568,7 +5569,22 @@ function openStartupApps() {
     { id: "help", name: "Help", icon: "fa-question-circle" },
     { id: "appstore", name: "App Store", icon: "fa-store" },
     { id: "calculator", name: "Calculator", icon: "fa-calculator" },
+    { id: "cloaking", name: "Cloaking", icon: "fa-mask" },
+    { id: "achievements", name: "Achievements", icon: "fa-trophy" },
   ];
+
+  // Add installed apps from app store
+  const installedAppsData = [];
+  installedApps.forEach((appName) => {
+    if (appName === "startup-apps") {
+      installedAppsData.push({ id: "startup-apps", name: "Startup Apps", icon: "fa-rocket" });
+    } else if (appName === "task-manager") {
+      installedAppsData.push({ id: "task-manager", name: "Task Manager", icon: "fa-tasks" });
+    }
+  });
+
+  // Combine all available apps
+  const availableApps = [...preinstalledApps, ...installedAppsData];
 
   const itemsHtml = availableApps
     .map((app) => {
@@ -5658,7 +5674,8 @@ function toggleStartupApp(appId) {
   if (windows["startup-apps"]) {
     const content = windows["startup-apps"].querySelector(".window-content");
     if (content) {
-      const availableApps = [
+      // Combine preinstalled apps with installed apps
+      const preinstalledApps = [
         { id: "files", name: "Files", icon: "fa-folder" },
         { id: "terminal", name: "Terminal", icon: "fa-terminal" },
         { id: "browser", name: "Nautilus Browser", icon: "fa-globe" },
@@ -5669,7 +5686,22 @@ function toggleStartupApp(appId) {
         { id: "help", name: "Help", icon: "fa-question-circle" },
         { id: "appstore", name: "App Store", icon: "fa-store" },
         { id: "calculator", name: "Calculator", icon: "fa-calculator" },
+        { id: "cloaking", name: "Cloaking", icon: "fa-mask" },
+        { id: "achievements", name: "Achievements", icon: "fa-trophy" },
       ];
+
+      // Add installed apps from app store
+      const installedAppsData = [];
+      installedApps.forEach((appName) => {
+        if (appName === "startup-apps") {
+          installedAppsData.push({ id: "startup-apps", name: "Startup Apps", icon: "fa-rocket" });
+        } else if (appName === "task-manager") {
+          installedAppsData.push({ id: "task-manager", name: "Task Manager", icon: "fa-tasks" });
+        }
+      });
+
+      // Combine all available apps
+      const availableApps = [...preinstalledApps, ...installedAppsData];
 
       const itemsHtml = availableApps
         .map((app) => {
