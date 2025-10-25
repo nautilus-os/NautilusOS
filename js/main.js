@@ -2862,7 +2862,7 @@ alt="favicon">
                                               theme.charAt(0).toUpperCase() +
                                               theme.slice(1)
                                             } Theme</div>
-                                            <button class="settings-action-btn" onclick="showToast('Theme support coming soon!', 'fa-info-circle')">
+                                            <button class="settings-action-btn" onclick="applyTheme('${theme}')">
                                                 Apply Theme
                                             </button>
                                         </div>
@@ -3640,6 +3640,10 @@ alt="favicon">
               <i class="fas fa-th"></i>
               <span>Apps</span>
           </div>
+          <div class="appstore-section" onclick="switchAppStoreSection('games', this)">
+              <i class="fas fa-gamepad"></i>
+              <span>Games</span>
+          </div>
       </div>
                   <div class="appstore-main" id="appstoreMain">
                       <div class="appstore-header">
@@ -3675,6 +3679,48 @@ alt="favicon">
                                       ? "Uninstall"
                                       : "Install"
                                   }
+                              </button>
+                          </div>
+                          <div class="appstore-item">
+                              <div class="appstore-item-icon">
+                                  <i class="fas fa-crown" style="color: #d4af37;"></i>
+                              </div>
+                              <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
+                              <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
+                              <button class="appstore-item-btn ${
+                                installedThemes.includes('golden') ? "installed" : ""
+                              }" onclick="${
+          installedThemes.includes('golden') ? "uninstallTheme('golden')" : "installTheme('golden')"
+        }">
+                                  ${installedThemes.includes('golden') ? "Uninstall" : "Install"}
+                              </button>
+                          </div>
+                          <div class="appstore-item">
+                              <div class="appstore-item-icon">
+                                  <i class="fas fa-fire" style="color: #ef4444;"></i>
+                              </div>
+                              <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
+                              <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
+                              <button class="appstore-item-btn ${
+                                installedThemes.includes('red') ? "installed" : ""
+                              }" onclick="${
+          installedThemes.includes('red') ? "uninstallTheme('red')" : "installTheme('red')"
+        }">
+                                  ${installedThemes.includes('red') ? "Uninstall" : "Install"}
+                              </button>
+                          </div>
+                          <div class="appstore-item">
+                              <div class="appstore-item-icon">
+                                  <i class="fas fa-droplet" style="color: #3b82f6;"></i>
+                              </div>
+                              <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
+                              <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
+                              <button class="appstore-item-btn ${
+                                installedThemes.includes('blue') ? "installed" : ""
+                              }" onclick="${
+          installedThemes.includes('blue') ? "uninstallTheme('blue')" : "installTheme('blue')"
+        }">
+                                  ${installedThemes.includes('blue') ? "Uninstall" : "Install"}
                               </button>
                           </div>
                       </div>
@@ -4791,7 +4837,7 @@ function expandTreeToPath(path) {
     }
   }
 }
-let installedThemes = [];
+let installedThemes = ["dark"];
 let isPasswordless = false;
 
 function switchAppStoreSection(section, element) {
@@ -4832,6 +4878,42 @@ function switchAppStoreSection(section, element) {
       lightThemeInstalled ? "uninstallTheme('light')" : "installTheme('light')"
     }">
                           ${lightThemeInstalled ? "Uninstall" : "Install"}
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-crown" style="color: #d4af37;"></i>
+                      </div>
+                      <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes('golden') ? "installed" : ""
+                      }" onclick="${installedThemes.includes('golden') ? "uninstallTheme('golden')" : "installTheme('golden')"}">
+                          ${installedThemes.includes('golden') ? "Uninstall" : "Install"}
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-fire" style="color: #ef4444;"></i>
+                      </div>
+                      <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes('red') ? "installed" : ""
+                      }" onclick="${installedThemes.includes('red') ? "uninstallTheme('red')" : "installTheme('red')"}">
+                          ${installedThemes.includes('red') ? "Uninstall" : "Install"}
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-droplet" style="color: #3b82f6;"></i>
+                      </div>
+                      <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes('blue') ? "installed" : ""
+                      }" onclick="${installedThemes.includes('blue') ? "uninstallTheme('blue')" : "installTheme('blue')"}">
+                          ${installedThemes.includes('blue') ? "Uninstall" : "Install"}
                       </button>
                   </div>
               </div>
@@ -4931,7 +5013,7 @@ function switchAppStoreSection(section, element) {
                           <div class="appstore-item-icon">
                               <i class="fas fa-border-all"></i>
                           </div>
-                          <div class="appstore-item-name">Snap Manager by Nautilus Labs</div>
+                          <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
                           <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
                           <button class="appstore-item-btn ${
                             snapManagerInstalled ? "installed" : ""
@@ -4947,6 +5029,25 @@ function switchAppStoreSection(section, element) {
 
                   </div>
               `;
+  } else if (section === "games") {
+    mainContent.innerHTML = `
+              <div class="appstore-header">
+                  <h2>Games</h2>
+                  <p>Play and enjoy games on NautilusOS</p>
+              </div>
+              <div class="appstore-grid">
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-snake"></i>
+                      </div>
+                      <div class="appstore-item-name">Snake by lanefiedler-731</div>
+                      <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
+                      <button class="appstore-item-btn" onclick="openApp('snake')">
+                          Play
+                      </button>
+                  </div>
+              </div>
+          `;
   }
 }
 function installTheme(themeName) {
@@ -4981,6 +5082,31 @@ function uninstallTheme(themeName) {
   }
 }
 
+const themeDefinitions = {
+  dark: { accent: "#7dd3c0", accentHover: "#6bc4b0", accentDark: "#469483", bgPrimary: "#0a0e1a", bgSecondary: "#151923", textPrimary: "#e8eaed", textSecondary: "#9aa0a6", border: "#7dd3c0" },
+  light: { accent: "#06b6d4", accentHover: "#0891b2", accentDark: "#0d9488", bgPrimary: "#f8fafc", bgSecondary: "#ffffff", textPrimary: "#ffffff", textSecondary: "#475569", border: "#e2e8f0" },
+  golden: { accent: "#d4af37", accentHover: "#c9a227", accentDark: "#997618", bgPrimary: "#1a1410", bgSecondary: "#2d2417", textPrimary: "#f5e6d3", textSecondary: "#b8a88a", border: "#d4af37" },
+  red: { accent: "#ef4444", accentHover: "#dc2626", accentDark: "#991b1b", bgPrimary: "#1a0f0f", bgSecondary: "#2d1818", textPrimary: "#ffe8e8", textSecondary: "#cc9999", border: "#ef4444" },
+  blue: { accent: "#3b82f6", accentHover: "#2563eb", accentDark: "#1e40af", bgPrimary: "#0f1419", bgSecondary: "#1a2332", textPrimary: "#e0e7ff", textSecondary: "#94a3b8", border: "#3b82f6" },
+  purple: { accent: "#a855f7", accentHover: "#9333ea", accentDark: "#7e22ce", bgPrimary: "#1a0f2e", bgSecondary: "#2d1b47", textPrimary: "#f3e8ff", textSecondary: "#d8b4fe", border: "#a855f7" },
+  green: { accent: "#10b981", accentHover: "#059669", accentDark: "#047857", bgPrimary: "#0f2e1b", bgSecondary: "#1a3d2a", textPrimary: "#d1fae5", textSecondary: "#a7f3d0", border: "#10b981" },
+};
+
+function applyTheme(themeName) {
+  const theme = themeDefinitions[themeName];
+  if (!theme) { console.warn("Theme not found:", themeName); return; }
+  document.documentElement.style.setProperty("--accent", theme.accent);
+  document.documentElement.style.setProperty("--accent-hover", theme.accentHover);
+  document.documentElement.style.setProperty("--accent-dark", theme.accentDark);
+  document.documentElement.style.setProperty("--bg-primary", theme.bgPrimary);
+  document.documentElement.style.setProperty("--bg-secondary", theme.bgSecondary);
+  document.documentElement.style.setProperty("--text-primary", theme.textPrimary);
+  document.documentElement.style.setProperty("--text-secondary", theme.textSecondary);
+  document.documentElement.style.setProperty("--border", theme.border);
+  localStorage.setItem("nautilusOS_currentTheme", themeName);
+  showToast(`Applied ${themeName.charAt(0).toUpperCase() + themeName.slice(1)} theme!`, "fa-check-circle");
+}
+
 function refreshAppStore() {
   const activeSection = document.querySelector(".appstore-section.active");
   if (!activeSection) return;
@@ -4990,6 +5116,8 @@ function refreshAppStore() {
     switchAppStoreSection("themes", activeSection);
   } else if (sectionText.includes("apps")) {
     switchAppStoreSection("apps", activeSection);
+  } else if (sectionText.includes("games")) {
+    switchAppStoreSection("games", activeSection);
   } else if (sectionText.includes("tools")) {
     switchAppStoreSection("tools", activeSection);
   }
@@ -6130,6 +6258,12 @@ function loadSettingsFromLocalStorage() {
   }
 }
 
+function loadAndApplyTheme() {
+  const saved = localStorage.getItem("nautilusOS_currentTheme");
+  const themeToApply = (saved && themeDefinitions[saved]) ? saved : "dark";
+  applyTheme(themeToApply);
+}
+
 function loadInstalledThemes() {
   const saved = localStorage.getItem("nautilusOS_installedThemes");
   if (saved) {
@@ -6139,11 +6273,16 @@ function loadInstalledThemes() {
       console.error("Failed to load themes:", e);
     }
   }
+  // Ensure dark theme is always included
+  if (!installedThemes.includes("dark")) {
+    installedThemes.unshift("dark");
+  }
 }
 window.addEventListener("DOMContentLoaded", () => {
   loadSnapSettings();
   loadSettingsFromLocalStorage();
   loadInstalledThemes();
+  loadAndApplyTheme();
   loadInstalledApps();
   loadAchievements();
   achievementsData.lastUptimeUpdate = Date.now();

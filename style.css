@@ -55,8 +55,8 @@
 body {
     font-family: "SUSE Mono";
     overflow: hidden;
-    background: #000;
-    color: #fff;
+    background: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 button, input {
