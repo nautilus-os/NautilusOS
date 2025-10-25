@@ -31,7 +31,7 @@ basically... a whole little os in your browser :D
 
 ## 🚧 todo
 
-- [ ] make wallpaper customizable  
+- [x] make wallpaper customizable  
 - [ ] actually make themes work
 - [ ] app store improvements  (rn can only install built in apps)
 - [x] FIX BROWSER it doesnt rly work as a proxy rn due to it being broken
