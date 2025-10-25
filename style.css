@@ -683,6 +683,10 @@ button, input {
     margin: 0 auto 1.5rem;
     font-size: 2.2rem;
     color: var(--bg-primary);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .login-title {
@@ -1031,6 +1035,15 @@ select:focus {
     justify-content: center;
     font-size: 1.3rem;
     color: var(--bg-primary);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.login-avatar.has-image i,
+.start-avatar.has-image i {
+    display: none;
 }
 
 .start-user {
