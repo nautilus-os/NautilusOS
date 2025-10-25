@@ -37,9 +37,10 @@ Basically... a whole little OS in your browser :D
 - [ ] Fix browser; it doesn’t really work as a proxy right now because it’s broken
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, etc.
 - [ ] Add an option to increase or decrease window transparency 
-- [x] make wallpaper customizable  
-- [ ] actually make themes work
-- [ ] make tabs and stuff work
+- [x] Make wallpaper customizable
+- [x] Make profile picture customizable
+- [ ] Actually make themes work
+- [ ] Make tabs and stuff work
 
 ---
 
