@@ -1382,9 +1382,11 @@ function login() {
   currentUsername = username;
   document.getElementById("displayUsername").textContent = username;
 
-  if (username.toLowerCase() === "dinguschan") {
+  if (username.toLowerCase() === "dinguschan" || username.toLowerCase() === "$xor" || username.toLowerCase() === "lanefiedler-731") {
     unlockEasterEgg("dev-mode");
   }
+
+  showToast("Welcome back, " + username + "!", "fa-circle-check");
 
   unlockAchievement("first-login");
 
@@ -2640,6 +2642,10 @@ alt="favicon">
                 <i class="fas fa-palette"></i>
                 <span>Appearance</span>
             </div>
+            <div class="settings-nav-item" onclick="switchSettingsTab('proxy', this)">
+                <i class="fas fa-globe"></i>
+                <span>Proxy</span>
+            </div>
             <div class="settings-nav-item" onclick="switchSettingsTab('system', this)">
                 <i class="fas fa-microchip"></i>
                 <span>System</span>
@@ -2825,7 +2831,22 @@ alt="favicon">
                     </div>
                 </div>
             </div>
-            
+
+            <div class="settings-tab-content" data-tab="proxy">
+                <h2><i class="fas fa-globe"></i>Proxy Settings</h2>
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-search"></i>
+                        <span>Search Engine</span>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-item">
+                            <p class="settings-description">Enter a search engine URL. The default search engine is Brave Search.</p>
+                            <input type="text" class="searchEngineI" onkeyup="localStorage.setItem('nOS_searchEngine', this.value); console.log('o')" placeholder="ex. https://google.com/search?q=">
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="settings-tab-content" data-tab="system">
                 <h2><i class="fas fa-microchip"></i> System</h2>
                 <div class="settings-card">
@@ -2858,6 +2879,7 @@ alt="favicon">
                                 <div class="settings-item-desc">Your account username</div>
                             </div>
                             <div class="settings-item-value">${currentUsername}</div>
+                            <button class="settings-action-btn" onclick="changeUsername()" style="margin-left: 25px;"><i class='fa-solid fa-pencil'></i>Edit</button>
                         </div>
                         <div class="settings-item">
                             <div class="settings-item-text">
@@ -4079,15 +4101,16 @@ function updateLoginGreeting() {
   const hour = now.getHours();
   const greetingEl = document.getElementById("loginGreeting");
   let greeting = "Welcome Back";
+  const username = localStorage.getItem("nautilusOS_username") || "User";
 
   if (hour >= 5 && hour < 12) {
-    greeting = "Good Morning";
+    greeting = `Good Morning, ${username}`;
   } else if (hour >= 12 && hour < 17) {
-    greeting = "Good Afternoon";
+    greeting = `Good Afternoon, ${username}`;
   } else if (hour >= 17 && hour < 22) {
-    greeting = "Good Evening";
+    greeting = `Good Evening, ${username}`;
   } else {
-    greeting = "Good Night";
+    greeting = `Good Night, ${username}`;
   }
 
   if (greetingEl) {
@@ -6238,6 +6261,25 @@ async function resetAllData() {
     location.reload();
   }, 2000);
 }
+
+async function changeUsername() {
+  const newUsername = await prompt("Enter a new username:")
+  if (!newUsername) {
+    showToast("Username change cancelled", "fa-info-circle");
+  } else if (newUsername.length < 3) {
+    showToast("Username must be at least 3 characters", "fa-exclamation-circle");
+  } else if (newUsername === currentUsername) {
+    showToast("New username cannot be the same as the current one", "fa-info-circle")
+  }
+
+  showToast("Username changed successfully. Reloading...", "fa-check-circle");
+  localStorage.setItem("nautilusOS_username", newUsername);
+
+  setTimeout(() => {
+    location.reload()
+  }, 2000)
+}
+
 let modalResolve = null;
 
 function showModal(options) {
