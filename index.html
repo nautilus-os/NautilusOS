@@ -7,12 +7,19 @@
     <title>NautilusOS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+        rel="stylesheet">
 </head> 
 
 <body>
     <div id="bootloader">
         <div class="boot-logo"><i class="fas fa-fish"></i></div>
-        <h1 class="boot-title">NAUTILUS OS</h1>
+        <h1 class="boot-title"><b>NAUTILUS OS</b></h1>
         <div class="boot-version">Version 1.0</div>
         <div class="boot-options" id="bootOptions">
             <div class="boot-option selected" data-index="0">
@@ -118,7 +125,7 @@
         </div>
 
         <div
-            style="background: rgba(21, 25, 35, 0.7); backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 3rem 2.5rem; width: 520px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            style="background: rgba(21, 25, 35, 0.7); backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 3rem 2.5rem; width: 520px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); font-family: 'Inter' !important;">
             <div style="text-align: center; margin-bottom: 2.5rem;">
                 <div
                     style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; animation: float 3s ease-in-out infinite;">
@@ -144,11 +151,11 @@
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label
-                        style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: var(--text-primary); font-size: 0.9rem; font-weight: 500;">
-                        <input type="checkbox" id="setupPasswordless" onchange="togglePasswordless()"
-                            style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);">
-                        <span>Create Passwordless Account</span>
+                    <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: var(--text-primary); font-size: 0.9rem; font-weight: 500;">
+                        <label class="cl-checkbox">
+                            <input type="checkbox" id="setupPasswordless" onchange="togglePasswordless()">
+                            <span>Create Passwordless Account</span>
+                        </label>
                     </label>
                     <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem;">
                         Skip password creation for easier access (no security)
@@ -229,8 +236,10 @@
                             style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s ease;"
                             onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'; this.style.borderColor='var(--accent)'"
                             onmouseout="this.style.background='rgba(30, 35, 48, 0.6)'; this.style.borderColor='var(--border)'">
-                            <input type="checkbox" value="startup-apps"
-                                style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent);">
+                            <label class="cl-checkbox" style="margin-right: -0.7em;">
+                                <input type="checkbox" value="startup-apps">
+                                <span></span>
+                            </label>
                             <div style="flex: 1;">
                                 <div
                                     style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -246,8 +255,10 @@
                             style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s ease;"
                             onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'; this.style.borderColor='var(--accent)'"
                             onmouseout="this.style.background='rgba(30, 35, 48, 0.6)'; this.style.borderColor='var(--border)'">
-                            <input type="checkbox" value="task-manager"
-                                style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent);">
+                            <label class="cl-checkbox" style="margin-right: -0.7em;">
+                                <input type="checkbox" value="task-manager">
+                                <span></span>
+                            </label>
                             <div style="flex: 1;">
                                 <div
                                     style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -289,8 +300,10 @@
                             style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s ease;"
                             onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'; this.style.borderColor='var(--accent)'"
                             onmouseout="this.style.background='rgba(30, 35, 48, 0.6)'; this.style.borderColor='var(--border)'">
-                            <input type="checkbox" value="light"
-                                style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent);" />
+                            <label class="cl-checkbox" style="margin-right: -0.7em;">
+                                <input type="checkbox" value="light">
+                                <span></span>
+                            </label>
                             <div style="flex: 1;">
                                 <div
                                     style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
