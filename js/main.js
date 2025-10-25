@@ -1491,60 +1491,9 @@ function openApp(appName, editorContent = "", filename = "") {
       title: "Nautilus Browser",
       icon: "fas fa-globe",
       content: `
-              <div class="browser-container">
+              <div class="browser-container" style="overflow: hidden;">
                   <div class="browser-header">
-                      <div class="browser-tabs" id="browserTabs">
-                          <div class="browser-tab active" data-tab-id="0" onclick="if(!event.target.closest('.browser-tab-close')) switchBrowserTab(0)">
-                              <i class="fas fa-globe browser-tab-icon"></i>
-                              <span class="browser-tab-title">New Tab</span>
-                              <div class="browser-tab-close" onclick="event.stopPropagation(); event.preventDefault(); closeBrowserTab(0)">
-                                  <i class="fas fa-times"></i>
-                              </div>
-                          </div>
-                          <div class="browser-new-tab" onclick="createBrowserTab()">
-                              <i class="fas fa-plus"></i>
-                          </div>
-                      </div>
-                      <div class="browser-loading" id="browserLoading">
-                          <div class="browser-loading-bar"></div>
-                      </div>
-                      <div class="browser-controls">
-                          <button class="browser-nav-btn" id="browserBack" onclick="browserGoBack()" disabled>
-                              <i class="fas fa-arrow-left"></i>
-                          </button>
-                          <button class="browser-nav-btn" id="browserForward" onclick="browserGoForward()" disabled>
-                              <i class="fas fa-arrow-right"></i>
-                          </button>
-                          <button class="browser-nav-btn" onclick="browserReload()">
-                              <i class="fas fa-redo"></i>
-                          </button>
-                          <div class="browser-url-bar">
-                              <i class="fas fa-lock" id="browserLockIcon"></i>
-                              <input
-                                  type="text"
-                                  class="browser-url-input"
-                                  id="browserUrlInput"
-                                  placeholder="Search or enter website URL"
-                                  onkeypress="handleBrowserUrlInput(event)"
-                              >
-                          </div>
-                      </div>
-                  </div>
-                  <div class="browser-content" id="browserContent">
-                      <div class="browser-view active" data-view-id="0">
-                          <div class="browser-landing">
-                              <i class="fas fa-fish browser-landing-logo"></i>
-                              <div class="browser-landing-search">
-                                  <i class="fas fa-search"></i>
-                                  <input
-                                      type="text"
-                                      class="browser-landing-input"
-                                      placeholder="Search or enter website URL"
-                                      onkeypress="handleBrowserLandingInput(event)"
-                                  >
-                              </div>
-                          </div>
-                      </div>
+                      <iframe src="/uv.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
                   </div>
               </div>
           `,
@@ -4402,6 +4351,14 @@ function handleBrowserLandingInput(event) {
   }
 }
 
+async function transport() {
+  if (!await connection.getTransport()) {
+    connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }])
+  }
+}
+
+transport()
+
 function navigateBrowser(input) {
   if (!input.trim()) return;
 
@@ -4428,7 +4385,9 @@ function navigateBrowser(input) {
   currentTab.historyIndex++;
   currentTab.url = url;
 
-  loadBrowserPage(url);
+  const finalUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+
+  loadBrowserPage(finalUrl);
 }
 
 async function loadBrowserPage(url) {
@@ -4451,39 +4410,9 @@ async function loadBrowserPage(url) {
 
     const iframe = document.createElement("iframe");
     iframe.style.cssText =
-      "width: 100%; height: 100%; border: none; background: #fff;";
+      "width: 100%; height: 100%; border: none; background: black;";
     iframe.sandbox =
       "allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox";
-
-    iframe.src = url;
-
-    iframe.onload = () => {
-      try {
-        const iframeDoc =
-          iframe.contentDocument || iframe.contentWindow.document;
-        const title = iframeDoc.title || new URL(url).hostname;
-        currentTab.title = title;
-
-        const tabEl = document.querySelector(
-          `.browser-tab[data-tab-id="${activeBrowserTab}"]`
-        );
-        if (tabEl) {
-          const titleEl = tabEl.querySelector(".browser-tab-title");
-          if (titleEl) titleEl.textContent = title;
-        }
-      } catch (err) {
-        const title = new URL(url).hostname;
-        currentTab.title = title;
-
-        const tabEl = document.querySelector(
-          `.browser-tab[data-tab-id="${activeBrowserTab}"]`
-        );
-        if (tabEl) {
-          const titleEl = tabEl.querySelector(".browser-tab-title");
-          if (titleEl) titleEl.textContent = title;
-        }
-      }
-    };
 
     iframe.onerror = () => {
       throw new Error("Failed to load page");
@@ -4491,6 +4420,37 @@ async function loadBrowserPage(url) {
 
     viewEl.appendChild(iframe);
     updateBrowserNavButtons();
+
+    setTimeout(() => {
+      iframe.src = url
+      iframe.onload = () => {
+        try {
+          const iframeDoc =
+            iframe.contentDocument || iframe.contentWindow.document;
+          const title = iframeDoc.title || new URL(url).hostname;
+          currentTab.title = title;
+
+          const tabEl = document.querySelector(
+            `.browser-tab[data-tab-id="${activeBrowserTab}"]`
+          );
+          if (tabEl) {
+            const titleEl = tabEl.querySelector(".browser-tab-title");
+            if (titleEl) titleEl.textContent = title;
+          }
+        } catch (err) {
+          const title = new URL(url).hostname;
+          currentTab.title = title;
+
+          const tabEl = document.querySelector(
+            `.browser-tab[data-tab-id="${activeBrowserTab}"]`
+          );
+          if (tabEl) {
+            const titleEl = tabEl.querySelector(".browser-tab-title");
+            if (titleEl) titleEl.textContent = title;
+          }
+        }
+      }
+    }, 500);
   } catch (error) {
     console.error("Browser error:", error);
     viewEl.innerHTML = `

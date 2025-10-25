@@ -13,6 +13,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SUSE+Mono:ital,wght@0,100..800;1,100..800&display=swap"
         rel="stylesheet">
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
+    <script src="/uv/uv.sw.js"></script>
+    <script src="/baremux/index.js"></script>
 </head>
 
 <body>
@@ -598,6 +602,42 @@
         </div>
     </div>
     <script src="/js/main.js" defer></script>
+
+    <script>
+        // register sw
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/uv/sw.js")
+            })
+        }
+    </script>
+
+    <script>
+        const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
+        const wispUrl = localStorage.getItem("nOS_wispUrl") || "wss://webmath.help/wisp/"
+        const bareUrl = localStorage.getItem("nOS_bareUrl") || "https://useclassplay.vercel.app/fq/"
+
+        let searchUrl = localStorage.getItem("nOS_searchEngine") || "https://search.brave.com/search?q="
+
+        document.getElementById("browserUrlInput").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                let url = document.getElementById("browserUrlInput").value
+
+                if (!url.includes(".")) {
+                    // search
+                    url = searchUrl + encodeURIComponent(url)
+                } else {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        // add https
+                        url = "https://" + url
+                    }
+                }
+
+                transport()
+                loadBrowserPage(__uv$config.prefix + __uv$config.encodeUrl(url))
+            }
+        })
+    </script>
 </body>
 
 </html>
