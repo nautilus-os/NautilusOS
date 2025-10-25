@@ -16,6 +16,7 @@ there’s a ton to play with, but heres a quick rundown (but fr check them all o
 - start menu with user info and apps grid  
 - file explorer with folders, files, and side tree  
 - built-in text editor  
+- super duper cool proxied browser
 - cloaking and various other settings 
 - terminal
 - built in app store
@@ -33,7 +34,8 @@ basically... a whole little os in your browser :D
 - [ ] make wallpaper customizable  
 - [ ] actually make themes work
 - [ ] app store improvements  (rn can only install built in apps)
-- [ ] FIX BROWSER it doesnt rly work as a proxy rn due to it being broken
+- [x] FIX BROWSER it doesnt rly work as a proxy rn due to it being broken
+- [ ] make tabs and stuff work
 - [ ] Add feature to confirm page closing to stop Securly, GoGuardian etc.
 - [ ] Add option to increase/decrease window transparancy 
 
