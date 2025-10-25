@@ -40,7 +40,7 @@ body {
 }
 
 button, input {
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
 }
 
 #bootloader {
@@ -208,7 +208,7 @@ button, input {
 .login-time {
     text-align: left;
     color: var(--text-primary);
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
 }
 
 .illustration-startup {
@@ -601,7 +601,7 @@ button, input {
 
 .login-time-main {
     font-size: 5rem;
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 0.5rem;
     letter-spacing: -0.02em;
     margin-left: -6px;
@@ -621,7 +621,7 @@ button, input {
     box-shadow: 0 8px 32px var(--overlay-dark);
     border-radius: 20px;
     padding: 2.3rem;
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
 }
 
 .info-card-title {
@@ -668,7 +668,7 @@ button, input {
     border-radius: 20px;
     padding: 3rem 2.5rem;
     width: 380px;
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
     z-index: 2;
 }
 
@@ -774,7 +774,7 @@ select:focus {
     display: none;
     opacity: 0;
     transition: opacity 0.5s ease;
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
 }
 
 #desktop.active {
@@ -1714,7 +1714,7 @@ select:focus {
     gap: 0.75rem;
     animation: toastSlideIn 0.3s ease;
     pointer-events: all;
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
 }
 
 .toast.hiding {
@@ -1782,7 +1782,7 @@ select:focus {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     z-index: 10002;
     display: none;
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
 }
 
 .context-menu.active {
@@ -4312,7 +4312,7 @@ select:focus {
     z-index: 10005;
     display: none;
     align-items: center;
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
     justify-content: center;
     animation: fadeIn 0.2s ease;
 }
@@ -4460,7 +4460,7 @@ select:focus {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     z-index: 10003;
     display: none;
-    font-family: "Inter" !important;
+    font-family: "system-ui" !important;
     animation: tooltipAppear 0.2s ease;
 }
 
