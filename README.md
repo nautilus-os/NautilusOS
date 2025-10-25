@@ -33,19 +33,14 @@ Basically... a whole little OS in your browser :D
 
 - [x] Make the app store actually work
 - [x] Add a way to change the theme/color scheme
-- [ ] Actually make themes work
 - [ ] App store improvements (right now it can only install built-in apps)
 - [ ] Fix browser; it doesn’t really work as a proxy right now because it’s broken
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, etc.
 - [ ] Add an option to increase or decrease window transparency 
-- [x] make wallpaper customizable  
-- [ ] actually make themes work
-- [ ] app store improvements  (rn can only install built in apps)
-- [x] FIX BROWSER it doesnt rly work as a proxy rn due to it being broken
-- [ ] make tabs and stuff work
-- [ ] Add feature to confirm page closing to stop Securly, GoGuardian etc.
-- [ ] Add option to increase/decrease window transparancy 
-- [ ] Add setting for avg background color to equal accent color or manually set
+- [x] Make wallpaper customizable
+- [x] Make profile picture customizable
+- [ ] Actually make themes work
+- [ ] Make tabs and stuff work
 
 ---
 
@@ -53,7 +48,7 @@ Basically... a whole little OS in your browser :D
 
 <img width="1918" height="897" alt="image" src="https://github.com/user-attachments/assets/c8911ec5-7748-4287-ba48-4370a44608be" />
 <img width="1917" height="906" alt="image" src="https://github.com/user-attachments/assets/8d853477-0fb4-45f1-a3cb-3e88169eb765" />
-<img width="1917" height="902" alt="image" src="https://github.com/user-attachments/assets/3a9484bb-e875-41d2-ab2b-542e5bb8b83e" />
+<img width="1918" height="871" alt="image" src="https://github.com/user-attachments/assets/40f6ad60-ff23-4e26-9772-7aac5746bddf" />
 <img width="1918" height="906" alt="image" src="https://github.com/user-attachments/assets/13b106be-49c5-416f-bf01-b5915491eb88" />
 <img width="1916" height="912" alt="image" src="https://github.com/user-attachments/assets/633fd5c8-ba2e-4e95-b6b7-71c8e6cf0d4b" />
 <img width="1916" height="908" alt="image" src="https://github.com/user-attachments/assets/26fec667-6acf-4dc5-bd43-be6872560482" />

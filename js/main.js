@@ -3478,6 +3478,51 @@ alt="favicon">
         <p>Track your progress with a comprehensive achievement system! Unlock badges for reaching milestones, exploring features, and discovering hidden Easter eggs. Achievement data persists even after system resets!</p>
     </div>
 </div>
+<div class="carousel-slide" data-slide="14">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 2rem; align-items: center; justify-content: center;">
+            <div style="width: 120px; height: 120px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--accent); animation: float 3s ease-in-out infinite; position: relative; overflow: hidden;">
+                <i class="fas fa-image"></i>
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: rgba(125, 211, 192, 0.4), transparent);"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--bg-primary); animation: float 3s ease-in-out infinite; animation-delay: 0.3s; box-shadow: 0 4px 12px rgba(125, 211, 192, 0.4);">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div style="width: 90px; height: 12px; background: rgba(125, 211, 192, 0.3); border-radius: 6px; animation: float 3s ease-in-out infinite; animation-delay: 0.6s;">
+                    <div style="width: 100%; height: 100%; background: var(--accent); border-radius: 6px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Personalization & Wallpapers</h2>
+        <p>Make NautilusOS truly yours! Upload custom wallpapers for both desktop and login screen, set a profile picture to personalize your account, and choose whether to use the same background everywhere or different ones for each screen.</p>
+    </div>
+</div>
+<div class="carousel-slide" data-slide="15">
+    <div class="carousel-illustration">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+            <div style="width: 240px; height: 50px; background: rgba(255, 255, 255, 0.05); border: 2px solid var(--accent); border-bottom: none; border-radius: 10px 10px 0 0; display: flex; align-items: center; padding: 0 1rem; gap: 0.75rem; animation: float 3s ease-in-out infinite;">
+                <div style="width: 18px; height: 18px; background: var(--accent); border-radius: 50%; flex-shrink: 0;"></div>
+                <div style="flex: 1; height: 10px; background: rgba(125, 211, 192, 0.4); border-radius: 5px;"></div>
+            </div>
+            <div style="width: 240px; background: rgba(21, 25, 35, 0.95); border-left: 2px solid var(--accent); border-right: 2px solid var(--accent); border-top: 2px solid var(--accent); border-bottom: 2px solid var(--accent); border-radius: 0 0 12px 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; animation: float 3s ease-in-out infinite;">
+                <div style="width: 60px; height: 60px; background: rgba(125, 211, 192, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); flex-shrink: 0; border: 2px solid var(--accent);">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="height: 12px; background: rgba(125, 211, 192, 0.4); border-radius: 6px; width: 100%;"></div>
+                    <div style="height: 12px; background: rgba(125, 211, 192, 0.3); border-radius: 6px; width: 85%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Advanced Tab Cloaking</h2>
+        <p>Stay under the radar with powerful disguise tools! Auto-rotate through multiple tab disguises, set custom rotation speeds, configure panic keys for instant redirects, and use preset templates for popular sites like Google Classroom and Drive.</p>
+    </div>
+</div>
 
 <div class="carousel-controls">
                           <div class="carousel-btn" onclick="changeSlide(-1)">
@@ -3502,7 +3547,9 @@ alt="favicon">
           <div class="carousel-dot" onclick="goToSlide(10)"></div>
           <div class="carousel-dot" onclick="goToSlide(11)"></div>
           <div class="carousel-dot" onclick="goToSlide(12)"></div>
-                    <div class="carousel-dot" onclick="goToSlide(13)"></div>
+          <div class="carousel-dot" onclick="goToSlide(13)"></div>
+          <div class="carousel-dot" onclick="goToSlide(14)"></div>
+          <div class="carousel-dot" onclick="goToSlide(15)"></div>
 
       </div>
                           </div>
@@ -4914,6 +4961,7 @@ function installTheme(themeName) {
     JSON.stringify(installedThemes)
   );
   showToast("Theme installed! Go to Settings to apply it.", "fa-check-circle");
+  
   unlockAchievement("theme-changer");
 
   refreshAppStore();
@@ -5944,12 +5992,24 @@ function setupComplete() {
     "nautilusOS_installedThemes",
     JSON.stringify(installedThemes)
   );
+  localStorage.setItem(
+    "nautilusOS_installedApps",
+    JSON.stringify(installedApps)
+  );
+  localStorage.setItem(
+    "nautilusOS_startupApps",
+    JSON.stringify(startupApps)
+  );
   saveSettingsToLocalStorage();
-  localStorage.setItem("nautilusOS_installedTools", JSON.stringify([]));
-  localStorage.setItem("nautilusOS_startupApps", JSON.stringify([]));
 
   currentUsername = username;
 
+   if (selectedThemes.length > 0) {
+    setTimeout(() => {
+      unlockAchievement("theme-changer");
+    }, 100);
+  }
+  
   // easteregg!!
   let welcomeMessage = "Setup complete! Welcome to NautilusOS";
   let toastIcon = "fa-check-circle";
@@ -6420,7 +6480,8 @@ function removeDesktopIcon(appName) {
 }
 
 function openStartupApps() {
-  const availableApps = [
+  // Combine preinstalled apps with installed apps
+  const preinstalledApps = [
     { id: "files", name: "Files", icon: "fa-folder" },
     { id: "terminal", name: "Terminal", icon: "fa-terminal" },
     { id: "browser", name: "Nautilus Browser", icon: "fa-globe" },
@@ -6431,7 +6492,22 @@ function openStartupApps() {
     { id: "help", name: "Help", icon: "fa-question-circle" },
     { id: "appstore", name: "App Store", icon: "fa-store" },
     { id: "calculator", name: "Calculator", icon: "fa-calculator" },
+    { id: "cloaking", name: "Cloaking", icon: "fa-mask" },
+    { id: "achievements", name: "Achievements", icon: "fa-trophy" },
   ];
+
+  // Add installed apps from app store
+  const installedAppsData = [];
+  installedApps.forEach((appName) => {
+    if (appName === "startup-apps") {
+      installedAppsData.push({ id: "startup-apps", name: "Startup Apps", icon: "fa-rocket" });
+    } else if (appName === "task-manager") {
+      installedAppsData.push({ id: "task-manager", name: "Task Manager", icon: "fa-tasks" });
+    }
+  });
+
+  // Combine all available apps
+  const availableApps = [...preinstalledApps, ...installedAppsData];
 
   const itemsHtml = availableApps
     .map((app) => {
@@ -6521,7 +6597,8 @@ function toggleStartupApp(appId) {
   if (windows["startup-apps"]) {
     const content = windows["startup-apps"].querySelector(".window-content");
     if (content) {
-      const availableApps = [
+      // Combine preinstalled apps with installed apps
+      const preinstalledApps = [
         { id: "files", name: "Files", icon: "fa-folder" },
         { id: "terminal", name: "Terminal", icon: "fa-terminal" },
         { id: "browser", name: "Nautilus Browser", icon: "fa-globe" },
@@ -6532,7 +6609,22 @@ function toggleStartupApp(appId) {
         { id: "help", name: "Help", icon: "fa-question-circle" },
         { id: "appstore", name: "App Store", icon: "fa-store" },
         { id: "calculator", name: "Calculator", icon: "fa-calculator" },
+        { id: "cloaking", name: "Cloaking", icon: "fa-mask" },
+        { id: "achievements", name: "Achievements", icon: "fa-trophy" },
       ];
+
+      // Add installed apps from app store
+      const installedAppsData = [];
+      installedApps.forEach((appName) => {
+        if (appName === "startup-apps") {
+          installedAppsData.push({ id: "startup-apps", name: "Startup Apps", icon: "fa-rocket" });
+        } else if (appName === "task-manager") {
+          installedAppsData.push({ id: "task-manager", name: "Task Manager", icon: "fa-tasks" });
+        }
+      });
+
+      // Combine all available apps
+      const availableApps = [...preinstalledApps, ...installedAppsData];
 
       const itemsHtml = availableApps
         .map((app) => {
@@ -6851,6 +6943,7 @@ function exportProfile() {
     version: "1.0",
     username: localStorage.getItem("nautilusOS_username"),
     password: localStorage.getItem("nautilusOS_password"),
+    isPasswordless: localStorage.getItem("nautilusOS_isPasswordless") === "true",
     settings: settings,
     installedThemes: installedThemes,
     installedApps: installedApps,
@@ -6901,7 +6994,7 @@ function importProfile(event) {
     try {
       const profile = JSON.parse(e.target.result);
 
-      if (!profile.version || !profile.username || !profile.password) {
+      if (!profile.version || !profile.username) {
         throw new Error("Invalid profile format");
       }
 
@@ -6924,28 +7017,41 @@ function importProfile(event) {
 
       // Import profile data
       localStorage.setItem("nautilusOS_username", profile.username);
-      localStorage.setItem("nautilusOS_password", profile.password);
+      localStorage.setItem("nautilusOS_password", profile.password || "");
+      
+      // Handle isPasswordless for both old and new profiles
+      const isPasswordless = profile.isPasswordless !== undefined 
+        ? String(profile.isPasswordless) 
+        : (profile.password === "" ? "true" : "false");
+      localStorage.setItem("nautilusOS_isPasswordless", isPasswordless);
+      
       localStorage.setItem("nautilusOS_setupComplete", "true");
+      
+      // Update local variables
+      settings = profile.settings || settings;
+      installedThemes = profile.installedThemes || [];
+      installedApps = profile.installedApps || [];
+      startupApps = profile.startupApps || [];
+      
       localStorage.setItem(
         "nautilusOS_settings",
-        JSON.stringify(profile.settings || settings)
+        JSON.stringify(settings)
       );
       localStorage.setItem(
         "nautilusOS_installedThemes",
-        JSON.stringify(profile.installedThemes || [])
+        JSON.stringify(installedThemes)
       );
       localStorage.setItem(
         "nautilusOS_installedApps",
-        JSON.stringify(profile.installedApps || [])
+        JSON.stringify(installedApps)
       );
       localStorage.setItem(
         "nautilusOS_startupApps",
-        JSON.stringify(profile.startupApps || [])
+        JSON.stringify(startupApps)
       );
-      if (
-        profile.useSameBackground !== null &&
-        profile.useSameBackground !== undefined
-      ) {
+      
+      // Handle useSameBackground for both old and new profiles
+      if (profile.useSameBackground !== null && profile.useSameBackground !== undefined) {
         localStorage.setItem(
           "nautilusOS_useSameBackground",
           String(profile.useSameBackground)
@@ -6953,11 +7059,13 @@ function importProfile(event) {
       } else {
         localStorage.removeItem("nautilusOS_useSameBackground");
       }
+      
       if (profile.wallpaper) {
         localStorage.setItem("nautilusOS_wallpaper", profile.wallpaper);
       } else {
         localStorage.removeItem("nautilusOS_wallpaper");
       }
+      
       if (profile.loginWallpaper) {
         localStorage.setItem(
           "nautilusOS_loginBackground",
@@ -6966,6 +7074,7 @@ function importProfile(event) {
       } else {
         localStorage.removeItem("nautilusOS_loginBackground");
       }
+      
       if (profile.profilePicture) {
         localStorage.setItem("nautilusOS_profilePicture", profile.profilePicture);
       } else {
@@ -6983,6 +7092,10 @@ function importProfile(event) {
         }
         fileSystem = cleanedFileSystem;
       }
+      
+      // Check and trigger achievements for imported themes/apps
+      checkImportedAchievements();
+      
       applyUserBackgrounds();
       applyProfilePicture();
       initializeAppearanceSettings();
@@ -7001,6 +7114,7 @@ function importProfile(event) {
           const login = document.getElementById("login");
           login.classList.add("active");
           document.getElementById("username").value = profile.username;
+          updateLoginScreen();
           startLoginClock();
           displayBrowserInfo();
           updateLoginGreeting();
@@ -8500,4 +8614,41 @@ function applyPreset(presetName) {
 
   showToast(`Applied ${preset.title} preset!`, "fa-check-circle");
   unlockAchievement("stealth-mode");
+}
+
+function checkImportedAchievements() {
+  if (installedThemes.length > 0) {
+    unlockAchievement("theme-changer");
+  }
+  
+  const preinstalledApps = [
+    "files",
+    "terminal",
+    "browser",
+    "settings",
+    "editor",
+    "music",
+    "photos",
+    "help",
+    "whatsnew",
+    "appstore",
+    "calculator",
+    "cloaking",
+  ];
+  
+  installedApps.forEach((appName) => {
+    if (!preinstalledApps.includes(appName)) {
+      achievementsData.openedApps.add(appName);
+    }
+  });
+  
+  const allAppsAchievement = achievementsData.achievements["all-apps"];
+  if (allAppsAchievement) {
+    allAppsAchievement.progress = achievementsData.openedApps.size;
+    if (achievementsData.openedApps.size >= allAppsAchievement.target) {
+      unlockAchievement("all-apps");
+    }
+  }
+  
+  saveAchievements();
 }
