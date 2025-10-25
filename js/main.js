@@ -2908,7 +2908,12 @@ alt="favicon">
                                 <div class="settings-item-title">Username</div>
                                 <div class="settings-item-desc">Your account username</div>
                             </div>
-                            <div class="settings-item-value">${currentUsername}</div>
+                            <div class="settings-item-value" id="usernameDisplay">${currentUsername}</div>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem;">
+                            <button class="settings-action-btn" onclick="openChangeUsernameDialog()">
+                                <i class="fas fa-edit"></i> Change Username
+                            </button>
                         </div>
                         <div class="settings-item">
                             <div class="settings-item-text">
@@ -9107,11 +9112,90 @@ function checkImportedAchievements() {
   
   const allAppsAchievement = achievementsData.achievements["all-apps"];
   if (allAppsAchievement) {
-    allAppsAchievement.progress = achievementsData.openedApps.size;
-    if (achievementsData.openedApps.size >= allAppsAchievement.target) {
-      unlockAchievement("all-apps");
-    }
+  allAppsAchievement.progress = achievementsData.openedApps.size;
+  if (achievementsData.openedApps.size >= allAppsAchievement.target) {
+  unlockAchievement("all-apps");
+  }
   }
   
   saveAchievements();
-}
+  }
+  
+  function openChangeUsernameDialog() {
+  showModal(
+  "Change Username",
+  "fa-user-edit",
+  "Enter your new username:",
+  "changeUsername",
+  "Change",
+  "Cancel"
+  );
+  
+  const inputContainer = document.getElementById("modalInputContainer");
+  inputContainer.innerHTML = `
+  <input 
+  type="text" 
+  id="newUsernameInput" 
+  class="login-input" 
+  placeholder="New username" 
+  value="${currentUsername}"
+  style="margin-bottom: 1rem; width: 100%;"
+  onkeypress="if(event.key === 'Enter') changeUsername()"
+  >
+  `;
+  
+  setTimeout(() => {
+  const input = document.getElementById("newUsernameInput");
+  if (input) {
+  input.focus();
+  input.select();
+  }
+  }, 100);
+  }
+  
+  function changeUsername() {
+  const newUsernameInput = document.getElementById("newUsernameInput");
+  if (!newUsernameInput) return;
+  
+  const newUsername = newUsernameInput.value.trim();
+  
+  if (!newUsername) {
+  showToast("Username cannot be empty", "fa-exclamation-circle");
+  return;
+  }
+  
+  if (newUsername.length < 3) {
+  showToast("Username must be at least 3 characters long", "fa-exclamation-circle");
+  return;
+  }
+  
+  if (newUsername.length > 20) {
+  showToast("Username must be 20 characters or less", "fa-exclamation-circle");
+  return;
+  }
+  
+  if (!/^[a-zA-Z0-9_-]+$/.test(newUsername)) {
+  showToast("Username can only contain letters, numbers, underscores, and hyphens", "fa-exclamation-circle");
+  return;
+  }
+  
+  if (newUsername === currentUsername) {
+  showToast("New username is the same as current username", "fa-info-circle");
+  closeModal();
+  return;
+  }
+  
+  currentUsername = newUsername;
+  localStorage.setItem("nautilusOS_username", newUsername);
+  document.getElementById("displayUsername").textContent = newUsername;
+  
+  showToast(`Username changed to "${newUsername}"`, "fa-check-circle");
+  closeModal();
+  
+  if (windows["settings"]) {
+  closeWindow(
+  windows["settings"].querySelector(".window-btn.close"),
+  "settings"
+  );
+  }
+  }
