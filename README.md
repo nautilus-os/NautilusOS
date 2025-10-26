@@ -36,6 +36,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Make tabs and stuff work
+- [ ] Search bar for start menu
 
 ---
 
