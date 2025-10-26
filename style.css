@@ -25,27 +25,27 @@
 }
 
 :root {
-    --accent: #6bb3a0;
-    --accent-hover: #59a490;
-    --accent-dark: #3c7a69;
-    --bg-primary: #404040;
-    --bg-secondary: #404040;
-    --text-primary: #f0f2f5;
-    --text-secondary: #a0a6ac;
-    --border: #6bb3a0;
-    --error-red: #d73c3c;
-    --error-red-hover: #b91c1c;
+    --accent: #7dd3c0;
+    --accent-hover: #6bc4b0;
+    --accent-dark: #469483;
+    --bg-primary: #0a0e1a;
+    --bg-secondary: #121724;
+    --text-primary: #e8eaed;
+    --text-secondary: #9aa0a6;
+    --border: #7dd3c0;
+    --error-red: #ef4444;
+    --error-red-hover: #dc2626;
     --error-red-bg: rgba(239, 68, 68, 0.15);
     --error-red-border: rgba(239, 68, 68, 0.3);
-    --success-green: #22c55e;
+    --success-green: #4ade80;
     --overlay-dark: rgba(0, 0, 0, 0.8);
     --overlay-darker: rgba(0, 0, 0, 0.9);
-    --glass-bg: rgba(64, 64, 64, 0.8);
+    --glass-bg: rgba(21, 25, 35, 0.7);
     --glass-border: rgba(255, 255, 255, 0.08);
     --pure-black: #000;
     --pure-white: #fff;
-    --gray-dark: #666;
-    --gray-light: #404040;
+    --gray-dark: #888;
+    --gray-light: #222;
     --transparent-white-1: rgba(255, 255, 255, 0.1);
     --transparent-white-2: rgba(255, 255, 255, 0.2);
     --transparent-white-5: rgba(255, 255, 255, 0.05);
@@ -59,7 +59,8 @@ body {
     color: var(--text-primary);
 }
 
-button, input {
+button,
+input {
     font-family: font, "font" !important;
 }
 
@@ -635,7 +636,7 @@ button, input {
 }
 
 .login-info-card {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     backdrop-filter: blur(40px) saturate(180%);
     border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--overlay-dark);
@@ -681,7 +682,7 @@ button, input {
 }
 
 .login-container {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--overlay-dark);
     backdrop-filter: blur(40px) saturate(180%);
@@ -1043,6 +1044,7 @@ select:focus {
         opacity: 0;
         transform: translateX(-50%) scale(0.9) translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(-50%) scale(1) translateY(0);
@@ -1255,6 +1257,7 @@ select:focus {
     0% {
         box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25);
     }
+
     100% {
         box-shadow: 0 0 24px 0 rgba(59, 130, 246, 0.45);
     }
@@ -5917,6 +5920,7 @@ select:focus {
     color: var(--text-secondary);
     font-size: 0.85rem;
 }
+
 .cl-checkbox {
     position: relative;
     display: inline-block;
@@ -5959,7 +5963,7 @@ select:focus {
     box-sizing: border-box;
     margin: 2px 11px 3px 1px;
     border: solid 2px;
-    
+
     border-color: rgba(255, 255, 255, 0.6);
     border-radius: 2px;
     width: 18px;
@@ -6334,17 +6338,4 @@ select {
     margin-left: 0;
     margin-top: 17px;
     margin-bottom: -5px;
-}
-@keyframes tileAppear {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
 }
