@@ -13423,6 +13423,8 @@ if (!loginStartTime) {
   loginStartTime = parseInt(loginStartTime, 10);
 }
 
+let appliedThemeName = null;
+
 function checkFileProtocol() {
    if (window.location.protocol === "file:") {
      showToast("This feature doesn't work on file:// protocol. Please run NautilusOS from a web server.", "fa-exclamation-triangle");
@@ -13432,25 +13434,26 @@ function checkFileProtocol() {
 }
 
 function showToast(message, icon = "fa-info-circle") {
-   const container = document.getElementById("toastContainer");
-   const toast = document.createElement("div");
-   toast.className = "toast";
+    console.log(`[TOAST LOG] ${new Date().toISOString()}: ${message} (icon: ${icon})`);
+    const container = document.getElementById("toastContainer");
+    const toast = document.createElement("div");
+    toast.className = "toast";
 
-   toast.innerHTML = `
-              <i class="fas ${icon} toast-icon"></i>
-              <div class="toast-message">${message}</div>
-              <div class="toast-close" onclick="closeToast(this)">
-                  <i class="fas fa-times"></i>
-              </div>
-          `;
+    toast.innerHTML = `
+               <i class="fas ${icon} toast-icon"></i>
+               <div class="toast-message">${message}</div>
+               <div class="toast-close" onclick="closeToast(this)">
+                   <i class="fas fa-times"></i>
+               </div>
+           `;
 
-   container.appendChild(toast);
+    container.appendChild(toast);
 
-   setTimeout(() => {
-     closeToast(toast.querySelector(".toast-close"));
-   }, 4000);
+    setTimeout(() => {
+      closeToast(toast.querySelector(".toast-close"));
+    }, 4000);
 
-   addNotificationToHistory(message, icon);
+    addNotificationToHistory(message, icon);
 }
 function closeToast(btn) {
   const toast = btn.closest(".toast");
@@ -14454,6 +14457,7 @@ function selectBoot() {
 }
 
 function startBootSequence() {
+  console.log(`[BOOT LOG] ${new Date().toISOString()}: Starting boot sequence`);
   let messages;
 
   if (bootSelectedIndex === 1) {
@@ -14501,6 +14505,7 @@ function startBootSequence() {
       loadingBar.style.width = progress + "%";
 
       if (index === messages.length - 1) {
+        console.log(`[BOOT LOG] ${new Date().toISOString()}: Boot sequence complete, hiding bootloader`);
         setTimeout(() => {
           const bootloader = document.getElementById("bootloader");
           bootloader.classList.add("hidden");
@@ -14527,6 +14532,7 @@ function startBootSequence() {
               }, 500);
             } else {
               setTimeout(() => {
+                console.log(`[BOOT LOG] ${new Date().toISOString()}: Showing login screen`);
                 const savedUsername = localStorage.getItem(
                   "nautilusOS_username"
                 );
@@ -14747,6 +14753,7 @@ function startLoginClock() {
 }
 
 function login() {
+  console.log(`[LOGIN LOG] ${new Date().toISOString()}: Login function called`);
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
@@ -14795,6 +14802,7 @@ function login() {
   const login = document.getElementById("login");
   const desktop = document.getElementById("desktop");
 
+  console.log(`[LOGIN LOG] ${new Date().toISOString()}: Starting desktop transition`);
   login.style.opacity = "0";
   setTimeout(() => {
     login.classList.remove("active");
@@ -14802,37 +14810,47 @@ function login() {
     desktop.classList.add("active");
 
     setTimeout(() => {
-      startClock();
-
-      const iconsContainer = document.getElementById("desktopIcons");
-      if (iconsContainer) {
-        const installedIcons = iconsContainer.querySelectorAll(
-          ".desktop-icon[data-app]"
-        );
-        installedIcons.forEach((icon) => {
-          const appName = icon.getAttribute("data-app");
-          if (installedApps.includes(appName)) {
-            icon.remove();
-          }
-        });
-
-        installedApps.forEach((appName) => {
-          addDesktopIcon(appName);
-        });
-      }
-
-      initDesktopIconDragging();
-      initContextMenu();
-      initScrollIndicator();
-
-      updateStartMenu();
-
-      const showWhatsNew = localStorage.getItem("nautilusOS_showWhatsNew");
-      if (showWhatsNew === null || showWhatsNew === "true") {
-        setTimeout(() => {
-          openApp("whatsnew");
-        }, 800);
-      }
+      console.log(`[LOGIN LOG] ${new Date().toISOString()}: Desktop active, starting clock and initialization`);
+        startClock();
+  
+        const iconsContainer = document.getElementById("desktopIcons");
+        if (iconsContainer) {
+          const installedIcons = iconsContainer.querySelectorAll(
+            ".desktop-icon[data-app]"
+          );
+          installedIcons.forEach((icon) => {
+            const appName = icon.getAttribute("data-app");
+            if (installedApps.includes(appName)) {
+              icon.remove();
+            }
+          });
+  
+          installedApps.forEach((appName) => {
+            addDesktopIcon(appName);
+          });
+        }
+  
+        initDesktopIconDragging();
+        initContextMenu();
+        initScrollIndicator();
+  
+        updateStartMenu();
+  
+        // Show theme application toast after desktop loads
+        if (appliedThemeName) {
+          setTimeout(() => {
+            showToast(`Applied ${appliedThemeName.charAt(0).toUpperCase() + appliedThemeName.slice(1)} theme!`, "fa-check-circle");
+            appliedThemeName = null;
+          }, 1000);
+        }
+  
+        const showWhatsNew = localStorage.getItem("nautilusOS_showWhatsNew");
+        if (showWhatsNew === null || showWhatsNew === "true") {
+          console.log(`[LOGIN LOG] ${new Date().toISOString()}: Opening What's New app`);
+          setTimeout(() => {
+            openApp("whatsnew");
+          }, 800);
+        }
     }, 100);
   }, 500);
 }
@@ -18774,7 +18792,7 @@ function applyTheme(themeName) {
   document.documentElement.style.setProperty("--text-secondary", theme.textSecondary);
   document.documentElement.style.setProperty("--border", theme.border);
   localStorage.setItem("nautilusOS_currentTheme", themeName);
-  showToast(`Applied ${themeName.charAt(0).toUpperCase() + themeName.slice(1)} theme!`, "fa-check-circle");
+  appliedThemeName = themeName;
 }
 
 function refreshAppStore() {
