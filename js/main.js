@@ -2333,6 +2333,42 @@ function openApp(appName, editorContent = "", filename = "") {
       width: 900,
       height: 600,
     },
+    "2048": {
+  title: "2048",
+  icon: "fas fa-th",
+  content: `
+    <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: var(--bg-primary); padding: 20px; gap: 40px;">
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="text-align: center;">
+          <h2 style="color: var(--accent); margin: 0 0 10px 0; font-size: 48px; font-weight: bold; font-family: fontb;">2048</h2>
+          <div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">Combine tiles to reach 2048!</div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+          <div style="text-align: center;">
+            <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Score</div>
+            <div id="game2048Score" style="color: var(--accent); font-size: 32px; font-weight: bold; font-family: fontb;">0</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Best</div>
+            <div id="game2048Best" style="color: var(--accent); font-size: 32px; font-weight: bold; font-family: fontb;">0</div>
+          </div>
+          <button class="editor-btn" onclick="start2048Game()" style="background: var(--accent); color: var(--bg-primary); border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: fontb;">New Game</button>
+          
+          <div style="color: var(--text-secondary); font-size: 11px; text-align: center; line-height: 1.6; margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border);">
+            <div style="margin-bottom: 8px;"><strong>Controls:</strong></div>
+            <div>Arrow Keys or WASD</div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="game2048Board" style="display: grid; grid-template-columns: repeat(4, 100px); gap: 10px;"></div>
+    </div>
+  `,
+  noPadding: true,
+  width: 700,
+  height: 600,
+},
     browser: {
       title: "Nautilus Browser",
       icon: "fas fa-globe",
@@ -3930,39 +3966,79 @@ alt="favicon">
       width: 900,
       height: 600,
     },
-    snake: {
+snake: {
       title: "Snake",
       icon: "fas fa-gamepad",
       content: `
-        <div class="snake-game" id="snakeGameContainer" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: #00d4ff; margin: 0 0 10px 0;">Snake Game</h2>
-            <div style="color: #888; font-size: 14px; margin-bottom: 15px;">Use arrow keys or WASD to move</div>
-          </div>
-          <div style="display: flex; gap: 30px; margin-bottom: 20px; align-items: center;">
+        <div class="snake-game" id="snakeGameContainer" style="display: flex; align-items: center; justify-content: center; height: 100%; background: var(--bg-primary); padding: 20px; gap: 40px;">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
             <div style="text-align: center;">
-              <div style="color: #888; font-size: 12px;">Score</div>
-              <div id="snakeScore" style="color: #00d4ff; font-size: 24px; font-weight: bold;">0</div>
+              <h2 style="color: var(--accent); margin: 0 0 10px 0; font-size: 48px; font-weight: bold; font-family: fontb;">Snake</h2>
+              <div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">Eat food and grow!</div>
             </div>
-            <div style="text-align: center;">
-              <div style="color: #888; font-size: 12px;">High Score</div>
-              <div id="snakeHighScore" style="color: #ffaa00; font-size: 24px; font-weight: bold;">0</div>
-            </div>
-            <div style="text-align: center;">
-              <button id="snakeStartBtn" class="editor-btn" onclick="startSnakeGame()" style="background: #00d4ff; color: #000; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Start Game</button>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+              <div style="text-align: center;">
+                <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Score</div>
+                <div id="snakeScore" style="color: var(--accent); font-size: 32px; font-weight: bold; font-family: fontb;">0</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">High Score</div>
+                <div id="snakeHighScore" style="color: var(--accent); font-size: 32px; font-weight: bold; font-family: fontb;">0</div>
+              </div>
+              <button id="snakeStartBtn" class="editor-btn" onclick="startSnakeGame()" style="background: var(--accent); color: var(--bg-primary); border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: fontb;">Start Game</button>
+              
+              <div style="color: var(--text-secondary); font-size: 11px; text-align: center; line-height: 1.6; margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border);">
+                <div style="margin-bottom: 8px;"><strong>Controls:</strong></div>
+                <div>Arrow Keys or WASD</div>
+                <div style="margin-top: 8px;">SPACE: Pause/Resume</div>
+                <div>R: Restart</div>
+              </div>
             </div>
           </div>
-          <canvas id="snakeCanvas" width="400" height="400" style="background: #0f0f0f; border: 2px solid #00d4ff; border-radius: 4px;"></canvas>
-          <div style="color: #888; font-size: 12px; margin-top: 15px; text-align: center;">
-            Press SPACE to pause/resume • Press R to restart
-          </div>
+          
+          <canvas id="snakeCanvas" width="400" height="400" style="background: var(--bg-secondary); border: 2px solid var(--border); border-radius: 8px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);"></canvas>
         </div>
       `,
       noPadding: true,
-      width: 550,
-      height: 700,
+      width: 700,
+      height: 600,
     },
-  };
+tictactoe: {
+      title: "Tic-Tac-Toe",
+      icon: "fas fa-circle",
+      content: `
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: var(--bg-primary); padding: 20px; gap: 40px;">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="text-align: center;">
+              <h2 style="color: var(--accent); margin: 0 0 10px 0; font-size: 36px; font-weight: bold; font-family: fontb;">Tic-Tac-Toe</h2>
+              <div id="tttStatus" style="color: var(--text-primary); font-size: 16px; margin-bottom: 15px; font-weight: 500;">Your turn (X)</div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+              <div style="text-align: center;">
+                <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Wins</div>
+                <div id="tttWins" style="color: var(--success-green); font-size: 28px; font-weight: bold; font-family: fontb;">0</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Losses</div>
+                <div id="tttLosses" style="color: var(--error-red); font-size: 28px; font-weight: bold; font-family: fontb;">0</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Draws</div>
+                <div id="tttDraws" style="color: var(--text-secondary); font-size: 28px; font-weight: bold; font-family: fontb;">0</div>
+              </div>
+              <button id="tttResetBtn" class="editor-btn" onclick="startTicTacToe()" style="background: var(--accent); color: var(--bg-primary); border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: fontb; margin-top: 10px;">New Game</button>
+            </div>
+          </div>
+          
+          <div id="tttBoard" style="display: grid; grid-template-columns: repeat(3, 120px); gap: 10px;"></div>
+        </div>
+      `,
+      noPadding: true,
+      width: 650,
+      height: 550,
+    },  };
 
   if (appName === "achievements") {
     openAchievements();
@@ -4013,6 +4089,17 @@ alt="favicon">
           document.getElementById('snakeHighScore').textContent = snakeGame.highScore;
           drawSnakeGame();
         }
+      }, 50);
+    }
+    if (appName === "2048") {
+      setTimeout(() => {
+        start2048Game();
+      }, 50);
+    }
+    
+    if (appName === "tictactoe") {
+      setTimeout(() => {
+        startTicTacToe();
       }, 50);
     }
   }
@@ -5277,7 +5364,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
       <i class="fas fa-globe"></i>
    </div>
    <div class="appstore-item-name">Ultraviolet by $xor</div>
-   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet. With tabbing, browser controls, history, extensive site support, and more, you can feel confident while surfing the web.</div>
+   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
    <button class="appstore-item-btn ${
      uvInstalled ? "installed" : ""
    }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
@@ -5324,11 +5411,9 @@ ${startupInstalled ? "Uninstall" : "Install"}
               </div>
               <div class="appstore-grid">
                   <div class="appstore-item">
-  
                       <div class="appstore-item-icon">
                           <i class="fas fa-gamepad"></i>
                       </div>
-                      
                       <div class="appstore-item-name">Snake by lanefiedler-731</div>
                       <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
                       <button class="appstore-item-btn ${
@@ -5338,11 +5423,43 @@ ${startupInstalled ? "Uninstall" : "Install"}
         ? "openApp('snake')"
         : "installGame('snake')"
     }">
-                          ${
-                            installedGames.includes("snake")
-                              ? "Play"
-                              : "Install"
-                          }
+                          ${installedGames.includes("snake") ? "Play" : "Install"}
+                      </button>
+                      <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
+                  </div>
+                  
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-th"></i>
+                      </div>
+                      <div class="appstore-item-name">2048 by dinguschan</div>
+                      <div class="appstore-item-desc">Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.</div>
+                      <button class="appstore-item-btn ${
+                        installedGames.includes("2048") ? "installed" : ""
+                      }" onclick="${
+      installedGames.includes("2048")
+        ? "openApp('2048')"
+        : "installGame('2048')"
+    }">
+                          ${installedGames.includes("2048") ? "Play" : "Install"}
+                      </button>
+                      <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
+                  </div>
+                  
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-circle"></i>
+                      </div>
+                      <div class="appstore-item-name">Tic-Tac-Toe by dinguschan</div>
+                      <div class="appstore-item-desc">Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?</div>
+                      <button class="appstore-item-btn ${
+                        installedGames.includes("tictactoe") ? "installed" : ""
+                      }" onclick="${
+      installedGames.includes("tictactoe")
+        ? "openApp('tictactoe')"
+        : "installGame('tictactoe')"
+    }">
+                          ${installedGames.includes("tictactoe") ? "Play" : "Install"}
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
@@ -7169,10 +7286,17 @@ function drawSnakeGame() {
   const canvas = snakeGame.canvas;
   const ctx = snakeGame.ctx;
   
-  ctx.fillStyle = '#0f0f0f';
+  if (!canvas || !ctx) return;
+  
+  const bgSecondary = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const border = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+  const errorRed = getComputedStyle(document.documentElement).getPropertyValue('--error-red').trim();
+  
+  ctx.fillStyle = bgSecondary;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-  ctx.strokeStyle = '#1a3a3a';
+  ctx.strokeStyle = 'rgba(125, 211, 192, 0.1)';
   ctx.lineWidth = 0.5;
   for (let i = 0; i <= snakeGame.tileCount; i++) {
     const pos = i * snakeGame.gridSize;
@@ -7189,27 +7313,29 @@ function drawSnakeGame() {
   
   snakeGame.snake.forEach((segment, index) => {
     if (index === 0) {
-      ctx.fillStyle = '#00ff00';
+      ctx.fillStyle = accentColor;
     } else {
-      ctx.fillStyle = '#00cc00';
+      ctx.fillStyle = 'rgba(125, 211, 192, 0.7)';
     }
     ctx.fillRect(
-      segment.x * snakeGame.gridSize + 1,
-      segment.y * snakeGame.gridSize + 1,
-      snakeGame.gridSize - 2,
-      snakeGame.gridSize - 2
+      segment.x * snakeGame.gridSize + 2,
+      segment.y * snakeGame.gridSize + 2,
+      snakeGame.gridSize - 4,
+      snakeGame.gridSize - 4
     );
   });
   
-  ctx.fillStyle = '#ff4444';
-  ctx.fillRect(
-    snakeGame.food.x * snakeGame.gridSize + 1,
-    snakeGame.food.y * snakeGame.gridSize + 1,
-    snakeGame.gridSize - 2,
-    snakeGame.gridSize - 2
+  ctx.fillStyle = errorRed;
+  ctx.beginPath();
+  ctx.arc(
+    snakeGame.food.x * snakeGame.gridSize + snakeGame.gridSize / 2,
+    snakeGame.food.y * snakeGame.gridSize + snakeGame.gridSize / 2,
+    snakeGame.gridSize / 2 - 2,
+    0,
+    2 * Math.PI
   );
+  ctx.fill();
 }
-
 function endSnakeGame() {
   snakeGame.gameRunning = false;
   snakeGame.gameOver = true;
@@ -7245,6 +7371,10 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-border-all", label: "Snap Manager" };
   } else if (appName === "snake") {
     iconConfig = { icon: "fa-gamepad", label: "Snake" };
+  } else if (appName === "2048") {
+    iconConfig = { icon: "fa-th", label: "2048" };
+  } else if (appName === "tictactoe") {
+    iconConfig = { icon: "fa-circle", label: "Tic-Tac-Toe" };
   } else if (appName === "uv") {
     iconConfig = { icon: "fa-globe", label: "Ultraviolet" };
   } else if (appName === "helios") {
@@ -7268,6 +7398,7 @@ function addDesktopIcon(appName) {
 
   initDesktopIconDragging();
 }
+
 function removeDesktopIcon(appName) {
   const icon = document.querySelector(`.desktop-icon[data-app="${appName}"]`);
   if (icon) {
@@ -7291,16 +7422,28 @@ function openStartupApps() {
     { id: "achievements", name: "Achievements", icon: "fa-trophy" },
   ];
 
-  const installedAppsData = [];
+const installedAppsData = [];
   installedApps.forEach((appName) => {
     if (appName === "startup-apps") {
       installedAppsData.push({ id: "startup-apps", name: "Startup Apps", icon: "fa-rocket" });
     } else if (appName === "task-manager") {
       installedAppsData.push({ id: "task-manager", name: "Task Manager", icon: "fa-tasks" });
+    } else if (appName === "snap-manager") {
+      installedAppsData.push({ id: "snap-manager", name: "Snap Manager", icon: "fa-border-all" });
     }
   });
 
-  const availableApps = [...preinstalledApps, ...installedAppsData];
+  installedGames.forEach((gameName) => {
+    if (gameName === "snake") {
+      installedAppsData.push({ id: "snake", name: "Snake", icon: "fa-gamepad" });
+    } else if (gameName === "2048") {
+      installedAppsData.push({ id: "2048", name: "2048", icon: "fa-th" });
+    } else if (gameName === "tictactoe") {
+      installedAppsData.push({ id: "tictactoe", name: "Tic-Tac-Toe", icon: "fa-circle" });
+    }
+  });
+
+  const availableApps = [...preinstalledApps, ...installedAppsData]; 
 
   const itemsHtml = availableApps
     .map((app) => {
@@ -7723,6 +7866,11 @@ function updateStartMenu() {
   );
   existingInstalledApps.forEach((el) => el.remove());
 
+  const existingInstalledGames = appGrid.querySelectorAll(
+    '.app-item[data-installed-game="true"]'
+  );
+  existingInstalledGames.forEach((el) => el.remove());
+
   installedApps.forEach((appName) => {
     let appConfig = {};
     if (appName === "startup-apps") {
@@ -7742,6 +7890,30 @@ function updateStartMenu() {
     appItem.innerHTML = `
             <i class="fas ${appConfig.icon}"></i>
             <span>${appConfig.label}</span>
+        `;
+
+    appGrid.appendChild(appItem);
+  });
+
+  installedGames.forEach((gameName) => {
+    let gameConfig = {};
+    if (gameName === "snake") {
+      gameConfig = { icon: "fa-gamepad", label: "Snake" };
+    } else if (gameName === "2048") {
+      gameConfig = { icon: "fa-th", label: "2048" };
+    } else if (gameName === "tictactoe") {
+      gameConfig = { icon: "fa-circle", label: "Tic-Tac-Toe" };
+    } else {
+      return;
+    }
+
+    const appItem = document.createElement("div");
+    appItem.className = "app-item";
+    appItem.setAttribute("data-installed-game", "true");
+    appItem.onclick = () => openApp(gameName);
+    appItem.innerHTML = `
+            <i class="fas ${gameConfig.icon}"></i>
+            <span>${gameConfig.label}</span>
         `;
 
     appGrid.appendChild(appItem);
@@ -9544,3 +9716,442 @@ function checkImportedAchievements() {
   );
   }
   }
+
+let game2048 = {
+  board: null,
+  score: 0,
+  best: localStorage.getItem('2048Best') ? parseInt(localStorage.getItem('2048Best')) : 0,
+  size: 4,
+  gameStarted: false,
+  tiles: []
+};
+
+function start2048Game() {
+  game2048.board = Array(game2048.size).fill().map(() => Array(game2048.size).fill(0));
+  game2048.score = 0;
+  game2048.gameStarted = true;
+  game2048.tiles = [];
+  
+  document.getElementById('game2048Score').textContent = '0';
+  document.getElementById('game2048Best').textContent = game2048.best;
+  
+  addRandomTile2048();
+  addRandomTile2048();
+  render2048Board();
+  
+  document.removeEventListener('keydown', handle2048KeyPress);
+  document.addEventListener('keydown', handle2048KeyPress);
+}
+
+function addRandomTile2048() {
+  const emptyCells = [];
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      if (game2048.board[i][j] === 0) {
+        emptyCells.push({row: i, col: j});
+      }
+    }
+  }
+  
+  if (emptyCells.length > 0) {
+    const cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    game2048.board[cell.row][cell.col] = Math.random() < 0.9 ? 2 : 4;
+  }
+}
+
+function getTileColor(value) {
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const bgSecondary = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
+  
+  if (value === 0) return bgSecondary;
+  if (value === 2) return 'rgba(125, 211, 192, 0.2)';
+  if (value === 4) return 'rgba(125, 211, 192, 0.3)';
+  if (value === 8) return 'rgba(125, 211, 192, 0.4)';
+  if (value === 16) return 'rgba(125, 211, 192, 0.5)';
+  if (value === 32) return 'rgba(125, 211, 192, 0.6)';
+  if (value === 64) return 'rgba(125, 211, 192, 0.7)';
+  if (value === 128) return 'rgba(125, 211, 192, 0.8)';
+  if (value >= 256) return accentColor;
+  return accentColor;
+}
+
+function getTileTextColor(value) {
+  const textPrimary = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+  const bgPrimary = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim();
+  
+  if (value >= 8) return textPrimary;
+  return textPrimary;
+}
+
+function render2048Board() {
+  const boardEl = document.getElementById('game2048Board');
+  if (!boardEl) return;
+  
+  boardEl.innerHTML = '';
+  boardEl.style.display = 'grid';
+  boardEl.style.gridTemplateColumns = `repeat(${game2048.size}, 100px)`;
+  boardEl.style.gap = '10px';
+  boardEl.style.position = 'relative';
+  
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      const value = game2048.board[i][j];
+      const tile = document.createElement('div');
+      tile.style.width = '100px';
+      tile.style.height = '100px';
+      tile.style.background = getTileColor(value);
+      tile.style.borderRadius = '8px';
+      tile.style.display = 'flex';
+      tile.style.alignItems = 'center';
+      tile.style.justifyContent = 'center';
+      tile.style.fontSize = value >= 1000 ? '28px' : value >= 100 ? '36px' : '44px';
+      tile.style.fontWeight = 'bold';
+      tile.style.fontFamily = 'fontb';
+      tile.style.color = getTileTextColor(value);
+      tile.style.transition = 'all 0.15s ease';
+      tile.style.border = value > 0 ? '2px solid var(--border)' : 'none';
+      tile.style.boxShadow = value > 0 ? '0 2px 8px rgba(0, 0, 0, 0.3)' : 'none';
+      
+      if (value > 0) {
+        tile.style.animation = 'tileAppear 0.2s ease';
+      }
+      
+      tile.textContent = value || '';
+      boardEl.appendChild(tile);
+    }
+  }
+}
+
+function handle2048KeyPress(e) {
+  if (!game2048.gameStarted) return;
+  
+  const key = e.key.toLowerCase();
+  let moved = false;
+  let direction = '';
+  
+  if (key === 'arrowup' || key === 'w') {
+    e.preventDefault();
+    moved = move2048Up();
+    direction = 'up';
+  } else if (key === 'arrowdown' || key === 's') {
+    e.preventDefault();
+    moved = move2048Down();
+    direction = 'down';
+  } else if (key === 'arrowleft' || key === 'a') {
+    e.preventDefault();
+    moved = move2048Left();
+    direction = 'left';
+  } else if (key === 'arrowright' || key === 'd') {
+    e.preventDefault();
+    moved = move2048Right();
+    direction = 'right';
+  }
+  
+  if (moved) {
+    addRandomTile2048();
+    setTimeout(() => {
+      render2048Board();
+    }, 100);
+    
+    if (game2048.score > game2048.best) {
+      game2048.best = game2048.score;
+      localStorage.setItem('2048Best', game2048.best);
+      document.getElementById('game2048Best').textContent = game2048.best;
+    }
+    
+    if (check2048GameOver()) {
+      game2048.gameStarted = false;
+      setTimeout(() => {
+        showToast('Game Over! Score: ' + game2048.score, 'fa-gamepad');
+      }, 300);
+    }
+  }
+}
+
+function move2048Left() {
+  let moved = false;
+  for (let i = 0; i < game2048.size; i++) {
+    const row = game2048.board[i].filter(val => val !== 0);
+    for (let j = 0; j < row.length - 1; j++) {
+      if (row[j] === row[j + 1]) {
+        row[j] *= 2;
+        game2048.score += row[j];
+        document.getElementById('game2048Score').textContent = game2048.score;
+        row.splice(j + 1, 1);
+      }
+    }
+    while (row.length < game2048.size) row.push(0);
+    if (JSON.stringify(game2048.board[i]) !== JSON.stringify(row)) moved = true;
+    game2048.board[i] = row;
+  }
+  return moved;
+}
+
+function move2048Right() {
+  let moved = false;
+  for (let i = 0; i < game2048.size; i++) {
+    const row = game2048.board[i].filter(val => val !== 0);
+    for (let j = row.length - 1; j > 0; j--) {
+      if (row[j] === row[j - 1]) {
+        row[j] *= 2;
+        game2048.score += row[j];
+        document.getElementById('game2048Score').textContent = game2048.score;
+        row.splice(j - 1, 1);
+        j--;
+      }
+    }
+    while (row.length < game2048.size) row.unshift(0);
+    if (JSON.stringify(game2048.board[i]) !== JSON.stringify(row)) moved = true;
+    game2048.board[i] = row;
+  }
+  return moved;
+}
+
+function move2048Up() {
+  let moved = false;
+  for (let j = 0; j < game2048.size; j++) {
+    const col = [];
+    for (let i = 0; i < game2048.size; i++) {
+      if (game2048.board[i][j] !== 0) col.push(game2048.board[i][j]);
+    }
+    for (let i = 0; i < col.length - 1; i++) {
+      if (col[i] === col[i + 1]) {
+        col[i] *= 2;
+        game2048.score += col[i];
+        document.getElementById('game2048Score').textContent = game2048.score;
+        col.splice(i + 1, 1);
+      }
+    }
+    while (col.length < game2048.size) col.push(0);
+    for (let i = 0; i < game2048.size; i++) {
+      if (game2048.board[i][j] !== col[i]) moved = true;
+      game2048.board[i][j] = col[i];
+    }
+  }
+  return moved;
+}
+
+function move2048Down() {
+  let moved = false;
+  for (let j = 0; j < game2048.size; j++) {
+    const col = [];
+    for (let i = 0; i < game2048.size; i++) {
+      if (game2048.board[i][j] !== 0) col.push(game2048.board[i][j]);
+    }
+    for (let i = col.length - 1; i > 0; i--) {
+      if (col[i] === col[i - 1]) {
+        col[i] *= 2;
+        game2048.score += col[i];
+        document.getElementById('game2048Score').textContent = game2048.score;
+        col.splice(i - 1, 1);
+        i--;
+      }
+    }
+    while (col.length < game2048.size) col.unshift(0);
+    for (let i = 0; i < game2048.size; i++) {
+      if (game2048.board[i][j] !== col[i]) moved = true;
+      game2048.board[i][j] = col[i];
+    }
+  }
+  return moved;
+}
+
+function check2048GameOver() {
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      if (game2048.board[i][j] === 0) return false;
+      if (j < game2048.size - 1 && game2048.board[i][j] === game2048.board[i][j + 1]) return false;
+      if (i < game2048.size - 1 && game2048.board[i][j] === game2048.board[i + 1][j]) return false;
+    }
+  }
+  return true;
+}
+
+let tttGame = {
+  board: Array(9).fill(''),
+  currentPlayer: 'X',
+  gameActive: true,
+  wins: localStorage.getItem('tttWins') ? parseInt(localStorage.getItem('tttWins')) : 0,
+  losses: localStorage.getItem('tttLosses') ? parseInt(localStorage.getItem('tttLosses')) : 0,
+  draws: localStorage.getItem('tttDraws') ? parseInt(localStorage.getItem('tttDraws')) : 0
+};
+
+function startTicTacToe() {
+  tttGame.board = Array(9).fill('');
+  tttGame.currentPlayer = 'X';
+  tttGame.gameActive = true;
+  
+  document.getElementById('tttStatus').textContent = 'Your turn (X)';
+  document.getElementById('tttWins').textContent = tttGame.wins;
+  document.getElementById('tttLosses').textContent = tttGame.losses;
+  document.getElementById('tttDraws').textContent = tttGame.draws;
+  
+  renderTTTBoard();
+}
+
+function renderTTTBoard() {
+  const boardEl = document.getElementById('tttBoard');
+  if (!boardEl) return;
+  
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const textPrimary = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+  const bgSecondary = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
+  const border = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+  
+  boardEl.innerHTML = '';
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement('div');
+    cell.style.width = '120px';
+    cell.style.height = '120px';
+    cell.style.background = bgSecondary;
+    cell.style.border = `2px solid ${border}`;
+    cell.style.borderRadius = '12px';
+    cell.style.display = 'flex';
+    cell.style.alignItems = 'center';
+    cell.style.justifyContent = 'center';
+    cell.style.fontSize = '56px';
+    cell.style.fontWeight = 'bold';
+    cell.style.fontFamily = 'fontb';
+    cell.style.cursor = tttGame.board[i] === '' && tttGame.gameActive ? 'pointer' : 'default';
+    cell.style.transition = 'all 0.2s ease';
+    cell.style.color = tttGame.board[i] === 'X' ? accentColor : textPrimary;
+    cell.textContent = tttGame.board[i];
+    
+    if (tttGame.board[i] === '' && tttGame.gameActive) {
+      cell.onmouseover = () => {
+        cell.style.background = `rgba(125, 211, 192, 0.1)`;
+        cell.style.transform = 'scale(1.05)';
+        cell.style.borderColor = accentColor;
+      };
+      cell.onmouseout = () => {
+        cell.style.background = bgSecondary;
+        cell.style.transform = 'scale(1)';
+        cell.style.borderColor = border;
+      };
+    }
+    
+    cell.onclick = () => handleTTTCellClick(i);
+    boardEl.appendChild(cell);
+  }
+}
+
+function handleTTTCellClick(index) {
+  if (tttGame.board[index] !== '' || !tttGame.gameActive || tttGame.currentPlayer !== 'X') return;
+  
+  tttGame.board[index] = 'X';
+  renderTTTBoard();
+  
+  const result = checkTTTWinner();
+  if (result) {
+    endTTTGame(result);
+    return;
+  }
+  
+  if (tttGame.board.every(cell => cell !== '')) {
+    endTTTGame('draw');
+    return;
+  }
+  
+  tttGame.currentPlayer = 'O';
+  document.getElementById('tttStatus').textContent = 'AI is thinking...';
+  
+  setTimeout(() => {
+    makeAIMove();
+  }, 500);
+}
+
+function makeAIMove() {
+  const bestMove = getBestMove();
+  tttGame.board[bestMove] = 'O';
+  renderTTTBoard();
+  
+  const result = checkTTTWinner();
+  if (result) {
+    endTTTGame(result);
+    return;
+  }
+  
+  if (tttGame.board.every(cell => cell !== '')) {
+    endTTTGame('draw');
+    return;
+  }
+  
+  tttGame.currentPlayer = 'X';
+  document.getElementById('tttStatus').textContent = 'Your turn (X)';
+}
+
+function getBestMove() {
+  for (let i = 0; i < 9; i++) {
+    if (tttGame.board[i] === '') {
+      tttGame.board[i] = 'O';
+      if (checkTTTWinner() === 'O') {
+        tttGame.board[i] = '';
+        return i;
+      }
+      tttGame.board[i] = '';
+    }
+  }
+  
+  for (let i = 0; i < 9; i++) {
+    if (tttGame.board[i] === '') {
+      tttGame.board[i] = 'X';
+      if (checkTTTWinner() === 'X') {
+        tttGame.board[i] = '';
+        return i;
+      }
+      tttGame.board[i] = '';
+    }
+  }
+  
+  const corners = [0, 2, 6, 8];
+  const availableCorners = corners.filter(i => tttGame.board[i] === '');
+  if (availableCorners.length > 0) {
+    return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+  }
+  
+  if (tttGame.board[4] === '') return 4;
+  
+  const available = tttGame.board.map((cell, i) => cell === '' ? i : null).filter(i => i !== null);
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+function checkTTTWinner() {
+  const winPatterns = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+  ];
+  
+  for (const pattern of winPatterns) {
+    const [a, b, c] = pattern;
+    if (tttGame.board[a] && tttGame.board[a] === tttGame.board[b] && tttGame.board[a] === tttGame.board[c]) {
+      return tttGame.board[a];
+    }
+  }
+  
+  return null;
+}
+
+function endTTTGame(result) {
+  tttGame.gameActive = false;
+  
+  if (result === 'X') {
+    tttGame.wins++;
+    localStorage.setItem('tttWins', tttGame.wins);
+    document.getElementById('tttStatus').textContent = 'You won! 🎉';
+    document.getElementById('tttWins').textContent = tttGame.wins;
+    showToast('You won!', 'fa-trophy');
+  } else if (result === 'O') {
+    tttGame.losses++;
+    localStorage.setItem('tttLosses', tttGame.losses);
+    document.getElementById('tttStatus').textContent = 'AI won! 🤖';
+    document.getElementById('tttLosses').textContent = tttGame.losses;
+    showToast('AI won!', 'fa-gamepad');
+  } else {
+    tttGame.draws++;
+    localStorage.setItem('tttDraws', tttGame.draws);
+    document.getElementById('tttStatus').textContent = "It's a draw! 🤝";
+    document.getElementById('tttDraws').textContent = tttGame.draws;
+    showToast("It's a draw!", 'fa-handshake');
+  }
+}
