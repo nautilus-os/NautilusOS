@@ -37,6 +37,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Make tabs and stuff work
 - [ ] Search bar for start menu
+- [ ] Add helios as a seprate app
 
 ---
 
