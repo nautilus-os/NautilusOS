@@ -3303,10 +3303,12 @@ alt="favicon">
       icon: "fas fa-star",
       content: `
               <div class="whats-new-content">
+                  <center>
                   <div class="whats-new-header">
-      <h1>Welcome to NautilusOS v1.0! <br>What's new?</h1>
+                      <h1 style="text-align: center !important">Welcome to NautilusOS v1.0! <br>What's new?</h1>
                       <p>Discover the latest features and improvements</p>
                   </div>
+                  </center>
 
                   <div class="carousel-container">
                       <div class="carousel-slide active" data-slide="0">

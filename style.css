@@ -635,9 +635,9 @@ button, input {
 }
 
 .login-info-card {
-    background: var(--glass-bg);
+    background: var(--bg-primary);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--overlay-dark);
     border-radius: 20px;
     padding: 2.3rem;
@@ -681,8 +681,8 @@ button, input {
 }
 
 .login-container {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--overlay-dark);
     backdrop-filter: blur(40px) saturate(180%);
     border-radius: 20px;
@@ -2297,10 +2297,13 @@ select:focus {
     padding: 2rem;
     max-width: 800px;
     margin: 0 auto;
+    text-align: center;
 }
 
 .whats-new-header {
-    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     margin-bottom: 3rem;
 }
 
@@ -2310,11 +2313,13 @@ select:focus {
     margin-bottom: 0.5rem;
     font-family: fontb;
     line-height: 1.3;
+    text-align: center;
 }
 
 .whats-new-header p {
     color: var(--text-secondary);
     font-size: 1.1rem;
+    text-align: center;
 }
 
 .carousel-container {
@@ -2326,6 +2331,12 @@ select:focus {
     min-height: 340px;
     overflow: hidden;
     border: 1px solid var(--border);
+}
+
+.carousel-container h2 {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .carousel-slide {
