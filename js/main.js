@@ -5643,7 +5643,7 @@ function navigateBrowser(input) {
   currentTab.historyIndex++;
   currentTab.url = url;
 
-  const finalUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+  const finalUrl = url;
 
   loadBrowserPage(finalUrl);
 }
