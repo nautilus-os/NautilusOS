@@ -39,9 +39,11 @@ Basically... a whole little OS in your browser :D
 - [x] Search bar for start menu
 - [ ] Search engine customization should apply to all browsers for enhanced user experince
 - [x] All themes should have black gradient background color
-- [ ] Toasts should apper AFTER bootloader
+- [x] Toasts should apper AFTER bootloader
 - [x] Visual studio code editor
 - [ ] Window animation settings
+TODOs will stay visible for one day after that comleted ones get removed
+
 ---
 
 ## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)
