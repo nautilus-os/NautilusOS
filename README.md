@@ -42,7 +42,8 @@ Basically... a whole little OS in your browser :D
 - [x] Toasts should apper AFTER bootloader
 - [x] Visual studio code editor
 - [ ] Window animation settings
-TODOs will stay visible for one day after that comleted ones get removed
+
+*TODOs will stay visible for one day after that comleted ones get removed*
 
 ---
 
