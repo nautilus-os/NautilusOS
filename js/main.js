@@ -1079,6 +1079,8 @@ function startBootSequence() {
       "- displayBrowserInfo()",
       "- updateUptime()",
       "- updateLoginGreeting()",
+      "- registerSW()",
+      "- ./build.py",
       "Finished running startup functions.",
       "Fetching icons from https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
       "Starting graphical user interface...",
@@ -3692,9 +3694,20 @@ alt="favicon">
       icon: "fas fa-globe",
       content: `
         <div class="browser-container" style="overflow: hidden;">
-                  <div class="browser-header">
                       <iframe src="/app/uv.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
-                  </div>
+              </div>
+      `,
+      noPadding: true,
+      width: 900,
+      height: 600,
+    },
+    vsc: {
+      title: "Visual Studio Code",
+      icon: "fas fa-code",
+      content: `
+        <div class="browser-container" style="overflow: hidden;">
+                  <h1 style="z-index: -1; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">Loading...</h1>
+                      <iframe src="/uv/service/hvtrs8%2F-vqcmdg.fet%2F" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
               </div>
       `,
       noPadding: true,
@@ -3706,9 +3719,7 @@ alt="favicon">
       icon: "fas fa-globe",
       content: `
         <div class="browser-container" style="overflow: hidden;">
-                  <div class="browser-header">
                       <iframe src="/app/helios.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
-                  </div>
               </div>
       `,
       noPadding: true,
@@ -5083,6 +5094,7 @@ function switchAppStoreSection(section, element) {
     const snapManagerInstalled = installedApps.includes("snap-manager");
     const uvInstalled = installedApps.includes("uv");
     const heliosInstalled = installedApps.includes("helios");
+    const vscInstalled = installedApps.includes("vsc");
 
     mainContent.innerHTML = `
                   <div class="appstore-header">
@@ -5212,6 +5224,20 @@ ${startupInstalled ? "Uninstall" : "Install"}
       heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
     }">
    ${heliosInstalled ? "Uninstall" : "Install"}
+   </button>
+</div>
+<div class="appstore-item">
+   <div class="appstore-item-icon">
+      <i class="fas fa-globe"></i>
+   </div>
+   <div class="appstore-item-name">Visual Studio Code</div>
+   <div class="appstore-item-desc">The developer's choice for text editing, now on NautilusOS.</div>
+   <button class="appstore-item-btn ${
+     vscInstalled ? "installed" : ""
+   }" onclick="${
+      vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"
+    }">
+   ${vscInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
 </div>
@@ -7150,6 +7176,8 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-globe", label: "Ultraviolet" };
   } else if (appName === "helios") {
     iconConfig = { icon: "fa-globe", label: "Helios" };
+  } else if (appName === "vsc") {
+    iconConfig = { icon: "fa-code", label: "Visual Studio Code" };
   } else {
     return;
   }
