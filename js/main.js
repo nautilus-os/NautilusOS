@@ -2817,7 +2817,7 @@ alt="favicon">
                                               theme.charAt(0).toUpperCase() +
                                               theme.slice(1)
                                             } Theme</div>
-                                            <button class="settings-action-btn" onclick="showToast('Theme support coming soon!', 'fa-info-circle')">
+                                            <button class="settings-action-btn" onclick="applyTheme('${theme}')">
                                                 Apply Theme
                                             </button>
                                         </div>
@@ -3611,6 +3611,10 @@ alt="favicon">
               <i class="fas fa-th"></i>
               <span>Apps</span>
           </div>
+          <div class="appstore-section" onclick="switchAppStoreSection('games', this)">
+              <i class="fas fa-gamepad"></i>
+              <span>Games</span>
+          </div>
       </div>
                   <div class="appstore-main" id="appstoreMain">
                       <div class="appstore-header">
@@ -3648,6 +3652,48 @@ alt="favicon">
                                   }
                               </button>
                           </div>
+                          <div class="appstore-item">
+                              <div class="appstore-item-icon">
+                                  <i class="fas fa-crown" style="color: #d4af37;"></i>
+                              </div>
+                              <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
+                              <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
+                              <button class="appstore-item-btn ${
+                                installedThemes.includes('golden') ? "installed" : ""
+                              }" onclick="${
+          installedThemes.includes('golden') ? "uninstallTheme('golden')" : "installTheme('golden')"
+        }">
+                                  ${installedThemes.includes('golden') ? "Uninstall" : "Install"}
+                              </button>
+                          </div>
+                          <div class="appstore-item">
+                              <div class="appstore-item-icon">
+                                  <i class="fas fa-fire" style="color: #ef4444;"></i>
+                              </div>
+                              <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
+                              <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
+                              <button class="appstore-item-btn ${
+                                installedThemes.includes('red') ? "installed" : ""
+                              }" onclick="${
+          installedThemes.includes('red') ? "uninstallTheme('red')" : "installTheme('red')"
+        }">
+                                  ${installedThemes.includes('red') ? "Uninstall" : "Install"}
+                              </button>
+                          </div>
+                          <div class="appstore-item">
+                              <div class="appstore-item-icon">
+                                  <i class="fas fa-droplet" style="color: #3b82f6;"></i>
+                              </div>
+                              <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
+                              <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
+                              <button class="appstore-item-btn ${
+                                installedThemes.includes('blue') ? "installed" : ""
+                              }" onclick="${
+          installedThemes.includes('blue') ? "uninstallTheme('blue')" : "installTheme('blue')"
+        }">
+                                  ${installedThemes.includes('blue') ? "Uninstall" : "Install"}
+                              </button>
+                          </div>
                       </div>
                   </div>
               </div>
@@ -3656,6 +3702,38 @@ alt="favicon">
       noPadding: true,
       width: 900,
       height: 600,
+    },
+    snake: {
+      title: "Snake",
+      icon: "fas fa-gamepad",
+      content: `
+        <div class="snake-game" id="snakeGameContainer" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #00d4ff; margin: 0 0 10px 0;">Snake Game</h2>
+            <div style="color: #888; font-size: 14px; margin-bottom: 15px;">Use arrow keys or WASD to move</div>
+          </div>
+          <div style="display: flex; gap: 30px; margin-bottom: 20px; align-items: center;">
+            <div style="text-align: center;">
+              <div style="color: #888; font-size: 12px;">Score</div>
+              <div id="snakeScore" style="color: #00d4ff; font-size: 24px; font-weight: bold;">0</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: #888; font-size: 12px;">High Score</div>
+              <div id="snakeHighScore" style="color: #ffaa00; font-size: 24px; font-weight: bold;">0</div>
+            </div>
+            <div style="text-align: center;">
+              <button id="snakeStartBtn" class="editor-btn" onclick="startSnakeGame()" style="background: #00d4ff; color: #000; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Start Game</button>
+            </div>
+          </div>
+          <canvas id="snakeCanvas" width="400" height="400" style="background: #0f0f0f; border: 2px solid #00d4ff; border-radius: 4px;"></canvas>
+          <div style="color: #888; font-size: 12px; margin-top: 15px; text-align: center;">
+            Press SPACE to pause/resume • Press R to restart
+          </div>
+        </div>
+      `,
+      noPadding: true,
+      width: 550,
+      height: 700,
     },
   };
 
@@ -3698,6 +3776,17 @@ alt="favicon">
     }
     if (appName === "whatsnew") {
       currentSlide = 0;
+    }
+    if (appName === "snake") {
+      setTimeout(() => {
+        snakeGame.canvas = document.getElementById('snakeCanvas');
+        if (snakeGame.canvas) {
+          snakeGame.ctx = snakeGame.canvas.getContext('2d');
+          snakeGame.highScore = localStorage.getItem('snakeHighScore') ? parseInt(localStorage.getItem('snakeHighScore')) : 0;
+          document.getElementById('snakeHighScore').textContent = snakeGame.highScore;
+          drawSnakeGame();
+        }
+      }, 50);
     }
   }
 }
@@ -4763,7 +4852,7 @@ function expandTreeToPath(path) {
     }
   }
 }
-let installedThemes = [];
+let installedThemes = ["dark"];
 let isPasswordless = false;
 
 function switchAppStoreSection(section, element) {
@@ -4804,6 +4893,42 @@ function switchAppStoreSection(section, element) {
       lightThemeInstalled ? "uninstallTheme('light')" : "installTheme('light')"
     }">
                           ${lightThemeInstalled ? "Uninstall" : "Install"}
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-crown" style="color: #d4af37;"></i>
+                      </div>
+                      <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes('golden') ? "installed" : ""
+                      }" onclick="${installedThemes.includes('golden') ? "uninstallTheme('golden')" : "installTheme('golden')"}">
+                          ${installedThemes.includes('golden') ? "Uninstall" : "Install"}
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-fire" style="color: #ef4444;"></i>
+                      </div>
+                      <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes('red') ? "installed" : ""
+                      }" onclick="${installedThemes.includes('red') ? "uninstallTheme('red')" : "installTheme('red')"}">
+                          ${installedThemes.includes('red') ? "Uninstall" : "Install"}
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-droplet" style="color: #3b82f6;"></i>
+                      </div>
+                      <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes('blue') ? "installed" : ""
+                      }" onclick="${installedThemes.includes('blue') ? "uninstallTheme('blue')" : "installTheme('blue')"}">
+                          ${installedThemes.includes('blue') ? "Uninstall" : "Install"}
                       </button>
                   </div>
               </div>
@@ -4903,7 +5028,7 @@ function switchAppStoreSection(section, element) {
                           <div class="appstore-item-icon">
                               <i class="fas fa-border-all"></i>
                           </div>
-                          <div class="appstore-item-name">Snap Manager by Nautilus Labs</div>
+                          <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
                           <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
                           <button class="appstore-item-btn ${
                             snapManagerInstalled ? "installed" : ""
@@ -4919,6 +5044,31 @@ function switchAppStoreSection(section, element) {
 
                   </div>
               `;
+  } else if (section === "games") {
+    mainContent.innerHTML = `
+              <div class="appstore-header">
+                  <h2>Games</h2>
+                  <p>Play and enjoy games on NautilusOS</p>
+              </div>
+              <div class="appstore-grid">
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-gamepad"></i>
+                      </div>
+                      <div class="appstore-item-name">Snake by lanefiedler-731</div>
+                      <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
+                      <button class="appstore-item-btn ${
+                        installedGames.includes('snake') ? "installed" : ""
+                      }" onclick="${
+                        installedGames.includes('snake') 
+                          ? "openApp('snake')" 
+                          : "installGame('snake')"
+                      }">
+                          ${installedGames.includes('snake') ? "Play" : "Install"}
+                      </button>
+                  </div>
+              </div>
+          `;
   }
 }
 function installTheme(themeName) {
@@ -4953,6 +5103,31 @@ function uninstallTheme(themeName) {
   }
 }
 
+const themeDefinitions = {
+  dark: { accent: "#7dd3c0", accentHover: "#6bc4b0", accentDark: "#469483", bgPrimary: "#0a0e1a", bgSecondary: "#151923", textPrimary: "#e8eaed", textSecondary: "#9aa0a6", border: "#7dd3c0" },
+  light: { accent: "#06b6d4", accentHover: "#0891b2", accentDark: "#0d9488", bgPrimary: "#f8fafc", bgSecondary: "#ffffff", textPrimary: "#ffffff", textSecondary: "#475569", border: "#e2e8f0" },
+  golden: { accent: "#d4af37", accentHover: "#c9a227", accentDark: "#997618", bgPrimary: "#1a1410", bgSecondary: "#2d2417", textPrimary: "#f5e6d3", textSecondary: "#b8a88a", border: "#d4af37" },
+  red: { accent: "#ef4444", accentHover: "#dc2626", accentDark: "#991b1b", bgPrimary: "#1a0f0f", bgSecondary: "#2d1818", textPrimary: "#ffe8e8", textSecondary: "#cc9999", border: "#ef4444" },
+  blue: { accent: "#3b82f6", accentHover: "#2563eb", accentDark: "#1e40af", bgPrimary: "#0f1419", bgSecondary: "#1a2332", textPrimary: "#e0e7ff", textSecondary: "#94a3b8", border: "#3b82f6" },
+  purple: { accent: "#a855f7", accentHover: "#9333ea", accentDark: "#7e22ce", bgPrimary: "#1a0f2e", bgSecondary: "#2d1b47", textPrimary: "#f3e8ff", textSecondary: "#d8b4fe", border: "#a855f7" },
+  green: { accent: "#10b981", accentHover: "#059669", accentDark: "#047857", bgPrimary: "#0f2e1b", bgSecondary: "#1a3d2a", textPrimary: "#d1fae5", textSecondary: "#a7f3d0", border: "#10b981" },
+};
+
+function applyTheme(themeName) {
+  const theme = themeDefinitions[themeName];
+  if (!theme) { console.warn("Theme not found:", themeName); return; }
+  document.documentElement.style.setProperty("--accent", theme.accent);
+  document.documentElement.style.setProperty("--accent-hover", theme.accentHover);
+  document.documentElement.style.setProperty("--accent-dark", theme.accentDark);
+  document.documentElement.style.setProperty("--bg-primary", theme.bgPrimary);
+  document.documentElement.style.setProperty("--bg-secondary", theme.bgSecondary);
+  document.documentElement.style.setProperty("--text-primary", theme.textPrimary);
+  document.documentElement.style.setProperty("--text-secondary", theme.textSecondary);
+  document.documentElement.style.setProperty("--border", theme.border);
+  localStorage.setItem("nautilusOS_currentTheme", themeName);
+  showToast(`Applied ${themeName.charAt(0).toUpperCase() + themeName.slice(1)} theme!`, "fa-check-circle");
+}
+
 function refreshAppStore() {
   const activeSection = document.querySelector(".appstore-section.active");
   if (!activeSection) return;
@@ -4962,6 +5137,8 @@ function refreshAppStore() {
     switchAppStoreSection("themes", activeSection);
   } else if (sectionText.includes("apps")) {
     switchAppStoreSection("apps", activeSection);
+  } else if (sectionText.includes("games")) {
+    switchAppStoreSection("games", activeSection);
   } else if (sectionText.includes("tools")) {
     switchAppStoreSection("tools", activeSection);
   }
@@ -5340,6 +5517,10 @@ async function loadBrowserPage(url) {
       doc.head.prepend(baseEl);
     }
     viewEl.innerHTML = doc.documentElement.innerHTML;
+    const links = viewEl.querySelectorAll("a[target]");
+    links.forEach((link) => link.removeAttribute("target"));
+    const forms = viewEl.querySelectorAll("form[target]");
+    forms.forEach((form) => form.removeAttribute("target"));
     const scripts = Array.from(viewEl.querySelectorAll("script"));
     for (const script of scripts) {
       const replacement = document.createElement("script");
@@ -5373,6 +5554,40 @@ async function loadBrowserPage(url) {
       }
       navigateBrowser(targetUrl);
     };
+    viewEl.addEventListener(
+      "submit",
+      (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement)) {
+          return;
+        }
+        const method = (form.getAttribute("method") || "GET").toUpperCase();
+        if (method !== "GET") {
+          return;
+        }
+        event.preventDefault();
+        let action = form.getAttribute("action") || url;
+        let targetUrl;
+        try {
+          targetUrl = new URL(action, url);
+        } catch (_) {
+          return;
+        }
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+        for (const [key, value] of formData.entries()) {
+          if (typeof value === "string") {
+            params.append(key, value);
+          }
+        }
+        const queryString = params.toString();
+        if (queryString) {
+          targetUrl.search = queryString;
+        }
+        navigateBrowser(targetUrl.toString());
+      },
+      true
+    );
     updateBrowserNavButtons();
 
     setTimeout(() => {
@@ -6023,7 +6238,6 @@ function setupComplete() {
     }, 100);
   }
   
-  // easteregg!!
   let welcomeMessage = "Setup complete! Welcome to NautilusOS";
   let toastIcon = "fa-check-circle";
   if (username.toLowerCase() === "dinguschan") {
@@ -6143,6 +6357,12 @@ function loadSettingsFromLocalStorage() {
   }
 }
 
+function loadAndApplyTheme() {
+  const saved = localStorage.getItem("nautilusOS_currentTheme");
+  const themeToApply = (saved && themeDefinitions[saved]) ? saved : "dark";
+  applyTheme(themeToApply);
+}
+
 function loadInstalledThemes() {
   const saved = localStorage.getItem("nautilusOS_installedThemes");
   if (saved) {
@@ -6152,12 +6372,17 @@ function loadInstalledThemes() {
       console.error("Failed to load themes:", e);
     }
   }
+  if (!installedThemes.includes("dark")) {
+    installedThemes.unshift("dark");
+  }
 }
 window.addEventListener("DOMContentLoaded", () => {
   loadSnapSettings();
   loadSettingsFromLocalStorage();
   loadInstalledThemes();
+  loadAndApplyTheme();
   loadInstalledApps();
+  loadInstalledGames();
   loadAchievements();
   achievementsData.lastUptimeUpdate = Date.now();
 
@@ -6172,6 +6397,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
   installedApps.forEach((appName) => {
     addDesktopIcon(appName);
+  });
+  installedGames.forEach((gameName) => {
+    addDesktopIcon(gameName);
   });
   applyUserBackgrounds();
   applyProfilePicture();
@@ -6378,8 +6606,8 @@ window.prompt = async (message, defaultValue = "") => {
 };
 let installedApps = [];
 let startupApps = [];
+let installedGames = [];
 
-// Password hashing utility
 function hashPassword(password) {
   const salt = "NautilusOS_Salt_2024"; // Simple salt for demo
   let hash = 0;
@@ -6472,6 +6700,252 @@ function uninstallApp(appName) {
   }
 }
 
+function installGame(gameName) {
+  if (installedGames.includes(gameName)) {
+    showToast("Game already installed", "fa-info-circle");
+    return;
+  }
+
+  installedGames.push(gameName);
+  localStorage.setItem(
+    "nautilusOS_installedGames",
+    JSON.stringify(installedGames)
+  );
+
+  addDesktopIcon(gameName);
+  updateStartMenu();
+
+  showToast(
+    "Game installed! Check your desktop and start menu to launch it.",
+    "fa-check-circle"
+  );
+  refreshAppStore();
+}
+
+function uninstallGame(gameName) {
+  const index = installedGames.indexOf(gameName);
+  if (index > -1) {
+    installedGames.splice(index, 1);
+    localStorage.setItem(
+      "nautilusOS_installedGames",
+      JSON.stringify(installedGames)
+    );
+
+    removeDesktopIcon(gameName);
+    updateStartMenu();
+
+    if (windows[gameName]) {
+      closeWindowByAppName(gameName);
+    }
+
+    showToast("Game uninstalled", "fa-trash");
+    refreshAppStore();
+  }
+}
+
+function loadInstalledGames() {
+  const saved = localStorage.getItem("nautilusOS_installedGames");
+  if (saved) {
+    try {
+      installedGames = JSON.parse(saved);
+    } catch (e) {
+      console.error("Failed to load games:", e);
+    }
+  }
+
+}
+
+let snakeGame = {
+  canvas: null,
+  ctx: null,
+  snake: [{x: 10, y: 10}],
+  food: {x: 15, y: 15},
+  direction: {x: 1, y: 0},
+  nextDirection: {x: 1, y: 0},
+  score: 0,
+  gameRunning: false,
+  gamePaused: false,
+  gameOver: false,
+  gridSize: 20,
+  tileCount: 20,
+  gameSpeed: 100,
+  highScore: localStorage.getItem('snakeHighScore') ? parseInt(localStorage.getItem('snakeHighScore')) : 0
+};
+
+function startSnakeGame() {
+  if (!snakeGame.canvas) {
+    snakeGame.canvas = document.getElementById('snakeCanvas');
+    snakeGame.ctx = snakeGame.canvas.getContext('2d');
+  }
+  
+  if (snakeGame.gameRunning && !snakeGame.gamePaused) {
+    return;
+  }
+  
+  if (!snakeGame.gameRunning) {
+    snakeGame.snake = [{x: 10, y: 10}];
+    snakeGame.food = generateFood();
+    snakeGame.direction = {x: 1, y: 0};
+    snakeGame.nextDirection = {x: 1, y: 0};
+    snakeGame.score = 0;
+    snakeGame.gameOver = false;
+    snakeGame.gameRunning = true;
+    document.getElementById('snakeScore').textContent = '0';
+    document.getElementById('snakeStartBtn').textContent = 'Pause';
+    
+    attachSnakeKeyListeners();
+    gameLoop();
+  } else if (snakeGame.gamePaused) {
+    snakeGame.gamePaused = false;
+    document.getElementById('snakeStartBtn').textContent = 'Pause';
+    gameLoop();
+  }
+}
+
+function attachSnakeKeyListeners() {
+  document.addEventListener('keydown', handleSnakeKeyPress);
+}
+
+function handleSnakeKeyPress(e) {
+  if (!snakeGame.gameRunning) return;
+  
+  if (e.key === ' ') {
+    e.preventDefault();
+    snakeGame.gamePaused = !snakeGame.gamePaused;
+    document.getElementById('snakeStartBtn').textContent = snakeGame.gamePaused ? 'Resume' : 'Pause';
+    if (!snakeGame.gamePaused) gameLoop();
+    return;
+  }
+  
+  if (e.key === 'r' || e.key === 'R') {
+    startSnakeGame();
+    return;
+  }
+  
+  const key = e.key.toLowerCase();
+  if (key === 'arrowup' || key === 'w') {
+    if (snakeGame.direction.y === 0) snakeGame.nextDirection = {x: 0, y: -1};
+    e.preventDefault();
+  } else if (key === 'arrowdown' || key === 's') {
+    if (snakeGame.direction.y === 0) snakeGame.nextDirection = {x: 0, y: 1};
+    e.preventDefault();
+  } else if (key === 'arrowleft' || key === 'a') {
+    if (snakeGame.direction.x === 0) snakeGame.nextDirection = {x: -1, y: 0};
+    e.preventDefault();
+  } else if (key === 'arrowright' || key === 'd') {
+    if (snakeGame.direction.x === 0) snakeGame.nextDirection = {x: 1, y: 0};
+    e.preventDefault();
+  }
+}
+
+function generateFood() {
+  let newFood;
+  let foodOnSnake = true;
+  while (foodOnSnake) {
+    newFood = {
+      x: Math.floor(Math.random() * snakeGame.tileCount),
+      y: Math.floor(Math.random() * snakeGame.tileCount)
+    };
+    foodOnSnake = snakeGame.snake.some(segment => segment.x === newFood.x && segment.y === newFood.y);
+  }
+  return newFood;
+}
+
+function gameLoop() {
+  if (!snakeGame.gameRunning || snakeGame.gamePaused || snakeGame.gameOver) {
+    return;
+  }
+  
+  snakeGame.direction = snakeGame.nextDirection;
+  
+  const head = snakeGame.snake[0];
+  const newHead = {
+    x: (head.x + snakeGame.direction.x + snakeGame.tileCount) % snakeGame.tileCount,
+    y: (head.y + snakeGame.direction.y + snakeGame.tileCount) % snakeGame.tileCount
+  };
+  
+  if (snakeGame.snake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
+    endSnakeGame();
+    return;
+  }
+  
+  snakeGame.snake.unshift(newHead);
+  
+  if (newHead.x === snakeGame.food.x && newHead.y === snakeGame.food.y) {
+    snakeGame.score += 10;
+    document.getElementById('snakeScore').textContent = snakeGame.score;
+    snakeGame.food = generateFood();
+  } else {
+    snakeGame.snake.pop();
+  }
+  
+  drawSnakeGame();
+  setTimeout(gameLoop, snakeGame.gameSpeed);
+}
+
+function drawSnakeGame() {
+  const canvas = snakeGame.canvas;
+  const ctx = snakeGame.ctx;
+  
+  ctx.fillStyle = '#0f0f0f';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.strokeStyle = '#1a3a3a';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= snakeGame.tileCount; i++) {
+    const pos = i * snakeGame.gridSize;
+    ctx.beginPath();
+    ctx.moveTo(pos, 0);
+    ctx.lineTo(pos, canvas.height);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(0, pos);
+    ctx.lineTo(canvas.width, pos);
+    ctx.stroke();
+  }
+  
+  snakeGame.snake.forEach((segment, index) => {
+    if (index === 0) {
+      ctx.fillStyle = '#00ff00';
+    } else {
+      ctx.fillStyle = '#00cc00';
+    }
+    ctx.fillRect(
+      segment.x * snakeGame.gridSize + 1,
+      segment.y * snakeGame.gridSize + 1,
+      snakeGame.gridSize - 2,
+      snakeGame.gridSize - 2
+    );
+  });
+  
+  ctx.fillStyle = '#ff4444';
+  ctx.fillRect(
+    snakeGame.food.x * snakeGame.gridSize + 1,
+    snakeGame.food.y * snakeGame.gridSize + 1,
+    snakeGame.gridSize - 2,
+    snakeGame.gridSize - 2
+  );
+}
+
+function endSnakeGame() {
+  snakeGame.gameRunning = false;
+  snakeGame.gameOver = true;
+  
+  if (snakeGame.score > snakeGame.highScore) {
+    snakeGame.highScore = snakeGame.score;
+    localStorage.setItem('snakeHighScore', snakeGame.highScore);
+    document.getElementById('snakeHighScore').textContent = snakeGame.highScore;
+  }
+  
+  document.getElementById('snakeStartBtn').textContent = 'Start Game';
+  
+  document.removeEventListener('keydown', handleSnakeKeyPress);
+  
+  showToast('Game Over! Score: ' + snakeGame.score + ' | High Score: ' + snakeGame.highScore, 'fa-skull');
+}
+
+
 function addDesktopIcon(appName) {
   const iconsContainer = document.getElementById("desktopIcons");
   if (!iconsContainer) {
@@ -6487,6 +6961,8 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-tasks", label: "Task Manager" };
   } else if (appName === "snap-manager") {
     iconConfig = { icon: "fa-border-all", label: "Snap Manager" };
+  } else if (appName === "snake") {
+    iconConfig = { icon: "fa-gamepad", label: "Snake" };
   } else {
     return;
   }
@@ -6512,7 +6988,6 @@ function removeDesktopIcon(appName) {
 }
 
 function openStartupApps() {
-  // Combine preinstalled apps with installed apps
   const preinstalledApps = [
     { id: "files", name: "Files", icon: "fa-folder" },
     { id: "terminal", name: "Terminal", icon: "fa-terminal" },
@@ -6528,7 +7003,6 @@ function openStartupApps() {
     { id: "achievements", name: "Achievements", icon: "fa-trophy" },
   ];
 
-  // Add installed apps from app store
   const installedAppsData = [];
   installedApps.forEach((appName) => {
     if (appName === "startup-apps") {
@@ -6538,7 +7012,6 @@ function openStartupApps() {
     }
   });
 
-  // Combine all available apps
   const availableApps = [...preinstalledApps, ...installedAppsData];
 
   const itemsHtml = availableApps
@@ -6629,7 +7102,6 @@ function toggleStartupApp(appId) {
   if (windows["startup-apps"]) {
     const content = windows["startup-apps"].querySelector(".window-content");
     if (content) {
-      // Combine preinstalled apps with installed apps
       const preinstalledApps = [
         { id: "files", name: "Files", icon: "fa-folder" },
         { id: "terminal", name: "Terminal", icon: "fa-terminal" },
@@ -6645,7 +7117,6 @@ function toggleStartupApp(appId) {
         { id: "achievements", name: "Achievements", icon: "fa-trophy" },
       ];
 
-      // Add installed apps from app store
       const installedAppsData = [];
       installedApps.forEach((appName) => {
         if (appName === "startup-apps") {
@@ -6655,7 +7126,6 @@ function toggleStartupApp(appId) {
         }
       });
 
-      // Combine all available apps
       const availableApps = [...preinstalledApps, ...installedAppsData];
 
       const itemsHtml = availableApps
@@ -6938,13 +7408,11 @@ function updateStartMenu() {
   const appGrid = document.querySelector(".app-grid");
   if (!appGrid) return;
 
-  // Remove existing installed apps from grid
   const existingInstalledApps = appGrid.querySelectorAll(
     '.app-item[data-installed="true"]'
   );
   existingInstalledApps.forEach((el) => el.remove());
 
-  // Add installed apps at the end
   installedApps.forEach((appName) => {
     let appConfig = {};
     if (appName === "startup-apps") {
@@ -7047,11 +7515,9 @@ function importProfile(event) {
         return;
       }
 
-      // Import profile data
       localStorage.setItem("nautilusOS_username", profile.username);
       localStorage.setItem("nautilusOS_password", profile.password || "");
       
-      // Handle isPasswordless for both old and new profiles
       const isPasswordless = profile.isPasswordless !== undefined 
         ? String(profile.isPasswordless) 
         : (profile.password === "" ? "true" : "false");
@@ -7059,7 +7525,6 @@ function importProfile(event) {
       
       localStorage.setItem("nautilusOS_setupComplete", "true");
       
-      // Update local variables
       settings = profile.settings || settings;
       installedThemes = profile.installedThemes || [];
       installedApps = profile.installedApps || [];
@@ -7082,7 +7547,6 @@ function importProfile(event) {
         JSON.stringify(startupApps)
       );
       
-      // Handle useSameBackground for both old and new profiles
       if (profile.useSameBackground !== null && profile.useSameBackground !== undefined) {
         localStorage.setItem(
           "nautilusOS_useSameBackground",
@@ -7125,7 +7589,6 @@ function importProfile(event) {
         fileSystem = cleanedFileSystem;
       }
       
-      // Check and trigger achievements for imported themes/apps
       checkImportedAchievements();
       
       applyUserBackgrounds();
@@ -8676,11 +9139,90 @@ function checkImportedAchievements() {
   
   const allAppsAchievement = achievementsData.achievements["all-apps"];
   if (allAppsAchievement) {
-    allAppsAchievement.progress = achievementsData.openedApps.size;
-    if (achievementsData.openedApps.size >= allAppsAchievement.target) {
-      unlockAchievement("all-apps");
-    }
+  allAppsAchievement.progress = achievementsData.openedApps.size;
+  if (achievementsData.openedApps.size >= allAppsAchievement.target) {
+  unlockAchievement("all-apps");
+  }
   }
   
   saveAchievements();
-}
+  }
+  
+  function openChangeUsernameDialog() {
+  showModal(
+  "Change Username",
+  "fa-user-edit",
+  "Enter your new username:",
+  "changeUsername",
+  "Change",
+  "Cancel"
+  );
+  
+  const inputContainer = document.getElementById("modalInputContainer");
+  inputContainer.innerHTML = `
+  <input 
+  type="text" 
+  id="newUsernameInput" 
+  class="login-input" 
+  placeholder="New username" 
+  value="${currentUsername}"
+  style="margin-bottom: 1rem; width: 100%;"
+  onkeypress="if(event.key === 'Enter') changeUsername()"
+  >
+  `;
+  
+  setTimeout(() => {
+  const input = document.getElementById("newUsernameInput");
+  if (input) {
+  input.focus();
+  input.select();
+  }
+  }, 100);
+  }
+  
+  function changeUsername() {
+  const newUsernameInput = document.getElementById("newUsernameInput");
+  if (!newUsernameInput) return;
+  
+  const newUsername = newUsernameInput.value.trim();
+  
+  if (!newUsername) {
+  showToast("Username cannot be empty", "fa-exclamation-circle");
+  return;
+  }
+  
+  if (newUsername.length < 3) {
+  showToast("Username must be at least 3 characters long", "fa-exclamation-circle");
+  return;
+  }
+  
+  if (newUsername.length > 20) {
+  showToast("Username must be 20 characters or less", "fa-exclamation-circle");
+  return;
+  }
+  
+  if (!/^[a-zA-Z0-9_-]+$/.test(newUsername)) {
+  showToast("Username can only contain letters, numbers, underscores, and hyphens", "fa-exclamation-circle");
+  return;
+  }
+  
+  if (newUsername === currentUsername) {
+  showToast("New username is the same as current username", "fa-info-circle");
+  closeModal();
+  return;
+  }
+  
+  currentUsername = newUsername;
+  localStorage.setItem("nautilusOS_username", newUsername);
+  document.getElementById("displayUsername").textContent = newUsername;
+  
+  showToast(`Username changed to "${newUsername}"`, "fa-check-circle");
+  closeModal();
+  
+  if (windows["settings"]) {
+  closeWindow(
+  windows["settings"].querySelector(".window-btn.close"),
+  "settings"
+  );
+  }
+  }

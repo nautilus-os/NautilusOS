@@ -31,15 +31,10 @@ Basically... a whole little OS in your browser :D
 
 ## 🚧 todos
 
-- [x] Make the app store actually work
-- [x] Add a way to change the theme/color scheme
+
 - [ ] App store improvements (right now it can only install built-in apps)
-- [ ] Fix browser; it doesn’t really work as a proxy right now because it’s broken
-- [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, etc.
+- [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
-- [x] Make wallpaper customizable
-- [x] Make profile picture customizable
-- [ ] Actually make themes work
 - [ ] Make tabs and stuff work
 
 ---
