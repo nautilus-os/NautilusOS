@@ -654,9 +654,9 @@ button, input {
 }
 
 .login-info-card {
-    background: var(--glass-bg);
+    background: var(--bg-primary);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--overlay-dark);
     border-radius: 20px;
     padding: 2.3rem;
@@ -700,8 +700,8 @@ button, input {
 }
 
 .login-container {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--overlay-dark);
     backdrop-filter: blur(40px) saturate(180%);
     border-radius: 20px;
@@ -2316,10 +2316,13 @@ select:focus {
     padding: 2rem;
     max-width: 800px;
     margin: 0 auto;
+    text-align: center;
 }
 
 .whats-new-header {
-    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     margin-bottom: 3rem;
 }
 
@@ -2329,11 +2332,13 @@ select:focus {
     margin-bottom: 0.5rem;
     font-family: fontb;
     line-height: 1.3;
+    text-align: center;
 }
 
 .whats-new-header p {
     color: var(--text-secondary);
     font-size: 1.1rem;
+    text-align: center;
 }
 
 .carousel-container {
@@ -2345,6 +2350,12 @@ select:focus {
     min-height: 340px;
     overflow: hidden;
     border: 1px solid var(--border);
+}
+
+.carousel-container h2 {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .carousel-slide {
@@ -6086,17 +6097,9 @@ select:focus {
     background: var(--bg-secondary);
 }
 
-@import "https://unpkg.com/open-props" layer(design.system);
-@import "https://unpkg.com/open-props/normalize.min.css" layer(demo.support);
-@import "https://unpkg.com/open-props/buttons.min.css" layer(demo.support);
-
-/*  
-  TODO:
-    - large excellent mobile design
-    - excellent tablet design
-    - fix arrow not rotating when open (regression)
-    - add directional aware entry/exit transitions
-*/
+@import "https://unpkg.com/open-props";
+@import "https://unpkg.com/open-props/normalize.min.css";
+@import "https://unpkg.com/open-props/buttons.min.css";
 
 
 select {
@@ -7092,9 +7095,9 @@ button, input {
 }
 
 .login-info-card {
-    background: var(--glass-bg);
+    background: var(--bg-primary);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--overlay-dark);
     border-radius: 20px;
     padding: 2.3rem;
@@ -7138,8 +7141,8 @@ button, input {
 }
 
 .login-container {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
     box-shadow: 0 8px 32px var(--overlay-dark);
     backdrop-filter: blur(40px) saturate(180%);
     border-radius: 20px;
@@ -8754,10 +8757,13 @@ select:focus {
     padding: 2rem;
     max-width: 800px;
     margin: 0 auto;
+    text-align: center;
 }
 
 .whats-new-header {
-    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     margin-bottom: 3rem;
 }
 
@@ -8767,11 +8773,13 @@ select:focus {
     margin-bottom: 0.5rem;
     font-family: fontb;
     line-height: 1.3;
+    text-align: center;
 }
 
 .whats-new-header p {
     color: var(--text-secondary);
     font-size: 1.1rem;
+    text-align: center;
 }
 
 .carousel-container {
@@ -8783,6 +8791,12 @@ select:focus {
     min-height: 340px;
     overflow: hidden;
     border: 1px solid var(--border);
+}
+
+.carousel-container h2 {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .carousel-slide {
@@ -12524,17 +12538,9 @@ select:focus {
     background: var(--bg-secondary);
 }
 
-@import "https://unpkg.com/open-props" layer(design.system);
-@import "https://unpkg.com/open-props/normalize.min.css" layer(demo.support);
-@import "https://unpkg.com/open-props/buttons.min.css" layer(demo.support);
-
-/*  
-  TODO:
-    - large excellent mobile design
-    - excellent tablet design
-    - fix arrow not rotating when open (regression)
-    - add directional aware entry/exit transitions
-*/
+@import "https://unpkg.com/open-props";
+@import "https://unpkg.com/open-props/normalize.min.css";
+@import "https://unpkg.com/open-props/buttons.min.css";
 
 
 select {
@@ -12883,8 +12889,7 @@ select {
         </div>
     </div>
     <div id="setup"
-        style="position: fixed; inset: 0; background: linear-gradient(135deg, #0a0e1a 0%, #151923 100%); display: none; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.5s ease; padding: 2rem; font-family: font, "
-        font" !important">
+        style="position: fixed; inset: 0; background: linear-gradient(135deg, #0a0e1a 0%, #151923 100%); display: none; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.5s ease; padding: 2rem; font-family: font !important">
         <div
             style="position: absolute; width: 170px; height: 170px; border-radius: 50%; background: rgba(125, 211, 192, 0.04); top: 5%; left: 2%; animation: float 7s ease-in-out infinite;">
         </div>
@@ -13424,13 +13429,21 @@ if (!loginStartTime) {
 }
 
 let appliedThemeName = null;
+let hasShownFileProtocolToast = false;
 
-function checkFileProtocol() {
-   if (window.location.protocol === "file:") {
-     showToast("This feature doesn't work on file:// protocol. Please run NautilusOS from a web server.", "fa-exclamation-triangle");
-     return false;
-   }
-   return true;
+function checkFileProtocol(title = null) {
+    if (window.location.protocol === "file:") {
+      const shouldShowToast = title && (
+        title.toLowerCase().includes("browser") ||
+        title === "Visual Studio Code"
+      );
+      if (shouldShowToast && !hasShownFileProtocolToast) {
+        showToast("This feature doesn't work on file:// protocol. Please run NautilusOS from a web server.", "fa-exclamation-triangle");
+        hasShownFileProtocolToast = true;
+      }
+      return false;
+    }
+    return true;
 }
 
 function showToast(message, icon = "fa-info-circle") {
@@ -15727,7 +15740,7 @@ function openApp(appName, editorContent = "", filename = "") {
       title: "Nautilus Browser",
       icon: "fas fa-globe",
       content: (() => {
-        if (!checkFileProtocol()) {
+        if (!checkFileProtocol("Nautilus Browser")) {
           return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
               <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
@@ -16321,7 +16334,7 @@ alt="favicon">
                     </div>
                     <div class="settings-card-body">
                         <div class="settings-item">
-                            <p class="settings-description">The website <b>all browsers</b> will use to search. The default search engine is Brave.</p>
+                            <p class="settings-description">The website all browsers will use to search. The default search engine is Brave.</p>
                             <select style="margin-left: 10.1px; border-radius: 12.5px;">
         <button>
             <div>
@@ -16693,10 +16706,12 @@ alt="favicon">
       icon: "fas fa-star",
       content: `
               <div class="whats-new-content">
+                  <center>
                   <div class="whats-new-header">
-      <h1>Welcome to NautilusOS v1.0! <br>What's new?</h1>
+                      <h1 style="text-align: center !important">Welcome to NautilusOS v1.0! <br>What's new?</h1>
                       <p>Discover the latest features and improvements</p>
                   </div>
+                  </center>
 
                   <div class="carousel-container">
                       <div class="carousel-slide active" data-slide="0">
@@ -17120,7 +17135,7 @@ alt="favicon">
       title: "Ultraviolet",
       icon: "fas fa-globe",
       content: (() => {
-        if (!checkFileProtocol()) {
+        if (!checkFileProtocol("Ultraviolet")) {
           return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
               <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
@@ -17143,7 +17158,7 @@ alt="favicon">
       title: "Visual Studio Code",
       icon: "fas fa-code",
       content: (() => {
-        if (!checkFileProtocol()) {
+        if (!checkFileProtocol("Visual Studio Code")) {
           return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
               <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
@@ -17167,7 +17182,7 @@ alt="favicon">
       title: "Helios Browser",
       icon: "fas fa-globe",
       content: (() => {
-        if (!checkFileProtocol()) {
+        if (!checkFileProtocol("Helios Browser")) {
           return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
               <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
@@ -18665,7 +18680,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
       <i class="fas fa-globe"></i>
    </div>
    <div class="appstore-item-name">Ultraviolet by $xor</div>
-   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
+   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet. With tabbing, browser controls, history, extensive site support, and more, you can feel confident while surfing the web.</div>
    <button class="appstore-item-btn ${
      uvInstalled ? "installed" : ""
    }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
@@ -19121,7 +19136,8 @@ function navigateBrowser(input) {
   let url = input.trim();
 
   if (!url.includes(".") || url.includes(" ")) {
-    url = "https://www.google.com/search?q=" + encodeURIComponent(url);
+    const searchEngine = localStorage.getItem('nOS_searchEngine') || 'https://search.brave.com/search?q=';
+    url = searchEngine + encodeURIComponent(url);
   } else {
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
       url = "https://" + url;
@@ -22762,6 +22778,12 @@ function triggerPanicMode() {
   setFavicon(domain);
 
   window.location.href = url.startsWith("http") ? url : "https://" + url;
+}
+
+function changeSearchEngine(value) {
+  console.log('[DEBUG] changeSearchEngine called with value:', value);
+  localStorage.setItem('nOS_searchEngine', value);
+  showToast('Search engine updated!', 'fa-check-circle');
 }
 
 function applyPreset(presetName) {
