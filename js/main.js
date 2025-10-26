@@ -34,13 +34,21 @@ if (!loginStartTime) {
 }
 
 let appliedThemeName = null;
+let hasShownFileProtocolToast = false;
 
-function checkFileProtocol() {
-   if (window.location.protocol === "file:") {
-     showToast("This feature doesn't work on file:// protocol. Please run NautilusOS from a web server.", "fa-exclamation-triangle");
-     return false;
-   }
-   return true;
+function checkFileProtocol(title = null) {
+    if (window.location.protocol === "file:") {
+      const shouldShowToast = title && (
+        title.toLowerCase().includes("browser") ||
+        title === "Visual Studio Code"
+      );
+      if (shouldShowToast && !hasShownFileProtocolToast) {
+        showToast("This feature doesn't work on file:// protocol. Please run NautilusOS from a web server.", "fa-exclamation-triangle");
+        hasShownFileProtocolToast = true;
+      }
+      return false;
+    }
+    return true;
 }
 
 function showToast(message, icon = "fa-info-circle") {
@@ -2373,7 +2381,7 @@ function openApp(appName, editorContent = "", filename = "") {
       title: "Nautilus Browser",
       icon: "fas fa-globe",
       content: (() => {
-        if (!checkFileProtocol()) {
+        if (!checkFileProtocol("Nautilus Browser")) {
           return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
               <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
@@ -3768,7 +3776,7 @@ alt="favicon">
       title: "Ultraviolet",
       icon: "fas fa-globe",
       content: (() => {
-        if (!checkFileProtocol()) {
+        if (!checkFileProtocol("Ultraviolet")) {
           return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
               <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
@@ -3791,7 +3799,7 @@ alt="favicon">
       title: "Visual Studio Code",
       icon: "fas fa-code",
       content: (() => {
-        if (!checkFileProtocol()) {
+        if (!checkFileProtocol("Visual Studio Code")) {
           return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
               <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
@@ -3815,7 +3823,7 @@ alt="favicon">
       title: "Helios Browser",
       icon: "fas fa-globe",
       content: (() => {
-        if (!checkFileProtocol()) {
+        if (!checkFileProtocol("Helios Browser")) {
           return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
               <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
