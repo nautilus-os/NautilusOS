@@ -37,7 +37,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Make tabs and stuff work
 - [x] Search bar for start menu
-- [ ] Search engine customization should apply to all browsers for enhanced user experince
+- [x] Search engine customization should apply to all browsers for enhanced user experince
 - [x] All themes should have black gradient background color
 - [x] Toasts should apper AFTER bootloader
 - [x] Visual studio code editor
