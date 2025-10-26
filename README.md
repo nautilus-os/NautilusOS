@@ -43,7 +43,7 @@ Basically... a whole little OS in your browser :D
 - [x] Visual studio code editor
 - [ ] Window animation settings
 
-*TODOs will stay visible for one day after that comleted ones get removed*
+*Completed tasks remain visible for ~24 hours before being manully cleared.*
 
 ---
 
