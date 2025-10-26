@@ -38,6 +38,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Make tabs and stuff work
 - [ ] Search bar for start menu
 - [ ] Add helios as a seprate app
+- [ ] Search engine customization should apply to all browsers for enhanced user experince
 
 ---
 
