@@ -2837,6 +2837,77 @@ select:focus {
     }
 }
 
+@keyframes tileAppear {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes tileMerge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes slideLeft {
+    from { transform: translateX(110px); }
+    to { transform: translateX(0); }
+}
+
+@keyframes slideRight {
+    from { transform: translateX(-110px); }
+    to { transform: translateX(0); }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(110px); }
+    to { transform: translateY(0); }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-110px); }
+    to { transform: translateY(0); }
+}
+
+@keyframes scoreIncrease {
+    0% { transform: scale(1); color: var(--accent); }
+    50% { transform: scale(1.1); color: var(--success-green); }
+    100% { transform: scale(1); color: var(--accent); }
+}
+
+.tile-new {
+    animation: tileAppear 0.2s ease;
+}
+
+.tile-merge {
+    animation: tileMerge 0.3s ease;
+}
+
+.score-increase {
+    animation: scoreIncrease 0.3s ease;
+}
+
+.tile-slide-left {
+    animation: slideLeft 0.2s ease;
+}
+
+.tile-slide-right {
+    animation: slideRight 0.2s ease;
+}
+
+.tile-slide-up {
+    animation: slideUp 0.2s ease;
+}
+
+.tile-slide-down {
+    animation: slideDown 0.2s ease;
+}
+
 .carousel-content {
     text-align: center;
 }

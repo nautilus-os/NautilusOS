@@ -9731,7 +9731,11 @@ let game2048 = {
   best: localStorage.getItem('2048Best') ? parseInt(localStorage.getItem('2048Best')) : 0,
   size: 4,
   gameStarted: false,
-  tiles: []
+  tiles: [],
+  mergedTiles: new Set(),
+  newTiles: new Set(),
+  previousBoard: null,
+  slideDirection: null
 };
 
 function start2048Game() {
@@ -9739,14 +9743,18 @@ function start2048Game() {
   game2048.score = 0;
   game2048.gameStarted = true;
   game2048.tiles = [];
-  
+  game2048.mergedTiles = new Set();
+  game2048.newTiles = new Set();
+  game2048.previousBoard = null;
+  game2048.slideDirection = null;
+
   document.getElementById('game2048Score').textContent = '0';
   document.getElementById('game2048Best').textContent = game2048.best;
-  
+
   addRandomTile2048();
   addRandomTile2048();
   render2048Board();
-  
+
   document.removeEventListener('keydown', handle2048KeyPress);
   document.addEventListener('keydown', handle2048KeyPress);
 }
@@ -9760,10 +9768,11 @@ function addRandomTile2048() {
       }
     }
   }
-  
+
   if (emptyCells.length > 0) {
     const cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
     game2048.board[cell.row][cell.col] = Math.random() < 0.9 ? 2 : 4;
+    game2048.newTiles.add(`${cell.row}-${cell.col}`);
   }
 }
 
@@ -9794,13 +9803,13 @@ function getTileTextColor(value) {
 function render2048Board() {
   const boardEl = document.getElementById('game2048Board');
   if (!boardEl) return;
-  
+
   boardEl.innerHTML = '';
   boardEl.style.display = 'grid';
   boardEl.style.gridTemplateColumns = `repeat(${game2048.size}, 100px)`;
   boardEl.style.gap = '10px';
   boardEl.style.position = 'relative';
-  
+
   for (let i = 0; i < game2048.size; i++) {
     for (let j = 0; j < game2048.size; j++) {
       const value = game2048.board[i][j];
@@ -9819,24 +9828,70 @@ function render2048Board() {
       tile.style.transition = 'all 0.15s ease';
       tile.style.border = value > 0 ? '2px solid var(--border)' : 'none';
       tile.style.boxShadow = value > 0 ? '0 2px 8px rgba(0, 0, 0, 0.3)' : 'none';
-      
+
+      // Add animation classes
       if (value > 0) {
-        tile.style.animation = 'tileAppear 0.2s ease';
+        if (game2048.newTiles.has(`${i}-${j}`)) {
+          tile.classList.add('tile-new');
+        } else if (game2048.mergedTiles.has(`${i}-${j}`)) {
+          tile.classList.add('tile-merge');
+        } else if (game2048.slideDirection && game2048.previousBoard) {
+          // Check if this tile moved from a previous position
+          const slideClass = getSlideAnimationClass(i, j, game2048.slideDirection);
+          if (slideClass) {
+            tile.classList.add(slideClass);
+          }
+        }
       }
-      
+
       tile.textContent = value || '';
       boardEl.appendChild(tile);
     }
   }
+
+  // Clear animation sets after rendering
+  setTimeout(() => {
+    game2048.newTiles.clear();
+    game2048.mergedTiles.clear();
+    game2048.previousBoard = null;
+    game2048.slideDirection = null;
+  }, 200);
+}
+
+function getSlideAnimationClass(row, col, direction) {
+  if (!game2048.previousBoard) return null;
+
+  // Find where this tile was in the previous board
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      if (game2048.previousBoard[i][j] === game2048.board[row][col] && game2048.previousBoard[i][j] !== 0) {
+        // Check if it's the same tile that moved
+        if (i !== row || j !== col) {
+          switch (direction) {
+            case 'left': return j < col ? 'tile-slide-left' : null;
+            case 'right': return j > col ? 'tile-slide-right' : null;
+            case 'up': return i < row ? 'tile-slide-up' : null;
+            case 'down': return i > row ? 'tile-slide-down' : null;
+          }
+        }
+        break;
+      }
+    }
+  }
+  return null;
 }
 
 function handle2048KeyPress(e) {
   if (!game2048.gameStarted) return;
-  
+
   const key = e.key.toLowerCase();
   let moved = false;
   let direction = '';
-  
+  let scoreBefore = game2048.score;
+
+  // Store previous board state for slide animations
+  game2048.previousBoard = game2048.board.map(row => [...row]);
+
   if (key === 'arrowup' || key === 'w') {
     e.preventDefault();
     moved = move2048Up();
@@ -9854,25 +9909,39 @@ function handle2048KeyPress(e) {
     moved = move2048Right();
     direction = 'right';
   }
-  
+
   if (moved) {
+    game2048.slideDirection = direction;
     addRandomTile2048();
     setTimeout(() => {
       render2048Board();
     }, 100);
-    
+
+    // Animate score if it increased
+    if (game2048.score > scoreBefore) {
+      const scoreEl = document.getElementById('game2048Score');
+      scoreEl.classList.add('score-increase');
+      setTimeout(() => {
+        scoreEl.classList.remove('score-increase');
+      }, 300);
+    }
+
     if (game2048.score > game2048.best) {
       game2048.best = game2048.score;
       localStorage.setItem('2048Best', game2048.best);
       document.getElementById('game2048Best').textContent = game2048.best;
     }
-    
+
     if (check2048GameOver()) {
       game2048.gameStarted = false;
       setTimeout(() => {
         showToast('Game Over! Score: ' + game2048.score, 'fa-gamepad');
       }, 300);
     }
+  } else {
+    // Reset if no move was made
+    game2048.previousBoard = null;
+    game2048.slideDirection = null;
   }
 }
 
@@ -9886,6 +9955,8 @@ function move2048Left() {
         game2048.score += row[j];
         document.getElementById('game2048Score').textContent = game2048.score;
         row.splice(j + 1, 1);
+        // Track merged tile position
+        game2048.mergedTiles.add(`${i}-${j}`);
       }
     }
     while (row.length < game2048.size) row.push(0);
@@ -9906,6 +9977,8 @@ function move2048Right() {
         document.getElementById('game2048Score').textContent = game2048.score;
         row.splice(j - 1, 1);
         j--;
+        // Track merged tile position
+        game2048.mergedTiles.add(`${i}-${game2048.size - row.length + j}`);
       }
     }
     while (row.length < game2048.size) row.unshift(0);
@@ -9928,6 +10001,8 @@ function move2048Up() {
         game2048.score += col[i];
         document.getElementById('game2048Score').textContent = game2048.score;
         col.splice(i + 1, 1);
+        // Track merged tile position
+        game2048.mergedTiles.add(`${i}-${j}`);
       }
     }
     while (col.length < game2048.size) col.push(0);
@@ -9953,6 +10028,8 @@ function move2048Down() {
         document.getElementById('game2048Score').textContent = game2048.score;
         col.splice(i - 1, 1);
         i--;
+        // Track merged tile position
+        game2048.mergedTiles.add(`${game2048.size - col.length + i}-${j}`);
       }
     }
     while (col.length < game2048.size) col.unshift(0);
