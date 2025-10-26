@@ -5277,7 +5277,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
       <i class="fas fa-globe"></i>
    </div>
    <div class="appstore-item-name">Ultraviolet by $xor</div>
-   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
+   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet. With tabbing, browser controls, history, extensive site support, and more, you can feel confident while surfing the web.</div>
    <button class="appstore-item-btn ${
      uvInstalled ? "installed" : ""
    }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">

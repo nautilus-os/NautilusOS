@@ -385,7 +385,7 @@
 
         function closeTab(tId) {
             if (bTabs.length === 1) {
-                alert("Cannot close last tab!")
+                showToast("Cannot close last tab!", "fas fa-circle-xmark")
                 return
             }
 
