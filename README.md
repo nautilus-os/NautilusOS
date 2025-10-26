@@ -39,6 +39,10 @@ Basically... a whole little OS in your browser :D
 - [ ] Search bar for start menu
 - [ ] Add helios as a seprate app
 - [ ] Search engine customization should apply to all browsers for enhanced user experince
+- [ ] All themes should have black background color
+- [ ] Toasts should apper AFTER bootloader
+- [ ] Visual studio like code editor
+- [ ] Window animation settings
 
 ---
 
