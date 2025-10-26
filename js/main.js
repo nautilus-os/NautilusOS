@@ -2931,15 +2931,49 @@ alt="favicon">
                     </div>
                     <div class="settings-card-body">
                         <div class="settings-item">
-                            <p class="settings-description">The website <b>all browsers</b> will use to search. The default search engine is Brave.</p>
-                            <select style="margin-left: 10.1px; border-radius: 12.5px;" onchange="changeSearchEngine(this.value)">
-            <option value="https://search.brave.com/search?q=" ${localStorage.getItem('nOS_searchEngine') === 'https://search.brave.com/search?q=' ? 'selected' : ''}>Brave Search</option>
-            <option value="https://duckduckgo.com/search?q=" ${localStorage.getItem('nOS_searchEngine') === 'https://duckduckgo.com/search?q=' ? 'selected' : ''}>Duck Duck Go</option>
-            <option value="https://www.google.com/search?q=" ${localStorage.getItem('nOS_searchEngine') === 'https://google.com/search?q=' ? 'selected' : ''}>Google Search</option>
-            <option value="https://www.bing.com/search?q=" ${localStorage.getItem('nOS_searchEngine') === 'https://bing.com/search?q=' ? 'selected' : ''}>Bing</option>
-            <option value="https://www.startpage.com/search?q=" ${localStorage.getItem('nOS_searchEngine') === 'https://startpage.com/search?q=' ? 'selected' : ''}>Startpage</option>
-            <option value="https://www.qwant.com/search?q=" ${localStorage.getItem('nOS_searchEngine') === 'https://qwant.com/search?q=' ? 'selected' : ''}>Qwant</option>
-        </select>
+                            <p class="settings-description">The website all browsers will use to search. The default search engine is Brave.</p>
+                            <select style="margin-left: 10.1px; border-radius: 12.5px;">
+        <button>
+            <div>
+                <selectedcontent style="scale: 1.1;"> </selectedcontent>
+                <svg style="scale: 1.8;" width="128" height="128" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="m7 10l5 5l5-5z" />
+                </svg>
+            </div>
+        </button>
+        <div>
+            <option value="https://search.brave.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://search.brave.com/search?q='); showToast('Search engine set to Brave', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Brave Search</span>
+                </div>
+            </option>
+            <option value="https://duckduckgo.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://duckduckgo.com/search?q='); showToast('Search engine set to Duck Duck Go', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Duck Duck Go</span>
+                </div>
+            </option>
+            <option value="https://www.google.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://google.com/search?q='); showToast('Search engine set to Google', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Google Search</span>
+                </div>
+            </option>
+            <option value="https://www.bing.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://bing.com/search?q='); showToast('Search engine set to Bing', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Bing</span>
+                </div>
+            </option>
+            <option value="https://www.startpage.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://startpage.com/search?q='); showToast('Search engine set to Startpage', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Startpage</span>
+                </div>
+            </option>
+            <option value="https://www.qwant.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://qwant.com/search?q='); showToast('Search engine set to Qwant', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Qwant</span>
+                </div>
+            </option>
+        </div>
+    </select>
                         </div>
                     </div>
                 </div>
