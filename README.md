@@ -65,7 +65,7 @@ Built with just HTML, CSS, and JS (no frameworks, no CDNs except icons/fonts)
 
 ## 🧠 try it
 
-Open the HTML file in your browser. That’s it. 
+Open the NautilusOS-OneFile/index.html file in your browser. That’s it. 
 
 ---
 
