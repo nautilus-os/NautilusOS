@@ -25,27 +25,27 @@
 }
 
 :root {
-    --accent: #7dd3c0;
-    --accent-hover: #6bc4b0;
-    --accent-dark: #469483;
-    --bg-primary: #0a0e1a;
-    --bg-secondary: #151923;
-    --text-primary: #e8eaed;
-    --text-secondary: #9aa0a6;
-    --border: #7dd3c0;
-    --error-red: #ef4444;
-    --error-red-hover: #dc2626;
+    --accent: #6bb3a0;
+    --accent-hover: #59a490;
+    --accent-dark: #3c7a69;
+    --bg-primary: #404040;
+    --bg-secondary: #404040;
+    --text-primary: #f0f2f5;
+    --text-secondary: #a0a6ac;
+    --border: #6bb3a0;
+    --error-red: #d73c3c;
+    --error-red-hover: #b91c1c;
     --error-red-bg: rgba(239, 68, 68, 0.15);
     --error-red-border: rgba(239, 68, 68, 0.3);
-    --success-green: #4ade80;
+    --success-green: #22c55e;
     --overlay-dark: rgba(0, 0, 0, 0.8);
     --overlay-darker: rgba(0, 0, 0, 0.9);
-    --glass-bg: rgba(21, 25, 35, 0.7);
+    --glass-bg: rgba(64, 64, 64, 0.8);
     --glass-border: rgba(255, 255, 255, 0.08);
     --pure-black: #000;
     --pure-white: #fff;
-    --gray-dark: #888;
-    --gray-light: #222;
+    --gray-dark: #666;
+    --gray-light: #404040;
     --transparent-white-1: rgba(255, 255, 255, 0.1);
     --transparent-white-2: rgba(255, 255, 255, 0.2);
     --transparent-white-5: rgba(255, 255, 255, 0.05);
@@ -66,7 +66,7 @@ button, input {
 #bootloader {
     position: fixed;
     inset: 0;
-    background: #000;
+    background: var(--bg-primary);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -85,21 +85,21 @@ button, input {
 
 .boot-logo {
     font-size: 3.1rem;
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .boot-title {
     font-size: 1.6rem;
     font-weight: 400;
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
     letter-spacing: 4px;
 }
 
 .boot-version {
     font-size: 1rem;
-    color: #888;
+    color: var(--gray-dark);
     margin-bottom: 3rem;
 }
 
@@ -112,12 +112,12 @@ button, input {
 
 .boot-option {
     background: transparent;
-    border: 1.5px solid #555;
+    border: 1.5px solid var(--gray-dark);
     border-radius: 5px;
     padding: 1.2rem 1.5rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: #fff;
+    color: var(--text-primary);
     text-align: left;
     display: flex;
     align-items: center;
@@ -132,15 +132,15 @@ button, input {
 }
 
 .boot-option.selected {
-    background: #fff;
-    color: #000;
-    border-color: #fff;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-color: var(--text-primary);
 }
 
 .boot-hint {
     position: absolute;
     bottom: 2rem;
-    color: #888;
+    color: var(--gray-dark);
     font-size: 1rem;
     text-align: center;
 }
@@ -170,7 +170,7 @@ button, input {
 
 .loading-bar {
     height: 100%;
-    background: var(--pure-white);
+    background: var(--accent);
     width: 0%;
     transition: width 0.3s ease;
     border-radius: 1px;
@@ -178,7 +178,7 @@ button, input {
 
 .boot-messages {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--gray-dark);
     line-height: 1.6;
 }
 
@@ -196,7 +196,7 @@ button, input {
 #login {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--accent) 50%, var(--bg-primary) 100%);
     display: none;
     align-items: center;
     justify-content: center;
@@ -241,7 +241,7 @@ button, input {
 .illustration-startup-window {
     width: 260px;
     height: 160px;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(15, 19, 21, 0.95);
     border: 2px solid var(--accent);
     border-radius: 12px;
     padding: 1rem;
@@ -267,7 +267,7 @@ button, input {
     align-items: center;
     gap: 0.5rem;
     padding: 0.4rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(15, 19, 21, 0.6);
     border-radius: 6px;
 }
 
@@ -282,7 +282,7 @@ button, input {
 .illustration-startup-icon {
     width: 16px;
     height: 16px;
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(107, 179, 160, 0.3);
     border-radius: 4px;
     flex-shrink: 0;
 }
@@ -290,14 +290,14 @@ button, input {
 .illustration-startup-label {
     flex: 1;
     height: 6px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(107, 179, 160, 0.2);
     border-radius: 2px;
 }
 
 .illustration-taskmanager {
     width: 260px;
     height: 160px;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(15, 19, 21, 0.95);
     border: 2px solid var(--accent);
     border-radius: 12px;
     padding: 1rem;
@@ -788,13 +788,13 @@ select:focus {
 
 .login-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(125, 211, 192, 0.3);
+    box-shadow: 0 4px 12px rgba(107, 179, 160, 0.3);
 }
 
 #desktop {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(107, 179, 160, 0.1) 50%, var(--bg-primary) 100%);
     display: none;
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -809,7 +809,7 @@ select:focus {
 .wallpaper {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(107, 179, 160, 0.1) 50%, var(--bg-primary) 100%);
     z-index: 0;
     display: flex;
     flex-direction: column;
@@ -823,7 +823,7 @@ select:focus {
 
 .wallpaper-icon {
     font-size: 6.3rem;
-    color: rgba(125, 211, 192, 0.06);
+    color: rgba(107, 179, 160, 0.06);
     margin-bottom: -0.2rem;
     pointer-events: none;
 }
@@ -831,7 +831,7 @@ select:focus {
 .wallpaper-text {
     font-size: 6rem;
     font-family: fontb;
-    background: linear-gradient(135deg, rgba(125, 211, 192, 0.04) 0%, rgba(107, 196, 176, 0.06) 100%);
+    background: linear-gradient(135deg, rgba(64, 64, 64, 0.04) 0%, rgba(107, 179, 160, 0.06) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -847,13 +847,13 @@ select:focus {
     right: 0;
     font-size: 2rem;
     font-weight: 400;
-    color: rgba(125, 211, 192, 0.15);
+    color: rgba(107, 179, 160, 0.15);
 }
 
 .wallpaper-byline {
     font-size: 2rem;
     font-family: fontb;
-    background: linear-gradient(135deg, rgba(125, 211, 192, 0.04) 0%, rgba(107, 196, 176, 0.06) 100%);
+    background: linear-gradient(135deg, rgba(64, 64, 64, 0.04) 0%, rgba(107, 179, 160, 0.06) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -894,7 +894,7 @@ select:focus {
 }
 
 .desktop-icon:hover {
-    background: rgba(125, 211, 192, 0.1);
+    background: rgba(107, 179, 160, 0.1);
 }
 
 .desktop-icon.dragging {
@@ -962,7 +962,7 @@ select:focus {
 }
 
 .taskbar-icon:hover {
-    background: rgba(125, 211, 192, 0.15);
+    background: rgba(107, 179, 160, 0.15);
 }
 
 .taskbar-icon::after {
@@ -1015,17 +1015,17 @@ select:focus {
     bottom: 98px;
     left: 50%;
     transform: translateX(-50%) scale(0.95);
-    width: 600px;
-    height: 480px;
-    background: rgba(21, 25, 35, 0.85);
-    backdrop-filter: blur(40px) saturate(180%);
+    width: 650px;
+    height: 520px;
+    background: rgba(21, 25, 35, 0.9);
+    backdrop-filter: blur(50px) saturate(180%);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
     opacity: 0;
     pointer-events: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     z-index: 999;
     display: flex;
     flex-direction: column;
@@ -1035,13 +1035,27 @@ select:focus {
     opacity: 1;
     transform: translateX(-50%) scale(1);
     pointer-events: all;
+    animation: menuSlideIn 0.4s ease-out;
+}
+
+@keyframes menuSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) translateY(0);
+    }
 }
 
 .start-header {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .start-avatar {
@@ -1093,6 +1107,51 @@ select:focus {
     align-content: start;
 }
 
+.start-search {
+    padding: 0 1.5rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+.start-search-input {
+    width: 100%;
+    padding: 1rem 3.5rem 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(30, 35, 48, 0.9), rgba(21, 25, 35, 0.8));
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: font, "font" !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.start-search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(30, 35, 48, 0.95), rgba(21, 25, 35, 0.9));
+    box-shadow: 0 0 0 4px rgba(125, 211, 192, 0.2), 0 8px 24px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.start-search-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.start-search-icon {
+    position: absolute;
+    right: 1.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 1.2rem;
+    pointer-events: none;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
 .app-grid::-webkit-scrollbar {
     width: 8px;
 }
@@ -1127,8 +1186,8 @@ select:focus {
 }
 
 .app-item:hover {
-    background: rgba(125, 211, 192, 0.1);
-    border-color: rgba(125, 211, 192, 0.3);
+    background: rgba(107, 179, 160, 0.1);
+    border-color: rgba(107, 179, 160, 0.3);
     transform: translateY(-2px);
 }
 
@@ -3529,7 +3588,7 @@ select:focus {
     justify-content: center;
     height: 100%;
     padding: 2rem;
-    background: linear-gradient(135deg, #0a0e1a 0%, #151923 100%);
+    background: linear-gradient(135deg, #404040 0%, rgba(107, 179, 160, 0.1) 50%, #404040 100%);
 }
 
 .browser-landing-logo {
