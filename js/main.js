@@ -5124,6 +5124,7 @@ function switchAppStoreSection(section, element) {
     }">
 ${startupInstalled ? "Uninstall" : "Install"}
 </button>
+<div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
 </div>
 <div class="appstore-item">
    <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
@@ -5168,6 +5169,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
     }">
    ${taskmanagerInstalled ? "Uninstall" : "Install"}
    </button>
+   <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
 </div>
 <div class="appstore-item">
    <div class="appstore-item-icon">
@@ -5184,6 +5186,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
     }">
    ${snapManagerInstalled ? "Uninstall" : "Install"}
    </button>
+   <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
 </div>
 <div class="appstore-item">
    <div class="appstore-item-icon">
@@ -5205,7 +5208,9 @@ ${startupInstalled ? "Uninstall" : "Install"}
    <div class="appstore-item-desc">The classic CORS proxy you know and love, fit in to one single file.</div>
    <button class="appstore-item-btn ${
      heliosInstalled ? "installed" : ""
-   }" onclick="${heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"}">
+   }" onclick="${
+      heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
+    }">
    ${heliosInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -5221,20 +5226,27 @@ ${startupInstalled ? "Uninstall" : "Install"}
               </div>
               <div class="appstore-grid">
                   <div class="appstore-item">
+  
                       <div class="appstore-item-icon">
                           <i class="fas fa-gamepad"></i>
                       </div>
+                      
                       <div class="appstore-item-name">Snake by lanefiedler-731</div>
                       <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
                       <button class="appstore-item-btn ${
-                        installedGames.includes('snake') ? "installed" : ""
+                        installedGames.includes("snake") ? "installed" : ""
                       }" onclick="${
-                        installedGames.includes('snake') 
-                          ? "openApp('snake')" 
-                          : "installGame('snake')"
-                      }">
-                          ${installedGames.includes('snake') ? "Play" : "Install"}
+      installedGames.includes("snake")
+        ? "openApp('snake')"
+        : "installGame('snake')"
+    }">
+                          ${
+                            installedGames.includes("snake")
+                              ? "Play"
+                              : "Install"
+                          }
                       </button>
+                      <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
               </div>
           `;

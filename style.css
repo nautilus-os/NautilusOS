@@ -6259,3 +6259,17 @@ select {
         gap: var(--size-5);
     }
 }
+
+.offline-support {
+    background: var(--bg-secondary);
+    padding: 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-align: center;
+    width: 100%;
+    font-size: 12px;
+    margin: 5px;
+    margin-left: 0;
+    margin-top: 17px;
+    margin-bottom: -5px;
+}
