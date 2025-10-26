@@ -7,7 +7,7 @@ Boot it up, log in, and mess around like it’s a real desktop with apps, an app
 
 ## ✨ features
 
-There’s a ton to play with, but here’s a quick rundown (seriously, check them all out yourself):
+There’s a ton of stuff to play with, but here’s a quick rundown (seriously, check them all out yourself):
 
 - bootloader, account setup, and login screen  
 - fully animated desktop environment  
