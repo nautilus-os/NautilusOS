@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An Ultraviolet Proxy for Next Dev</title>
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
+    <script src="/baremux/index.js"></script>
+</head>
+<body>
+
+    <style>
+
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        form {
+            justify-content: center;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        form input {
+            height: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.411);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: none;
+            width: 200px;
+            border-radius: 15px;
+        }
+
+        form button {
+            height: 40px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.411);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 15px;
+            width: 60px;
+            text-align: center;
+        }
+
+        * {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+    </style>
+
+    <form action="" id="form">
+        <input type="text" id="urlbar">
+        <button id="submit">Go</button>
+    </form>
+    
+    <iframe src="" frameborder="0" id="iframe"></iframe>
+
+    <script>
+        // register sw
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/uv/sw.js")
+            })
+        }
+    </script>
+
+    <script>
+        // actual uv handling
+
+        const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
+        const wispUrl = "wss://webmath.help/wisp/" // terbium's wisp
+        const bareUrl = "https://useclassplay.vercel.app/fq/" // old site i have
+
+        document.getElementById("urlbar").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                event.preventDefault()
+                document.getElementById("submit").click()
+            }
+        })
+
+        document.getElementById("submit").onclick = async function (event) {
+            event.preventDefault()
+
+            let url = document.getElementById("urlbar").value // takes value of bar
+            let searchUrl = "https://search.brave.com/search?q=" // use brave search
+
+            if (!url.includes(".")) {
+                // makes a search
+                url = searchUrl + encodeURIComponent(url);
+            } else {
+                if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                    // is a url
+                    url = "https://" + url;
+                }
+            }
+            if (!await connection.getTransport()) {
+                await connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }])
+            }
+            document.getElementById("iframe").src = __uv$config.prefix + __uv$config.encodeUrl(url)
+            console.log("o")
+            iframe.onload = document.getElementById("urlbar").value = document.getElementById("iframe").src
+        }
+
+        
+    </script>
+
+</body>
+</html>

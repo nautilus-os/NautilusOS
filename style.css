@@ -963,7 +963,6 @@ select:focus {
 
 .taskbar-icon:hover {
     background: rgba(125, 211, 192, 0.15);
-    transform: translateY(-3px);
 }
 
 .taskbar-icon::after {
@@ -5987,4 +5986,24 @@ select:focus {
 
 .cl-checkbox::selection {
     background: transparent;
+}
+
+.searchEngineI {
+    height: 40px;
+    width: 350px;
+    margin-left: 20px;
+    padding: 10px 20px;
+    border-radius: 15px;
+    border: none;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: 0.2s;
+    font-family: font !important;
+    font-size: 14px;
+}
+
+.searchEngineI:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent);
+    background: var(--bg-secondary);
 }
