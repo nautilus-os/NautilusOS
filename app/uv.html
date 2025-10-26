@@ -7,10 +7,20 @@
     <script src="/uv/uv.bundle.js"></script>
     <script src="/uv/uv.config.js"></script>
     <script src="/baremux/index.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
 </head>
 <body>
 
     <style>
+        *:not(.fas) {
+            font-family: "Inter" !important;
+        }
+
         iframe {
             position: absolute;
             top: 0;
@@ -18,6 +28,25 @@
             width: 100%;
             height: 100vh;
             z-index: -1;
+        }
+
+        iframe.viewframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            border: none;
+            display: none;
+        }
+
+        .viewframe.active {
+            display: block;
+        }
+
+        .tab.active {
+            background: #96969638;
         }
 
         body {
@@ -59,6 +88,7 @@
             justify-content: center;
             text-align: center;
             margin-top: 15px;
+            width: 79.5%;
         }
 
         form input {
@@ -70,9 +100,30 @@
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
             color: white;
             border: none;
-            width: 70%;
+            width: 100%;
             border-radius: 150px;
             transition: 0.2s;
+            font-size: 16px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        .webcontrols {
+            background: #36363638;
+            padding: 15px;
+            border-radius: 25px;
+            margin: 10px;
+            border: 2px solid transparent;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+            scale: 1;
+            width: 80%;
+            padding-right: 0px;
+            padding-left: 0px;
+            backdrop-filter: blur(10px);
+            display: inline-block;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         form input:focus {
@@ -83,7 +134,7 @@
 
         form button {
             height: 40px;
-            padding: 10px 20px;
+            padding: 10px 10px;
             display: none;
             color: white;
             background: #36363638;
@@ -92,26 +143,150 @@
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
             border: none;
             border-radius: 500px;
-            width: 60px;
+            width: 20px;
             text-align: center;
+        }
+
+        .maincontrols {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: -10px;
+        }
+
+        button {
+            height: 40px;
+            padding: 10px 10px;
+            color: white;
+            background: #36363638;
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+            border: none;
+            border-radius: 500px;
+            width: 40px;
+            text-align: center;
+            transition: 0.2s;
+            cursor: pointer;
+            margin: 10px;
+            vertical-align: middle;
+        }
+
+        .leftcontrols, .rightcontrols {
+            width: max-content;
+            margin-top: 5px;
+        }
+
+        .leftcontrols {
+            margin-left: -4.3%;
+        }
+
+        .leftcontrols button, .rightcontrols button {
+            margin-right: 2px;
+            margin-left: 2px;
+        }
+
+        button:hover {
+            background: #5e5e5e38;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: left;
+            flex-direction: row;
+            margin: 10px;
+            margin-top: 0;
+        }
+
+        .tab {
+            height: 20px;
+            padding: 10px 20px;
+            color: white;
+            background: #36363638;
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+            border: none;
+            border-radius: 500px;
+            width: 160px;
+            text-align: center;
+            transition: 0.2s;
+            cursor: pointer;
+            display: flex;
+            margin: 5px;
+        }
+
+        .tabs button {
+            margin: 5px;
+        }
+
+        .tab i {
+            position: absolute;
+            right: 6%;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: 0.2s;
+        }
+
+        .tab i:hover {
+            color: rgb(211, 125, 125);
+        }
+
+        .tab:hover {
+            background: #5e5e5e38;
+        }
+        
+        .tab span {
+            text-align: left;
         }
 
         * {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
     </style>
-
-    <form action="" id="form">
-        <input type="text" id="urlbar">
-        <button id="submit">Go</button>
-    </form>
+        <div class="webcontrols">
+            <div class="tabs">
+                <button id="nt" onclick="newTab()"><i class="fas fa-plus"></i></button>
+            </div>
+            <div class="maincontrols">
+                <div class="leftcontrols">
+                    <button onclick="b()"><i class="fas fa-arrow-left"></i></button>
+                    <button onclick="f()"><i class="fas fa-arrow-right"></i></button>
+                    <button onclick="r()"><i class="fas fa-rotate-right"></i></button>
+                </div>
+                <form action="" id="form">
+                    <input type="text" id="urlbar" placeholder="Search with or enter a URL here">
+                    <button id="submit">Go</button>
+                </form>
+                <div class="rightcontrols"></div>
+            </div>
+        </div>
 
     <div class="backgroundtext">
         <h1>ultraviolet</h1>
-        <p>made by $xor</p>
+        <p>made by $xor | built for nautilus-os</p>
     </div>
     
     <iframe src="" frameborder="0" id="iframe"></iframe>
+
+    <script>
+        const se = localStorage.getItem("nOS_searchEngine") || "https://search.brave.com/search?q="
+        const bar = document.getElementById("urlbar")
+
+        if (se === "https://duckduckgo.com/search?q=") {
+            bar.placeholder = "Search with Duck Duck Go or enter a URL here"
+        } else if (se === "https://google.com/search?q=") {
+            bar.placeholder = "Search with Google or enter a URL here"
+        } else if (se === "https://bing.com/search?q=") {
+            bar.placeholder = "Search with Bing or enter a URL here"
+        } else if (se === "https://startpage.com/search?q=") {
+            bar.placeholder = "Search with Startpage or enter a URL here"
+        } else if (se === "https://qwant.com/search?q=") {
+            bar.placeholder = "Search with Qwant or enter a URL here"
+        } else {
+            bar.placeholder = "Search with Brave or enter a URL here"
+        }
+    </script>
 
     <script>
         // register sw
@@ -123,42 +298,204 @@
     </script>
 
     <script>
+        let tabFrame
+
         // actual uv handling
         const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
         const wispUrl = "wss://webmath.help/wisp/" // terbium's wisp
         const bareUrl = "https://useclassplay.vercel.app/fq/" // old site i have
 
-        document.getElementById("urlbar").addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-                event.preventDefault()
-                document.getElementById("submit").click()
-            }
-        })
+        connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }])
 
-        document.getElementById("submit").onclick = async function (event) {
-            event.preventDefault()
+        const tabCont = document.querySelector(".tabs")
 
-            let url = document.getElementById("urlbar").value // takes value of bar
-            let searchUrl = localStorage.getItem("nOS_searchEngine") || "https://search.brave.com/search?q=" // use brave search
+        let bTabs = [
+            {
+                id: 0,
+                title: "New Tab",
+                url: "",
+                history: [],
+                historyIndex: -1,
+            },
+        ]
 
-            if (!url.includes(".")) {
-                // makes a search
-                url = searchUrl + encodeURIComponent(url);
-            } else {
-                if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                    // is a url
-                    url = "https://" + url;
+        let aTab = 0
+        let tabCounter = 1
+
+        function newTab() {
+            const nTab = {
+                id: tabCounter++,
+                title: "New Tab",
+                url: "",
+                history: [],
+                historyIndex: -1,
+            };
+            
+            bTabs.push(nTab)
+            if (!tabCont) return
+
+            const ntBtn = document.getElementById('nt')
+
+            const tabElement = document.createElement("div")
+            tabElement.classList.add("tab")
+            tabElement.dataset.tabId = nTab.id
+            tabElement.innerHTML = `<span class="btitle">New Tab</span> <div class="closetab"><i class="fas fa-times"></i></div>`
+
+            tabElement.addEventListener("click", (e) => {
+                if (!e.target.closest(".closetab")) {
+                    switchTab(nTab.id)
                 }
-            }
-            if (!await connection.getTransport()) {
-                await connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }])
-            }
-            document.getElementById("iframe").src = __uv$config.prefix + __uv$config.encodeUrl(url)
-            console.log("o")
-            iframe.onload = document.getElementById("urlbar").value = document.getElementById("iframe").src
+            })
+
+            const closebtn = tabElement.querySelector(".closetab")
+            closebtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                closeTab(nTab.id);
+            });
+
+            tabCont.insertBefore(tabElement, ntBtn)
+
+            tabFrame = document.createElement("iframe")
+            tabFrame.classList.add("viewframe")
+            tabFrame.dataset.frameId = nTab.id
+
+            document.body.appendChild(tabFrame)
+
+            switchTab(nTab.id)
         }
 
-        
+        newTab()
+        closeTab(0)
+
+        function switchTab(tId) {
+                aTab = tId
+
+                document.querySelectorAll(".tab").forEach(tab => {
+                    tab.classList.toggle("active", parseInt(tab.dataset.tabId) === tId)
+                })
+
+                document.querySelectorAll(".viewframe").forEach(frame => {
+                    frame.classList.toggle("active", parseInt(frame.dataset.frameId) === tId)
+                })
+
+                const cTab = bTabs.find(t => t.id === tId)
+                if (cTab) {
+                    const input = document.getElementById("urlbar")
+                    if (input) input.value = cTab.url
+                }
+            }
+
+
+        function closeTab(tId) {
+            if (bTabs.length === 1) {
+                alert("Cannot close last tab!")
+                return
+            }
+
+            const tIndex = bTabs.findIndex((t) => t.id === tId)
+            if (tIndex === -1) return
+
+            bTabs.splice(tIndex, 1)
+
+            const tEl = document.querySelector(`.tab[data-tab-id="${tId}"]`)
+            const frame = document.querySelector(`.viewframe[data-view-id="${tId}"]`)
+
+            if (tEl) tEl.remove()
+            if (frame) frame.remove()
+
+            if (aTab === tId) {
+                const newATab = bTabs[Math.max(0, tIndex - 1)];
+                if (newATab) {
+                    switchTab(newATab.id);
+                    console.log("woah")
+                }
+            }
+        }
+
+        document.getElementById("form").addEventListener("submit", (e) => {
+            e.preventDefault()
+            const inp = document.getElementById("urlbar")
+            nav(inp.value)
+            console.log("i")
+        })
+
+        function nav(i) {
+            console.log("e")
+            if (!i.trim()) return
+
+            let url = i.trim()
+
+            if (!url.includes(".") || url.includes(" ")) {
+                const se = localStorage.getItem("nOS_searchEngine") || "https://search.brave.com/search?q="
+                url = se + encodeURIComponent(url)
+            } else {
+                if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                    url = "https://" + url
+                }
+            }
+
+            const cTab = bTabs.find((t) => t.id === aTab)
+            if (!cTab) return
+            
+            cTab.history.push(url)
+            cTab.historyIndex++
+
+            cTab.url = url
+            const fUrl = __uv$config.prefix + __uv$config.encodeUrl(url)
+
+            go(fUrl)
+        }
+
+        async function go(u) {
+            console.log("a")
+            const cTab = bTabs.find((t) => t.id === aTab)
+            const viewframe = document.querySelector(`.viewframe[data-frame-id="${aTab}"]`)
+            if (!viewframe) return
+
+            const ubar = document.getElementById("urlbar")
+            if (ubar) ubar.value = __uv$config.decodeUrl(u.replace("/uv/service/", ""))
+
+            try {
+                viewframe.src = u
+                console.log("ooooo")
+
+                const iframeDoc = viewframe.contentDocument || viewframe.contentWindow.document
+                const title = iframeDoc.title || new URL(cTab.url).hostname
+
+                const tabEl = document.querySelector(`.tab[data-tab-id="${aTab}"]`)
+                if (tabEl) {
+                    const titleEl = tabEl.querySelector(".btitle")
+                    if (titleEl) titleEl.textContent = title
+                }
+            } catch (e) {
+                console.error("There was an error while loading the page:", e)
+                alert("There was an error while loading the page: " + e)
+            }
+        }
+
+        function b() {
+            const cTab = bTabs.find((t) => t.id === aTab)
+            if (!cTab || cTab.historyIndex <= 0) return;
+
+            cTab.historyIndex--
+            const u = cTab.history[cTab.historyIndex]
+            cTab.url = u
+            const furl = __uv$config.prefix + __uv$config.encodeUrl(u)
+
+            go(furl)
+        }
+
+        function f() {
+            const cTab = bTabs.find((t) => t.id === aTab)
+
+            cTab.historyIndex++
+            const u = cTab.history[cTab.historyIndex]
+            cTab.url = u
+            const furl = __uv$config.prefix + __uv$config.encodeUrl(u)
+
+            go(furl)
+        }
+
     </script>
 
 </body>
