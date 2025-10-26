@@ -2311,7 +2311,58 @@ function openApp(appName, editorContent = "", filename = "") {
       content: `
               <div class="browser-container" style="overflow: hidden;">
                   <div class="browser-header">
-                      <iframe src="/uv.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
+                      <div class="browser-tabs" id="browserTabs">
+                          <div class="browser-tab active" data-tab-id="0" onclick="if(!event.target.closest('.browser-tab-close')) switchBrowserTab(0)">
+                              <i class="fas fa-globe browser-tab-icon"></i>
+                              <span class="browser-tab-title">New Tab</span>
+                              <div class="browser-tab-close" onclick="event.stopPropagation(); event.preventDefault(); closeBrowserTab(0)">
+                                  <i class="fas fa-times"></i>
+                              </div>
+                          </div>
+                          <div class="browser-new-tab" onclick="createBrowserTab()">
+                              <i class="fas fa-plus"></i>
+                          </div>
+                      </div>
+                      <div class="browser-loading" id="browserLoading">
+                          <div class="browser-loading-bar"></div>
+                      </div>
+                      <div class="browser-controls">
+                          <button class="browser-nav-btn" id="browserBack" onclick="browserGoBack()" disabled>
+                              <i class="fas fa-arrow-left"></i>
+                          </button>
+                          <button class="browser-nav-btn" id="browserForward" onclick="browserGoForward()" disabled>
+                              <i class="fas fa-arrow-right"></i>
+                          </button>
+                          <button class="browser-nav-btn" onclick="browserReload()">
+                              <i class="fas fa-redo"></i>
+                          </button>
+                          <div class="browser-url-bar">
+                              <i class="fas fa-lock" id="browserLockIcon"></i>
+                              <input
+                                  type="text"
+                                  class="browser-url-input"
+                                  id="browserUrlInput"
+                                  placeholder="Search or enter website URL"
+                                  onkeypress="handleBrowserUrlInput(event)"
+                              >
+                          </div>
+                      </div>
+                  </div>
+                  <div class="browser-content" id="browserContent">
+                      <div class="browser-view active" data-view-id="0">
+                          <div class="browser-landing">
+                              <i class="fas fa-fish browser-landing-logo"></i>
+                              <div class="browser-landing-search">
+                                  <i class="fas fa-search"></i>
+                                  <input
+                                      type="text"
+                                      class="browser-landing-input"
+                                      placeholder="Search or enter website URL"
+                                      onkeypress="handleBrowserLandingInput(event)"
+                                  >
+                              </div>
+                          </div>
+                      </div>
                   </div>
               </div>
           `,
@@ -3595,6 +3646,20 @@ alt="favicon">
       width: 820,
       height: 640,
     },
+    "uv": {
+      title: "Ultraviolet",
+      icon: "fas fa-globe",
+      content: `
+        <div class="browser-container" style="overflow: hidden;">
+                  <div class="browser-header">
+                      <iframe src="/uv.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
+                  </div>
+              </div>
+      `,
+      noPadding: true,
+      width: 900,
+      height: 600,
+    },
     appstore: {
       title: "App Store",
       icon: "fas fa-store",
@@ -3659,11 +3724,19 @@ alt="favicon">
                               <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
                               <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
                               <button class="appstore-item-btn ${
-                                installedThemes.includes('golden') ? "installed" : ""
+                                installedThemes.includes("golden")
+                                  ? "installed"
+                                  : ""
                               }" onclick="${
-          installedThemes.includes('golden') ? "uninstallTheme('golden')" : "installTheme('golden')"
+          installedThemes.includes("golden")
+            ? "uninstallTheme('golden')"
+            : "installTheme('golden')"
         }">
-                                  ${installedThemes.includes('golden') ? "Uninstall" : "Install"}
+                                  ${
+                                    installedThemes.includes("golden")
+                                      ? "Uninstall"
+                                      : "Install"
+                                  }
                               </button>
                           </div>
                           <div class="appstore-item">
@@ -3673,11 +3746,19 @@ alt="favicon">
                               <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
                               <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
                               <button class="appstore-item-btn ${
-                                installedThemes.includes('red') ? "installed" : ""
+                                installedThemes.includes("red")
+                                  ? "installed"
+                                  : ""
                               }" onclick="${
-          installedThemes.includes('red') ? "uninstallTheme('red')" : "installTheme('red')"
+          installedThemes.includes("red")
+            ? "uninstallTheme('red')"
+            : "installTheme('red')"
         }">
-                                  ${installedThemes.includes('red') ? "Uninstall" : "Install"}
+                                  ${
+                                    installedThemes.includes("red")
+                                      ? "Uninstall"
+                                      : "Install"
+                                  }
                               </button>
                           </div>
                           <div class="appstore-item">
@@ -3687,11 +3768,19 @@ alt="favicon">
                               <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
                               <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
                               <button class="appstore-item-btn ${
-                                installedThemes.includes('blue') ? "installed" : ""
+                                installedThemes.includes("blue")
+                                  ? "installed"
+                                  : ""
                               }" onclick="${
-          installedThemes.includes('blue') ? "uninstallTheme('blue')" : "installTheme('blue')"
+          installedThemes.includes("blue")
+            ? "uninstallTheme('blue')"
+            : "installTheme('blue')"
         }">
-                                  ${installedThemes.includes('blue') ? "Uninstall" : "Install"}
+                                  ${
+                                    installedThemes.includes("blue")
+                                      ? "Uninstall"
+                                      : "Install"
+                                  }
                               </button>
                           </div>
                       </div>
@@ -3769,7 +3858,7 @@ alt="favicon">
     if (appName === "browser") {
       setTimeout(() => {
         showToast(
-          "Nautilus Browser not good enough? Check out Helios Browser on the App Store!",
+          "Nautilus Browser not good enough? Check out Helios Browser and UV on the App Store!",
           "fa-info-circle"
         );
       }, 500);
@@ -4937,6 +5026,7 @@ function switchAppStoreSection(section, element) {
     const startupInstalled = installedApps.includes("startup-apps");
     const taskmanagerInstalled = installedApps.includes("task-manager");
     const snapManagerInstalled = installedApps.includes("snap-manager");
+    const uvInstalled = installedApps.includes("uv");
 
     mainContent.innerHTML = `
                   <div class="appstore-header">
@@ -4968,81 +5058,96 @@ function switchAppStoreSection(section, element) {
     </div>
 </div>
                           <div class="appstore-item-name">Startup Apps by dinguschan</div>
-                          <div class="appstore-item-desc">Control which applications launch automatically on login with this convenient this built-in app.</div>
-                          <button class="appstore-item-btn ${
-                            startupInstalled ? "installed" : ""
-                          }" onclick="${
-      startupInstalled
-        ? "uninstallApp('startup-apps')"
-        : "installApp('startup-apps')"
-    }">
-                              ${startupInstalled ? "Uninstall" : "Install"}
-                          </button>
-                      </div>
-
-                      <div class="appstore-item">
-                          <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-    <div class="illustration-taskmanager">
-                                      <div class="illustration-taskmanager-header">
-                                          <div class="illustration-taskmanager-title">Task Manager</div>
-                                          <div class="illustration-taskmanager-stat">CPU: 45%</div>
-                                      </div>
-                                      <div class="illustration-taskmanager-processes">
-                                          <div class="illustration-taskmanager-process">
-                                              <div class="illustration-taskmanager-process-icon"></div>
-                                              <div class="illustration-taskmanager-process-name"></div>
-                                              <div class="illustration-taskmanager-process-bar">
-                                                  <div class="illustration-taskmanager-process-fill" style="width: 60%;"></div>
-                                              </div>
-                                          </div>
-                                          <div class="illustration-taskmanager-process">
-                                              <div class="illustration-taskmanager-process-icon"></div>
-                                              <div class="illustration-taskmanager-process-name"></div>
-                                              <div class="illustration-taskmanager-process-bar">
-                                                  <div class="illustration-taskmanager-process-fill" style="width: 35%;"></div>
-                                              </div>
-                                          </div>
-                                          <div class="illustration-taskmanager-process">
-                                              <div class="illustration-taskmanager-process-icon"></div>
-                                              <div class="illustration-taskmanager-process-name"></div>
-                                              <div class="illustration-taskmanager-process-bar">
-                                                  <div class="illustration-taskmanager-process-fill" style="width: 80%;"></div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          <div class="appstore-item-name">Task Manager by dinguschan</div>
-                          <div class="appstore-item-desc">Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.</div>
-                          <button class="appstore-item-btn ${
-                            taskmanagerInstalled ? "installed" : ""
-                          }" onclick="${
-      taskmanagerInstalled
-        ? "uninstallApp('task-manager')"
-        : "installApp('task-manager')"
-    }">
-                              ${taskmanagerInstalled ? "Uninstall" : "Install"}
-                          </button>
-                      </div>
-                      <div class="appstore-item">
-                          <div class="appstore-item-icon">
-                              <i class="fas fa-border-all"></i>
-                          </div>
-                          <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
-                          <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
-                          <button class="appstore-item-btn ${
-                            snapManagerInstalled ? "installed" : ""
-                          }" onclick="${
-      snapManagerInstalled
-        ? "uninstallApp('snap-manager')"
-        : "installApp('snap-manager')"
-    }">
-                              ${snapManagerInstalled ? "Uninstall" : "Install"}
-                          </button>
-                      </div>
-                                                </div>
-
-                  </div>
+<div class="appstore-item-desc">Control which applications launch automatically on login with this convenient this built-in app.</div>
+<button class="appstore-item-btn ${
+startupInstalled ? "installed" : ""
+}" onclick="${
+startupInstalled
+? "uninstallApp('startup-apps')"
+: "installApp('startup-apps')"
+}">
+${startupInstalled ? "Uninstall" : "Install"}
+</button>
+</div>
+<div class="appstore-item">
+   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+      <div class="illustration-taskmanager">
+         <div class="illustration-taskmanager-header">
+            <div class="illustration-taskmanager-title">Task Manager</div>
+            <div class="illustration-taskmanager-stat">CPU: 45%</div>
+         </div>
+         <div class="illustration-taskmanager-processes">
+            <div class="illustration-taskmanager-process">
+               <div class="illustration-taskmanager-process-icon"></div>
+               <div class="illustration-taskmanager-process-name"></div>
+               <div class="illustration-taskmanager-process-bar">
+                  <div class="illustration-taskmanager-process-fill" style="width: 60%;"></div>
+               </div>
+            </div>
+            <div class="illustration-taskmanager-process">
+               <div class="illustration-taskmanager-process-icon"></div>
+               <div class="illustration-taskmanager-process-name"></div>
+               <div class="illustration-taskmanager-process-bar">
+                  <div class="illustration-taskmanager-process-fill" style="width: 35%;"></div>
+               </div>
+            </div>
+            <div class="illustration-taskmanager-process">
+               <div class="illustration-taskmanager-process-icon"></div>
+               <div class="illustration-taskmanager-process-name"></div>
+               <div class="illustration-taskmanager-process-bar">
+                  <div class="illustration-taskmanager-process-fill" style="width: 80%;"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="appstore-item-name">Task Manager by dinguschan</div>
+   <div class="appstore-item-desc">Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.</div>
+   <button class="appstore-item-btn ${
+   taskmanagerInstalled ? "installed" : ""
+   }" onclick="${
+   taskmanagerInstalled
+   ? "uninstallApp('task-manager')"
+   : "installApp('task-manager')"
+   }">
+   ${taskmanagerInstalled ? "Uninstall" : "Install"}
+   </button>
+</div>
+<div class="appstore-item">
+   <div class="appstore-item-icon">
+      <i class="fas fa-border-all"></i>
+   </div>
+   <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
+   <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
+   <button class="appstore-item-btn ${
+   snapManagerInstalled ? "installed" : ""
+   }" onclick="${
+   snapManagerInstalled
+   ? "uninstallApp('snap-manager')"
+   : "installApp('snap-manager')"
+   }">
+   ${snapManagerInstalled ? "Uninstall" : "Install"}
+   </button>
+</div>
+<div class="appstore-item">
+   <div class="appstore-item-icon">
+      <i class="fas fa-globe"></i>
+   </div>
+   <div class="appstore-item-name">Ultraviolet by $xor</div>
+   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
+   <button class="appstore-item-btn ${
+   uvInstalled ? "installed" : ""
+   }" onclick="${
+   uvInstalled
+   ? "uninstallApp('uv')"
+   : "installApp('uv')"
+   }">
+   ${uvInstalled ? "Uninstall" : "Install"}
+   </button>
+</div>
+</div>
+</div>
+</div>
               `;
   } else if (section === "games") {
     mainContent.innerHTML = `
@@ -5297,6 +5402,7 @@ function toggleLoop() {
     showToast("Loop disabled", "fa-repeat");
   }
 }
+
 let browserTabs = [
   {
     id: 0,
@@ -6963,6 +7069,8 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-border-all", label: "Snap Manager" };
   } else if (appName === "snake") {
     iconConfig = { icon: "fa-gamepad", label: "Snake" };
+  } else if (appName === "uv") {
+    iconConfig = { icon: "fa-globe", label: "Ultraviolet" };
   } else {
     return;
   }
