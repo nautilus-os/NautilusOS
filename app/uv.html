@@ -78,7 +78,6 @@
 
     <script>
         // actual uv handling
-
         const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
         const wispUrl = "wss://webmath.help/wisp/" // terbium's wisp
         const bareUrl = "https://useclassplay.vercel.app/fq/" // old site i have
@@ -94,7 +93,7 @@
             event.preventDefault()
 
             let url = document.getElementById("urlbar").value // takes value of bar
-            let searchUrl = "https://search.brave.com/search?q=" // use brave search
+            let searchUrl = localStorage.getItem("nOS_searchEngine") || "https://search.brave.com/search?q=" // use brave search
 
             if (!url.includes(".")) {
                 // makes a search

@@ -1,6 +1,6 @@
 let windows = {};
 let zIndexCounter = 100;
-let currentUsername = "User";
+let currentUsername = localStorage.getItem("nautilusOS_username") || "User";
 let focusedWindow = null;
 let fileSystem = {
   Photos: {},
@@ -2892,8 +2892,49 @@ alt="favicon">
                     </div>
                     <div class="settings-card-body">
                         <div class="settings-item">
-                            <p class="settings-description">Enter a search engine URL. The default search engine is Brave Search.</p>
-                            <input type="text" class="searchEngineI" onkeyup="localStorage.setItem('nOS_searchEngine', this.value); console.log('o')" placeholder="ex. https://google.com/search?q=">
+                            <p class="settings-description">The website the <b>Ultraviolet</b> proxy will use to search. The default search engine is Brave.</p>
+                            <select style="margin-left: 10.1px; border-radius: 12.5px;">
+        <button>
+            <div>
+                <selectedcontent style="scale: 1.1;"> </selectedcontent>
+                <svg style="scale: 1.8;" width="128" height="128" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="m7 10l5 5l5-5z" />
+                </svg>
+            </div>
+        </button>
+        <div>
+            <option value="https://search.brave.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://search.brave.com/search?q='); showToast('Search engine set to Brave', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Brave Search</span>
+                </div>
+            </option>
+            <option value="https://duckduckgo.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://duckduckgo.com/search?q='); showToast('Search engine set to Duck Duck Go', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Duck Duck Go</span>
+                </div>
+            </option>
+            <option value="https://www.google.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://google.com/search?q='); showToast('Search engine set to Google', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Google Search</span>
+                </div>
+            </option>
+            <option value="https://www.bing.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://bing.com/search?q='); showToast('Search engine set to Bing', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Bing</span>
+                </div>
+            </option>
+            <option value="https://www.startpage.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://startpage.com/search?q='); showToast('Search engine set to Startpage', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Startpage</span>
+                </div>
+            </option>
+            <option value="https://www.qwant.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://qwant.com/search?q='); showToast('Search engine set to Qwant', 'fa-solid fa-check')">
+                <div class="custom-option">
+                    <span class="option-text">Qwant</span>
+                </div>
+            </option>
+        </div>
+    </select>
                         </div>
                     </div>
                 </div>
@@ -2930,7 +2971,7 @@ alt="favicon">
                                 <div class="settings-item-desc">Your account username</div>
                             </div>
                             <div class="settings-item-value">${currentUsername}</div>
-                            <button class="settings-action-btn" onclick="changeUsername()" style="margin-left: 25px;"><i class='fa-solid fa-pencil'></i>Edit</button>
+                            <button class="settings-action-btn" onclick="changeuser(); console.log('Tried to run function')" style="margin-left: 25px;"><i class='fa-solid fa-pencil'></i>Edit</button>
                         </div>
                         <div class="settings-item">
                             <div class="settings-item-text">
@@ -3646,13 +3687,27 @@ alt="favicon">
       width: 820,
       height: 640,
     },
-    "uv": {
+    uv: {
       title: "Ultraviolet",
       icon: "fas fa-globe",
       content: `
         <div class="browser-container" style="overflow: hidden;">
                   <div class="browser-header">
-                      <iframe src="/uv.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
+                      <iframe src="/app/uv.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
+                  </div>
+              </div>
+      `,
+      noPadding: true,
+      width: 900,
+      height: 600,
+    },
+    helios: {
+      title: "Helios Browser",
+      icon: "fas fa-globe",
+      content: `
+        <div class="browser-container" style="overflow: hidden;">
+                  <div class="browser-header">
+                      <iframe src="/app/helios.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
                   </div>
               </div>
       `,
@@ -5027,6 +5082,7 @@ function switchAppStoreSection(section, element) {
     const taskmanagerInstalled = installedApps.includes("task-manager");
     const snapManagerInstalled = installedApps.includes("snap-manager");
     const uvInstalled = installedApps.includes("uv");
+    const heliosInstalled = installedApps.includes("helios");
 
     mainContent.innerHTML = `
                   <div class="appstore-header">
@@ -5060,12 +5116,12 @@ function switchAppStoreSection(section, element) {
                           <div class="appstore-item-name">Startup Apps by dinguschan</div>
 <div class="appstore-item-desc">Control which applications launch automatically on login with this convenient this built-in app.</div>
 <button class="appstore-item-btn ${
-startupInstalled ? "installed" : ""
-}" onclick="${
-startupInstalled
-? "uninstallApp('startup-apps')"
-: "installApp('startup-apps')"
-}">
+      startupInstalled ? "installed" : ""
+    }" onclick="${
+      startupInstalled
+        ? "uninstallApp('startup-apps')"
+        : "installApp('startup-apps')"
+    }">
 ${startupInstalled ? "Uninstall" : "Install"}
 </button>
 </div>
@@ -5104,12 +5160,12 @@ ${startupInstalled ? "Uninstall" : "Install"}
    <div class="appstore-item-name">Task Manager by dinguschan</div>
    <div class="appstore-item-desc">Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.</div>
    <button class="appstore-item-btn ${
-   taskmanagerInstalled ? "installed" : ""
+     taskmanagerInstalled ? "installed" : ""
    }" onclick="${
-   taskmanagerInstalled
-   ? "uninstallApp('task-manager')"
-   : "installApp('task-manager')"
-   }">
+      taskmanagerInstalled
+        ? "uninstallApp('task-manager')"
+        : "installApp('task-manager')"
+    }">
    ${taskmanagerInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -5120,12 +5176,12 @@ ${startupInstalled ? "Uninstall" : "Install"}
    <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
    <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
    <button class="appstore-item-btn ${
-   snapManagerInstalled ? "installed" : ""
+     snapManagerInstalled ? "installed" : ""
    }" onclick="${
-   snapManagerInstalled
-   ? "uninstallApp('snap-manager')"
-   : "installApp('snap-manager')"
-   }">
+      snapManagerInstalled
+        ? "uninstallApp('snap-manager')"
+        : "installApp('snap-manager')"
+    }">
    ${snapManagerInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -5136,13 +5192,21 @@ ${startupInstalled ? "Uninstall" : "Install"}
    <div class="appstore-item-name">Ultraviolet by $xor</div>
    <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
    <button class="appstore-item-btn ${
-   uvInstalled ? "installed" : ""
-   }" onclick="${
-   uvInstalled
-   ? "uninstallApp('uv')"
-   : "installApp('uv')"
-   }">
+     uvInstalled ? "installed" : ""
+   }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
    ${uvInstalled ? "Uninstall" : "Install"}
+   </button>
+</div>
+<div class="appstore-item">
+   <div class="appstore-item-icon">
+      <i class="fas fa-globe"></i>
+   </div>
+   <div class="appstore-item-name">Helios by dinguschan</div>
+   <div class="appstore-item-desc">The classic CORS proxy you know and love, fit in to one single file.</div>
+   <button class="appstore-item-btn ${
+     heliosInstalled ? "installed" : ""
+   }" onclick="${heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"}">
+   ${heliosInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
 </div>
@@ -6596,23 +6660,24 @@ async function resetAllData() {
   }, 2000);
 }
 
-async function changeUsername() {
-  const newUsername = await prompt("Enter a new username:")
+async function changeuser() {
+  console.log("Changing user....");
+  const newUsername = await prompt("Enter a new username:");
   if (!newUsername) {
     showToast("Username change cancelled", "fa-info-circle");
   } else if (newUsername.length < 3) {
     showToast("Username must be at least 3 characters", "fa-exclamation-circle");
   } else if (newUsername === currentUsername) {
-    showToast("New username cannot be the same as the current one", "fa-info-circle")
-  }
+    showToast("New username cannot be the same as the current one", "fa-info-circle");
+  };
 
   showToast("Username changed successfully. Reloading...", "fa-check-circle");
   localStorage.setItem("nautilusOS_username", newUsername);
 
   setTimeout(() => {
-    location.reload()
-  }, 2000)
-}
+    location.reload();
+  }, 2000);
+};
 
 let modalResolve = null;
 
@@ -7071,6 +7136,8 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-gamepad", label: "Snake" };
   } else if (appName === "uv") {
     iconConfig = { icon: "fa-globe", label: "Ultraviolet" };
+  } else if (appName === "helios") {
+    iconConfig = { icon: "fa-globe", label: "Helios" };
   } else {
     return;
   }

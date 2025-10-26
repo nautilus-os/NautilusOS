@@ -6007,3 +6007,255 @@ select:focus {
     box-shadow: 0 0 0 2px var(--accent);
     background: var(--bg-secondary);
 }
+
+@import "https://unpkg.com/open-props" layer(design.system);
+@import "https://unpkg.com/open-props/normalize.min.css" layer(demo.support);
+@import "https://unpkg.com/open-props/buttons.min.css" layer(demo.support);
+
+/*  
+  TODO:
+    - large excellent mobile design
+    - excellent tablet design
+    - fix arrow not rotating when open (regression)
+    - add directional aware entry/exit transitions
+*/
+
+
+select {
+
+    /* opt into customizing select */
+    &,
+    &::picker(select) {
+        appearance: base-select;
+    }
+
+    font-size: 14px;
+
+    /* removing open props normalize styles */
+    background: none;
+    padding: 0;
+
+    /* enable transitions in the drop down */
+    &::picker(select) {
+        transition:
+            opacity .2s ease,
+            transform .2s,
+            display .2s allow-discrete,
+            overlay .2s allow-discrete;
+    }
+
+    &::picker-icon {
+        display: none;
+    }
+
+    /* set the off stage styles */
+    &:not(:open)::picker(select) {
+        opacity: 0;
+        transform: scale(.95);
+    }
+
+    /* set the on stage styles */
+    &:open::picker(select) {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* transition the selected option changing */
+    selectedcontent>* {
+        transition:
+            transform 1s ease,
+            display 1s allow-discrete,
+            opacity 1s;
+
+        @starting-style {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        opacity: 1;
+    }
+
+    /* customize the invoking button */
+    >button {
+        --_text: var(--text-1);
+
+        &:focus-visible {
+            outline-offset: -3px;
+        }
+
+        &:has(selectedcontent) {
+            align-items: start;
+            min-inline-size: 20ch;
+            flex-direction: column;
+        }
+
+        &.primary {
+            --_bg: #1d1d1d;
+            --_border: none;
+            --_text: var(--surface-1);
+            --_ink-shadow: none;
+        }
+
+        >div {
+            inline-size: 100%;
+            display: flex;
+            justify-content: space-between;
+            gap: var(--size-3);
+        }
+
+        &>small {
+            color: var(--text-2);
+        }
+
+        & svg {
+            inline-size: 2ch;
+            transition: transform .3s var(--ease-elastic-out-2);
+        }
+    }
+
+    &:open>button svg {
+        transform: rotate(.5turn);
+    }
+
+    /* reset some picker styles */
+    &::picker(select) {
+        background: light-dark(white, var(--surface-2));
+        border-radius: 15px;
+        padding: 0;
+        margin-block: 5px;
+        box-shadow: var(--shadow-5);
+
+        @media (forced-colors: none) {
+            border: none;
+        }
+    }
+
+    /* customize the picker contents */
+    >div {
+        min-inline-size: calc(anchor-size(self-inline) + 20px);
+        scroll-behavior: smooth;
+
+        &.scrollable {
+            max-block-size: 20lh;
+            scrollbar-width: thin;
+        }
+
+        & hr {
+            margin-block: var(--size-2);
+        }
+
+        & label {
+            display: block;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: var(--surface-3);
+            font-size: var(--font-size-0);
+            color: var(--text-2);
+            font-weight: var(--font-weight-7);
+            padding-block: var(--size-1);
+            padding-inline: var(--size-3);
+        }
+
+        & option {
+            display: flex;
+            align-items: center;
+            gap: var(--size-3);
+            padding-block: var(--size-2);
+            padding-inline: var(--size-3);
+            font-size: var(--font-size-1);
+
+            cursor: pointer;
+            outline-offset: -1px;
+
+            &::checkmark {
+                font-weight: var(--font-weight-8);
+            }
+
+            &:focus-visible {
+                outline-offset: -1px;
+            }
+
+            &:is(:focus, :hover) {
+                background: oklch(from var(--accent-dark) l c h / 25%);
+                color: inherit;
+            }
+
+            &:is(:checked) {
+                background: var(--accent);
+                color: var(--surface-1);
+                font-weight: var(--font-weight-8);
+            }
+        }
+    }
+}
+
+/* utilities to aid in custom select children */
+.custom-option {
+    display: flex;
+    gap: var(--size-3);
+    align-items: center;
+    justify-content: space-between;
+
+    .primary & {
+        display: grid;
+        gap: var(--size-1);
+    }
+
+    &:has(.description) {
+        display: grid;
+        justify-items: start;
+        gap: var(--size-2);
+        padding-block: var(--size-2);
+        text-shadow: none;
+
+        & .description {
+            color: var(--text-2);
+        }
+    }
+
+    option:is(:checked) & .description {
+        font-weight: normal;
+        color: var(--surface-2);
+    }
+
+    selectedcontent & .description {
+        display: none;
+    }
+}
+
+.indicator {
+    display: inline-block;
+    block-size: var(--size-2);
+    inline-size: var(--size-2);
+    border-radius: var(--radius-round);
+    background: var(--gray-5);
+
+    &.success {
+        background: var(--green-5);
+    }
+
+    &.danger {
+        background: var(--red-5);
+    }
+}
+
+.option-text {
+    flex: 2;
+}
+
+.avatar {
+    border-radius: var(--radius-round);
+    overflow: hidden;
+}
+
+
+@layer demo.support {
+    body {
+        display: grid;
+        place-items: start;
+        place-content: center;
+        padding: var(--size-5);
+        gap: var(--size-5);
+    }
+}
