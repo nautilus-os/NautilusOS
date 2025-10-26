@@ -37,13 +37,12 @@ Basically... a whole little OS in your browser :D
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Make tabs and stuff work
 - [ ] Search bar for start menu
-- [ ] Add helios as a seprate app
 - [ ] Search engine customization should apply to all browsers for enhanced user experince
 - [ ] All themes should have black background color
 - [ ] Toasts should apper AFTER bootloader
 - [ ] Visual studio like code editor
 - [ ] Window animation settings
-
+- [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 ---
 
 ## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)
