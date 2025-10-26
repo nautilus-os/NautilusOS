@@ -42,6 +42,7 @@ Basically... a whole little OS in your browser :D
 - [x] Toasts should apper AFTER bootloader
 - [x] Visual studio code editor
 - [ ] Window animation settings
+- [ ] Fix browser background & login screen container background
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
