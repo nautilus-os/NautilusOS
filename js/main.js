@@ -33,12 +33,20 @@ if (!loginStartTime) {
   loginStartTime = parseInt(loginStartTime, 10);
 }
 
-function showToast(message, icon = "fa-info-circle") {
-  const container = document.getElementById("toastContainer");
-  const toast = document.createElement("div");
-  toast.className = "toast";
+function checkFileProtocol() {
+   if (window.location.protocol === "file:") {
+     showToast("This feature doesn't work on file:// protocol. Please run NautilusOS from a web server.", "fa-exclamation-triangle");
+     return false;
+   }
+   return true;
+}
 
-  toast.innerHTML = `
+function showToast(message, icon = "fa-info-circle") {
+   const container = document.getElementById("toastContainer");
+   const toast = document.createElement("div");
+   toast.className = "toast";
+
+   toast.innerHTML = `
               <i class="fas ${icon} toast-icon"></i>
               <div class="toast-message">${message}</div>
               <div class="toast-close" onclick="closeToast(this)">
@@ -46,13 +54,13 @@ function showToast(message, icon = "fa-info-circle") {
               </div>
           `;
 
-  container.appendChild(toast);
+   container.appendChild(toast);
 
-  setTimeout(() => {
-    closeToast(toast.querySelector(".toast-close"));
-  }, 4000);
+   setTimeout(() => {
+     closeToast(toast.querySelector(".toast-close"));
+   }, 4000);
 
-  addNotificationToHistory(message, icon);
+   addNotificationToHistory(message, icon);
 }
 function closeToast(btn) {
   const toast = btn.closest(".toast");
@@ -2310,7 +2318,17 @@ function openApp(appName, editorContent = "", filename = "") {
     browser: {
       title: "Nautilus Browser",
       icon: "fas fa-globe",
-      content: `
+      content: (() => {
+        if (!checkFileProtocol()) {
+          return `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
+              <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
+              <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Browser Unavailable</h2>
+              <p style="color: var(--text-secondary); text-align: center; max-width: 400px;">The browser doesn't work on file:// protocol. Please run NautilusOS from a web server to use this feature.</p>
+            </div>
+          `;
+        }
+        return `
               <div class="browser-container" style="overflow: hidden;">
                   <div class="browser-header">
                       <div class="browser-tabs" id="browserTabs">
@@ -2367,7 +2385,8 @@ function openApp(appName, editorContent = "", filename = "") {
                       </div>
                   </div>
               </div>
-          `,
+          `;
+      })(),
       noPadding: true,
       width: 900,
       height: 600,
@@ -3692,11 +3711,22 @@ alt="favicon">
     uv: {
       title: "Ultraviolet",
       icon: "fas fa-globe",
-      content: `
+      content: (() => {
+        if (!checkFileProtocol()) {
+          return `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
+              <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
+              <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Ultraviolet Unavailable</h2>
+              <p style="color: var(--text-secondary); text-align: center; max-width: 400px;">Ultraviolet doesn't work on file:// protocol. Please run NautilusOS from a web server to use this feature.</p>
+            </div>
+          `;
+        }
+        return `
         <div class="browser-container" style="overflow: hidden;">
                       <iframe src="/app/uv.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
               </div>
-      `,
+      `;
+      })(),
       noPadding: true,
       width: 900,
       height: 600,
@@ -3704,12 +3734,23 @@ alt="favicon">
     vsc: {
       title: "Visual Studio Code",
       icon: "fas fa-code",
-      content: `
+      content: (() => {
+        if (!checkFileProtocol()) {
+          return `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
+              <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
+              <h2 style="margin-bottom: 1rem; color: var(--text-primary);">VS Code Unavailable</h2>
+              <p style="color: var(--text-secondary); text-align: center; max-width: 400px;">Visual Studio Code doesn't work on file:// protocol. Please run NautilusOS from a web server to use this feature.</p>
+            </div>
+          `;
+        }
+        return `
         <div class="browser-container" style="overflow: hidden;">
                   <h1 style="z-index: -1; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">Loading...</h1>
                       <iframe src="/uv/service/hvtrs8%2F-vqcmdg.fet%2F" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
               </div>
-      `,
+      `;
+      })(),
       noPadding: true,
       width: 900,
       height: 600,
@@ -3717,11 +3758,22 @@ alt="favicon">
     helios: {
       title: "Helios Browser",
       icon: "fas fa-globe",
-      content: `
+      content: (() => {
+        if (!checkFileProtocol()) {
+          return `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
+              <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: var(--error-red); margin-bottom: 2rem;"></i>
+              <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Helios Unavailable</h2>
+              <p style="color: var(--text-secondary); text-align: center; max-width: 400px;">Helios Browser doesn't work on file:// protocol. Please run NautilusOS from a web server to use this feature.</p>
+            </div>
+          `;
+        }
+        return `
         <div class="browser-container" style="overflow: hidden;">
                       <iframe src="/app/helios.html" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
               </div>
-      `,
+      `;
+      })(),
       noPadding: true,
       width: 900,
       height: 600,
@@ -7619,6 +7671,28 @@ window.closeWindow = closeWindow = function (btn, appName) {
     }
   }, 150);
 };
+function initStartMenuSearch() {
+  const searchInput = document.getElementById('startSearch');
+  if (!searchInput || searchInput.dataset.listenerAdded) {
+    return;
+  }
+
+  searchInput.dataset.listenerAdded = 'true';
+  searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const appItems = document.querySelectorAll('.app-item');
+
+    appItems.forEach(item => {
+      const appName = item.textContent.toLowerCase();
+      if (appName.includes(searchTerm)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+}
+
 function updateStartMenu() {
   const appGrid = document.querySelector(".app-grid");
   if (!appGrid) return;
@@ -7651,6 +7725,8 @@ function updateStartMenu() {
 
     appGrid.appendChild(appItem);
   });
+
+  initStartMenuSearch();
 }
 
 function exportProfile() {
