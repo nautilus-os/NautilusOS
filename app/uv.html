@@ -496,6 +496,13 @@
             go(furl)
         }
 
+        function r() {
+            const viewframe = document.querySelector(`.viewframe[data-frame-id="${aTab}"]`)
+            const curl = viewframe.src
+
+            viewframe.src = curl
+        }
+
     </script>
 
 </body>
