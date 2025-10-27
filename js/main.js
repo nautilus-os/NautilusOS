@@ -10220,22 +10220,26 @@ function checkTTTWinner() {
 function endTTTGame(result) {
   tttGame.gameActive = false;
   
+  const status = document.getElementById('tttStatus');
+
   if (result === 'X') {
     tttGame.wins++;
     localStorage.setItem('tttWins', tttGame.wins);
-    document.getElementById('tttStatus').textContent = 'You won! 🎉';
+    status.innerHTML = 'You won! <i class="fa-solid fa-trophy"</i>';
     document.getElementById('tttWins').textContent = tttGame.wins;
     showToast('You won!', 'fa-trophy');
+
   } else if (result === 'O') {
     tttGame.losses++;
     localStorage.setItem('tttLosses', tttGame.losses);
-    document.getElementById('tttStatus').textContent = 'AI won! 🤖';
+    status.innerHTML = 'AI won! <i class="fa-solid fa-robot" </i>';
     document.getElementById('tttLosses').textContent = tttGame.losses;
-    showToast('AI won!', 'fa-gamepad');
+    showToast('AI won!', 'fa-robot');
+
   } else {
     tttGame.draws++;
     localStorage.setItem('tttDraws', tttGame.draws);
-    document.getElementById('tttStatus').textContent = "It's a draw! 🤝";
+    status.innerHTML = "It's a draw! <i class='fa-solid fa-handshake'</i>";
     document.getElementById('tttDraws').textContent = tttGame.draws;
     showToast("It's a draw!", 'fa-handshake');
   }
