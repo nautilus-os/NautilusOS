@@ -36,14 +36,10 @@ Basically... a whole little OS in your browser :D
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Make tabs and stuff work
-- [x] Search bar for start menu
-- [x] Search engine customization should apply to all browsers for enhanced user experince
-- [x] All themes should have black gradient background color
-- [x] Toasts should apper AFTER bootloader
-- [x] Visual studio code editor
 - [ ] Window animation settings
 - [ ] Make taskbar autohide
 - [ ] Fix browser background & login screen container background (toasterfucker's job)
+- [ ] Embed V86 (lanefiedler-731's job)
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
