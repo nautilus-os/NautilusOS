@@ -39,7 +39,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Make tabs and stuff work
 - [ ] Window animation settings
 - [ ] Make taskbar autohide
-- [ ] Fix browser background & login screen container background (toasterfucker's job)
+- [x] Fix browser background & login screen container background (toasterfucker's job)
 - [ ] Embed V86 (lanefiedler-731's job)
 - [ ] Fix styles on proxy list dropdown menu
 
