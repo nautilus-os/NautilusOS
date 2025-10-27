@@ -42,6 +42,7 @@ Basically... a whole little OS in your browser :D
 - [x] Fix browser background & login screen container background (toasterfucker's job)
 - [ ] Embed V86 (lanefiedler-731's job)
 - [ ] Fix styles on proxy list dropdown menu
+- [ ] Add previews to all apps and themes
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
