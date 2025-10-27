@@ -1,3 +1,4 @@
+NOTE: Do NOT sync the dev build untill this message is removed
 ## NautilusOS
 
 NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS—and it’s my biggest project yet!!  
@@ -40,6 +41,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Make taskbar autohide
 - [ ] Fix browser background & login screen container background (toasterfucker's job)
 - [ ] Embed V86 (lanefiedler-731's job)
+- [ ] Fix styles on proxy list dropdown menu
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
