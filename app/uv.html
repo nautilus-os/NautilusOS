@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
 </head>
+
 <body>
 
     <style>
@@ -126,6 +128,7 @@
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
+            transition: 0.4s;
         }
 
         form input:focus {
@@ -174,12 +177,14 @@
             vertical-align: middle;
         }
 
-        .leftcontrols, .rightcontrols {
+        .leftcontrols,
+        .rightcontrols {
             width: max-content;
             margin-top: 5px;
         }
 
-        .leftcontrols button, .rightcontrols button {
+        .leftcontrols button,
+        .rightcontrols button {
             margin-right: 2px;
             margin-left: 2px;
         }
@@ -212,6 +217,7 @@
             cursor: pointer;
             display: flex;
             margin: 5px;
+            overflow: hidden;
         }
 
         .tabs button {
@@ -233,37 +239,64 @@
         .tab:hover {
             background: #5e5e5e38;
         }
-        
+
         .tab span {
             text-align: left;
+            width: 70%;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, black 70%, transparent 100%);
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgb(255, 255, 255, 1);
+            border-top-color: transparent;
+            border-right-color: transparent;
+            animation: rot1 0.5s linear infinite;
+        }
+
+        @keyframes rot1 {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         * {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
     </style>
-        <div class="webcontrols">
-            <div class="tabs">
-                <button id="nt" onclick="newTab()"><i class="fas fa-plus"></i></button>
+    <div class="webcontrols">
+        <div class="tabs">
+            <button id="nt" onclick="newTab()"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="maincontrols">
+            <div class="leftcontrols">
+                <button onclick="b()"><i class="fas fa-chevron-left"></i></button>
+                <button onclick="f()"><i class="fas fa-chevron-right"></i></button>
+                <button onclick="r()"><i class="fas fa-rotate-right"></i></button>
             </div>
-            <div class="maincontrols">
-                <div class="leftcontrols">
-                    <button onclick="b()"><i class="fas fa-arrow-left"></i></button>
-                    <button onclick="f()"><i class="fas fa-arrow-right"></i></button>
-                    <button onclick="r()"><i class="fas fa-rotate-right"></i></button>
-                </div>
-                <form action="" id="form">
-                    <input type="text" id="urlbar" placeholder="Search with or enter a URL here">
-                    <button id="submit">Go</button>
-                </form>
+            <form action="" id="form">
+                <input type="text" id="urlbar" placeholder="Search with or enter a URL here">
+                <button id="submit">Go</button>
+            </form>
+            <div class="rightcontrols">
+                <button onclick="full()"><i class="fas fa-external-link"></i></button>
+                <button onclick="hide()"><i class="fas fa-chevron-up"></i></button>
             </div>
         </div>
+    </div>
+
+    <button class="showcontrols" onclick="show()" style="opacity: 0; position: fixed; right: 0.2%; display: none; transition: 0.2s;">
+        <i class="fas fa-chevron-down"></i>
+    </button>
 
     <div class="backgroundtext">
         <h1>ultraviolet</h1>
         <p>made by $xor | built for nautilus-os</p>
     </div>
-    
+
     <iframe src="" frameborder="0" id="iframe"></iframe>
 
     <script>
@@ -299,7 +332,7 @@
 
         // actual uv handling
         const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
-        const wispUrl = "wss://wisp.rhw.one" // rhw wisp, super speedy
+        const wispUrl = "wss://wisp.rhw.one/" // rhw wisp, super speedy
         const bareUrl = "https://useclassplay.vercel.app/fq/" // old site i have
 
         connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }])
@@ -327,7 +360,7 @@
                 history: [],
                 historyIndex: -1,
             };
-            
+
             bTabs.push(nTab)
             if (!tabCont) return
 
@@ -336,7 +369,7 @@
             const tabElement = document.createElement("div")
             tabElement.classList.add("tab")
             tabElement.dataset.tabId = nTab.id
-            tabElement.innerHTML = `<span class="btitle">New Tab</span> <div class="closetab"><i class="fas fa-times"></i></div>`
+            tabElement.innerHTML = `<img id="fav" data-fav-id="${nTab.id}" src="https://www.google.com/s2/favicons?domain=https://nautilus-os.vercel.app&sz=256"></img>&nbsp;&nbsp;<span class="btitle">New Tab</span> <div class="closetab"><i class="fas fa-times"></i></div>`
 
             tabElement.addEventListener("click", (e) => {
                 if (!e.target.closest(".closetab")) {
@@ -365,22 +398,22 @@
         closeTab(0)
 
         function switchTab(tId) {
-                aTab = tId
+            aTab = tId
 
-                document.querySelectorAll(".tab").forEach(tab => {
-                    tab.classList.toggle("active", parseInt(tab.dataset.tabId) === tId)
-                })
+            document.querySelectorAll(".tab").forEach(tab => {
+                tab.classList.toggle("active", parseInt(tab.dataset.tabId) === tId)
+            })
 
-                document.querySelectorAll(".viewframe").forEach(frame => {
-                    frame.classList.toggle("active", parseInt(frame.dataset.frameId) === tId)
-                })
+            document.querySelectorAll(".viewframe").forEach(frame => {
+                frame.classList.toggle("active", parseInt(frame.dataset.frameId) === tId)
+            })
 
-                const cTab = bTabs.find(t => t.id === tId)
-                if (cTab) {
-                    const input = document.getElementById("urlbar")
-                    if (input) input.value = cTab.url
-                }
+            const cTab = bTabs.find(t => t.id === tId)
+            if (cTab) {
+                const input = document.getElementById("urlbar")
+                if (input) input.value = cTab.url
             }
+        }
 
 
         function closeTab(tId) {
@@ -433,24 +466,42 @@
 
             const cTab = bTabs.find((t) => t.id === aTab)
             if (!cTab) return
-            
+
             cTab.history.push(url)
             cTab.historyIndex++
 
             cTab.url = url
             const fUrl = __uv$config.prefix + __uv$config.encodeUrl(url)
 
+            const loadC = document.querySelector(".backgroundtext")
+            if (loadC) {
+                loadC.innerHTML = `
+                    <center>
+                        <div class="loader"></div>
+                        <p>Loading...</p>
+                    </center>
+                `
+            }
+
             go(fUrl)
         }
 
         async function go(u) {
+
+            if (!await connection.getTransport()) {
+                connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }])
+            }
+
             console.log("a")
             const cTab = bTabs.find((t) => t.id === aTab)
+            const favEl = document.querySelector(`#fav[data-fav-id="${aTab}"]`)
             const viewframe = document.querySelector(`.viewframe[data-frame-id="${aTab}"]`)
             if (!viewframe) return
 
             const ubar = document.getElementById("urlbar")
             if (ubar) ubar.value = __uv$config.decodeUrl(u.replace("/uv/service/", ""))
+            const favUrl = __uv$config.decodeUrl(u.replace("/uv/service/", ""))
+            if (favEl) favEl.src = `https://www.google.com/s2/favicons?domain=${favUrl}&sz=256`
 
             try {
                 viewframe.src = u
@@ -459,10 +510,20 @@
                 const iframeDoc = viewframe.contentDocument || viewframe.contentWindow.document
                 const title = iframeDoc.title || new URL(cTab.url).hostname
 
-                const tabEl = document.querySelector(`.tab[data-tab-id="${aTab}"]`)
-                if (tabEl) {
-                    const titleEl = tabEl.querySelector(".btitle")
-                    if (titleEl) titleEl.textContent = title
+                viewframe.onload = () => {
+                    const tabEl = document.querySelector(`.tab[data-tab-id="${aTab}"]`)
+                    if (tabEl) {
+                        const titleEl = tabEl.querySelector(".btitle")
+                        if (titleEl) titleEl.textContent = title
+                    }
+
+                    const loadC = document.querySelector(".backgroundtext")
+                    if (loadC) {
+                        loadC.innerHTML = `
+                            <h1>ultraviolet</h1>
+                            <p>made by $xor | built for nautilus-os</p>
+                        `
+                    }
                 }
             } catch (e) {
                 console.error("There was an error while loading the page:", e)
@@ -500,7 +561,37 @@
             viewframe.src = curl
         }
 
+        function full() {
+            const viewframe = document.querySelector(`.viewframe[data-frame-id="${aTab}"]`)
+            console.log("adksjfh")
+            const popup = window.open(viewframe.src, "_blank")
+            if (popup) console.log("popped out")
+        }
+
+        function hide() {
+            document.querySelector(".webcontrols").style.marginTop = "-15%"
+            setTimeout(() => {
+                document.querySelector(".webcontrols").style.display = "none"
+                document.querySelector(".showcontrols").style.display = "block"
+                setTimeout(() => {
+                    document.querySelector(".showcontrols").style.opacity = "1"
+                }, 1)
+            }, 401)
+        }
+
+        function show() {
+           document.querySelector(".showcontrols").style.opacity = "0"
+            setTimeout(() => {
+                document.querySelector(".showcontrols").style.display = "none"
+                document.querySelector(".webcontrols").style.display = "block"
+                setTimeout(() => {
+                    document.querySelector(".webcontrols").style.marginTop = "10px"
+                }, 25)
+            }, 201) 
+        }
+
     </script>
 
 </body>
+
 </html>
