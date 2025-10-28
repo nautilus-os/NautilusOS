@@ -1,0 +1,804 @@
+/* V86 Emulator Styles */
+
+.v86-emulator {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--bg-primary);
+    font-family: var(--font-family);
+}
+
+/* Toolbar */
+.v86-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.v86-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.v86-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.v86-btn:hover:not(:disabled) {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+}
+
+.v86-btn:disabled,
+.v86-btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.v86-btn:disabled:hover,
+.v86-btn-disabled:hover {
+    background: var(--bg-primary);
+    border-color: var(--border);
+}
+
+.v86-btn-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.v86-btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+}
+
+.v86-btn-secondary {
+    background: var(--bg-secondary);
+}
+
+.v86-btn-warning {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+}
+
+.v86-btn-warning:hover:not(:disabled) {
+    background: #d97706;
+}
+
+.v86-btn-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Status Display */
+.v86-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.v86-status-main {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.v86-performance {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.v86-perf-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+}
+
+.v86-perf-item i {
+    width: 12px;
+    text-align: center;
+    opacity: 0.7;
+}
+
+.v86-status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+}
+
+.v86-status-loading {
+    background: #f59e0b;
+    animation: v86-pulse 1.5s ease-in-out infinite;
+}
+
+.v86-status-ready {
+    background: #10b981;
+}
+
+.v86-status-running {
+    background: #3b82f6;
+    animation: v86-pulse 2s ease-in-out infinite;
+}
+
+.v86-status-error {
+    background: #ef4444;
+}
+
+.v86-status-stopped {
+    background: var(--text-secondary);
+}
+
+@keyframes v86-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Display Container */
+.v86-display-container {
+    flex: 1;
+    position: relative;
+    background: #000;
+    min-height: 400px;
+    overflow: auto;
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.v86-screen-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative;
+    min-height: 400px;
+    box-sizing: border-box;
+    flex: 1;
+    padding: 20px;
+    /* Add padding to keep content away from edges */
+    overflow: hidden;
+    /* Prevent content from spilling to edges */
+}
+
+.v86-screen {
+    border: none;
+    background: #000;
+    cursor: crosshair;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    transition: all 0.2s ease;
+    display: block !important;
+    margin: 0 !important;
+    position: static !important;
+    top: auto !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    float: none !important;
+    flex-shrink: 0;
+    outline: none !important;
+}
+
+/* Force left alignment so text is always visible */
+.v86-screen-wrapper {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: relative !important;
+    overflow: hidden !important;
+    padding: 20px !important;
+}
+
+/* Canvas container - left aligned with padding */
+.v86-canvas-container {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    min-width: 800px;
+    min-height: 600px;
+    overflow: visible !important;
+}
+
+/* Ensure V86's canvas and text div are visible */
+.v86-canvas-container>canvas {
+    display: block !important;
+    max-width: none !important;
+    max-height: none !important;
+}
+
+/* Text mode div styling */
+.v86-canvas-container>div,
+.v86-text-mode {
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    color: #fff !important;
+    font-family: monospace !important;
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+    white-space: pre !important;
+    background: #000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 640px !important;
+    min-height: 400px !important;
+}
+
+/* Text mode rows */
+.v86-canvas-container>div>div {
+    display: block !important;
+    white-space: pre !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* V86 text mode character spans */
+.v86-canvas-container>div>div>span {
+    display: inline !important;
+    white-space: pre !important;
+}
+
+/* Blinking text */
+.v86-canvas-container .blink {
+    animation: v86-blink 1s step-end infinite;
+}
+
+@keyframes v86-blink {
+
+    0%,
+    49% {
+        opacity: 1;
+    }
+
+    50%,
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Cursor in text mode */
+.v86-canvas-container .cursor {
+    display: inline-block !important;
+    background-color: #ccc !important;
+    animation: v86-cursor-blink 1s step-end infinite;
+}
+
+@keyframes v86-cursor-blink {
+
+    0%,
+    49% {
+        opacity: 1;
+    }
+
+    50%,
+    100% {
+        opacity: 0.3;
+    }
+}
+
+.v86-screen:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.v86-screen.v86-input-captured {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* Input Capture Notification */
+.v86-input-notification {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(16, 185, 129, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    z-index: 20;
+    animation: v86-fade-in 0.3s ease;
+}
+
+.v86-input-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.v86-input-notification-content small {
+    opacity: 0.8;
+    font-size: 0.65rem;
+}
+
+@keyframes v86-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Prevent NautilusOS conflicts when input is active */
+body.v86-input-active {
+    /* Disable text selection */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+body.v86-input-active * {
+    /* Prevent context menus */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Screen Controls - Always visible */
+.v86-screen-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 6px;
+    padding: 4px;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.v86-screen-wrapper:hover .v86-screen-controls {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.v86-scale-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.v86-scale-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.v86-scale-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.v86-scale-btn.active:hover {
+    background: var(--accent-hover);
+}
+
+/* Overlay */
+.v86-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.v86-overlay-content {
+    text-align: center;
+    color: white;
+    padding: 2rem;
+}
+
+.v86-overlay-icon {
+    font-size: 4rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.v86-overlay-content h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.v86-overlay-content p {
+    margin: 0;
+    color: #d1d5db;
+    font-size: 0.875rem;
+}
+
+/* Configuration Panel */
+.v86-config-panel {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.v86-config-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.v86-config-header:hover {
+    background: var(--bg-hover);
+}
+
+.v86-config-header h4 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.v86-config-content {
+    padding: 0 1rem 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.v86-config-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    gap: 1rem;
+}
+
+.v86-config-row label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    min-width: 100px;
+}
+
+.v86-config-row select,
+.v86-config-row input[type="file"] {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    min-width: 150px;
+}
+
+.v86-config-row select:focus,
+.v86-config-row input[type="file"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Fullscreen styles */
+.v86-emulator:fullscreen {
+    background: #000;
+}
+
+.v86-emulator:fullscreen .v86-display-container {
+    background: #000;
+    overflow: hidden;
+}
+
+.v86-emulator:fullscreen .v86-screen-wrapper {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+}
+
+.v86-emulator:fullscreen .v86-screen {
+    border: none;
+    max-width: 100vw;
+    max-height: 100vh;
+}
+
+.v86-emulator:fullscreen .v86-toolbar,
+.v86-emulator:fullscreen .v86-config-panel {
+    display: none;
+}
+
+.v86-emulator:fullscreen .v86-screen-controls {
+    opacity: 0.7;
+    top: 20px;
+    right: 20px;
+}
+
+.v86-emulator:fullscreen .v86-screen-controls:hover {
+    opacity: 1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .v86-toolbar {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+
+    .v86-controls {
+        justify-content: center;
+    }
+
+    .v86-config-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .v86-config-row label {
+        min-width: auto;
+    }
+
+    .v86-config-row select,
+    .v86-config-row input[type="file"] {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+    .v86-screen {
+        border-color: #374151;
+    }
+
+    .v86-overlay {
+        background: rgba(0, 0, 0, 0.9);
+    }
+}
+
+/* Animation for smooth transitions */
+.v86-config-content {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.v86-btn {
+    transition: all 0.2s ease;
+}
+
+.v86-status-indicator {
+    transition: background-color 0.3s ease;
+}
+
+/*
+ Loading Progress Styles */
+.v86-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+.v86-loading-content {
+    text-align: center;
+    max-width: 400px;
+    padding: 2rem;
+}
+
+.v86-loading-icon {
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    animation: pulse 2s infinite;
+}
+
+.v86-loading-icon.error {
+    color: #ff6b6b;
+    animation: none;
+}
+
+.v86-loading-content h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.v86-progress-container {
+    margin-top: 1.5rem;
+}
+
+.v86-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.v86-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.v86-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+.v86-progress-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.v86-error-message {
+    color: var(--text-secondary);
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.v86-retry-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.v86-retry-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Co
+nfiguration Panel Improvements */
+.v86-help-text {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+.v86-config-row input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.v86-config-row input[type="file"]:hover {
+    border-color: var(--accent);
+    background: var(--bg-hover);
+}
+
+.v86-config-row input[type="file"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(125, 211, 192, 0.2);
+}
+
+/* File input styling for better ISO file indication */
+.v86-config-row input[type="file"]::file-selector-button {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin-right: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.v86-config-row input[type="file"]::file-selector-button:hover {
+    background: var(--accent-hover);
+}

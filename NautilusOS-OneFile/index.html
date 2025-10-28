@@ -17601,7 +17601,7 @@ tictactoe: {
   if (apps[appName]) {
     const app = apps[appName];
     trackAppOpened(appName);
-    createWindow(
+    const windowEl = createWindow(
       app.title,
       app.icon,
       app.content,
@@ -20934,6 +20934,8 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-globe", label: "Helios" };
   } else if (appName === "vsc") {
     iconConfig = { icon: "fa-code", label: "Visual Studio Code" };
+  } else if (appName === "v86-emulator") {
+    iconConfig = { icon: "fa-microchip", label: "V86 Emulator" };
   } else {
     return;
   }

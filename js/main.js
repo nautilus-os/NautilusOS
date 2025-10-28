@@ -37,27 +37,27 @@ let appliedThemeName = null;
 let hasShownFileProtocolToast = false;
 
 function checkFileProtocol(title = null) {
-    if (window.location.protocol === "file:") {
-      const shouldShowToast = title && (
-        title.toLowerCase().includes("browser") ||
-        title === "Visual Studio Code"
-      );
-      if (shouldShowToast && !hasShownFileProtocolToast) {
-        showToast("This feature doesn't work on file:// protocol. Please run NautilusOS from a web server.", "fa-exclamation-triangle");
-        hasShownFileProtocolToast = true;
-      }
-      return false;
+  if (window.location.protocol === "file:") {
+    const shouldShowToast = title && (
+      title.toLowerCase().includes("browser") ||
+      title === "Visual Studio Code"
+    );
+    if (shouldShowToast && !hasShownFileProtocolToast) {
+      showToast("This feature doesn't work on file:// protocol. Please run NautilusOS from a web server.", "fa-exclamation-triangle");
+      hasShownFileProtocolToast = true;
     }
-    return true;
+    return false;
+  }
+  return true;
 }
 
 function showToast(message, icon = "fa-info-circle") {
-    console.log(`[TOAST LOG] ${new Date().toISOString()}: ${message} (icon: ${icon})`);
-    const container = document.getElementById("toastContainer");
-    const toast = document.createElement("div");
-    toast.className = "toast";
+  console.log(`[TOAST LOG] ${new Date().toISOString()}: ${message} (icon: ${icon})`);
+  const container = document.getElementById("toastContainer");
+  const toast = document.createElement("div");
+  toast.className = "toast";
 
-    toast.innerHTML = `
+  toast.innerHTML = `
                <i class="fas ${icon} toast-icon"></i>
                <div class="toast-message">${message}</div>
                <div class="toast-close" onclick="closeToast(this)">
@@ -65,13 +65,13 @@ function showToast(message, icon = "fa-info-circle") {
                </div>
            `;
 
-    container.appendChild(toast);
+  container.appendChild(toast);
 
-    setTimeout(() => {
-      closeToast(toast.querySelector(".toast-close"));
-    }, 4000);
+  setTimeout(() => {
+    closeToast(toast.querySelector(".toast-close"));
+  }, 4000);
 
-    addNotificationToHistory(message, icon);
+  addNotificationToHistory(message, icon);
 }
 function closeToast(btn) {
   const toast = btn.closest(".toast");
@@ -115,6 +115,11 @@ const appMetadata = {
   "snap-manager": {
     name: "Snap Manager",
     icon: "fa-border-all",
+    preinstalled: false,
+  },
+  "v86-emulator": {
+    name: "V86 Emulator",
+    icon: "fa-microchip",
     preinstalled: false,
   },
 };
@@ -560,8 +565,8 @@ function renderSnapManager() {
                 <div class="snap-layout-header">
                     <div class="snap-layout-title">
                         <input type="text" value="${escapeHtml(
-                          layout.name
-                        )}" onblur="handleSnapLayoutField('${layoutId}', 'name', this.value)">
+        layout.name
+      )}" onblur="handleSnapLayoutField('${layoutId}', 'name', this.value)">
                         <span>${getSnapTriggerLabel(layout.trigger)}</span>
                     </div>
                     <button class="snap-remove-btn" onclick="removeSnapLayout('${layoutId}')" ${removeDisabled}>
@@ -1359,9 +1364,8 @@ function startLoginClock() {
       "November",
       "December",
     ];
-    const dateStr = `${days[now.getDay()]}, ${
-      months[now.getMonth()]
-    } ${now.getDate()}`;
+    const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]
+      } ${now.getDate()}`;
     document.getElementById("loginDate").textContent = dateStr;
   }
   updateLoginClock();
@@ -1429,46 +1433,46 @@ function login() {
 
     setTimeout(() => {
       console.log(`[LOGIN LOG] ${new Date().toISOString()}: Desktop active, starting clock and initialization`);
-        startClock();
-  
-        const iconsContainer = document.getElementById("desktopIcons");
-        if (iconsContainer) {
-          const installedIcons = iconsContainer.querySelectorAll(
-            ".desktop-icon[data-app]"
-          );
-          installedIcons.forEach((icon) => {
-            const appName = icon.getAttribute("data-app");
-            if (installedApps.includes(appName)) {
-              icon.remove();
-            }
-          });
-  
-          installedApps.forEach((appName) => {
-            addDesktopIcon(appName);
-          });
-        }
-  
-        initDesktopIconDragging();
-        initContextMenu();
-        initScrollIndicator();
-  
-        updateStartMenu();
-  
-        // Show theme application toast after desktop loads
-        if (appliedThemeName) {
-          setTimeout(() => {
-            showToast(`Applied ${appliedThemeName.charAt(0).toUpperCase() + appliedThemeName.slice(1)} theme!`, "fa-check-circle");
-            appliedThemeName = null;
-          }, 1000);
-        }
-  
-        const showWhatsNew = localStorage.getItem("nautilusOS_showWhatsNew");
-        if (showWhatsNew === null || showWhatsNew === "true") {
-          console.log(`[LOGIN LOG] ${new Date().toISOString()}: Opening What's New app`);
-          setTimeout(() => {
-            openApp("whatsnew");
-          }, 800);
-        }
+      startClock();
+
+      const iconsContainer = document.getElementById("desktopIcons");
+      if (iconsContainer) {
+        const installedIcons = iconsContainer.querySelectorAll(
+          ".desktop-icon[data-app]"
+        );
+        installedIcons.forEach((icon) => {
+          const appName = icon.getAttribute("data-app");
+          if (installedApps.includes(appName)) {
+            icon.remove();
+          }
+        });
+
+        installedApps.forEach((appName) => {
+          addDesktopIcon(appName);
+        });
+      }
+
+      initDesktopIconDragging();
+      initContextMenu();
+      initScrollIndicator();
+
+      updateStartMenu();
+
+      // Show theme application toast after desktop loads
+      if (appliedThemeName) {
+        setTimeout(() => {
+          showToast(`Applied ${appliedThemeName.charAt(0).toUpperCase() + appliedThemeName.slice(1)} theme!`, "fa-check-circle");
+          appliedThemeName = null;
+        }, 1000);
+      }
+
+      const showWhatsNew = localStorage.getItem("nautilusOS_showWhatsNew");
+      if (showWhatsNew === null || showWhatsNew === "true") {
+        console.log(`[LOGIN LOG] ${new Date().toISOString()}: Opening What's New app`);
+        setTimeout(() => {
+          openApp("whatsnew");
+        }, 800);
+      }
     }, 100);
   }, 500);
 }
@@ -1860,6 +1864,7 @@ function minimizeWindow(btn) {
 function maximizeWindow(btn) {
   const window = btn.closest(".window");
   const icon = btn.querySelector("i");
+  const appName = window.dataset.appName;
 
   if (window.dataset.maximized === "true") {
     window.style.width = window.dataset.oldWidth;
@@ -1891,10 +1896,21 @@ function maximizeWindow(btn) {
     const header = window.querySelector(".window-header");
     if (header) header.style.borderRadius = "1px";
   }
+
+  // Handle V86 emulator display scaling adjustments
+  if (appName === "v86-emulator") {
+    handleV86WindowResize(window);
+  }
 }
 
 function closeWindow(btn, appName) {
   const window = btn.closest(".window");
+
+  // Handle V86 emulator cleanup before closing window
+  if (appName === "v86-emulator") {
+    handleV86WindowClose(window);
+  }
+
   window.style.animation = "windowMinimize 0.25s ease forwards";
   setTimeout(() => {
     window.remove();
@@ -2279,11 +2295,10 @@ function openApp(appName, editorContent = "", filename = "") {
                       </div>
                       <div class="file-main">
                           <div class="file-toolbar">
-                              <button class="editor-btn" onclick="goUpDirectory()" ${
-                                currentPath.length === 0
-                                  ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
-                                  : ""
-                              }>
+                              <button class="editor-btn" onclick="goUpDirectory()" ${currentPath.length === 0
+            ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
+            : ""
+          }>
                                   <i class="fas fa-arrow-up"></i> Up
                               </button>
                               <button class="editor-btn" onclick="createNewFolder()">
@@ -2295,12 +2310,12 @@ function openApp(appName, editorContent = "", filename = "") {
                           </div>
       <div class="file-grid">
                       ${Object.keys(current)
-                        .sort()
-                        .map((file) => {
-                          const isFolder = typeof current[file] === "object";
-                          const icon = isFolder ? "fa-folder" : "fa-file-alt";
-                          const escapedFile = file.replace(/'/g, "\\'");
-                          return `
+            .sort()
+            .map((file) => {
+              const isFolder = typeof current[file] === "object";
+              const icon = isFolder ? "fa-folder" : "fa-file-alt";
+              const escapedFile = file.replace(/'/g, "\\'");
+              return `
                               <div class="file-item" ondblclick="openFile('${escapedFile}')" onclick="selectFileItem(event, this, '${escapedFile}')" draggable="true" ondragstart="handleFileDragStart(event, '${escapedFile}')" ondragover="handleFileDragOver(event, ${isFolder})" ondrop="handleFileDrop(event, '${escapedFile}')">
                                   <i class="fas ${icon}"></i>
                                   <span>${file}</span>
@@ -2314,8 +2329,8 @@ function openApp(appName, editorContent = "", filename = "") {
                                   </div>
                               </div>
                           `;
-                        })
-                        .join("")}
+            })
+            .join("")}
                   </div>
                       </div>
                   </div>
@@ -2342,9 +2357,9 @@ function openApp(appName, editorContent = "", filename = "") {
       height: 600,
     },
     "2048": {
-  title: "2048",
-  icon: "fas fa-th",
-  content: `
+      title: "2048",
+      icon: "fas fa-th",
+      content: `
     <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: var(--bg-primary); padding: 20px; gap: 40px;">
       <div style="display: flex; flex-direction: column; gap: 20px;">
         <div style="text-align: center;">
@@ -2373,10 +2388,10 @@ function openApp(appName, editorContent = "", filename = "") {
       <div id="game2048Board" style="display: grid; grid-template-columns: repeat(4, 100px); gap: 10px;"></div>
     </div>
   `,
-  noPadding: true,
-  width: 700,
-  height: 600,
-},
+      noPadding: true,
+      width: 700,
+      height: 600,
+    },
     browser: {
       title: "Nautilus Browser",
       icon: "fas fa-globe",
@@ -2548,35 +2563,30 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-status-card">
-                        <div class="cloaking-status-indicator ${
-                          cloakingConfig.autoRotate ? "active" : ""
-                        }">
+                        <div class="cloaking-status-indicator ${cloakingConfig.autoRotate ? "active" : ""
+        }">
                             <div class="cloaking-status-icon">
-                                <i class="fas ${
-                                  cloakingConfig.autoRotate
-                                    ? "fa-rotate"
-                                    : "fa-rotate"
-                                }"></i>
+                                <i class="fas ${cloakingConfig.autoRotate
+          ? "fa-rotate"
+          : "fa-rotate"
+        }"></i>
                             </div>
                             <div class="cloaking-status-text">
                                 <div class="cloaking-status-title">Auto-Rotate Status</div>
-                                <div class="cloaking-status-desc">${
-                                  cloakingConfig.autoRotate
-                                    ? "Currently Active"
-                                    : "Currently Inactive"
-                                }</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.autoRotate
+          ? "Currently Active"
+          : "Currently Inactive"
+        }</div>
                             </div>
-                            <div class="toggle-switch ${
-                              cloakingConfig.autoRotate ? "active" : ""
-                            }" id="autoRotateToggle" onclick="toggleAutoRotate()"></div>
+                            <div class="toggle-switch ${cloakingConfig.autoRotate ? "active" : ""
+        }" id="autoRotateToggle" onclick="toggleAutoRotate()"></div>
                         </div>
                     </div>
                     
-                    <div class="cloaking-form-card" id="rotateSettings" style="${
-                      cloakingConfig.autoRotate
-                        ? ""
-                        : "opacity: 0.5; pointer-events: none;"
-                    }">
+                    <div class="cloaking-form-card" id="rotateSettings" style="${cloakingConfig.autoRotate
+          ? ""
+          : "opacity: 0.5; pointer-events: none;"
+        }">
                         <div class="cloaking-form-group">
                             <label class="cloaking-label">
                                 <i class="fas fa-clock"></i> Rotation Speed (seconds)
@@ -2591,9 +2601,8 @@ alt="favicon">
                                     value="${cloakingConfig.rotateSpeed}"
                                     oninput="updateRotateSpeedDisplay(this.value)"
                                 >
-                                <span class="cloaking-slider-value" id="rotateSpeedValue">${
-                                  cloakingConfig.rotateSpeed
-                                }s</span>
+                                <span class="cloaking-slider-value" id="rotateSpeedValue">${cloakingConfig.rotateSpeed
+        }s</span>
                             </div>
                             <div class="cloaking-hint">How often the tab should change disguise</div>
                         </div>
@@ -2622,27 +2631,23 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-status-card">
-                        <div class="cloaking-status-indicator ${
-                          cloakingConfig.panicKeyEnabled ? "active" : ""
-                        }">
+                        <div class="cloaking-status-indicator ${cloakingConfig.panicKeyEnabled ? "active" : ""
+        }">
                             <div class="cloaking-status-icon">
-                                <i class="fas ${
-                                  cloakingConfig.panicKeyEnabled
-                                    ? "fa-shield-alt"
-                                    : "fa-shield"
-                                }"></i>
+                                <i class="fas ${cloakingConfig.panicKeyEnabled
+          ? "fa-shield-alt"
+          : "fa-shield"
+        }"></i>
                             </div>
                             <div class="cloaking-status-text">
                                 <div class="cloaking-status-title">Panic Key Status</div>
-                                <div class="cloaking-status-desc">${
-                                  cloakingConfig.panicKeyEnabled
-                                    ? "Armed and Ready"
-                                    : "Disabled"
-                                }</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.panicKeyEnabled
+          ? "Armed and Ready"
+          : "Disabled"
+        }</div>
                             </div>
-                            <div class="toggle-switch ${
-                              cloakingConfig.panicKeyEnabled ? "active" : ""
-                            }" onclick="togglePanicKey()"></div>
+                            <div class="toggle-switch ${cloakingConfig.panicKeyEnabled ? "active" : ""
+        }" onclick="togglePanicKey()"></div>
                         </div>
                     </div>
                     
@@ -2652,10 +2657,9 @@ alt="favicon">
                                 <i class="fas fa-keyboard"></i> Panic Hotkey
                             </label>
                             <div class="cloaking-hotkey-display" id="panicHotkeyDisplay" onclick="recordPanicKey()">
-                                ${
-                                  cloakingConfig.panicKey ||
-                                  "Click to set hotkey"
-                                }
+                                ${cloakingConfig.panicKey ||
+        "Click to set hotkey"
+        }
                             </div>
                             <div class="cloaking-hint">Press any key combination to set it as your panic hotkey</div>
                         </div>
@@ -2808,18 +2812,16 @@ alt="favicon">
                                 <div class="settings-item-title">12-Hour Format</div>
                                 <div class="settings-item-desc">Use 12-hour time with AM/PM</div>
                             </div>
-                            <div class="toggle-switch ${
-                              settings.use12Hour ? "active" : ""
-                            }" onclick="toggleSetting('use12Hour')"></div>
+                            <div class="toggle-switch ${settings.use12Hour ? "active" : ""
+        }" onclick="toggleSetting('use12Hour')"></div>
                         </div>
                         <div class="settings-item">
                             <div class="settings-item-text">
                                 <div class="settings-item-title">Show Seconds</div>
                                 <div class="settings-item-desc">Display seconds in taskbar clock</div>
                             </div>
-                            <div class="toggle-switch ${
-                              settings.showSeconds ? "active" : ""
-                            }" onclick="toggleSetting('showSeconds')"></div>
+                            <div class="toggle-switch ${settings.showSeconds ? "active" : ""
+        }" onclick="toggleSetting('showSeconds')"></div>
                         </div>
                     </div>
                 </div>
@@ -2835,9 +2837,8 @@ alt="favicon">
                                 <div class="settings-item-title">Show Desktop Icons</div>
                                 <div class="settings-item-desc">Display application icons on desktop</div>
                             </div>
-                            <div class="toggle-switch ${
-                              settings.showDesktopIcons ? "active" : ""
-                            }" onclick="toggleSetting('showDesktopIcons')"></div>
+                            <div class="toggle-switch ${settings.showDesktopIcons ? "active" : ""
+        }" onclick="toggleSetting('showDesktopIcons')"></div>
                         </div>
                     </div>
                 </div>
@@ -2853,13 +2854,12 @@ alt="favicon">
                                 <div class="settings-item-title">Show on Startup</div>
                                 <div class="settings-item-desc">Open What's New window when logging in</div>
                             </div>
-                            <div class="toggle-switch ${
-                              localStorage.getItem(
-                                "nautilusOS_showWhatsNew"
-                              ) !== "false"
-                                ? "active"
-                                : ""
-                            }" onclick="toggleSetting('showWhatsNew')"></div>
+                            <div class="toggle-switch ${localStorage.getItem(
+          "nautilusOS_showWhatsNew"
+        ) !== "false"
+          ? "active"
+          : ""
+        }" onclick="toggleSetting('showWhatsNew')"></div>
                         </div>
                     </div>
                 </div>
@@ -2881,11 +2881,10 @@ alt="favicon">
                         <input type="file" id="loginWallpaperInput" accept="image/png, image/jpeg, image/gif" onchange="handleLoginBackgroundUpload(event)" style="display: none;">
                         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
                             <button class="settings-action-btn" id="desktopWallpaperButton" onclick="document.getElementById('wallpaperInput').click()">
-                                <i class="fas fa-upload"></i> ${
-                                  hasWallpaper
-                                    ? "Change Desktop Wallpaper"
-                                    : "Set Desktop Wallpaper"
-                                }
+                                <i class="fas fa-upload"></i> ${hasWallpaper
+          ? "Change Desktop Wallpaper"
+          : "Set Desktop Wallpaper"
+        }
                             </button>
                             <button class="settings-action-btn" onclick="clearWallpaper()">
                                 <i class="fas fa-undo"></i> Reset Desktop Wallpaper
@@ -2896,20 +2895,17 @@ alt="favicon">
                                 <div class="settings-item-title">Use same for login screen</div>
                                 <div class="settings-item-desc">Mirror the desktop wallpaper on the login page</div>
                             </div>
-                            <div class="toggle-switch ${
-                              useSameBackground ? "active" : ""
-                            }" id="loginWallpaperToggle" onclick="toggleLoginWallpaperLink(this)"></div>
+                            <div class="toggle-switch ${useSameBackground ? "active" : ""
+        }" id="loginWallpaperToggle" onclick="toggleLoginWallpaperLink(this)"></div>
                         </div>
-                        <div id="loginWallpaperControls" style="${
-                          useSameBackground ? "display: none;" : ""
-                        }">
+                        <div id="loginWallpaperControls" style="${useSameBackground ? "display: none;" : ""
+        }">
                             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
                                 <button class="settings-action-btn" id="loginWallpaperButton" onclick="document.getElementById('loginWallpaperInput').click()">
-                                    <i class="fas fa-upload"></i> ${
-                                      hasLoginWallpaper
-                                        ? "Change Login Wallpaper"
-                                        : "Set Login Wallpaper"
-                                    }
+                                    <i class="fas fa-upload"></i> ${hasLoginWallpaper
+          ? "Change Login Wallpaper"
+          : "Set Login Wallpaper"
+        }
                                 </button>
                                 <button class="settings-action-btn" onclick="clearLoginWallpaper()">
                                     <i class="fas fa-undo"></i> Reset Login Wallpaper
@@ -2926,9 +2922,8 @@ alt="favicon">
                     </div>
                     <div class="settings-card-body">
                         <div id="themeSettings">
-                            ${
-                              installedThemes.length === 0
-                                ? `
+                            ${installedThemes.length === 0
+          ? `
                                 <div class="settings-empty">
                                     <i class="fas fa-paint-brush"></i>
                                     <h3>No Themes Installed</h3>
@@ -2938,29 +2933,28 @@ alt="favicon">
                                     </button>
                                 </div>
                             `
-                                : `
+          : `
                                 <div class="theme-grid">
                                     ${installedThemes
-                                      .map(
-                                        (theme) => `
+            .map(
+              (theme) => `
                                         <div class="theme-card">
                                             <div class="theme-preview">
                                                 <i class="fas fa-sun"></i>
                                             </div>
-                                            <div class="theme-name">${
-                                              theme.charAt(0).toUpperCase() +
-                                              theme.slice(1)
-                                            } Theme</div>
+                                            <div class="theme-name">${theme.charAt(0).toUpperCase() +
+                theme.slice(1)
+                } Theme</div>
                                             <button class="settings-action-btn" onclick="applyTheme('${theme}')">
                                                 Apply Theme
                                             </button>
                                         </div>
                                     `
-                                      )
-                                      .join("")}
+            )
+            .join("")}
                                 </div>
                             `
-                            }
+        }
                         </div>
                     </div>
                 </div>
@@ -3078,11 +3072,10 @@ alt="favicon">
                         <input type="file" id="profilePictureInput" accept="image/png, image/jpeg, image/gif" onchange="handleProfilePictureUpload(event)" style="display: none;">
                         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                             <button class="settings-action-btn" id="profilePictureButton" onclick="document.getElementById('profilePictureInput').click()">
-                                <i class="fas fa-upload"></i> ${
-                                  hasProfilePicture
-                                    ? "Change Profile Picture"
-                                    : "Set Profile Picture"
-                                }
+                                <i class="fas fa-upload"></i> ${hasProfilePicture
+          ? "Change Profile Picture"
+          : "Set Profile Picture"
+        }
                             </button>
                             <button class="settings-action-btn" onclick="clearProfilePicture()">
                                 <i class="fas fa-undo"></i> Reset Profile Picture
@@ -3142,9 +3135,8 @@ alt="favicon">
                   <button class="editor-btn" onclick="saveToDevice()"><i class="fas fa-download"></i> &nbsp;Save to Device</button>
                   <input type="text" id="editorFilename" class="editor-filename" placeholder="filename.txt" value="${filename}">
               </div>
-              <textarea class="editor-textarea" placeholder="Start typing...">${
-                editorContent || ""
-              }</textarea>
+              <textarea class="editor-textarea" placeholder="Start typing...">${editorContent || ""
+        }</textarea>
           `,
       noPadding: true,
       width: 900,
@@ -3230,8 +3222,8 @@ alt="favicon">
         return `
                   <div class="photos-grid" id="photosGrid">
                       ${photoList
-                        .map(
-                          (name) => `
+            .map(
+              (name) => `
                           <div class="photo-item" onclick="viewPhoto('${name}')">
                               <img src="${photos[name]}" alt="${name}" class="photo-thumbnail">
                               <div class="photo-name">${name}</div>
@@ -3240,8 +3232,8 @@ alt="favicon">
                               </button>
                           </div>
                       `
-                        )
-                        .join("")}
+            )
+            .join("")}
                   </div>
               `;
       })(),
@@ -3885,18 +3877,15 @@ alt="favicon">
                               </div>
                               <div class="appstore-item-name">Light Theme by dinguschan</div>
                               <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with light backgrounds and dark text.</div>
-                              <button class="appstore-item-btn ${
-                                lightThemeInstalled ? "installed" : ""
-                              }" onclick="${
-          lightThemeInstalled
+                              <button class="appstore-item-btn ${lightThemeInstalled ? "installed" : ""
+          }" onclick="${lightThemeInstalled
             ? "uninstallTheme('light')"
             : "installTheme('light')"
-        }">
-                                  ${
-                                    lightThemeInstalled
-                                      ? "Uninstall"
-                                      : "Install"
-                                  }
+          }">
+                                  ${lightThemeInstalled
+            ? "Uninstall"
+            : "Install"
+          }
                               </button>
                           </div>
                           <div class="appstore-item">
@@ -3905,20 +3894,17 @@ alt="favicon">
                               </div>
                               <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
                               <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
-                              <button class="appstore-item-btn ${
-                                installedThemes.includes("golden")
-                                  ? "installed"
-                                  : ""
-                              }" onclick="${
-          installedThemes.includes("golden")
+                              <button class="appstore-item-btn ${installedThemes.includes("golden")
+            ? "installed"
+            : ""
+          }" onclick="${installedThemes.includes("golden")
             ? "uninstallTheme('golden')"
             : "installTheme('golden')"
-        }">
-                                  ${
-                                    installedThemes.includes("golden")
-                                      ? "Uninstall"
-                                      : "Install"
-                                  }
+          }">
+                                  ${installedThemes.includes("golden")
+            ? "Uninstall"
+            : "Install"
+          }
                               </button>
                           </div>
                           <div class="appstore-item">
@@ -3927,20 +3913,17 @@ alt="favicon">
                               </div>
                               <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
                               <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
-                              <button class="appstore-item-btn ${
-                                installedThemes.includes("red")
-                                  ? "installed"
-                                  : ""
-                              }" onclick="${
-          installedThemes.includes("red")
+                              <button class="appstore-item-btn ${installedThemes.includes("red")
+            ? "installed"
+            : ""
+          }" onclick="${installedThemes.includes("red")
             ? "uninstallTheme('red')"
             : "installTheme('red')"
-        }">
-                                  ${
-                                    installedThemes.includes("red")
-                                      ? "Uninstall"
-                                      : "Install"
-                                  }
+          }">
+                                  ${installedThemes.includes("red")
+            ? "Uninstall"
+            : "Install"
+          }
                               </button>
                           </div>
                           <div class="appstore-item">
@@ -3949,20 +3932,17 @@ alt="favicon">
                               </div>
                               <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
                               <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
-                              <button class="appstore-item-btn ${
-                                installedThemes.includes("blue")
-                                  ? "installed"
-                                  : ""
-                              }" onclick="${
-          installedThemes.includes("blue")
+                              <button class="appstore-item-btn ${installedThemes.includes("blue")
+            ? "installed"
+            : ""
+          }" onclick="${installedThemes.includes("blue")
             ? "uninstallTheme('blue')"
             : "installTheme('blue')"
-        }">
-                                  ${
-                                    installedThemes.includes("blue")
-                                      ? "Uninstall"
-                                      : "Install"
-                                  }
+          }">
+                                  ${installedThemes.includes("blue")
+            ? "Uninstall"
+            : "Install"
+          }
                               </button>
                           </div>
                       </div>
@@ -3974,7 +3954,7 @@ alt="favicon">
       width: 900,
       height: 600,
     },
-snake: {
+    snake: {
       title: "Snake",
       icon: "fas fa-gamepad",
       content: `
@@ -4012,7 +3992,7 @@ snake: {
       width: 700,
       height: 600,
     },
-tictactoe: {
+    tictactoe: {
       title: "Tic-Tac-Toe",
       icon: "fas fa-circle",
       content: `
@@ -4046,7 +4026,18 @@ tictactoe: {
       noPadding: true,
       width: 650,
       height: 550,
-    },  };
+    },
+    "v86-emulator": {
+      title: "V86 Emulator",
+      icon: "fas fa-microchip",
+      content: (() => {
+        return generateV86Interface();
+      })(),
+      noPadding: true,
+      width: 1000,
+      height: 700,
+    },
+  };
 
   if (appName === "achievements") {
     openAchievements();
@@ -4056,7 +4047,7 @@ tictactoe: {
   if (apps[appName]) {
     const app = apps[appName];
     trackAppOpened(appName);
-    createWindow(
+    const windowEl = createWindow(
       app.title,
       app.icon,
       app.content,
@@ -4104,10 +4095,17 @@ tictactoe: {
         start2048Game();
       }, 50);
     }
-    
+
     if (appName === "tictactoe") {
       setTimeout(() => {
         startTicTacToe();
+      }, 50);
+    }
+
+    if (appName === "v86-emulator") {
+      setTimeout(() => {
+        // Load V86 resources on-demand with progress bar
+        loadV86ResourcesOnDemand(windowEl);
       }, 50);
     }
   }
@@ -4377,21 +4375,18 @@ function initializeAppearanceSettings() {
   }
 
   if (desktopButton) {
-    desktopButton.innerHTML = `<i class="fas fa-upload"></i> ${
-      hasWallpaper ? "Change Desktop Wallpaper" : "Set Desktop Wallpaper"
-    }`;
+    desktopButton.innerHTML = `<i class="fas fa-upload"></i> ${hasWallpaper ? "Change Desktop Wallpaper" : "Set Desktop Wallpaper"
+      }`;
   }
 
   if (loginButton) {
-    loginButton.innerHTML = `<i class="fas fa-upload"></i> ${
-      hasLoginWallpaper ? "Change Login Wallpaper" : "Set Login Wallpaper"
-    }`;
+    loginButton.innerHTML = `<i class="fas fa-upload"></i> ${hasLoginWallpaper ? "Change Login Wallpaper" : "Set Login Wallpaper"
+      }`;
   }
 
   if (profileButton) {
-    profileButton.innerHTML = `<i class="fas fa-upload"></i> ${
-      hasProfile ? "Change Profile Picture" : "Set Profile Picture"
-    }`;
+    profileButton.innerHTML = `<i class="fas fa-upload"></i> ${hasProfile ? "Change Profile Picture" : "Set Profile Picture"
+      }`;
   }
 }
 
@@ -4571,11 +4566,10 @@ function updateFileExplorer() {
               </div>
               <div class="file-main">
                   <div class="file-toolbar">
-                      <button class="editor-btn" onclick="goUpDirectory()" ${
-                        currentPath.length === 0
-                          ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
-                          : ""
-                      }>
+                      <button class="editor-btn" onclick="goUpDirectory()" ${currentPath.length === 0
+      ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
+      : ""
+    }>
                           <i class="fas fa-arrow-up"></i> Up
                       </button>
                       <button class="editor-btn" onclick="createNewFolder()">
@@ -4587,15 +4581,15 @@ function updateFileExplorer() {
                   </div>
       <div class="file-grid">
                               ${Object.keys(current)
-                                .sort()
-                                .map((file) => {
-                                  const isFolder =
-                                    typeof current[file] === "object";
-                                  const icon = isFolder
-                                    ? "fa-folder"
-                                    : "fa-file-alt";
-                                  const escapedFile = file.replace(/'/g, "\\'");
-                                  return `
+      .sort()
+      .map((file) => {
+        const isFolder =
+          typeof current[file] === "object";
+        const icon = isFolder
+          ? "fa-folder"
+          : "fa-file-alt";
+        const escapedFile = file.replace(/'/g, "\\'");
+        return `
                                       <div class="file-item" ondblclick="openFile('${escapedFile}')" onclick="selectFileItem(event, this, '${escapedFile}')" draggable="true" ondragstart="handleFileDragStart(event, '${escapedFile}')" ondragover="handleFileDragOver(event, ${isFolder})" ondrop="handleFileDrop(event, '${escapedFile}')">
                                           <i class="fas ${icon}"></i>
                                           <span>${file}</span>
@@ -4609,8 +4603,8 @@ function updateFileExplorer() {
                                           </div>
                                       </div>
                                   `;
-                                })
-                                .join("")}
+      })
+      .join("")}
                           </div>
               </div>
           `;
@@ -4631,9 +4625,8 @@ function renderFileTree(fs = fileSystem, parentPath = [], level = 0) {
 
       if (isFolder) {
         html += `
-                      <div class="file-tree-item folder ${
-                        isActive ? "active" : ""
-                      }" onclick="navigateToFolderFromTree('${pathString}')" data-path="${pathString}">
+                      <div class="file-tree-item folder ${isActive ? "active" : ""
+          }" onclick="navigateToFolderFromTree('${pathString}')" data-path="${pathString}">
                           <i class="fas fa-chevron-right" onclick="toggleTreeFolder(this.parentElement, '${pathString}', event)" style="cursor: pointer;"></i>
                           <i class="fas fa-folder"></i>
                           <span>${name}</span>
@@ -4644,9 +4637,8 @@ function renderFileTree(fs = fileSystem, parentPath = [], level = 0) {
                   `;
       } else {
         html += `
-                      <div class="file-tree-item ${
-                        isActive ? "active" : ""
-                      }" onclick="openFileFromTree('${pathString}')" data-path="${pathString}">
+                      <div class="file-tree-item ${isActive ? "active" : ""
+          }" onclick="openFileFromTree('${pathString}')" data-path="${pathString}">
                           <i class="fas fa-file-alt"></i>
                           <span>${name}</span>
                       </div>
@@ -4745,7 +4737,7 @@ function moveFileToFolder() {
       window.minimizeWindow =
       window.showToast =
       window.handleTaskbarClick =
-        function () {};
+      function () { };
 
     const elements = document.querySelectorAll("div, body, html, :root");
     elements.forEach((el) => {
@@ -5209,11 +5201,9 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Light Theme by dinguschan</div>
                       <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with light backgrounds and dark text.</div>
-                      <button class="appstore-item-btn ${
-                        lightThemeInstalled ? "installed" : ""
-                      }" onclick="${
-      lightThemeInstalled ? "uninstallTheme('light')" : "installTheme('light')"
-    }">
+                      <button class="appstore-item-btn ${lightThemeInstalled ? "installed" : ""
+      }" onclick="${lightThemeInstalled ? "uninstallTheme('light')" : "installTheme('light')"
+      }">
                           ${lightThemeInstalled ? "Uninstall" : "Install"}
                       </button>
                   </div>
@@ -5223,9 +5213,8 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes('golden') ? "installed" : ""
-                      }" onclick="${installedThemes.includes('golden') ? "uninstallTheme('golden')" : "installTheme('golden')"}">
+                      <button class="appstore-item-btn ${installedThemes.includes('golden') ? "installed" : ""
+      }" onclick="${installedThemes.includes('golden') ? "uninstallTheme('golden')" : "installTheme('golden')"}">
                           ${installedThemes.includes('golden') ? "Uninstall" : "Install"}
                       </button>
                   </div>
@@ -5235,9 +5224,8 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes('red') ? "installed" : ""
-                      }" onclick="${installedThemes.includes('red') ? "uninstallTheme('red')" : "installTheme('red')"}">
+                      <button class="appstore-item-btn ${installedThemes.includes('red') ? "installed" : ""
+      }" onclick="${installedThemes.includes('red') ? "uninstallTheme('red')" : "installTheme('red')"}">
                           ${installedThemes.includes('red') ? "Uninstall" : "Install"}
                       </button>
                   </div>
@@ -5247,9 +5235,8 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes('blue') ? "installed" : ""
-                      }" onclick="${installedThemes.includes('blue') ? "uninstallTheme('blue')" : "installTheme('blue')"}">
+                      <button class="appstore-item-btn ${installedThemes.includes('blue') ? "installed" : ""
+      }" onclick="${installedThemes.includes('blue') ? "uninstallTheme('blue')" : "installTheme('blue')"}">
                           ${installedThemes.includes('blue') ? "Uninstall" : "Install"}
                       </button>
                   </div>
@@ -5262,6 +5249,7 @@ function switchAppStoreSection(section, element) {
     const uvInstalled = installedApps.includes("uv");
     const heliosInstalled = installedApps.includes("helios");
     const vscInstalled = installedApps.includes("vsc");
+    const v86Installed = installedApps.includes("v86-emulator");
 
     mainContent.innerHTML = `
                   <div class="appstore-header">
@@ -5294,13 +5282,11 @@ function switchAppStoreSection(section, element) {
 </div>
                           <div class="appstore-item-name">Startup Apps by dinguschan</div>
 <div class="appstore-item-desc">Control which applications launch automatically on login with this convenient this built-in app.</div>
-<button class="appstore-item-btn ${
-      startupInstalled ? "installed" : ""
-    }" onclick="${
-      startupInstalled
+<button class="appstore-item-btn ${startupInstalled ? "installed" : ""
+      }" onclick="${startupInstalled
         ? "uninstallApp('startup-apps')"
         : "installApp('startup-apps')"
-    }">
+      }">
 ${startupInstalled ? "Uninstall" : "Install"}
 </button>
 <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5339,13 +5325,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Task Manager by dinguschan</div>
    <div class="appstore-item-desc">Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.</div>
-   <button class="appstore-item-btn ${
-     taskmanagerInstalled ? "installed" : ""
-   }" onclick="${
-      taskmanagerInstalled
+   <button class="appstore-item-btn ${taskmanagerInstalled ? "installed" : ""
+      }" onclick="${taskmanagerInstalled
         ? "uninstallApp('task-manager')"
         : "installApp('task-manager')"
-    }">
+      }">
    ${taskmanagerInstalled ? "Uninstall" : "Install"}
    </button>
    <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5356,13 +5340,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
    <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
-   <button class="appstore-item-btn ${
-     snapManagerInstalled ? "installed" : ""
-   }" onclick="${
-      snapManagerInstalled
+   <button class="appstore-item-btn ${snapManagerInstalled ? "installed" : ""
+      }" onclick="${snapManagerInstalled
         ? "uninstallApp('snap-manager')"
         : "installApp('snap-manager')"
-    }">
+      }">
    ${snapManagerInstalled ? "Uninstall" : "Install"}
    </button>
    <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5373,9 +5355,8 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Ultraviolet by $xor</div>
    <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
-   <button class="appstore-item-btn ${
-     uvInstalled ? "installed" : ""
-   }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
+   <button class="appstore-item-btn ${uvInstalled ? "installed" : ""
+      }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
    ${uvInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -5385,11 +5366,9 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Helios by dinguschan</div>
    <div class="appstore-item-desc">The classic CORS proxy you know and love, fit in to one single file.</div>
-   <button class="appstore-item-btn ${
-     heliosInstalled ? "installed" : ""
-   }" onclick="${
-      heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
-    }">
+   <button class="appstore-item-btn ${heliosInstalled ? "installed" : ""
+      }" onclick="${heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
+      }">
    ${heliosInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -5399,13 +5378,24 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Visual Studio Code</div>
    <div class="appstore-item-desc">The developer's choice for text editing, now on NautilusOS.</div>
-   <button class="appstore-item-btn ${
-     vscInstalled ? "installed" : ""
-   }" onclick="${
-      vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"
-    }">
+   <button class="appstore-item-btn ${vscInstalled ? "installed" : ""
+      }" onclick="${vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"
+      }">
    ${vscInstalled ? "Uninstall" : "Install"}
    </button>
+</div>
+<div class="appstore-item">
+   <div class="appstore-item-icon">
+      <i class="fas fa-microchip"></i>
+   </div>
+   <div class="appstore-item-name">V86 Emulator by dinguschan</div>
+   <div class="appstore-item-desc">Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.</div>
+   <button class="appstore-item-btn ${v86Installed ? "installed" : ""
+      }" onclick="${v86Installed ? "uninstallApp('v86-emulator')" : "installApp('v86-emulator')"
+      }">
+   ${v86Installed ? "Uninstall" : "Install"}
+   </button>
+   <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
 </div>
 </div>
 </div>
@@ -5424,13 +5414,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">Snake by lanefiedler-731</div>
                       <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
-                      <button class="appstore-item-btn ${
-                        installedGames.includes("snake") ? "installed" : ""
-                      }" onclick="${
-      installedGames.includes("snake")
+                      <button class="appstore-item-btn ${installedGames.includes("snake") ? "installed" : ""
+      }" onclick="${installedGames.includes("snake")
         ? "openApp('snake')"
         : "installGame('snake')"
-    }">
+      }">
                           ${installedGames.includes("snake") ? "Play" : "Install"}
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5442,13 +5430,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">2048 by dinguschan</div>
                       <div class="appstore-item-desc">Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.</div>
-                      <button class="appstore-item-btn ${
-                        installedGames.includes("2048") ? "installed" : ""
-                      }" onclick="${
-      installedGames.includes("2048")
+                      <button class="appstore-item-btn ${installedGames.includes("2048") ? "installed" : ""
+      }" onclick="${installedGames.includes("2048")
         ? "openApp('2048')"
         : "installGame('2048')"
-    }">
+      }">
                           ${installedGames.includes("2048") ? "Play" : "Install"}
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5460,13 +5446,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">Tic-Tac-Toe by dinguschan</div>
                       <div class="appstore-item-desc">Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?</div>
-                      <button class="appstore-item-btn ${
-                        installedGames.includes("tictactoe") ? "installed" : ""
-                      }" onclick="${
-      installedGames.includes("tictactoe")
+                      <button class="appstore-item-btn ${installedGames.includes("tictactoe") ? "installed" : ""
+      }" onclick="${installedGames.includes("tictactoe")
         ? "openApp('tictactoe')"
         : "installGame('tictactoe')"
-    }">
+      }">
                           ${installedGames.includes("tictactoe") ? "Play" : "Install"}
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5487,7 +5471,7 @@ function installTheme(themeName) {
     JSON.stringify(installedThemes)
   );
   showToast("Theme installed! Go to Settings to apply it.", "fa-check-circle");
-  
+
   unlockAchievement("theme-changer");
 
   refreshAppStore();
@@ -6355,8 +6339,8 @@ function updatePhotosApp() {
   content.innerHTML = `
               <div class="photos-grid" id="photosGrid">
                   ${photoList
-                    .map(
-                      (name) => `
+      .map(
+        (name) => `
                       <div class="photo-item" onclick="viewPhoto('${name}')">
                           <img src="${photos[name]}" alt="${name}" class="photo-thumbnail">
                           <div class="photo-name">${name}</div>
@@ -6365,8 +6349,8 @@ function updatePhotosApp() {
                           </button>
                       </div>
                   `
-                    )
-                    .join("")}
+      )
+      .join("")}
               </div>
           `;
 }
@@ -6638,12 +6622,12 @@ function setupComplete() {
 
   currentUsername = username;
 
-   if (selectedThemes.length > 0) {
+  if (selectedThemes.length > 0) {
     setTimeout(() => {
       unlockAchievement("theme-changer");
     }, 100);
   }
-  
+
   let welcomeMessage = "Setup complete! Welcome to NautilusOS";
   let toastIcon = "fa-check-circle";
   if (username.toLowerCase() === "dinguschan") {
@@ -6937,22 +6921,19 @@ function showModal(options) {
     inputContainer.innerHTML = "";
 
     if (options.prompt) {
-      inputContainer.innerHTML = `<input type="text" class="modal-input" id="modalInput" placeholder="${
-        options.placeholder || ""
-      }" value="${options.defaultValue || ""}">`;
+      inputContainer.innerHTML = `<input type="text" class="modal-input" id="modalInput" placeholder="${options.placeholder || ""
+        }" value="${options.defaultValue || ""}">`;
       setTimeout(() => document.getElementById("modalInput").focus(), 100);
     }
 
     if (options.confirm) {
       buttons.innerHTML = `
                       <button class="modal-btn modal-btn-secondary" onclick="closeModal(false)">Cancel</button>
-                      <button class="modal-btn ${
-                        options.danger
-                          ? "modal-btn-danger"
-                          : "modal-btn-primary"
-                      }" onclick="confirmModal()">${
-        options.confirmText || "OK"
-      }</button>
+                      <button class="modal-btn ${options.danger
+          ? "modal-btn-danger"
+          : "modal-btn-primary"
+        }" onclick="confirmModal()">${options.confirmText || "OK"
+        }</button>
                   `;
     } else {
       buttons.innerHTML = `
@@ -7071,6 +7052,8 @@ function installApp(appName) {
     updateSnapOverlayStyles();
   }
 
+  // V86 resources will be loaded on-demand when the app is opened
+
   showToast(
     "App installed! Check your desktop and start menu to launch it.",
     "fa-check-circle"
@@ -7100,6 +7083,11 @@ function uninstallApp(appName) {
       snapSettings.enabled = false;
       saveSnapSettings();
       hideSnapPreview();
+    }
+
+    if (appName === "v86-emulator") {
+      // Clean up V86 resources when uninstalling
+      cleanupV86Resources();
     }
 
     showToast("App uninstalled", "fa-trash");
@@ -7165,10 +7153,10 @@ function loadInstalledGames() {
 let snakeGame = {
   canvas: null,
   ctx: null,
-  snake: [{x: 10, y: 10}],
-  food: {x: 15, y: 15},
-  direction: {x: 1, y: 0},
-  nextDirection: {x: 1, y: 0},
+  snake: [{ x: 10, y: 10 }],
+  food: { x: 15, y: 15 },
+  direction: { x: 1, y: 0 },
+  nextDirection: { x: 1, y: 0 },
   score: 0,
   gameRunning: false,
   gamePaused: false,
@@ -7184,22 +7172,22 @@ function startSnakeGame() {
     snakeGame.canvas = document.getElementById('snakeCanvas');
     snakeGame.ctx = snakeGame.canvas.getContext('2d');
   }
-  
+
   if (snakeGame.gameRunning && !snakeGame.gamePaused) {
     return;
   }
-  
+
   if (!snakeGame.gameRunning) {
-    snakeGame.snake = [{x: 10, y: 10}];
+    snakeGame.snake = [{ x: 10, y: 10 }];
     snakeGame.food = generateFood();
-    snakeGame.direction = {x: 1, y: 0};
-    snakeGame.nextDirection = {x: 1, y: 0};
+    snakeGame.direction = { x: 1, y: 0 };
+    snakeGame.nextDirection = { x: 1, y: 0 };
     snakeGame.score = 0;
     snakeGame.gameOver = false;
     snakeGame.gameRunning = true;
     document.getElementById('snakeScore').textContent = '0';
     document.getElementById('snakeStartBtn').textContent = 'Pause';
-    
+
     attachSnakeKeyListeners();
     gameLoop();
   } else if (snakeGame.gamePaused) {
@@ -7215,7 +7203,7 @@ function attachSnakeKeyListeners() {
 
 function handleSnakeKeyPress(e) {
   if (!snakeGame.gameRunning) return;
-  
+
   if (e.key === ' ') {
     e.preventDefault();
     snakeGame.gamePaused = !snakeGame.gamePaused;
@@ -7223,24 +7211,24 @@ function handleSnakeKeyPress(e) {
     if (!snakeGame.gamePaused) gameLoop();
     return;
   }
-  
+
   if (e.key === 'r' || e.key === 'R') {
     startSnakeGame();
     return;
   }
-  
+
   const key = e.key.toLowerCase();
   if (key === 'arrowup' || key === 'w') {
-    if (snakeGame.direction.y === 0) snakeGame.nextDirection = {x: 0, y: -1};
+    if (snakeGame.direction.y === 0) snakeGame.nextDirection = { x: 0, y: -1 };
     e.preventDefault();
   } else if (key === 'arrowdown' || key === 's') {
-    if (snakeGame.direction.y === 0) snakeGame.nextDirection = {x: 0, y: 1};
+    if (snakeGame.direction.y === 0) snakeGame.nextDirection = { x: 0, y: 1 };
     e.preventDefault();
   } else if (key === 'arrowleft' || key === 'a') {
-    if (snakeGame.direction.x === 0) snakeGame.nextDirection = {x: -1, y: 0};
+    if (snakeGame.direction.x === 0) snakeGame.nextDirection = { x: -1, y: 0 };
     e.preventDefault();
   } else if (key === 'arrowright' || key === 'd') {
-    if (snakeGame.direction.x === 0) snakeGame.nextDirection = {x: 1, y: 0};
+    if (snakeGame.direction.x === 0) snakeGame.nextDirection = { x: 1, y: 0 };
     e.preventDefault();
   }
 }
@@ -7262,22 +7250,22 @@ function gameLoop() {
   if (!snakeGame.gameRunning || snakeGame.gamePaused || snakeGame.gameOver) {
     return;
   }
-  
+
   snakeGame.direction = snakeGame.nextDirection;
-  
+
   const head = snakeGame.snake[0];
   const newHead = {
     x: (head.x + snakeGame.direction.x + snakeGame.tileCount) % snakeGame.tileCount,
     y: (head.y + snakeGame.direction.y + snakeGame.tileCount) % snakeGame.tileCount
   };
-  
+
   if (snakeGame.snake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
     endSnakeGame();
     return;
   }
-  
+
   snakeGame.snake.unshift(newHead);
-  
+
   if (newHead.x === snakeGame.food.x && newHead.y === snakeGame.food.y) {
     snakeGame.score += 10;
     document.getElementById('snakeScore').textContent = snakeGame.score;
@@ -7285,7 +7273,7 @@ function gameLoop() {
   } else {
     snakeGame.snake.pop();
   }
-  
+
   drawSnakeGame();
   setTimeout(gameLoop, snakeGame.gameSpeed);
 }
@@ -7293,17 +7281,17 @@ function gameLoop() {
 function drawSnakeGame() {
   const canvas = snakeGame.canvas;
   const ctx = snakeGame.ctx;
-  
+
   if (!canvas || !ctx) return;
-  
+
   const bgSecondary = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
   const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   const border = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
   const errorRed = getComputedStyle(document.documentElement).getPropertyValue('--error-red').trim();
-  
+
   ctx.fillStyle = bgSecondary;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
+
   ctx.strokeStyle = 'rgba(125, 211, 192, 0.1)';
   ctx.lineWidth = 0.5;
   for (let i = 0; i <= snakeGame.tileCount; i++) {
@@ -7312,13 +7300,13 @@ function drawSnakeGame() {
     ctx.moveTo(pos, 0);
     ctx.lineTo(pos, canvas.height);
     ctx.stroke();
-    
+
     ctx.beginPath();
     ctx.moveTo(0, pos);
     ctx.lineTo(canvas.width, pos);
     ctx.stroke();
   }
-  
+
   snakeGame.snake.forEach((segment, index) => {
     if (index === 0) {
       ctx.fillStyle = accentColor;
@@ -7332,7 +7320,7 @@ function drawSnakeGame() {
       snakeGame.gridSize - 4
     );
   });
-  
+
   ctx.fillStyle = errorRed;
   ctx.beginPath();
   ctx.arc(
@@ -7347,17 +7335,17 @@ function drawSnakeGame() {
 function endSnakeGame() {
   snakeGame.gameRunning = false;
   snakeGame.gameOver = true;
-  
+
   if (snakeGame.score > snakeGame.highScore) {
     snakeGame.highScore = snakeGame.score;
     localStorage.setItem('snakeHighScore', snakeGame.highScore);
     document.getElementById('snakeHighScore').textContent = snakeGame.highScore;
   }
-  
+
   document.getElementById('snakeStartBtn').textContent = 'Start Game';
-  
+
   document.removeEventListener('keydown', handleSnakeKeyPress);
-  
+
   showToast('Game Over! Score: ' + snakeGame.score + ' | High Score: ' + snakeGame.highScore, 'fa-skull');
 }
 
@@ -7389,6 +7377,8 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-globe", label: "Helios" };
   } else if (appName === "vsc") {
     iconConfig = { icon: "fa-code", label: "Visual Studio Code" };
+  } else if (appName === "v86-emulator") {
+    iconConfig = { icon: "fa-microchip", label: "V86 Emulator" };
   } else {
     return;
   }
@@ -7430,7 +7420,7 @@ function openStartupApps() {
     { id: "achievements", name: "Achievements", icon: "fa-trophy" },
   ];
 
-const installedAppsData = [];
+  const installedAppsData = [];
   installedApps.forEach((appName) => {
     if (appName === "startup-apps") {
       installedAppsData.push({ id: "startup-apps", name: "Startup Apps", icon: "fa-rocket" });
@@ -7451,7 +7441,7 @@ const installedAppsData = [];
     }
   });
 
-  const availableApps = [...preinstalledApps, ...installedAppsData]; 
+  const availableApps = [...preinstalledApps, ...installedAppsData];
 
   const itemsHtml = availableApps
     .map((app) => {
@@ -7469,19 +7459,16 @@ const installedAppsData = [];
                       </div>
                       <div class="startup-item-info">
                           <div class="startup-item-name">${app.name}</div>
-                          <div class="startup-item-status">${
-                            isWhatsNew
-                              ? "Managed in Settings"
-                              : isEnabled
-                              ? "Enabled"
-                              : "Disabled"
-                          }</div>
+                          <div class="startup-item-status">${isWhatsNew
+          ? "Managed in Settings"
+          : isEnabled
+            ? "Enabled"
+            : "Disabled"
+        }</div>
                       </div>
-                      <div class="toggle-switch ${
-                        isEnabled ? "active" : ""
-                      } ${disabled}" ${toggleAction} style="${
-        isWhatsNew ? "opacity: 0.5; cursor: not-allowed;" : ""
-      }"></div>
+                      <div class="toggle-switch ${isEnabled ? "active" : ""
+        } ${disabled}" ${toggleAction} style="${isWhatsNew ? "opacity: 0.5; cursor: not-allowed;" : ""
+        }"></div>
                   </div>
               `;
     })
@@ -7498,9 +7485,8 @@ const installedAppsData = [];
                       <div class="startup-item-name">What's New</div>
                       <div class="startup-item-status">Managed in Settings</div>
                   </div>
-                  <div class="toggle-switch ${
-                    whatsNewEnabled ? "active" : ""
-                  }" style="opacity: 0.5; cursor: not-allowed;"></div>
+                  <div class="toggle-switch ${whatsNewEnabled ? "active" : ""
+    }" style="opacity: 0.5; cursor: not-allowed;"></div>
               </div>
           `;
 
@@ -7576,16 +7562,13 @@ function toggleStartupApp(appId) {
                                   <i class="fas ${app.icon}"></i>
                               </div>
                               <div class="startup-item-info">
-                                  <div class="startup-item-name">${
-                                    app.name
-                                  }</div>
-                                  <div class="startup-item-status">${
-                                    isEnabled ? "Enabled" : "Disabled"
-                                  }</div>
+                                  <div class="startup-item-name">${app.name
+            }</div>
+                                  <div class="startup-item-status">${isEnabled ? "Enabled" : "Disabled"
+            }</div>
                               </div>
-                              <div class="toggle-switch ${
-                                isEnabled ? "active" : ""
-                              }" onclick="toggleStartupApp('${app.id}')"></div>
+                              <div class="toggle-switch ${isEnabled ? "active" : ""
+            }" onclick="toggleStartupApp('${app.id}')"></div>
                           </div>
                       `;
         })
@@ -7602,9 +7585,8 @@ function toggleStartupApp(appId) {
                               <div class="startup-item-name">What's New</div>
                               <div class="startup-item-status">Managed in Settings</div>
                           </div>
-                          <div class="toggle-switch ${
-                            whatsNewEnabled ? "active" : ""
-                          }" style="opacity: 0.5; cursor: not-allowed;"></div>
+                          <div class="toggle-switch ${whatsNewEnabled ? "active" : ""
+        }" style="opacity: 0.5; cursor: not-allowed;"></div>
                       </div>
                   `;
 
@@ -7666,11 +7648,10 @@ function openTaskManager() {
 
                   <div class="taskmanager-section">
                       <h3><i class="fas fa-window-maximize"></i> Running Applications</h3>
-                      ${
-                        windowCount === 0
-                          ? '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No applications running</p>'
-                          : processesHtml
-                      }
+                      ${windowCount === 0
+      ? '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No applications running</p>'
+      : processesHtml
+    }
                   </div>
 
                   <div class="taskmanager-section">
@@ -7746,11 +7727,10 @@ function refreshTaskManager() {
                 
                 <div class="taskmanager-section">
                     <h3><i class="fas fa-window-maximize"></i> Running Applications</h3>
-                    ${
-                      windowCount === 0
-                        ? '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No applications running</p>'
-                        : processesHtml
-                    }
+                    ${windowCount === 0
+        ? '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No applications running</p>'
+        : processesHtml
+      }
                 </div>
                 
                 <div class="taskmanager-section">
@@ -7850,7 +7830,7 @@ function initStartMenuSearch() {
   }
 
   searchInput.dataset.listenerAdded = 'true';
-  searchInput.addEventListener('input', function() {
+  searchInput.addEventListener('input', function () {
     const searchTerm = this.value.toLowerCase();
     const appItems = document.querySelectorAll('.app-item');
 
@@ -7992,14 +7972,14 @@ function importProfile(event) {
 
       const confirmed = await confirm(
         `Import profile for user "${profile.username}"?<br><br>` +
-          `This will replace your current settings and data.<br><br>` +
-          `<strong>Profile Details:</strong><br>` +
-          `• Username: ${profile.username}<br>` +
-          `• Exported: ${new Date(
-            profile.exportDate
-          ).toLocaleDateString()}<br>` +
-          `• Installed Apps: ${(profile.installedApps || []).length}<br>` +
-          `• Installed Themes: ${(profile.installedThemes || []).length}`
+        `This will replace your current settings and data.<br><br>` +
+        `<strong>Profile Details:</strong><br>` +
+        `• Username: ${profile.username}<br>` +
+        `• Exported: ${new Date(
+          profile.exportDate
+        ).toLocaleDateString()}<br>` +
+        `• Installed Apps: ${(profile.installedApps || []).length}<br>` +
+        `• Installed Themes: ${(profile.installedThemes || []).length}`
       );
 
       if (!confirmed) {
@@ -8009,19 +7989,19 @@ function importProfile(event) {
 
       localStorage.setItem("nautilusOS_username", profile.username);
       localStorage.setItem("nautilusOS_password", profile.password || "");
-      
-      const isPasswordless = profile.isPasswordless !== undefined 
-        ? String(profile.isPasswordless) 
+
+      const isPasswordless = profile.isPasswordless !== undefined
+        ? String(profile.isPasswordless)
         : (profile.password === "" ? "true" : "false");
       localStorage.setItem("nautilusOS_isPasswordless", isPasswordless);
-      
+
       localStorage.setItem("nautilusOS_setupComplete", "true");
-      
+
       settings = profile.settings || settings;
       installedThemes = profile.installedThemes || [];
       installedApps = profile.installedApps || [];
       startupApps = profile.startupApps || [];
-      
+
       localStorage.setItem(
         "nautilusOS_settings",
         JSON.stringify(settings)
@@ -8038,7 +8018,7 @@ function importProfile(event) {
         "nautilusOS_startupApps",
         JSON.stringify(startupApps)
       );
-      
+
       if (profile.useSameBackground !== null && profile.useSameBackground !== undefined) {
         localStorage.setItem(
           "nautilusOS_useSameBackground",
@@ -8047,13 +8027,13 @@ function importProfile(event) {
       } else {
         localStorage.removeItem("nautilusOS_useSameBackground");
       }
-      
+
       if (profile.wallpaper) {
         localStorage.setItem("nautilusOS_wallpaper", profile.wallpaper);
       } else {
         localStorage.removeItem("nautilusOS_wallpaper");
       }
-      
+
       if (profile.loginWallpaper) {
         localStorage.setItem(
           "nautilusOS_loginBackground",
@@ -8062,7 +8042,7 @@ function importProfile(event) {
       } else {
         localStorage.removeItem("nautilusOS_loginBackground");
       }
-      
+
       if (profile.profilePicture) {
         localStorage.setItem("nautilusOS_profilePicture", profile.profilePicture);
       } else {
@@ -8080,9 +8060,9 @@ function importProfile(event) {
         }
         fileSystem = cleanedFileSystem;
       }
-      
+
       checkImportedAchievements();
-      
+
       applyUserBackgrounds();
       applyProfilePicture();
       initializeAppearanceSettings();
@@ -8393,42 +8373,36 @@ function refreshAchievementsWindow() {
         : "";
 
       return `
-            <div class="achievement-card ${
-              achievement.unlocked ? "unlocked" : "locked"
-            }">
+            <div class="achievement-card ${achievement.unlocked ? "unlocked" : "locked"
+        }">
                 <div class="achievement-icon">
                     <i class="fas ${achievement.icon}"></i>
-                    ${
-                      achievement.unlocked
-                        ? '<div class="achievement-badge">✓</div>'
-                        : ""
-                    }
+                    ${achievement.unlocked
+          ? '<div class="achievement-badge">✓</div>'
+          : ""
+        }
                 </div>
-                <div class="achievement-name">${
-                  achievement.unlocked ? achievement.name : "???"
-                }</div>
-                <div class="achievement-description">${
-                  achievement.unlocked
-                    ? achievement.description
-                    : "Locked - Keep exploring to unlock!"
-                }</div>
-                ${
-                  hasProgress && !achievement.unlocked
-                    ? `
+                <div class="achievement-name">${achievement.unlocked ? achievement.name : "???"
+        }</div>
+                <div class="achievement-description">${achievement.unlocked
+          ? achievement.description
+          : "Locked - Keep exploring to unlock!"
+        }</div>
+                ${hasProgress && !achievement.unlocked
+          ? `
                     <div class="achievement-progress">
                         <div class="achievement-progress-bar" style="width: ${progressPercent}%"></div>
                     </div>
                     <div class="achievement-date">${progressText}</div>
                 `
-                    : ""
-                }
-                ${
-                  achievement.unlocked
-                    ? `<div class="achievement-date">Unlocked: ${new Date(
-                        achievement.unlockedDate
-                      ).toLocaleDateString()}</div>`
-                    : ""
-                }
+          : ""
+        }
+                ${achievement.unlocked
+          ? `<div class="achievement-date">Unlocked: ${new Date(
+            achievement.unlockedDate
+          ).toLocaleDateString()}</div>`
+          : ""
+        }
             </div>
         `;
     })
@@ -8445,18 +8419,16 @@ function refreshAchievementsWindow() {
                 <i class="fas ${egg.icon}"></i>
             </div>
             <div class="achievement-name">${displayName}</div>
-            <div class="achievement-description">${
-              egg.unlocked
-                ? displayDesc
-                : `<i class="fas fa-lightbulb" style="margin-right: 0.5rem; color: var(--accent);"></i>${displayDesc}`
-            }</div>
-            ${
-              egg.unlocked
-                ? `<div class="achievement-date">Found: ${new Date(
-                    egg.unlockedDate
-                  ).toLocaleDateString()}</div>`
-                : ""
-            }
+            <div class="achievement-description">${egg.unlocked
+          ? displayDesc
+          : `<i class="fas fa-lightbulb" style="margin-right: 0.5rem; color: var(--accent);"></i>${displayDesc}`
+        }</div>
+            ${egg.unlocked
+          ? `<div class="achievement-date">Found: ${new Date(
+            egg.unlockedDate
+          ).toLocaleDateString()}</div>`
+          : ""
+        }
         </div>
     `;
     })
@@ -8477,8 +8449,8 @@ function refreshAchievementsWindow() {
                     </div>
                     <div class="achievements-stat">
                         <div class="achievements-stat-value">${Math.floor(
-                          achievementsData.totalUptime
-                        )}m</div>
+    achievementsData.totalUptime
+  )}m</div>
                         <div class="achievements-stat-label">Total Uptime</div>
                     </div>
                 </div>
@@ -8585,42 +8557,36 @@ function openAchievements() {
         : "";
 
       return `
-            <div class="achievement-card ${
-              achievement.unlocked ? "unlocked" : "locked"
-            }">
+            <div class="achievement-card ${achievement.unlocked ? "unlocked" : "locked"
+        }">
                 <div class="achievement-icon">
                     <i class="fas ${achievement.icon}"></i>
-                    ${
-                      achievement.unlocked
-                        ? '<div class="achievement-badge">✓</div>'
-                        : ""
-                    }
+                    ${achievement.unlocked
+          ? '<div class="achievement-badge">✓</div>'
+          : ""
+        }
                 </div>
-                <div class="achievement-name">${
-                  achievement.unlocked ? achievement.name : "???"
-                }</div>
-                <div class="achievement-description">${
-                  achievement.unlocked
-                    ? achievement.description
-                    : "Locked - Keep exploring to unlock!"
-                }</div>
-                ${
-                  hasProgress && !achievement.unlocked
-                    ? `
+                <div class="achievement-name">${achievement.unlocked ? achievement.name : "???"
+        }</div>
+                <div class="achievement-description">${achievement.unlocked
+          ? achievement.description
+          : "Locked - Keep exploring to unlock!"
+        }</div>
+                ${hasProgress && !achievement.unlocked
+          ? `
                     <div class="achievement-progress">
                         <div class="achievement-progress-bar" style="width: ${progressPercent}%"></div>
                     </div>
                     <div class="achievement-date">${progressText}</div>
                 `
-                    : ""
-                }
-                ${
-                  achievement.unlocked
-                    ? `<div class="achievement-date">Unlocked: ${new Date(
-                        achievement.unlockedDate
-                      ).toLocaleDateString()}</div>`
-                    : ""
-                }
+          : ""
+        }
+                ${achievement.unlocked
+          ? `<div class="achievement-date">Unlocked: ${new Date(
+            achievement.unlockedDate
+          ).toLocaleDateString()}</div>`
+          : ""
+        }
             </div>
         `;
     })
@@ -8632,25 +8598,22 @@ function openAchievements() {
       const displayDesc = egg.unlocked ? egg.description : egg.hint;
 
       return `
-            <div class="easter-egg-card ${
-              egg.unlocked ? "unlocked" : "locked"
-            }">
+            <div class="easter-egg-card ${egg.unlocked ? "unlocked" : "locked"
+        }">
                 <div class="easter-egg-icon">
                     <i class="fas ${egg.icon}"></i>
                 </div>
                 <div class="achievement-name">${displayName}</div>
-                <div class="achievement-description">${
-                  egg.unlocked
-                    ? displayDesc
-                    : `<i class="fas fa-lightbulb" style="margin-right: 0.5rem; color: var(--accent);"></i>${displayDesc}`
-                }</div>
-                ${
-                  egg.unlocked
-                    ? `<div class="achievement-date">Found: ${new Date(
-                        egg.unlockedDate
-                      ).toLocaleDateString()}</div>`
-                    : ""
-                }
+                <div class="achievement-description">${egg.unlocked
+          ? displayDesc
+          : `<i class="fas fa-lightbulb" style="margin-right: 0.5rem; color: var(--accent);"></i>${displayDesc}`
+        }</div>
+                ${egg.unlocked
+          ? `<div class="achievement-date">Found: ${new Date(
+            egg.unlockedDate
+          ).toLocaleDateString()}</div>`
+          : ""
+        }
             </div>
         `;
     })
@@ -8671,8 +8634,8 @@ function openAchievements() {
                     </div>
                     <div class="achievements-stat">
                         <div class="achievements-stat-value">${Math.floor(
-                          achievementsData.totalUptime
-                        )}m</div>
+    achievementsData.totalUptime
+  )}m</div>
                         <div class="achievements-stat-label">Total Uptime</div>
                     </div>
                 </div>
@@ -9613,7 +9576,7 @@ function checkImportedAchievements() {
   if (installedThemes.length > 0) {
     unlockAchievement("theme-changer");
   }
-  
+
   const preinstalledApps = [
     "files",
     "terminal",
@@ -9628,34 +9591,34 @@ function checkImportedAchievements() {
     "calculator",
     "cloaking",
   ];
-  
+
   installedApps.forEach((appName) => {
     if (!preinstalledApps.includes(appName)) {
       achievementsData.openedApps.add(appName);
     }
   });
-  
+
   const allAppsAchievement = achievementsData.achievements["all-apps"];
   if (allAppsAchievement) {
-  allAppsAchievement.progress = achievementsData.openedApps.size;
-  if (achievementsData.openedApps.size >= allAppsAchievement.target) {
-  unlockAchievement("all-apps");
+    allAppsAchievement.progress = achievementsData.openedApps.size;
+    if (achievementsData.openedApps.size >= allAppsAchievement.target) {
+      unlockAchievement("all-apps");
+    }
   }
-  }
-  
+
   saveAchievements();
-  }
-  
-  function openChangeUsernameDialog() {
+}
+
+function openChangeUsernameDialog() {
   showModal(
-  "Change Username",
-  "fa-user-edit",
-  "Enter your new username:",
-  "changeUsername",
-  "Change",
-  "Cancel"
+    "Change Username",
+    "fa-user-edit",
+    "Enter your new username:",
+    "changeUsername",
+    "Change",
+    "Cancel"
   );
-  
+
   const inputContainer = document.getElementById("modalInputContainer");
   inputContainer.innerHTML = `
   <input 
@@ -9668,62 +9631,62 @@ function checkImportedAchievements() {
   onkeypress="if(event.key === 'Enter') changeUsername()"
   >
   `;
-  
+
   setTimeout(() => {
-  const input = document.getElementById("newUsernameInput");
-  if (input) {
-  input.focus();
-  input.select();
-  }
+    const input = document.getElementById("newUsernameInput");
+    if (input) {
+      input.focus();
+      input.select();
+    }
   }, 100);
-  }
-  
-  function changeUsername() {
+}
+
+function changeUsername() {
   const newUsernameInput = document.getElementById("newUsernameInput");
   if (!newUsernameInput) return;
-  
+
   const newUsername = newUsernameInput.value.trim();
-  
+
   if (!newUsername) {
-  showToast("Username cannot be empty", "fa-exclamation-circle");
-  return;
+    showToast("Username cannot be empty", "fa-exclamation-circle");
+    return;
   }
-  
+
   if (newUsername.length < 3) {
-  showToast("Username must be at least 3 characters long", "fa-exclamation-circle");
-  return;
+    showToast("Username must be at least 3 characters long", "fa-exclamation-circle");
+    return;
   }
-  
+
   if (newUsername.length > 20) {
-  showToast("Username must be 20 characters or less", "fa-exclamation-circle");
-  return;
+    showToast("Username must be 20 characters or less", "fa-exclamation-circle");
+    return;
   }
-  
+
   if (!/^[a-zA-Z0-9_-]+$/.test(newUsername)) {
-  showToast("Username can only contain letters, numbers, underscores, and hyphens", "fa-exclamation-circle");
-  return;
+    showToast("Username can only contain letters, numbers, underscores, and hyphens", "fa-exclamation-circle");
+    return;
   }
-  
+
   if (newUsername === currentUsername) {
-  showToast("New username is the same as current username", "fa-info-circle");
-  closeModal();
-  return;
+    showToast("New username is the same as current username", "fa-info-circle");
+    closeModal();
+    return;
   }
-  
+
   currentUsername = newUsername;
   localStorage.setItem("nautilusOS_username", newUsername);
   document.getElementById("displayUsername").textContent = newUsername;
-  
+
   showToast(`Username changed to "${newUsername}"`, "fa-check-circle");
   closeModal();
-  
+
   if (windows["settings"]) {
-  closeWindow(
-  windows["settings"].querySelector(".window-btn.close"),
-  "settings"
-  );
+    closeWindow(
+      windows["settings"].querySelector(".window-btn.close"),
+      "settings"
+    );
   }
-  }
+}
 
 let game2048 = {
   board: null,
@@ -9764,7 +9727,7 @@ function addRandomTile2048() {
   for (let i = 0; i < game2048.size; i++) {
     for (let j = 0; j < game2048.size; j++) {
       if (game2048.board[i][j] === 0) {
-        emptyCells.push({row: i, col: j});
+        emptyCells.push({ row: i, col: j });
       }
     }
   }
@@ -9779,7 +9742,7 @@ function addRandomTile2048() {
 function getTileColor(value) {
   const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   const bgSecondary = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
-  
+
   if (value === 0) return bgSecondary;
   if (value === 2) return 'rgba(125, 211, 192, 0.2)';
   if (value === 4) return 'rgba(125, 211, 192, 0.3)';
@@ -9795,7 +9758,7 @@ function getTileColor(value) {
 function getTileTextColor(value) {
   const textPrimary = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
   const bgPrimary = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim();
-  
+
   if (value >= 8) return textPrimary;
   return textPrimary;
 }
@@ -10153,24 +10116,24 @@ function startTicTacToe() {
   tttGame.board = Array(9).fill('');
   tttGame.currentPlayer = 'X';
   tttGame.gameActive = true;
-  
+
   document.getElementById('tttStatus').textContent = 'Your turn (X)';
   document.getElementById('tttWins').textContent = tttGame.wins;
   document.getElementById('tttLosses').textContent = tttGame.losses;
   document.getElementById('tttDraws').textContent = tttGame.draws;
-  
+
   renderTTTBoard();
 }
 
 function renderTTTBoard() {
   const boardEl = document.getElementById('tttBoard');
   if (!boardEl) return;
-  
+
   const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   const textPrimary = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
   const bgSecondary = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
   const border = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
-  
+
   boardEl.innerHTML = '';
   for (let i = 0; i < 9; i++) {
     const cell = document.createElement('div');
@@ -10189,7 +10152,7 @@ function renderTTTBoard() {
     cell.style.transition = 'all 0.2s ease';
     cell.style.color = tttGame.board[i] === 'X' ? accentColor : textPrimary;
     cell.textContent = tttGame.board[i];
-    
+
     if (tttGame.board[i] === '' && tttGame.gameActive) {
       cell.onmouseover = () => {
         cell.style.background = `rgba(125, 211, 192, 0.1)`;
@@ -10202,7 +10165,7 @@ function renderTTTBoard() {
         cell.style.borderColor = border;
       };
     }
-    
+
     cell.onclick = () => handleTTTCellClick(i);
     boardEl.appendChild(cell);
   }
@@ -10210,24 +10173,24 @@ function renderTTTBoard() {
 
 function handleTTTCellClick(index) {
   if (tttGame.board[index] !== '' || !tttGame.gameActive || tttGame.currentPlayer !== 'X') return;
-  
+
   tttGame.board[index] = 'X';
   renderTTTBoard();
-  
+
   const result = checkTTTWinner();
   if (result) {
     endTTTGame(result);
     return;
   }
-  
+
   if (tttGame.board.every(cell => cell !== '')) {
     endTTTGame('draw');
     return;
   }
-  
+
   tttGame.currentPlayer = 'O';
   document.getElementById('tttStatus').textContent = 'AI is thinking...';
-  
+
   setTimeout(() => {
     makeAIMove();
   }, 500);
@@ -10237,18 +10200,18 @@ function makeAIMove() {
   const bestMove = getBestMove();
   tttGame.board[bestMove] = 'O';
   renderTTTBoard();
-  
+
   const result = checkTTTWinner();
   if (result) {
     endTTTGame(result);
     return;
   }
-  
+
   if (tttGame.board.every(cell => cell !== '')) {
     endTTTGame('draw');
     return;
   }
-  
+
   tttGame.currentPlayer = 'X';
   document.getElementById('tttStatus').textContent = 'Your turn (X)';
 }
@@ -10264,7 +10227,7 @@ function getBestMove() {
       tttGame.board[i] = '';
     }
   }
-  
+
   for (let i = 0; i < 9; i++) {
     if (tttGame.board[i] === '') {
       tttGame.board[i] = 'X';
@@ -10275,15 +10238,15 @@ function getBestMove() {
       tttGame.board[i] = '';
     }
   }
-  
+
   const corners = [0, 2, 6, 8];
   const availableCorners = corners.filter(i => tttGame.board[i] === '');
   if (availableCorners.length > 0) {
     return availableCorners[Math.floor(Math.random() * availableCorners.length)];
   }
-  
+
   if (tttGame.board[4] === '') return 4;
-  
+
   const available = tttGame.board.map((cell, i) => cell === '' ? i : null).filter(i => i !== null);
   return available[Math.floor(Math.random() * available.length)];
 }
@@ -10294,14 +10257,14 @@ function checkTTTWinner() {
     [0, 3, 6], [1, 4, 7], [2, 5, 8],
     [0, 4, 8], [2, 4, 6]
   ];
-  
+
   for (const pattern of winPatterns) {
     const [a, b, c] = pattern;
     if (tttGame.board[a] && tttGame.board[a] === tttGame.board[b] && tttGame.board[a] === tttGame.board[c]) {
       return tttGame.board[a];
     }
   }
-  
+
   return null;
 }
 
@@ -10331,4 +10294,1052 @@ function endTTTGame(result) {
     document.getElementById('tttDraws').textContent = tttGame.draws;
     showToast("It's a draw!", 'fa-handshake');
   }
+}
+
+// V86 Emulator Resource Management
+async function loadV86ResourcesOnDemand(windowEl) {
+  try {
+    // Check if already loaded
+    if (typeof V86Backend !== 'undefined' && typeof V86Frontend !== 'undefined' && typeof V86Starter !== 'undefined') {
+      console.log("V86 resources already loaded");
+      updateV86UI();
+      initializeV86WindowInstance(windowEl);
+      console.log("V86 emulator window opened with lifecycle management");
+      return;
+    }
+
+    // Show loading progress in the window
+    showV86LoadingProgress(windowEl);
+
+    const resources = [
+      { src: 'v86/libv86.mjs', name: 'V86', label: 'Loading V86 Library...', type: 'module' },
+      { src: 'v86/v86-resources.js', name: 'V86ResourceManager', label: 'Loading V86 Resources...' },
+      { src: 'v86/v86-backend.js', name: 'V86Backend', label: 'Loading V86 Core...' },
+      { src: 'v86/v86-wrapper.js', name: 'V86Wrapper', label: 'Loading V86 Wrapper...' },
+      { src: 'v86/v86-frontend.js', name: 'V86Frontend', label: 'Loading V86 Frontend...' }
+    ];
+
+    for (let i = 0; i < resources.length; i++) {
+      const resource = resources[i];
+      updateV86LoadingProgress(windowEl, resource.label, (i / resources.length) * 100);
+
+      if (typeof window[resource.name] === 'undefined') {
+        await loadScriptWithProgress(resource.src, resource.name, resource.type === 'module');
+      }
+    }
+
+    // Final initialization
+    updateV86LoadingProgress(windowEl, 'Initializing V86 Emulator...', 100);
+
+    setTimeout(() => {
+      hideV86LoadingProgress(windowEl);
+      // Don't call updateV86UI here - let V86Frontend handle the interface
+      initializeV86WindowInstance(windowEl);
+      console.log("V86 emulator window opened with lifecycle management");
+    }, 500);
+
+  } catch (error) {
+    console.error("Failed to load V86 resources:", error);
+    showV86LoadingError(windowEl, error.message);
+  }
+}
+
+function showV86LoadingProgress(windowEl) {
+  const container = windowEl.querySelector('.v86-container');
+  if (!container) return;
+
+  // Add loading overlay without replacing the container content
+  const overlay = document.createElement('div');
+  overlay.className = 'v86-loading-overlay';
+  overlay.innerHTML = `
+    <div class="v86-loading-content">
+      <div class="v86-loading-icon">
+        <i class="fas fa-microchip fa-3x"></i>
+      </div>
+      <h3>Loading V86 Emulator</h3>
+      <div class="v86-progress-container">
+        <div class="v86-progress-bar">
+          <div class="v86-progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="v86-progress-text">Preparing...</div>
+      </div>
+    </div>
+  `;
+
+  container.appendChild(overlay);
+}
+
+function updateV86LoadingProgress(windowEl, message, percentage) {
+  const progressFill = windowEl.querySelector('.v86-progress-fill');
+  const progressText = windowEl.querySelector('.v86-progress-text');
+
+  if (progressFill) {
+    progressFill.style.width = `${percentage}%`;
+  }
+  if (progressText) {
+    progressText.textContent = message;
+  }
+}
+
+function hideV86LoadingProgress(windowEl) {
+  const overlay = windowEl.querySelector('.v86-loading-overlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+      // Don't regenerate the interface - let V86Frontend handle it
+      // The V86Frontend.initialize() will create the proper interface
+      overlay.remove();
+    }, 300);
+  }
+}
+
+function showV86LoadingError(windowEl, errorMessage) {
+  const container = windowEl.querySelector('.v86-container');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="v86-loading-overlay">
+      <div class="v86-loading-content">
+        <div class="v86-loading-icon error">
+          <i class="fas fa-exclamation-triangle fa-3x"></i>
+        </div>
+        <h3>Failed to Load V86 Emulator</h3>
+        <p class="v86-error-message">${errorMessage}</p>
+        <button class="v86-retry-btn" onclick="retryV86Loading(this)">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function retryV86Loading(button) {
+  const windowEl = button.closest('.window');
+  if (windowEl) {
+    loadV86ResourcesOnDemand(windowEl);
+  }
+}
+
+function loadScriptWithProgress(src, expectedGlobal, isModule = false) {
+  return new Promise(async (resolve, reject) => {
+    // Handle ES modules differently
+    if (isModule) {
+      try {
+        const cacheBuster = '?v=' + Date.now();
+        const module = await import('../' + src + cacheBuster);
+        
+        // For V86 module, expose it globally
+        if (expectedGlobal === 'V86') {
+          // V86 is the default export
+          window[expectedGlobal] = module.default;
+        } else if (expectedGlobal && module[expectedGlobal]) {
+          window[expectedGlobal] = module[expectedGlobal];
+        } else if (expectedGlobal && module.default) {
+          window[expectedGlobal] = module.default;
+        }
+        
+        console.log(`Successfully loaded ${expectedGlobal || 'module'} from ${src}`);
+        resolve();
+      } catch (error) {
+        console.error(`Failed to load module ${src}:`, error);
+        reject(error);
+      }
+      return;
+    }
+    
+    // Regular script loading
+    const script = document.createElement('script');
+    // Add cache-busting parameter
+    const cacheBuster = '?v=' + Date.now();
+    script.src = src + cacheBuster;
+
+    script.onload = function () {
+      // Check for the global with retries
+      let attempts = 0;
+      const maxAttempts = 10;
+
+      const checkGlobal = () => {
+        attempts++;
+
+        if (!expectedGlobal || typeof window[expectedGlobal] !== 'undefined') {
+          console.log(`Successfully loaded ${expectedGlobal || 'script'} from ${src}`);
+          resolve();
+          return;
+        }
+
+        if (attempts < maxAttempts) {
+          console.log(`Attempt ${attempts}: ${expectedGlobal} not yet available, retrying...`);
+          setTimeout(checkGlobal, 10);
+        } else {
+          console.error(`${expectedGlobal} not found after loading ${src}. Available V86 globals:`, Object.keys(window).filter(k => k.includes('V86')));
+          reject(new Error(`${expectedGlobal} not found after loading ${src}`));
+        }
+      };
+
+      // Start checking immediately
+      checkGlobal();
+    };
+
+    script.onerror = function () {
+      reject(new Error(`Failed to load ${src}`));
+    };
+
+    document.head.appendChild(script);
+  });
+}
+
+async function loadV86AdditionalResources() {
+  const resources = [
+    { src: 'v86/libv86.mjs', name: 'V86', type: 'module' },
+    { src: 'v86/v86-resources.js', name: 'V86ResourceManager' },
+    { src: 'v86/v86-backend.js', name: 'V86Backend' },
+    { src: 'v86/v86-wrapper.js', name: 'V86Wrapper' },
+    { src: 'v86/v86-frontend.js', name: 'V86Frontend' }
+  ];
+
+  for (const resource of resources) {
+    if (typeof window[resource.name] === 'undefined') {
+      await loadScript(resource.src, resource.name);
+    }
+  }
+}
+
+function loadScript(src, expectedGlobal) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+
+    script.onload = function () {
+      if (expectedGlobal && typeof window[expectedGlobal] === 'undefined') {
+        reject(new Error(`${expectedGlobal} not found after loading ${src}`));
+      } else {
+        resolve();
+      }
+    };
+
+    script.onerror = function () {
+      reject(new Error(`Failed to load ${src}`));
+    };
+
+    document.head.appendChild(script);
+  });
+}
+
+function cleanupV86Resources() {
+  // This function will be called when V86 emulator is uninstalled
+  // It will clean up any running emulator instances and resources
+  console.log("Cleaning up V86 emulator resources...");
+
+  try {
+    // Close any open V86 emulator windows with proper cleanup
+    Object.keys(windows).forEach(windowId => {
+      if (windowId === 'v86-emulator' || windowId.startsWith('v86-emulator')) {
+        const windowElement = windows[windowId];
+        if (windowElement) {
+          // Trigger proper cleanup before closing
+          handleV86WindowClose(windowElement);
+          // Close the window
+          const closeBtn = windowElement.querySelector('.window-btn.close');
+          if (closeBtn) {
+            closeBtn.click();
+          }
+        }
+      }
+    });
+
+    // Clean up all V86 frontend instances
+    if (window.v86Instances) {
+      Object.keys(window.v86Instances).forEach(instanceId => {
+        const instance = window.v86Instances[instanceId];
+        if (instance && typeof instance.cleanup === 'function') {
+          instance.cleanup();
+        }
+      });
+      window.v86Instances = {};
+    }
+
+    // Clean up global V86 backend instance
+    if (v86Instance) {
+      if (typeof v86Instance.cleanup === 'function') {
+        v86Instance.cleanup();
+      } else if (typeof v86Instance.stop === 'function') {
+        v86Instance.stop();
+      }
+      v86Instance = null;
+    }
+
+    // Reset V86 state
+    v86State = 'stopped';
+
+    // Clean up any V86-related timers
+    if (window.v86WindowTimers) {
+      Object.keys(window.v86WindowTimers).forEach(windowId => {
+        window.v86WindowTimers[windowId].forEach(timerId => {
+          clearTimeout(timerId);
+          clearInterval(timerId);
+        });
+      });
+      window.v86WindowTimers = {};
+    }
+
+    // Clean up V86 resource manager cache
+    if (typeof v86ResourceManager !== 'undefined' && v86ResourceManager.clearCache) {
+      v86ResourceManager.clearCache();
+    }
+
+    // Clean up V86 wrapper instances
+    if (typeof v86Wrapper !== 'undefined' && v86Wrapper.destroyAllInstances) {
+      v86Wrapper.destroyAllInstances();
+    }
+
+    console.log("V86 emulator resources cleaned up successfully");
+
+  } catch (error) {
+    console.error("Error during V86 resource cleanup:", error);
+    showToast("Error cleaning up V86 resources", "fa-exclamation-triangle");
+  }
+}
+
+// V86 Emulator Interface Generation
+function generateV86Interface() {
+  // Generate a unique container ID for this V86 instance
+  const containerId = 'v86-container-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+
+  return `
+    <div id="${containerId}" class="v86-container" style="width: 100%; height: 100%; background: var(--bg-primary);">
+      <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
+        <div style="text-align: center;">
+          <i class="fas fa-microchip" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+          <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">V86 Emulator</div>
+          <div style="font-size: 0.9rem; opacity: 0.7;">Initializing...</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// V86 UI Update Function
+function updateV86UI() {
+  console.log("Updating V86 UI components...");
+
+  try {
+    // Update any V86-specific UI elements that need refreshing
+    const v86Containers = document.querySelectorAll('.v86-container');
+
+    v86Containers.forEach(container => {
+      // Check if container is still in initialization state
+      const initializingDiv = container.querySelector('div[style*="Initializing"]');
+      if (initializingDiv) {
+        // Update initialization message
+        initializingDiv.textContent = 'Loading emulator components...';
+      }
+    });
+
+    // Update V86 status indicators if they exist
+    const statusElements = document.querySelectorAll('.v86-status-text');
+    statusElements.forEach(element => {
+      if (element.textContent === 'Initializing...') {
+        element.textContent = 'Loading resources...';
+      }
+    });
+
+    console.log("V86 UI update completed");
+
+  } catch (error) {
+    console.error("Error updating V86 UI:", error);
+  }
+}
+
+// V86 Emulator Control Functions (Legacy - now handled by V86Frontend)
+// These functions are kept for backward compatibility but are no longer used
+let v86Instance = null;
+let v86State = 'stopped';
+
+// V86 Window Lifecycle Management
+function handleV86WindowClose(windowElement) {
+  console.log("Handling V86 window close - cleaning up emulator instance");
+
+  try {
+    // Stop any running emulator instance
+    if (v86State === 'running' && v86Instance) {
+      stopV86Emulator();
+    }
+
+    // Clean up any V86 frontend instances associated with this window
+    const windowId = windowElement.dataset.windowId;
+    if (windowId && window.v86Instances && window.v86Instances[windowId]) {
+      const frontend = window.v86Instances[windowId];
+      if (frontend && typeof frontend.cleanup === 'function') {
+        frontend.cleanup();
+      }
+      delete window.v86Instances[windowId];
+    }
+
+    // Clean up any event listeners or resources specific to this window
+    cleanupV86WindowResources(windowElement);
+
+    console.log("V86 window cleanup completed");
+
+  } catch (error) {
+    console.error("Error during V86 window cleanup:", error);
+  }
+}
+
+function handleV86WindowResize(windowElement) {
+  console.log("Handling V86 window resize - adjusting display scaling");
+
+  try {
+    // Get the window ID to find the associated frontend instance
+    const windowId = windowElement.dataset.windowId;
+    if (windowId && window.v86Instances && window.v86Instances[windowId]) {
+      const frontend = window.v86Instances[windowId];
+      if (frontend && typeof frontend.updateScreenScale === 'function') {
+        // Delay the scale update to allow window animation to complete
+        setTimeout(() => {
+          frontend.updateScreenScale();
+        }, 300);
+      }
+    }
+
+    // Fallback: Update any V86 display elements in the window
+    const v86Display = windowElement.querySelector('.v86-display');
+    if (v86Display) {
+      // Trigger a resize event for any canvas elements
+      const canvas = v86Display.querySelector('canvas');
+      if (canvas) {
+        // Force canvas to recalculate its display size
+        setTimeout(() => {
+          const event = new Event('resize');
+          window.dispatchEvent(event);
+        }, 300);
+      }
+    }
+
+  } catch (error) {
+    console.error("Error during V86 window resize handling:", error);
+  }
+}
+
+function initializeV86WindowInstance(windowElement) {
+  console.log("Initializing V86 window instance");
+
+  try {
+    // Check memory limits before creating new instance
+    if (!enforceV86MemoryLimits()) {
+      showToast("Cannot create V86 instance: memory or instance limits exceeded", "fa-exclamation-triangle");
+      return;
+    }
+
+    // Generate a unique window ID
+    const windowId = 'v86-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+    windowElement.dataset.windowId = windowId;
+
+    // Initialize global V86 instances tracker if not exists
+    if (!window.v86Instances) {
+      window.v86Instances = {};
+    }
+
+    // Initialize instance cache if not exists
+    if (!window.v86InstanceCache) {
+      window.v86InstanceCache = {};
+    }
+
+    // Initialize window timers tracker if not exists
+    if (!window.v86WindowTimers) {
+      window.v86WindowTimers = {};
+    }
+    window.v86WindowTimers[windowId] = [];
+
+    // Find the V86 container in this window
+    const v86Container = windowElement.querySelector('.v86-container');
+    if (v86Container) {
+      // Get the container ID that was generated in generateV86Interface
+      const containerId = v86Container.id;
+
+      // Initialize V86 frontend for this window instance
+      if (typeof V86Frontend !== 'undefined') {
+        const frontend = new V86Frontend(v86Container);
+        window.v86Instances[windowId] = frontend;
+
+        // Initialize instance cache for this window
+        window.v86InstanceCache[windowId] = {
+          blobUrls: [],
+          buffers: [],
+          created: Date.now()
+        };
+
+        // Initialize the frontend
+        frontend.initialize().then(() => {
+          console.log(`V86 frontend initialized for window ${windowId}`);
+
+          // Log memory usage after initialization
+          const usage = getV86MemoryUsage();
+          console.log(`V86 Memory Usage - Instances: ${usage.activeInstances}, Memory: ${Math.round(usage.totalMemoryAllocated / (1024 * 1024))}MB`);
+
+        }).catch(error => {
+          console.error(`Failed to initialize V86 frontend for window ${windowId}:`, error);
+          // Clean up on initialization failure
+          cleanupV86InstanceMemory(windowId);
+          showToast("Failed to initialize V86 emulator", "fa-exclamation-triangle");
+        });
+      } else {
+        console.error("V86Frontend class not available");
+        showToast("V86 emulator components not loaded", "fa-exclamation-triangle");
+      }
+    }
+
+    // Set up window-specific event handlers
+    setupV86WindowEventHandlers(windowElement, windowId);
+
+    console.log(`V86 window instance ${windowId} initialized`);
+
+  } catch (error) {
+    console.error("Error initializing V86 window instance:", error);
+    showToast("Failed to initialize V86 emulator window", "fa-exclamation-triangle");
+  }
+}
+
+function setupV86WindowEventHandlers(windowElement, windowId) {
+  // Handle window resize events
+  const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+      if (entry.target === windowElement) {
+        handleV86WindowResize(windowElement);
+      }
+    }
+  });
+
+  resizeObserver.observe(windowElement);
+
+  // Store the observer for cleanup
+  windowElement.v86ResizeObserver = resizeObserver;
+
+  // Handle window focus events
+  windowElement.addEventListener('mousedown', () => {
+    // Ensure V86 input handling is properly managed when window gains focus
+    const frontend = window.v86Instances && window.v86Instances[windowId];
+    if (frontend && frontend.inputFocused) {
+      // Re-establish input focus if it was previously captured
+      setTimeout(() => {
+        if (frontend.canvas) {
+          frontend.canvas.focus();
+        }
+      }, 100);
+    }
+  });
+}
+
+function cleanupV86WindowResources(windowElement) {
+  try {
+    console.log("Starting V86 window resource cleanup...");
+
+    // Clean up resize observer
+    if (windowElement.v86ResizeObserver) {
+      windowElement.v86ResizeObserver.disconnect();
+      delete windowElement.v86ResizeObserver;
+    }
+
+    // Clean up any other window-specific resources
+    const windowId = windowElement.dataset.windowId;
+    if (windowId) {
+      // Remove any timers or intervals associated with this window
+      if (window.v86WindowTimers && window.v86WindowTimers[windowId]) {
+        window.v86WindowTimers[windowId].forEach(timerId => {
+          clearTimeout(timerId);
+          clearInterval(timerId);
+        });
+        delete window.v86WindowTimers[windowId];
+      }
+
+      // Clean up memory allocated for this instance
+      cleanupV86InstanceMemory(windowId);
+    }
+
+    // Remove any event listeners attached to the window
+    const events = ['mousedown', 'mousemove', 'mouseup', 'keydown', 'keyup', 'resize'];
+    events.forEach(eventType => {
+      windowElement.removeEventListener(eventType, windowElement[`v86${eventType}Handler`]);
+    });
+
+    console.log("V86 window resources cleaned up successfully");
+
+  } catch (error) {
+    console.error("Error cleaning up V86 window resources:", error);
+  }
+}
+
+// V86 Memory Management for Multiple Instances
+function cleanupV86InstanceMemory(windowId) {
+  try {
+    console.log(`Cleaning up memory for V86 instance: ${windowId}`);
+
+    // Clean up the specific frontend instance
+    if (window.v86Instances && window.v86Instances[windowId]) {
+      const instance = window.v86Instances[windowId];
+
+      // Call cleanup on the instance
+      if (typeof instance.cleanup === 'function') {
+        instance.cleanup();
+      }
+
+      // Remove from instances registry
+      delete window.v86Instances[windowId];
+    }
+
+    // Clean up any cached resources specific to this instance
+    if (window.v86InstanceCache && window.v86InstanceCache[windowId]) {
+      const cache = window.v86InstanceCache[windowId];
+
+      // Clean up any blob URLs
+      if (cache.blobUrls) {
+        cache.blobUrls.forEach(url => {
+          try {
+            URL.revokeObjectURL(url);
+          } catch (e) {
+            console.warn("Failed to revoke blob URL:", url, e);
+          }
+        });
+      }
+
+      // Clean up any array buffers
+      if (cache.buffers) {
+        cache.buffers.forEach(buffer => {
+          // Clear the buffer (not strictly necessary but good practice)
+          if (buffer instanceof ArrayBuffer) {
+            // ArrayBuffers can't be explicitly freed, but we can clear references
+            buffer = null;
+          }
+        });
+      }
+
+      delete window.v86InstanceCache[windowId];
+    }
+
+    // Force garbage collection hint (if available)
+    if (window.gc && typeof window.gc === 'function') {
+      try {
+        window.gc();
+      } catch (e) {
+        // gc() is not always available, ignore errors
+      }
+    }
+
+    console.log(`Memory cleanup completed for V86 instance: ${windowId}`);
+
+  } catch (error) {
+    console.error(`Error cleaning up memory for V86 instance ${windowId}:`, error);
+  }
+}
+
+function getV86MemoryUsage() {
+  try {
+    const usage = {
+      activeInstances: 0,
+      totalMemoryAllocated: 0,
+      cacheSize: 0
+    };
+
+    // Count active instances
+    if (window.v86Instances) {
+      usage.activeInstances = Object.keys(window.v86Instances).length;
+
+      // Calculate memory usage per instance
+      Object.values(window.v86Instances).forEach(instance => {
+        if (instance.config && instance.config.memory_size) {
+          usage.totalMemoryAllocated += instance.config.memory_size;
+        }
+      });
+    }
+
+    // Calculate cache size
+    if (window.v86InstanceCache) {
+      Object.values(window.v86InstanceCache).forEach(cache => {
+        if (cache.buffers) {
+          cache.buffers.forEach(buffer => {
+            if (buffer instanceof ArrayBuffer) {
+              usage.cacheSize += buffer.byteLength;
+            }
+          });
+        }
+      });
+    }
+
+    return usage;
+
+  } catch (error) {
+    console.error("Error calculating V86 memory usage:", error);
+    return { activeInstances: 0, totalMemoryAllocated: 0, cacheSize: 0 };
+  }
+}
+
+function enforceV86MemoryLimits() {
+  try {
+    const usage = getV86MemoryUsage();
+    const maxInstances = 3; // Limit to 3 concurrent instances
+    const maxTotalMemory = 1024 * 1024 * 1024; // 1GB total limit
+
+    if (usage.activeInstances > maxInstances) {
+      console.warn(`V86 instance limit exceeded: ${usage.activeInstances}/${maxInstances}`);
+      showToast(`Too many V86 instances running (${usage.activeInstances}/${maxInstances}). Consider closing some.`, "fa-exclamation-triangle");
+      return false;
+    }
+
+    if (usage.totalMemoryAllocated > maxTotalMemory) {
+      console.warn(`V86 memory limit exceeded: ${Math.round(usage.totalMemoryAllocated / (1024 * 1024))}MB`);
+      showToast("V86 memory usage is high. Consider reducing memory allocation or closing instances.", "fa-exclamation-triangle");
+      return false;
+    }
+
+    return true;
+
+  } catch (error) {
+    console.error("Error enforcing V86 memory limits:", error);
+    return true; // Allow operation to continue on error
+  }
+}
+
+// V86 Error Handling and User Feedback
+function handleV86LoadError(errorType, errorMessage) {
+  console.error(`V86 Load Error [${errorType}]:`, errorMessage);
+
+  const errorHandlers = {
+    'BACKEND_LOAD_FAILED': () => {
+      showV86ErrorDialog(
+        'Backend Loading Failed',
+        'The V86 emulator core could not be loaded. This might be due to:',
+        [
+          'Network connectivity issues',
+          'Missing or corrupted emulator files',
+          'Browser compatibility problems'
+        ],
+        [
+          { text: 'Retry', action: () => retryV86Load() },
+          { text: 'Check Network', action: () => window.open('https://www.google.com', '_blank') },
+          { text: 'Close', action: () => closeV86ErrorDialog() }
+        ]
+      );
+    },
+
+    'LOAD_TIMEOUT': () => {
+      showV86ErrorDialog(
+        'Loading Timeout',
+        'The V86 emulator took too long to load. This might be due to:',
+        [
+          'Slow internet connection',
+          'Large emulator files',
+          'Server response issues'
+        ],
+        [
+          { text: 'Retry', action: () => retryV86Load() },
+          { text: 'Close', action: () => closeV86ErrorDialog() }
+        ]
+      );
+    },
+
+    'RESOURCE_NOT_FOUND': () => {
+      showV86ErrorDialog(
+        'Resources Missing',
+        'Required V86 emulator files are missing:',
+        [
+          'BIOS files may not be available',
+          'WebAssembly core is missing',
+          'Installation may be incomplete'
+        ],
+        [
+          { text: 'Reinstall', action: () => reinstallV86() },
+          { text: 'Close', action: () => closeV86ErrorDialog() }
+        ]
+      );
+    },
+
+    'INITIALIZATION_FAILED': () => {
+      showV86ErrorDialog(
+        'Initialization Failed',
+        'The V86 emulator could not be initialized:',
+        [
+          'Insufficient memory available',
+          'WebAssembly not supported',
+          'Configuration errors'
+        ],
+        [
+          { text: 'Reduce Memory', action: () => showV86MemorySettings() },
+          { text: 'Retry', action: () => retryV86Initialization() },
+          { text: 'Close', action: () => closeV86ErrorDialog() }
+        ]
+      );
+    },
+
+    'RUNTIME_ERROR': () => {
+      showV86ErrorDialog(
+        'Runtime Error',
+        'The V86 emulator encountered an error during operation:',
+        [
+          'Emulation crashed unexpectedly',
+          'Memory allocation failed',
+          'Invalid disk image or configuration'
+        ],
+        [
+          { text: 'Restart Emulator', action: () => restartV86Emulator() },
+          { text: 'Reset Configuration', action: () => resetV86Configuration() },
+          { text: 'Close', action: () => closeV86ErrorDialog() }
+        ]
+      );
+    },
+
+    'UNEXPECTED_ERROR': () => {
+      showV86ErrorDialog(
+        'Unexpected Error',
+        'An unexpected error occurred:',
+        [errorMessage || 'Unknown error'],
+        [
+          { text: 'Report Issue', action: () => reportV86Issue(errorType, errorMessage) },
+          { text: 'Retry', action: () => retryV86Load() },
+          { text: 'Close', action: () => closeV86ErrorDialog() }
+        ]
+      );
+    }
+  };
+
+  const handler = errorHandlers[errorType] || errorHandlers['UNEXPECTED_ERROR'];
+  handler();
+}
+
+function showV86ErrorDialog(title, description, causes, actions) {
+  const dialog = document.createElement('div');
+  dialog.className = 'v86-error-dialog';
+  dialog.innerHTML = `
+    <div class="v86-error-overlay">
+      <div class="v86-error-content">
+        <div class="v86-error-header">
+          <i class="fas fa-exclamation-triangle"></i>
+          <h3>${title}</h3>
+        </div>
+        <div class="v86-error-body">
+          <p>${description}</p>
+          <ul class="v86-error-causes">
+            ${causes.map(cause => `<li>${cause}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="v86-error-actions">
+          ${actions.map(action =>
+    `<button class="v86-error-btn" onclick="${action.action.name}()">${action.text}</button>`
+  ).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Add styles
+  const style = document.createElement('style');
+  style.textContent = `
+    .v86-error-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10000;
+    }
+    
+    .v86-error-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .v86-error-content {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .v86-error-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      color: var(--error-red);
+    }
+    
+    .v86-error-header i {
+      font-size: 24px;
+    }
+    
+    .v86-error-header h3 {
+      margin: 0;
+      color: var(--text-primary);
+    }
+    
+    .v86-error-body {
+      padding: 20px;
+    }
+    
+    .v86-error-body p {
+      margin: 0 0 15px 0;
+      color: var(--text-primary);
+    }
+    
+    .v86-error-causes {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text-secondary);
+    }
+    
+    .v86-error-causes li {
+      margin-bottom: 5px;
+    }
+    
+    .v86-error-actions {
+      display: flex;
+      gap: 10px;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+      justify-content: flex-end;
+    }
+    
+    .v86-error-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .v86-error-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+  `;
+
+  document.head.appendChild(style);
+  document.body.appendChild(dialog);
+
+  // Store references for cleanup
+  dialog.v86Style = style;
+  window.currentV86ErrorDialog = dialog;
+
+  // Set up action handlers
+  actions.forEach((action, index) => {
+    const btn = dialog.querySelectorAll('.v86-error-btn')[index];
+    btn.onclick = action.action;
+  });
+}
+
+function closeV86ErrorDialog() {
+  if (window.currentV86ErrorDialog) {
+    if (window.currentV86ErrorDialog.v86Style) {
+      window.currentV86ErrorDialog.v86Style.remove();
+    }
+    window.currentV86ErrorDialog.remove();
+    window.currentV86ErrorDialog = null;
+  }
+}
+
+function retryV86Load() {
+  closeV86ErrorDialog();
+  showToast("Retrying V86 emulator load...", "fa-redo");
+  loadV86Resources().catch(error => {
+    console.error("Retry failed:", error);
+  });
+}
+
+function reinstallV86() {
+  closeV86ErrorDialog();
+  showToast("Reinstalling V86 emulator...", "fa-download");
+
+  // Clean up existing resources
+  cleanupV86Resources();
+
+  // Remove from installed apps and reinstall
+  const index = installedApps.indexOf('v86-emulator');
+  if (index > -1) {
+    installedApps.splice(index, 1);
+    localStorage.setItem('nautilusOS_installedApps', JSON.stringify(installedApps));
+  }
+
+  // Trigger reinstallation
+  setTimeout(() => {
+    installApp('v86-emulator');
+  }, 1000);
+}
+
+function retryV86Initialization() {
+  closeV86ErrorDialog();
+  showToast("Retrying V86 initialization...", "fa-redo");
+
+  // Find the current V86 window and reinitialize
+  const v86Window = windows['v86-emulator'];
+  if (v86Window) {
+    const windowId = v86Window.dataset.windowId;
+    if (windowId && window.v86Instances && window.v86Instances[windowId]) {
+      const frontend = window.v86Instances[windowId];
+      frontend.initialize().catch(error => {
+        handleV86LoadError('INITIALIZATION_FAILED', error.message);
+      });
+    }
+  }
+}
+
+function showV86MemorySettings() {
+  closeV86ErrorDialog();
+  showToast("Opening memory settings...", "fa-memory");
+
+  // Show V86 configuration panel if available
+  const configPanel = document.getElementById('v86Config');
+  if (configPanel) {
+    configPanel.style.display = 'block';
+  }
+}
+
+function restartV86Emulator() {
+  closeV86ErrorDialog();
+  showToast("Restarting V86 emulator...", "fa-redo");
+
+  if (v86State === 'running') {
+    stopV86Emulator();
+    setTimeout(() => {
+      startV86Emulator();
+    }, 2000);
+  }
+}
+
+function resetV86Configuration() {
+  closeV86ErrorDialog();
+  showToast("Resetting V86 configuration...", "fa-cog");
+
+  // Reset memory and boot order to defaults
+  const memorySelect = document.getElementById('v86Memory');
+  const bootOrderSelect = document.getElementById('v86BootOrder');
+
+  if (memorySelect) memorySelect.value = '128';
+  if (bootOrderSelect) bootOrderSelect.value = '0x213';
+
+  showToast("V86 configuration reset to defaults", "fa-check-circle");
+}
+
+function reportV86Issue(errorType, errorMessage) {
+  closeV86ErrorDialog();
+
+  const issueData = {
+    type: errorType,
+    message: errorMessage,
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    url: window.location.href
+  };
+
+  console.log("V86 Issue Report:", issueData);
+  showToast("Issue details logged to console", "fa-bug");
 }
