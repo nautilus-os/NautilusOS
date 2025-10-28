@@ -4018,6 +4018,27 @@ alt="favicon">
                     }
                 </button>
             </div>
+            <div class="appstore-item">
+                <div class="appstore-item-icon">
+                    <i class="fas fa-palette" style="color: #ffffff;"></i>
+                </div>
+                <div class="appstore-item-name">Liquid Glass by $xor</div>
+                <div class="appstore-item-desc">An Apple insipired theme with a beautiful translucent look.</div>
+                <button class="appstore-item-btn ${
+                  installedThemes.includes("liquidGlass") ? "installed" : ""
+                }"
+                    onclick="${
+                      installedThemes.includes("liquidGlass")
+                        ? "uninstallTheme('liquidGlass')"
+                        : "installTheme('liquidGlass')"
+                    }">
+                    ${
+                      installedThemes.includes("liquidGlass")
+                        ? "Uninstall"
+                        : "Install"
+                    }
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -5377,6 +5398,26 @@ function switchAppStoreSection(section, element) {
     }">
                           ${
                             installedThemes.includes("green")
+                              ? "Uninstall"
+                              : "Install"
+                          }
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-palette" style="color: #ffffff;"></i>
+                      </div>
+                      <div class="appstore-item-name">Liquid Glass by $xor</div>
+                      <div class="appstore-item-desc">An Apple insipired theme with a beautiful translucent look.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes("liquidGlass") ? "installed" : ""
+                      }" onclick="${
+      installedThemes.includes("liquidGlass")
+        ? "uninstallTheme('liquidGlass')"
+        : "installTheme('liquidGlass')"
+    }">
+                          ${
+                            installedThemes.includes("liquidGlass")
                               ? "Uninstall"
                               : "Install"
                           }
