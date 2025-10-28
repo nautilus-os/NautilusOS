@@ -1,4 +1,5 @@
 NOTE: Do NOT sync the dev build untill this message is removed
+# `WE NEED TO SEEK FUNDING FOR DOMAIN! SEE DOMAIN IDEAS FOR MORE DETAILS`
 ## NautilusOS
 
 NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS—and it’s my biggest project yet!!  
@@ -51,6 +52,12 @@ Basically... a whole little OS in your browser :D
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
+---
+
+## 🌐 domain ideas
+
+- `nautilusos.app`
+- `maybe more ideas soon`
 ---
 
 ## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)
