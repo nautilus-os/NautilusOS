@@ -56,8 +56,10 @@ Basically... a whole little OS in your browser :D
 
 ## 🌐 domain ideas
 
-- `nautilusos.app` $14.20/year at cloudflare
-- `nautiluson.top` $4.63/year at porkbun
+- `nautilusos.app` $14.20/year at cloudflare or
+- `nautilusos.me` $2.99/first year at dreamhost
+- `nautliusos.xyz` $2.00/year at namecheap (some 90% off deal)
+- `nautiluson.top` $4.63/year at porkbun 
 ---
 
 ## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)
