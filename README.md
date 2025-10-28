@@ -1,4 +1,4 @@
-NOTE: Do NOT sync the dev build untill this message is removed
+
 # `WE NEED TO SEEK FUNDING FOR DOMAIN! SEE DOMAIN IDEAS FOR MORE DETAILS`
 ## NautilusOS
 
