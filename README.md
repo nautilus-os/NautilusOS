@@ -1,3 +1,5 @@
+NOTE: Do NOT sync the dev build untill this message is removed
+# `WE NEED TO SEEK FUNDING FOR DOMAIN! SEE DOMAIN IDEAS FOR MORE DETAILS`
 ## NautilusOS
 
 NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS—and it’s my biggest project yet!!  
@@ -35,18 +37,27 @@ Basically... a whole little OS in your browser :D
 - [ ] App store improvements (right now it can only install built-in apps)
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
-- [ ] Make tabs and stuff work
-- [x] Search bar for start menu
-- [x] Search engine customization should apply to all browsers for enhanced user experince
-- [x] All themes should have black gradient background color
-- [x] Toasts should apper AFTER bootloader
-- [x] Visual studio code editor
 - [ ] Window animation settings
 - [ ] Make taskbar autohide
-- [ ] Fix browser background & login screen container background (toasterfucker's job)
+- [ ] Embed V86 (lanefiedler-731's job)
+- [ ] Fix styles on proxy list dropdown menu (xor)
+- [ ] Add previews to all apps and themes
+- [ ] Make music player search with itunes and play with ub youtube
+- [ ] Add a scramjet proxy (xor)
+- [ ] Wisp server selection (xor)
+- [ ] Better file system
+- [ ] Fix [object promise] bug when creating new folder
+- [ ] Importing saves (anyone can take this)
+- [ ] Multiple accounts
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
+---
+
+## 🌐 domain ideas
+
+- `nautilusos.app`
+- `maybe more ideas soon`
 ---
 
 ## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)

@@ -9767,19 +9767,62 @@ function render2048Board() {
   const boardEl = document.getElementById('game2048Board');
   if (!boardEl) return;
 
+  // Create container with absolute positioning for smooth animations
   boardEl.innerHTML = '';
-  boardEl.style.display = 'grid';
-  boardEl.style.gridTemplateColumns = `repeat(${game2048.size}, 100px)`;
-  boardEl.style.gap = '10px';
+  boardEl.style.display = 'block';
   boardEl.style.position = 'relative';
+  boardEl.style.width = `${game2048.size * 100 + (game2048.size - 1) * 10}px`;
+  boardEl.style.height = `${game2048.size * 100 + (game2048.size - 1) * 10}px`;
+
+  // Render background grid
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      const cell = document.createElement('div');
+      cell.className = 'tile-cell-bg';
+      cell.style.position = 'absolute';
+      cell.style.left = `${j * 110}px`;
+      cell.style.top = `${i * 110}px`;
+      cell.style.width = '100px';
+      cell.style.height = '100px';
+      cell.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
+      cell.style.border = '2px solid var(--border)';
+      cell.style.borderRadius = '8px';
+      cell.style.opacity = '0.3';
+      boardEl.appendChild(cell);
+    }
+  }
+
+  // Render actual tiles with positions
+  const tileContainer = document.createElement('div');
+  tileContainer.style.position = 'absolute';
+  tileContainer.style.top = '0';
+  tileContainer.style.left = '0';
+  tileContainer.style.width = '100%';
+  tileContainer.style.height = '100%';
+  boardEl.appendChild(tileContainer);
 
   for (let i = 0; i < game2048.size; i++) {
     for (let j = 0; j < game2048.size; j++) {
       const value = game2048.board[i][j];
+      if (value === 0) continue;
+
       const tile = document.createElement('div');
+      tile.className = 'tile-2048';
+      tile.dataset.row = i;
+      tile.dataset.col = j;
+      tile.dataset.value = value;
+      
+      // Calculate position
+      const left = j * 110;
+      const top = i * 110;
+      
+      tile.style.position = 'absolute';
+      tile.style.left = `${left}px`;
+      tile.style.top = `${top}px`;
       tile.style.width = '100px';
       tile.style.height = '100px';
       tile.style.background = getTileColor(value);
+      tile.style.border = '2px solid var(--border)';
       tile.style.borderRadius = '8px';
       tile.style.display = 'flex';
       tile.style.alignItems = 'center';
@@ -9788,37 +9831,82 @@ function render2048Board() {
       tile.style.fontWeight = 'bold';
       tile.style.fontFamily = 'fontb';
       tile.style.color = getTileTextColor(value);
-      tile.style.transition = 'all 0.15s ease';
-      tile.style.border = value > 0 ? '2px solid var(--border)' : 'none';
-      tile.style.boxShadow = value > 0 ? '0 2px 8px rgba(0, 0, 0, 0.3)' : 'none';
-
-      // Add animation classes
-      if (value > 0) {
-        if (game2048.newTiles.has(`${i}-${j}`)) {
-          tile.classList.add('tile-new');
-        } else if (game2048.mergedTiles.has(`${i}-${j}`)) {
-          tile.classList.add('tile-merge');
-        } else if (game2048.slideDirection && game2048.previousBoard) {
-          // Check if this tile moved from a previous position
-          const slideClass = getSlideAnimationClass(i, j, game2048.slideDirection);
-          if (slideClass) {
-            tile.classList.add(slideClass);
-          }
+      tile.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+      tile.style.zIndex = '10';
+      
+      // Animation handling
+      if (game2048.newTiles.has(`${i}-${j}`)) {
+        tile.style.transform = 'scale(0)';
+        tile.style.transition = 'transform 0.2s ease';
+        setTimeout(() => {
+          tile.style.transform = 'scale(1)';
+        }, 50);
+      } else if (game2048.mergedTiles.has(`${i}-${j}`)) {
+        tile.style.transition = 'all 0.15s ease, transform 0.2s ease';
+        setTimeout(() => {
+          tile.style.transform = 'scale(1.1)';
+          setTimeout(() => {
+            tile.style.transform = 'scale(1)';
+          }, 100);
+        }, 150);
+      } else if (game2048.previousBoard && game2048.slideDirection) {
+        // Find previous position and animate slide
+        const prevPos = findPreviousPosition(i, j, value);
+        if (prevPos) {
+          const prevLeft = prevPos.col * 110;
+          const prevTop = prevPos.row * 110;
+          tile.style.left = `${prevLeft}px`;
+          tile.style.top = `${prevTop}px`;
+          tile.style.transition = 'all 0.15s ease';
+          
+          setTimeout(() => {
+            tile.style.left = `${left}px`;
+            tile.style.top = `${top}px`;
+          }, 10);
+        } else {
+          tile.style.transition = 'all 0.15s ease';
         }
       }
 
-      tile.textContent = value || '';
-      boardEl.appendChild(tile);
+      tile.textContent = value;
+      tileContainer.appendChild(tile);
     }
   }
 
-  // Clear animation sets after rendering
+  // Clear animation tracking
   setTimeout(() => {
     game2048.newTiles.clear();
     game2048.mergedTiles.clear();
     game2048.previousBoard = null;
     game2048.slideDirection = null;
   }, 200);
+}
+
+// New helper function to find previous position
+function findPreviousPosition(currentRow, currentCol, value) {
+  if (!game2048.previousBoard) return null;
+  
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      if (game2048.previousBoard[i][j] === value) {
+        // Check if this could be the source tile
+        const rowDiff = Math.abs(i - currentRow);
+        const colDiff = Math.abs(j - currentCol);
+        
+        if (game2048.slideDirection === 'up' && j === currentCol && i > currentRow) {
+          return {row: i, col: j};
+        } else if (game2048.slideDirection === 'down' && j === currentCol && i < currentRow) {
+          return {row: i, col: j};
+        } else if (game2048.slideDirection === 'left' && i === currentRow && j > currentCol) {
+          return {row: i, col: j};
+        } else if (game2048.slideDirection === 'right' && i === currentRow && j < currentCol) {
+          return {row: i, col: j};
+        }
+      }
+    }
+  }
+  
+  return null;
 }
 
 function getSlideAnimationClass(row, col, direction) {
@@ -10182,23 +10270,27 @@ function checkTTTWinner() {
 
 function endTTTGame(result) {
   tttGame.gameActive = false;
+  
+  const status = document.getElementById('tttStatus');
 
   if (result === 'X') {
     tttGame.wins++;
     localStorage.setItem('tttWins', tttGame.wins);
-    document.getElementById('tttStatus').textContent = 'You won! 🎉';
+    status.innerHTML = 'You won! <i class="fa-solid fa-trophy"</i>';
     document.getElementById('tttWins').textContent = tttGame.wins;
     showToast('You won!', 'fa-trophy');
+
   } else if (result === 'O') {
     tttGame.losses++;
     localStorage.setItem('tttLosses', tttGame.losses);
-    document.getElementById('tttStatus').textContent = 'AI won! 🤖';
+    status.innerHTML = 'AI won! <i class="fa-solid fa-robot" </i>';
     document.getElementById('tttLosses').textContent = tttGame.losses;
-    showToast('AI won!', 'fa-gamepad');
+    showToast('AI won!', 'fa-robot');
+
   } else {
     tttGame.draws++;
     localStorage.setItem('tttDraws', tttGame.draws);
-    document.getElementById('tttStatus').textContent = "It's a draw! 🤝";
+    status.innerHTML = "It's a draw! <i class='fa-solid fa-handshake'</i>";
     document.getElementById('tttDraws').textContent = tttGame.draws;
     showToast("It's a draw!", 'fa-handshake');
   }
