@@ -5388,7 +5388,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
    <div class="appstore-item-icon">
       <i class="fas fa-microchip"></i>
    </div>
-   <div class="appstore-item-name">V86 Emulator by dinguschan</div>
+   <div class="appstore-item-name">V86 Emulator by lanefiedler-731</div>
    <div class="appstore-item-desc">Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.</div>
    <button class="appstore-item-btn ${v86Installed ? "installed" : ""
       }" onclick="${v86Installed ? "uninstallApp('v86-emulator')" : "installApp('v86-emulator')"
