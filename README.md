@@ -57,7 +57,7 @@ Basically... a whole little OS in your browser :D
 ## 🌐 domain ideas
 
 - `nautilusos.app`
-- `maybe more ideas soon`
+- `nautiluson.top` $4.63/year at porkbun
 ---
 
 ## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)
