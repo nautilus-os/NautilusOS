@@ -36,13 +36,18 @@ Basically... a whole little OS in your browser :D
 - [ ] App store improvements (right now it can only install built-in apps)
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
-- [ ] Make tabs and stuff work
 - [ ] Window animation settings
 - [ ] Make taskbar autohide
-- [x] Fix browser background & login screen container background (toasterfucker's job)
 - [ ] Embed V86 (lanefiedler-731's job)
-- [ ] Fix styles on proxy list dropdown menu
+- [ ] Fix styles on proxy list dropdown menu (xor)
 - [ ] Add previews to all apps and themes
+- [ ] Make music player search with itunes and play with ub youtube
+- [ ] Add a scramjet proxy (xor)
+- [ ] Wisp server selection (xor)
+- [ ] Better file system
+- [ ] Fix [object promise] bug when creating new folder
+- [ ] Importing saves (anyone can take this)
+- [ ] Multiple accounts
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
