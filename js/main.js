@@ -2547,7 +2547,7 @@ alt="favicon">
                         
                         <div class="cloaking-actions">
                             <button class="cloaking-btn primary" onclick="applyCloaking()">
-                                <i class="fas fa-check"></i> Apply Cloak
+                                <i class="fas fa-check-circle"></i> Apply Cloak
                             </button>
                             <button class="cloaking-btn secondary" onclick="resetCloaking()">
                                 <i class="fas fa-undo"></i> Reset to Default
@@ -3801,9 +3801,36 @@ alt="favicon">
           `;
         }
         return `
+        <style>
+        
+        .loader {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgb(255, 255, 255, 1);
+            border-top-color: transparent;
+            border-right-color: transparent;
+            animation: rot1 0.5s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rot1 {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+            
+        </style>
+
         <div class="browser-container" style="overflow: hidden;">
-                  <h1 style="z-index: -1; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">Loading...</h1>
-                      <iframe src="/uv/service/hvtrs8%2F-vqcmdg.fet%2F" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
+                  <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: -5;">
+                    <center>
+                    <div class="loader"></div><br>
+                    <h5 style="margin-bottom: 10px;">Launching VS Code with Ultraviolet...</h5>
+                    <p>Load times may vary</p>
+                    </center>
+                  </div>
+                  <iframe src="/uv/service/hvtrs8%2F-vqcmdg.fet%2F" frameborder="0" style="width: 100%; height: 100vh; border-radius: 0px; margin: 0;"></iframe>
               </div>
       `;
       })(),
@@ -3841,113 +3868,159 @@ alt="favicon">
         const lightThemeInstalled = installedThemes.includes("light");
         return `
               <div class="appstore-content">
-                  <div class="appstore-sidebar">
-          <div class="appstore-section active" onclick="switchAppStoreSection('themes', this)">
-              <i class="fas fa-palette"></i>
-              <span>Themes</span>
-          </div>
-          <div class="appstore-section" onclick="switchAppStoreSection('apps', this)">
-              <i class="fas fa-th"></i>
-              <span>Apps</span>
-          </div>
-          <div class="appstore-section" onclick="switchAppStoreSection('games', this)">
-              <i class="fas fa-gamepad"></i>
-              <span>Games</span>
-          </div>
-      </div>
-                  <div class="appstore-main" id="appstoreMain">
-                      <div class="appstore-header">
-                          <h2>Themes</h2>
-                          <p>Customize your NautilusOS experience</p>
-                      </div>
-                      <div class="appstore-grid">
-                          <div class="appstore-item">
-                              <div class="appstore-item-icon">
-                                  <i class="fas fa-moon"></i>
-                              </div>
-                              <div class="appstore-item-name">Dark Theme by dinguschan</div>
-                              <div class="appstore-item-desc">The default NautilusOS theme. Sleek dark interface with teal accents, perfect for extended use and reducing eye strain.</div>
-                              <button class="appstore-item-btn installed" style="opacity: 0.6; cursor: not-allowed;" disabled>
-                                  Installed (Default)
-                              </button>
-                          </div>
-                          <div class="appstore-item">
-                              <div class="appstore-item-icon">
-                                  <i class="fas fa-sun"></i>
-                              </div>
-                              <div class="appstore-item-name">Light Theme by dinguschan</div>
-                              <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with light backgrounds and dark text.</div>
-                              <button class="appstore-item-btn ${lightThemeInstalled ? "installed" : ""
-          }" onclick="${lightThemeInstalled
-            ? "uninstallTheme('light')"
+    <div class="appstore-sidebar">
+        <div class="appstore-section active" onclick="switchAppStoreSection('themes', this)">
+            <i class="fas fa-palette"></i>
+            <span>Themes</span>
+        </div>
+        <div class="appstore-section" onclick="switchAppStoreSection('apps', this)">
+            <i class="fas fa-th"></i>
+            <span>Apps</span>
+        </div>
+        <div class="appstore-section" onclick="switchAppStoreSection('games', this)">
+            <i class="fas fa-gamepad"></i>
+            <span>Games</span>
+        </div>
+    </div>
+    <div class="appstore-main" id="appstoreMain">
+        <div class="appstore-header">
+            <h2>Themes</h2>
+            <p>Customize your NautilusOS experience</p>
+        </div>
+        <div class="appstore-grid">
+            <div class="appstore-item">
+                <div class="appstore-item-icon">
+                    <i class="fas fa-moon"></i>
+                </div>
+                <div class="appstore-item-name">Dark Theme by dinguschan</div>
+                <div class="appstore-item-desc">The default NautilusOS theme. Sleek dark interface with teal accents,
+                    perfect for extended use and reducing eye strain.</div>
+                <button class="appstore-item-btn installed" style="opacity: 0.6; cursor: not-allowed;" disabled>
+                    Installed (Default)
+                </button>
+            </div>
+            <div class="appstore-item">
+                <div class="appstore-item-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <div class="appstore-item-name">Light Theme by dinguschan</div>
+                <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with
+                    light backgrounds and dark text.</div>
+                <button class="appstore-item-btn ${
+                  lightThemeInstalled ? "installed" : ""
+                }" onclick="${
+          lightThemeInstalled
+            ? " uninstallTheme('light')"
             : "installTheme('light')"
-          }">
-                                  ${lightThemeInstalled
-            ? "Uninstall"
-            : "Install"
-          }
-                              </button>
-                          </div>
-                          <div class="appstore-item">
-                              <div class="appstore-item-icon">
-                                  <i class="fas fa-crown" style="color: #d4af37;"></i>
-                              </div>
-                              <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
-                              <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
-                              <button class="appstore-item-btn ${installedThemes.includes("golden")
-            ? "installed"
-            : ""
-          }" onclick="${installedThemes.includes("golden")
-            ? "uninstallTheme('golden')"
-            : "installTheme('golden')"
-          }">
-                                  ${installedThemes.includes("golden")
-            ? "Uninstall"
-            : "Install"
-          }
-                              </button>
-                          </div>
-                          <div class="appstore-item">
-                              <div class="appstore-item-icon">
-                                  <i class="fas fa-fire" style="color: #ef4444;"></i>
-                              </div>
-                              <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
-                              <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
-                              <button class="appstore-item-btn ${installedThemes.includes("red")
-            ? "installed"
-            : ""
-          }" onclick="${installedThemes.includes("red")
-            ? "uninstallTheme('red')"
-            : "installTheme('red')"
-          }">
-                                  ${installedThemes.includes("red")
-            ? "Uninstall"
-            : "Install"
-          }
-                              </button>
-                          </div>
-                          <div class="appstore-item">
-                              <div class="appstore-item-icon">
-                                  <i class="fas fa-droplet" style="color: #3b82f6;"></i>
-                              </div>
-                              <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
-                              <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
-                              <button class="appstore-item-btn ${installedThemes.includes("blue")
-            ? "installed"
-            : ""
-          }" onclick="${installedThemes.includes("blue")
-            ? "uninstallTheme('blue')"
-            : "installTheme('blue')"
-          }">
-                                  ${installedThemes.includes("blue")
-            ? "Uninstall"
-            : "Install"
-          }
-                              </button>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+        }">
+                    ${lightThemeInstalled ? "Uninstall" : "Install"}
+                </button>
+            </div>
+            <div class="appstore-item">
+                <div class="appstore-item-icon">
+                    <i class="fas fa-crown" style="color: #d4af37;"></i>
+                </div>
+                <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
+                <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect
+                    for a premium look.</div>
+                <button class="appstore-item-btn ${
+                  installedThemes.includes("golden") ? "installed" : ""
+                }"
+                    onclick="${
+                      installedThemes.includes("golden")
+                        ? "uninstallTheme('golden')"
+                        : "installTheme('golden')"
+                    }">
+                    ${
+                      installedThemes.includes("golden")
+                        ? "Uninstall"
+                        : "Install"
+                    }
+                </button>
+            </div>
+            <div class="appstore-item">
+                <div class="appstore-item-icon">
+                    <i class="fas fa-fire" style="color: #ef4444;"></i>
+                </div>
+                <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
+                <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy
+                    meets elegance.</div>
+                <button class="appstore-item-btn ${
+                  installedThemes.includes("red") ? "installed" : ""
+                }"
+                    onclick="${
+                      installedThemes.includes("red")
+                        ? "uninstallTheme('red')"
+                        : "installTheme('red')"
+                    }">
+                    ${installedThemes.includes("red") ? "Uninstall" : "Install"}
+                </button>
+            </div>
+            <div class="appstore-item">
+                <div class="appstore-item-icon">
+                    <i class="fas fa-droplet" style="color: #3b82f6;"></i>
+                </div>
+                <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
+                <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.
+                </div>
+                <button class="appstore-item-btn ${
+                  installedThemes.includes("blue") ? "installed" : ""
+                }"
+                    onclick="${
+                      installedThemes.includes("blue")
+                        ? "uninstallTheme('blue')"
+                        : "installTheme('blue')"
+                    }">
+                    ${
+                      installedThemes.includes("blue") ? "Uninstall" : "Install"
+                    }
+                </button>
+            </div>
+            <div class="appstore-item">
+                <div class="appstore-item-icon">
+                    <i class="fas fa-palette" style="color: #ffffff;"></i>
+                </div>
+                <div class="appstore-item-name">Purple Theme by lanefiedler-731</div>
+                <div class="appstore-item-desc">Deep shades combined with royal hues, crafted together for the perfect purple theme.</div>
+                <button class="appstore-item-btn ${
+                  installedThemes.includes("purple") ? "installed" : ""
+                }"
+                    onclick="${
+                      installedThemes.includes("purple")
+                        ? "uninstallTheme('purple')"
+                        : "installTheme('purple')"
+                    }">
+                    ${
+                      installedThemes.includes("purple")
+                        ? "Uninstall"
+                        : "Install"
+                    }
+                </button>
+            </div>
+            <div class="appstore-item">
+                <div class="appstore-item-icon">
+                    <i class="fas fa-palette" style="color: #ffffff;"></i>
+                </div>
+                <div class="appstore-item-name">Green Theme by lanefiedler-731</div>
+                <div class="appstore-item-desc">Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.</div>
+                <button class="appstore-item-btn ${
+                  installedThemes.includes("green") ? "installed" : ""
+                }"
+                    onclick="${
+                      installedThemes.includes("green")
+                        ? "uninstallTheme('green')"
+                        : "installTheme('green')"
+                    }">
+                    ${
+                      installedThemes.includes("green")
+                        ? "Uninstall"
+                        : "Install"
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
               `;
       })(),
       noPadding: true,
@@ -5201,9 +5274,11 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Light Theme by dinguschan</div>
                       <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with light backgrounds and dark text.</div>
-                      <button class="appstore-item-btn ${lightThemeInstalled ? "installed" : ""
-      }" onclick="${lightThemeInstalled ? "uninstallTheme('light')" : "installTheme('light')"
-      }">
+                      <button class="appstore-item-btn ${
+                        lightThemeInstalled ? "installed" : ""
+                      }" onclick="${
+      lightThemeInstalled ? "uninstallTheme('light')" : "installTheme('light')"
+    }">
                           ${lightThemeInstalled ? "Uninstall" : "Install"}
                       </button>
                   </div>
@@ -5213,9 +5288,18 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes('golden') ? "installed" : ""
-      }" onclick="${installedThemes.includes('golden') ? "uninstallTheme('golden')" : "installTheme('golden')"}">
-                          ${installedThemes.includes('golden') ? "Uninstall" : "Install"}
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes("golden") ? "installed" : ""
+                      }" onclick="${
+      installedThemes.includes("golden")
+        ? "uninstallTheme('golden')"
+        : "installTheme('golden')"
+    }">
+                          ${
+                            installedThemes.includes("golden")
+                              ? "Uninstall"
+                              : "Install"
+                          }
                       </button>
                   </div>
                   <div class="appstore-item">
@@ -5224,9 +5308,18 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes('red') ? "installed" : ""
-      }" onclick="${installedThemes.includes('red') ? "uninstallTheme('red')" : "installTheme('red')"}">
-                          ${installedThemes.includes('red') ? "Uninstall" : "Install"}
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes("red") ? "installed" : ""
+                      }" onclick="${
+      installedThemes.includes("red")
+        ? "uninstallTheme('red')"
+        : "installTheme('red')"
+    }">
+                          ${
+                            installedThemes.includes("red")
+                              ? "Uninstall"
+                              : "Install"
+                          }
                       </button>
                   </div>
                   <div class="appstore-item">
@@ -5235,9 +5328,58 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes('blue') ? "installed" : ""
-      }" onclick="${installedThemes.includes('blue') ? "uninstallTheme('blue')" : "installTheme('blue')"}">
-                          ${installedThemes.includes('blue') ? "Uninstall" : "Install"}
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes("blue") ? "installed" : ""
+                      }" onclick="${
+      installedThemes.includes("blue")
+        ? "uninstallTheme('blue')"
+        : "installTheme('blue')"
+    }">
+                          ${
+                            installedThemes.includes("blue")
+                              ? "Uninstall"
+                              : "Install"
+                          }
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-palette" style="color: #ffffff;"></i>
+                      </div>
+                      <div class="appstore-item-name">Purple Theme by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Deep shades combined with royal hues, crafted together for the perfect purple theme.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes("purple") ? "installed" : ""
+                      }" onclick="${
+      installedThemes.includes("purple")
+        ? "uninstallTheme('purple')"
+        : "installTheme('purple')"
+    }">
+                          ${
+                            installedThemes.includes("purple")
+                              ? "Uninstall"
+                              : "Install"
+                          }
+                      </button>
+                  </div>
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-palette" style="color: #ffffff;"></i>
+                      </div>
+                      <div class="appstore-item-name">Green Theme by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.</div>
+                      <button class="appstore-item-btn ${
+                        installedThemes.includes("green") ? "installed" : ""
+                      }" onclick="${
+      installedThemes.includes("green")
+        ? "uninstallTheme('green')"
+        : "installTheme('green')"
+    }">
+                          ${
+                            installedThemes.includes("green")
+                              ? "Uninstall"
+                              : "Install"
+                          }
                       </button>
                   </div>
               </div>
@@ -5492,26 +5634,22 @@ function uninstallTheme(themeName) {
 }
 
 const themeDefinitions = {
-  dark: { accent: "#7dd3c0", accentHover: "#6bc4b0", accentDark: "#469483", bgPrimary: "#0a0e1a", bgSecondary: "#151923", textPrimary: "#e8eaed", textSecondary: "#9aa0a6", border: "#7dd3c0" },
-  light: { accent: "#06b6d4", accentHover: "#0891b2", accentDark: "#0d9488", bgPrimary: "#f8fafc", bgSecondary: "#ffffff", textPrimary: "#ffffff", textSecondary: "#475569", border: "#e2e8f0" },
-  golden: { accent: "#d4af37", accentHover: "#c9a227", accentDark: "#997618", bgPrimary: "#1a1410", bgSecondary: "#2d2417", textPrimary: "#f5e6d3", textSecondary: "#b8a88a", border: "#d4af37" },
-  red: { accent: "#ef4444", accentHover: "#dc2626", accentDark: "#991b1b", bgPrimary: "#1a0f0f", bgSecondary: "#2d1818", textPrimary: "#ffe8e8", textSecondary: "#cc9999", border: "#ef4444" },
-  blue: { accent: "#3b82f6", accentHover: "#2563eb", accentDark: "#1e40af", bgPrimary: "#0f1419", bgSecondary: "#1a2332", textPrimary: "#e0e7ff", textSecondary: "#94a3b8", border: "#3b82f6" },
-  purple: { accent: "#a855f7", accentHover: "#9333ea", accentDark: "#7e22ce", bgPrimary: "#1a0f2e", bgSecondary: "#2d1b47", textPrimary: "#f3e8ff", textSecondary: "#d8b4fe", border: "#a855f7" },
-  green: { accent: "#10b981", accentHover: "#059669", accentDark: "#047857", bgPrimary: "#0f2e1b", bgSecondary: "#1a3d2a", textPrimary: "#d1fae5", textSecondary: "#a7f3d0", border: "#10b981" },
+  dark: { url: "/style.css" },
+  light: { url: "/themes/light.css" },
+  golden: { url: "/themes/golden.css" },
+  red: { url: "/themes/red.css" },
+  blue: { url: "/themes/blue.css" },
+  purple: { url: "/themes/purple.css" },
+  green: { url: "/themes/green.css" },
+  liquidGlass: { url: "/themes/lg.css" },
 };
 
 function applyTheme(themeName) {
   const theme = themeDefinitions[themeName];
+  const themeLink = document.getElementById("themeLink")
   if (!theme) { console.warn("Theme not found:", themeName); return; }
-  document.documentElement.style.setProperty("--accent", theme.accent);
-  document.documentElement.style.setProperty("--accent-hover", theme.accentHover);
-  document.documentElement.style.setProperty("--accent-dark", theme.accentDark);
-  document.documentElement.style.setProperty("--bg-primary", theme.bgPrimary);
-  document.documentElement.style.setProperty("--bg-secondary", theme.bgSecondary);
-  document.documentElement.style.setProperty("--text-primary", theme.textPrimary);
-  document.documentElement.style.setProperty("--text-secondary", theme.textSecondary);
-  document.documentElement.style.setProperty("--border", theme.border);
+  console.log(themeLink)
+  themeLink.href = theme.url
   localStorage.setItem("nautilusOS_currentTheme", themeName);
   appliedThemeName = themeName;
 }
@@ -6885,10 +7023,13 @@ async function changeuser() {
   const newUsername = await prompt("Enter a new username:");
   if (!newUsername) {
     showToast("Username change cancelled", "fa-info-circle");
+    return;
   } else if (newUsername.length < 3) {
     showToast("Username must be at least 3 characters", "fa-exclamation-circle");
+    return
   } else if (newUsername === currentUsername) {
-    showToast("New username cannot be the same as the current one", "fa-info-circle");
+    showToast("New username cannot be the same as the current one", "fa-exclamation-circle");
+    return
   };
 
   showToast("Username changed successfully. Reloading...", "fa-check-circle");
