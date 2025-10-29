@@ -5568,14 +5568,16 @@ function switchAppStoreSection(section, element) {
 </div>
                           <div class="appstore-item-name">Startup Apps by dinguschan</div>
 <div class="appstore-item-desc">Control which applications launch automatically on login with this convenient this built-in app.</div>
-<button class="appstore-item-btn ${startupInstalled ? "installed" : ""
-      }" onclick="${startupInstalled
+<button class="appstore-item-btn ${
+      startupInstalled ? "installed" : ""
+    }" onclick="${
+      startupInstalled
         ? "uninstallApp('startup-apps')"
         : "installApp('startup-apps')"
-      }">
+    }">
 ${startupInstalled ? "Uninstall" : "Install"}
 </button>
-<div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
+<div class="offline-support" style="top: -90%;"><i class="fa-solid fa-file"></i> OFFLINE SUPPORT</div>
 </div>
 <div class="appstore-item">
    <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
@@ -5611,11 +5613,13 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Task Manager by dinguschan</div>
    <div class="appstore-item-desc">Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.</div>
-   <button class="appstore-item-btn ${taskmanagerInstalled ? "installed" : ""
-      }" onclick="${taskmanagerInstalled
+   <button class="appstore-item-btn ${
+     taskmanagerInstalled ? "installed" : ""
+   }" onclick="${
+      taskmanagerInstalled
         ? "uninstallApp('task-manager')"
         : "installApp('task-manager')"
-      }">
+    }">
    ${taskmanagerInstalled ? "Uninstall" : "Install"}
    </button>
    <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5626,11 +5630,13 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
    <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
-   <button class="appstore-item-btn ${snapManagerInstalled ? "installed" : ""
-      }" onclick="${snapManagerInstalled
+   <button class="appstore-item-btn ${
+     snapManagerInstalled ? "installed" : ""
+   }" onclick="${
+      snapManagerInstalled
         ? "uninstallApp('snap-manager')"
         : "installApp('snap-manager')"
-      }">
+    }">
    ${snapManagerInstalled ? "Uninstall" : "Install"}
    </button>
    <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5641,8 +5647,9 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Ultraviolet by $xor</div>
    <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
-   <button class="appstore-item-btn ${uvInstalled ? "installed" : ""
-      }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
+   <button class="appstore-item-btn ${
+     uvInstalled ? "installed" : ""
+   }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
    ${uvInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -5652,9 +5659,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Helios by dinguschan</div>
    <div class="appstore-item-desc">The classic CORS proxy you know and love, fit in to one single file.</div>
-   <button class="appstore-item-btn ${heliosInstalled ? "installed" : ""
-      }" onclick="${heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
-      }">
+   <button class="appstore-item-btn ${
+     heliosInstalled ? "installed" : ""
+   }" onclick="${
+      heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
+    }">
    ${heliosInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -5664,9 +5673,9 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Visual Studio Code</div>
    <div class="appstore-item-desc">The developer's choice for text editing, now on NautilusOS.</div>
-   <button class="appstore-item-btn ${vscInstalled ? "installed" : ""
-      }" onclick="${vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"
-      }">
+   <button class="appstore-item-btn ${
+     vscInstalled ? "installed" : ""
+   }" onclick="${vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"}">
    ${vscInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -5676,9 +5685,13 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">V86 Emulator by lanefiedler-731</div>
    <div class="appstore-item-desc">Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.</div>
-   <button class="appstore-item-btn ${v86Installed ? "installed" : ""
-      }" onclick="${v86Installed ? "uninstallApp('v86-emulator')" : "installApp('v86-emulator')"
-      }">
+   <button class="appstore-item-btn ${
+     v86Installed ? "installed" : ""
+   }" onclick="${
+      v86Installed
+        ? "uninstallApp('v86-emulator')"
+        : "installApp('v86-emulator')"
+    }">
    ${v86Installed ? "Uninstall" : "Install"}
    </button>
    <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
@@ -5700,12 +5713,18 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">Snake by lanefiedler-731</div>
                       <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
-                      <button class="appstore-item-btn ${installedGames.includes("snake") ? "installed" : ""
-      }" onclick="${installedGames.includes("snake")
+                      <button class="appstore-item-btn ${
+                        installedGames.includes("snake") ? "installed" : ""
+                      }" onclick="${
+      installedGames.includes("snake")
         ? "openApp('snake')"
         : "installGame('snake')"
-      }">
-                          ${installedGames.includes("snake") ? "Play" : "Install"}
+    }">
+                          ${
+                            installedGames.includes("snake")
+                              ? "Play"
+                              : "Install"
+                          }
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
@@ -5716,12 +5735,16 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">2048 by dinguschan</div>
                       <div class="appstore-item-desc">Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.</div>
-                      <button class="appstore-item-btn ${installedGames.includes("2048") ? "installed" : ""
-      }" onclick="${installedGames.includes("2048")
+                      <button class="appstore-item-btn ${
+                        installedGames.includes("2048") ? "installed" : ""
+                      }" onclick="${
+      installedGames.includes("2048")
         ? "openApp('2048')"
         : "installGame('2048')"
-      }">
-                          ${installedGames.includes("2048") ? "Play" : "Install"}
+    }">
+                          ${
+                            installedGames.includes("2048") ? "Play" : "Install"
+                          }
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
@@ -5732,12 +5755,18 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">Tic-Tac-Toe by dinguschan</div>
                       <div class="appstore-item-desc">Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?</div>
-                      <button class="appstore-item-btn ${installedGames.includes("tictactoe") ? "installed" : ""
-      }" onclick="${installedGames.includes("tictactoe")
+                      <button class="appstore-item-btn ${
+                        installedGames.includes("tictactoe") ? "installed" : ""
+                      }" onclick="${
+      installedGames.includes("tictactoe")
         ? "openApp('tictactoe')"
         : "installGame('tictactoe')"
-      }">
-                          ${installedGames.includes("tictactoe") ? "Play" : "Install"}
+    }">
+                          ${
+                            installedGames.includes("tictactoe")
+                              ? "Play"
+                              : "Install"
+                          }
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>

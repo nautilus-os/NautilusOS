@@ -6618,17 +6618,16 @@ select {
 }
 
 .offline-support {
-    background: black;
-box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);;
-border: 2px solid transparent;
+    background: rgba(106, 211, 92, 0.226);
+    box-shadow: 0 0 0 1px rgba(126, 187, 114, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);;
+    border: 2px solid transparent;
     padding: 5px 7px;
-    
-    border-radius: 10px;
+    border-radius: 100px;
     text-align: center;
-    width: 100%;
+    width: fit-content;
     font-size: 12px;
-    margin: 5px;
-    margin-left: 0;
-    margin-top: 17px;
-    margin-bottom: -5px;
+    position: relative;
+    top: -94%;
+    right: -48%;
+    backdrop-filter: blur(40px);
 }
