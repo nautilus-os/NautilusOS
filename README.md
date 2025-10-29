@@ -49,6 +49,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Fix [object promise] bug when creating new folder
 - [ ] Importing saves (anyone can take this)
 - [ ] Multiple accounts
+- [ ] Add illustrations already in css to js for apps and games. themes already added
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
