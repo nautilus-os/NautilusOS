@@ -5280,42 +5280,75 @@ function switchAppStoreSection(section, element) {
               </div>
               <div class="appstore-grid">
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-moon"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-dark-theme">
+                              <div class="illustration-dark-window">
+                                  <div class="illustration-dark-header"></div>
+                                  <div class="illustration-dark-content">
+                                      <div class="illustration-dark-line" style="width: 80%;"></div>
+                                      <div class="illustration-dark-line" style="width: 60%;"></div>
+                                      <div class="illustration-dark-line" style="width: 90%;"></div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Dark Theme by dinguschan</div>
-                      <div class="appstore-item-desc">The default NautilusOS theme. Sleek dark interface with teal accents, perfect for extended use and reducing eye strain.</div>
+                      <div class="appstore-item-desc">The default NautilusOS theme. Sleek dark interface with teal accents,
+                          perfect for extended use and reducing eye strain.</div>
                       <button class="appstore-item-btn installed" style="opacity: 0.6; cursor: not-allowed;" disabled>
                           Installed (Default)
                       </button>
                   </div>
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-sun"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-light-theme">
+                              <div class="illustration-light-window">
+                                  <div class="illustration-light-header"></div>
+                                  <div class="illustration-light-content">
+                                      <div class="illustration-light-line" style="width: 80%;"></div>
+                                      <div class="illustration-light-line" style="width: 60%;"></div>
+                                      <div class="illustration-light-line" style="width: 90%;"></div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Light Theme by dinguschan</div>
-                      <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with light backgrounds and dark text.</div>
+                      <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with
+                          light backgrounds and dark text.</div>
                       <button class="appstore-item-btn ${
                         lightThemeInstalled ? "installed" : ""
                       }" onclick="${
-      lightThemeInstalled ? "uninstallTheme('light')" : "installTheme('light')"
-    }">
+          lightThemeInstalled
+            ? " uninstallTheme('light')"
+            : "installTheme('light')"
+        }">
                           ${lightThemeInstalled ? "Uninstall" : "Install"}
                       </button>
                   </div>
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-crown" style="color: #d4af37;"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-golden-theme">
+                              <div class="illustration-golden-window">
+                                  <div class="illustration-golden-header"></div>
+                                  <div class="illustration-golden-content">
+                                      <div class="illustration-golden-line" style="width: 80%;"></div>
+                                      <div class="illustration-golden-line" style="width: 60%;"></div>
+                                      <div class="illustration-golden-line" style="width: 90%;"></div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.</div>
+                      <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect
+                          for a premium look.</div>
                       <button class="appstore-item-btn ${
                         installedThemes.includes("golden") ? "installed" : ""
-                      }" onclick="${
-      installedThemes.includes("golden")
-        ? "uninstallTheme('golden')"
-        : "installTheme('golden')"
-    }">
+                      }"
+                          onclick="${
+                            installedThemes.includes("golden")
+                              ? "uninstallTheme('golden')"
+                              : "installTheme('golden')"
+                          }">
                           ${
                             installedThemes.includes("golden")
                               ? "Uninstall"
@@ -5324,58 +5357,84 @@ function switchAppStoreSection(section, element) {
                       </button>
                   </div>
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-fire" style="color: #ef4444;"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-red-theme">
+                              <div class="illustration-red-window">
+                                  <div class="illustration-red-header"></div>
+                                  <div class="illustration-red-content">
+                                      <div class="illustration-red-line" style="width: 80%;"></div>
+                                      <div class="illustration-red-line" style="width: 60%;"></div>
+                                      <div class="illustration-red-line" style="width: 90%;"></div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy meets elegance.</div>
+                      <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy
+                          meets elegance.</div>
                       <button class="appstore-item-btn ${
                         installedThemes.includes("red") ? "installed" : ""
-                      }" onclick="${
-      installedThemes.includes("red")
-        ? "uninstallTheme('red')"
-        : "installTheme('red')"
-    }">
-                          ${
+                      }"
+                          onclick="${
                             installedThemes.includes("red")
-                              ? "Uninstall"
-                              : "Install"
-                          }
+                              ? "uninstallTheme('red')"
+                              : "installTheme('red')"
+                          }">
+                          ${installedThemes.includes("red") ? "Uninstall" : "Install"}
                       </button>
                   </div>
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-droplet" style="color: #3b82f6;"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-blue-theme">
+                              <div class="illustration-blue-window">
+                                  <div class="illustration-blue-header"></div>
+                                  <div class="illustration-blue-content">
+                                      <div class="illustration-blue-line" style="width: 80%;"></div>
+                                      <div class="illustration-blue-line" style="width: 60%;"></div>
+                                      <div class="illustration-blue-line" style="width: 90%;"></div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.</div>
+                      <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.
+                      </div>
                       <button class="appstore-item-btn ${
                         installedThemes.includes("blue") ? "installed" : ""
-                      }" onclick="${
-      installedThemes.includes("blue")
-        ? "uninstallTheme('blue')"
-        : "installTheme('blue')"
-    }">
-                          ${
+                      }"
+                          onclick="${
                             installedThemes.includes("blue")
-                              ? "Uninstall"
-                              : "Install"
+                              ? "uninstallTheme('blue')"
+                              : "installTheme('blue')"
+                          }">
+                          ${
+                            installedThemes.includes("blue") ? "Uninstall" : "Install"
                           }
                       </button>
                   </div>
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-palette" style="color: #ffffff;"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-purple-theme">
+                              <div class="illustration-purple-window">
+                                  <div class="illustration-purple-header"></div>
+                                  <div class="illustration-purple-content">
+                                      <div class="illustration-purple-line" style="width: 80%;"></div>
+                                      <div class="illustration-purple-line" style="width: 60%;"></div>
+                                      <div class="illustration-purple-line" style="width: 90%;"></div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Purple Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Deep shades combined with royal hues, crafted together for the perfect purple theme.</div>
                       <button class="appstore-item-btn ${
                         installedThemes.includes("purple") ? "installed" : ""
-                      }" onclick="${
-      installedThemes.includes("purple")
-        ? "uninstallTheme('purple')"
-        : "installTheme('purple')"
-    }">
+                      }"
+                          onclick="${
+                            installedThemes.includes("purple")
+                              ? "uninstallTheme('purple')"
+                              : "installTheme('purple')"
+                          }">
                           ${
                             installedThemes.includes("purple")
                               ? "Uninstall"
@@ -5384,18 +5443,28 @@ function switchAppStoreSection(section, element) {
                       </button>
                   </div>
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-palette" style="color: #ffffff;"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-green-theme">
+                              <div class="illustration-green-window">
+                                  <div class="illustration-green-header"></div>
+                                  <div class="illustration-green-content">
+                                      <div class="illustration-green-line" style="width: 80%;"></div>
+                                      <div class="illustration-green-line" style="width: 60%;"></div>
+                                      <div class="illustration-green-line" style="width: 90%;"></div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Green Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.</div>
                       <button class="appstore-item-btn ${
                         installedThemes.includes("green") ? "installed" : ""
-                      }" onclick="${
-      installedThemes.includes("green")
-        ? "uninstallTheme('green')"
-        : "installTheme('green')"
-    }">
+                      }"
+                          onclick="${
+                            installedThemes.includes("green")
+                              ? "uninstallTheme('green')"
+                              : "installTheme('green')"
+                          }">
                           ${
                             installedThemes.includes("green")
                               ? "Uninstall"
@@ -5404,18 +5473,28 @@ function switchAppStoreSection(section, element) {
                       </button>
                   </div>
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-palette" style="color: #ffffff;"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-liquidglass-theme">
+                              <div class="illustration-liquidglass-window">
+                                  <div class="illustration-liquidglass-header"></div>
+                                  <div class="illustration-liquidglass-content">
+                                      <div class="illustration-liquidglass-line" style="width: 80%;"></div>
+                                      <div class="illustration-liquidglass-line" style="width: 60%;"></div>
+                                      <div class="illustration-liquidglass-line" style="width: 90%;"></div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Liquid Glass by $xor</div>
                       <div class="appstore-item-desc">An Apple insipired theme with a beautiful translucent look.</div>
                       <button class="appstore-item-btn ${
                         installedThemes.includes("liquidGlass") ? "installed" : ""
-                      }" onclick="${
-      installedThemes.includes("liquidGlass")
-        ? "uninstallTheme('liquidGlass')"
-        : "installTheme('liquidGlass')"
-    }">
+                      }"
+                          onclick="${
+                            installedThemes.includes("liquidGlass")
+                              ? "uninstallTheme('liquidGlass')"
+                              : "installTheme('liquidGlass')"
+                          }">
                           ${
                             installedThemes.includes("liquidGlass")
                               ? "Uninstall"
@@ -9131,15 +9210,22 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-const _originalOpenAppForCloaking2 = openApp;
+const _originalOpenAppForAppStore = openApp;
 window.openApp = openApp = function (appName, ...args) {
-  _originalOpenAppForCloaking2(appName, ...args);
-
+  _originalOpenAppForAppStore(appName, ...args);
+  if (appName === "appstore") {
+    setTimeout(() => {
+      // Initialize the default themes view with illustrations
+      const activeSection = document.querySelector(".appstore-section.active");
+      if (activeSection) {
+        switchAppStoreSection("themes", activeSection);
+      }
+    }, 100);
+  }
   if (appName === "cloaking") {
     setTimeout(() => {
       const toggle = document.getElementById("autoRotateToggle");
       const settings = document.getElementById("rotateSettings");
-
       if (toggle && cloakingConfig.autoRotate) {
         toggle.classList.add("active");
         if (settings) {
@@ -9147,26 +9233,21 @@ window.openApp = openApp = function (appName, ...args) {
           settings.style.pointerEvents = "all";
         }
       }
-
       const speedInput = document.getElementById("rotateSpeed");
       if (speedInput) {
         speedInput.value = cloakingConfig.rotateSpeed;
         updateRotateSpeedDisplay(cloakingConfig.rotateSpeed);
       }
-
       renderRotationList();
-
       const panicUrl = document.getElementById("panicUrl");
       if (panicUrl) {
         panicUrl.value = cloakingConfig.panicUrl || "";
       }
-
       const panicDisplay = document.getElementById("panicHotkeyDisplay");
       if (panicDisplay) {
         panicDisplay.textContent =
           cloakingConfig.panicKey || "Click to set hotkey";
       }
-
       updateCloakPreview();
     }, 100);
   }
