@@ -4864,8 +4864,8 @@ function goUpDirectory() {
   }
 }
 
-function createNewFolder() {
-  const folderName = prompt("Enter folder name:");
+async function createNewFolder() {
+  const folderName = await prompt("Enter folder name:");
   if (!folderName) return;
 
   let current = getFileSystemAtPath(currentPath);
