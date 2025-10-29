@@ -2,16 +2,20 @@
 # `WE NEED TO SEEK FUNDING FOR DOMAIN! SEE DOMAIN IDEAS FOR MORE DETAILS`
 ## NautilusOS
 
-NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS—and it’s my biggest project yet!!  
+NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS.
 Boot it up, log in, and mess around like it’s a real desktop with apps, an app store, windows, a file explorer, taskbar, and more.
 
 ---
 
 ## DEPLOY ME!!
 
-Make your own Vercel.app instance of NautilusOS with this handy button!
+Make your own vercel.app instance of NautilusOS with this handy button!
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnautilus-os%2FNautilusOS)
+
+You can also do this with Netlify!
+
+[![Deploy with Netlify](https://netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/nautilus-os/nautilusos)
 
 ---
 
@@ -55,7 +59,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Wisp server selection (xor)
 - [ ] Better file system
 - [ ] Fix [object promise] bug when creating new folder
-- [ ] Importing saves (anyone can take this)
+- [ ] Importing saves in settings (anyone can take this)
 - [ ] Multiple accounts
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 
@@ -68,7 +72,7 @@ Basically... a whole little OS in your browser :D
 - `nautilusos.app` $14.20/year at cloudflare or
 - `nautilusos.me` $2.99/first year at dreamhost
 - `nautliusos.xyz` $2.00/year at namecheap (some 90% off deal)
-- `nautiluson.top` $4.63/year at porkbun 
+- `nautiluson.top` $4.63/year at porkbun
 ---
 
 ## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)
