@@ -10,6 +10,7 @@ Boot it up, log in, and mess around like it’s a real desktop with apps, an app
 ## DEPLOY ME!!
 
 Make ur own Vercel.app instance of NautilusOS with this handy button!
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnautilus-os%2FNautilusOS)
 
 ## ✨ features
