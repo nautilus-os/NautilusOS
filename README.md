@@ -105,3 +105,11 @@ Open the NautilusOS-OneFile/index.html file in your browser. That’s it.
 ## 🧩 credits
 
 Developed by dinguschan, x8rr, and lanefiedler-731
+
+## IF YOU ARE FORKING
+**License compliance notice (AGPL-3.0 §5):**
+If you fork or redistribute NautilusOS, you must:
+ - Keep our copyright & license files intact.
+ - Add a **prominent** “Modified from NautilusOS” notice with the date of your change.
+ - Provide full source to any users over a network.
+ Non-compliant forks will be reported under GitHub’s DMCA policy.
