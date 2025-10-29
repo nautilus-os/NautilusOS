@@ -2295,10 +2295,11 @@ function openApp(appName, editorContent = "", filename = "") {
                       </div>
                       <div class="file-main">
                           <div class="file-toolbar">
-                              <button class="editor-btn" onclick="goUpDirectory()" ${currentPath.length === 0
-            ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
-            : ""
-          }>
+                              <button class="editor-btn" onclick="goUpDirectory()" ${
+                                currentPath.length === 0
+                                  ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
+                                  : ""
+                              }>
                                   <i class="fas fa-arrow-up"></i> Up
                               </button>
                               <button class="editor-btn" onclick="createNewFolder()">
@@ -2310,12 +2311,12 @@ function openApp(appName, editorContent = "", filename = "") {
                           </div>
       <div class="file-grid">
                       ${Object.keys(current)
-            .sort()
-            .map((file) => {
-              const isFolder = typeof current[file] === "object";
-              const icon = isFolder ? "fa-folder" : "fa-file-alt";
-              const escapedFile = file.replace(/'/g, "\\'");
-              return `
+                        .sort()
+                        .map((file) => {
+                          const isFolder = typeof current[file] === "object";
+                          const icon = isFolder ? "fa-folder" : "fa-file-alt";
+                          const escapedFile = file.replace(/'/g, "\\'");
+                          return `
                               <div class="file-item" ondblclick="openFile('${escapedFile}')" onclick="selectFileItem(event, this, '${escapedFile}')" draggable="true" ondragstart="handleFileDragStart(event, '${escapedFile}')" ondragover="handleFileDragOver(event, ${isFolder})" ondrop="handleFileDrop(event, '${escapedFile}')">
                                   <i class="fas ${icon}"></i>
                                   <span>${file}</span>
@@ -2329,8 +2330,8 @@ function openApp(appName, editorContent = "", filename = "") {
                                   </div>
                               </div>
                           `;
-            })
-            .join("")}
+                        })
+                        .join("")}
                   </div>
                       </div>
                   </div>
@@ -2356,7 +2357,7 @@ function openApp(appName, editorContent = "", filename = "") {
       width: 900,
       height: 600,
     },
-    "2048": {
+    2048: {
       title: "2048",
       icon: "fas fa-th",
       content: `
@@ -2563,30 +2564,35 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-status-card">
-                        <div class="cloaking-status-indicator ${cloakingConfig.autoRotate ? "active" : ""
-        }">
+                        <div class="cloaking-status-indicator ${
+                          cloakingConfig.autoRotate ? "active" : ""
+                        }">
                             <div class="cloaking-status-icon">
-                                <i class="fas ${cloakingConfig.autoRotate
-          ? "fa-rotate"
-          : "fa-rotate"
-        }"></i>
+                                <i class="fas ${
+                                  cloakingConfig.autoRotate
+                                    ? "fa-rotate"
+                                    : "fa-rotate"
+                                }"></i>
                             </div>
                             <div class="cloaking-status-text">
                                 <div class="cloaking-status-title">Auto-Rotate Status</div>
-                                <div class="cloaking-status-desc">${cloakingConfig.autoRotate
-          ? "Currently Active"
-          : "Currently Inactive"
-        }</div>
+                                <div class="cloaking-status-desc">${
+                                  cloakingConfig.autoRotate
+                                    ? "Currently Active"
+                                    : "Currently Inactive"
+                                }</div>
                             </div>
-                            <div class="toggle-switch ${cloakingConfig.autoRotate ? "active" : ""
-        }" id="autoRotateToggle" onclick="toggleAutoRotate()"></div>
+                            <div class="toggle-switch ${
+                              cloakingConfig.autoRotate ? "active" : ""
+                            }" id="autoRotateToggle" onclick="toggleAutoRotate()"></div>
                         </div>
                     </div>
                     
-                    <div class="cloaking-form-card" id="rotateSettings" style="${cloakingConfig.autoRotate
-          ? ""
-          : "opacity: 0.5; pointer-events: none;"
-        }">
+                    <div class="cloaking-form-card" id="rotateSettings" style="${
+                      cloakingConfig.autoRotate
+                        ? ""
+                        : "opacity: 0.5; pointer-events: none;"
+                    }">
                         <div class="cloaking-form-group">
                             <label class="cloaking-label">
                                 <i class="fas fa-clock"></i> Rotation Speed (seconds)
@@ -2601,8 +2607,9 @@ alt="favicon">
                                     value="${cloakingConfig.rotateSpeed}"
                                     oninput="updateRotateSpeedDisplay(this.value)"
                                 >
-                                <span class="cloaking-slider-value" id="rotateSpeedValue">${cloakingConfig.rotateSpeed
-        }s</span>
+                                <span class="cloaking-slider-value" id="rotateSpeedValue">${
+                                  cloakingConfig.rotateSpeed
+                                }s</span>
                             </div>
                             <div class="cloaking-hint">How often the tab should change disguise</div>
                         </div>
@@ -2631,23 +2638,27 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-status-card">
-                        <div class="cloaking-status-indicator ${cloakingConfig.panicKeyEnabled ? "active" : ""
-        }">
+                        <div class="cloaking-status-indicator ${
+                          cloakingConfig.panicKeyEnabled ? "active" : ""
+                        }">
                             <div class="cloaking-status-icon">
-                                <i class="fas ${cloakingConfig.panicKeyEnabled
-          ? "fa-shield-alt"
-          : "fa-shield"
-        }"></i>
+                                <i class="fas ${
+                                  cloakingConfig.panicKeyEnabled
+                                    ? "fa-shield-alt"
+                                    : "fa-shield"
+                                }"></i>
                             </div>
                             <div class="cloaking-status-text">
                                 <div class="cloaking-status-title">Panic Key Status</div>
-                                <div class="cloaking-status-desc">${cloakingConfig.panicKeyEnabled
-          ? "Armed and Ready"
-          : "Disabled"
-        }</div>
+                                <div class="cloaking-status-desc">${
+                                  cloakingConfig.panicKeyEnabled
+                                    ? "Armed and Ready"
+                                    : "Disabled"
+                                }</div>
                             </div>
-                            <div class="toggle-switch ${cloakingConfig.panicKeyEnabled ? "active" : ""
-        }" onclick="togglePanicKey()"></div>
+                            <div class="toggle-switch ${
+                              cloakingConfig.panicKeyEnabled ? "active" : ""
+                            }" onclick="togglePanicKey()"></div>
                         </div>
                     </div>
                     
@@ -2657,9 +2668,10 @@ alt="favicon">
                                 <i class="fas fa-keyboard"></i> Panic Hotkey
                             </label>
                             <div class="cloaking-hotkey-display" id="panicHotkeyDisplay" onclick="recordPanicKey()">
-                                ${cloakingConfig.panicKey ||
-        "Click to set hotkey"
-        }
+                                ${
+                                  cloakingConfig.panicKey ||
+                                  "Click to set hotkey"
+                                }
                             </div>
                             <div class="cloaking-hint">Press any key combination to set it as your panic hotkey</div>
                         </div>
@@ -2812,16 +2824,18 @@ alt="favicon">
                                 <div class="settings-item-title">12-Hour Format</div>
                                 <div class="settings-item-desc">Use 12-hour time with AM/PM</div>
                             </div>
-                            <div class="toggle-switch ${settings.use12Hour ? "active" : ""
-        }" onclick="toggleSetting('use12Hour')"></div>
+                            <div class="toggle-switch ${
+                              settings.use12Hour ? "active" : ""
+                            }" onclick="toggleSetting('use12Hour')"></div>
                         </div>
                         <div class="settings-item">
                             <div class="settings-item-text">
                                 <div class="settings-item-title">Show Seconds</div>
                                 <div class="settings-item-desc">Display seconds in taskbar clock</div>
                             </div>
-                            <div class="toggle-switch ${settings.showSeconds ? "active" : ""
-        }" onclick="toggleSetting('showSeconds')"></div>
+                            <div class="toggle-switch ${
+                              settings.showSeconds ? "active" : ""
+                            }" onclick="toggleSetting('showSeconds')"></div>
                         </div>
                     </div>
                 </div>
@@ -2837,8 +2851,9 @@ alt="favicon">
                                 <div class="settings-item-title">Show Desktop Icons</div>
                                 <div class="settings-item-desc">Display application icons on desktop</div>
                             </div>
-                            <div class="toggle-switch ${settings.showDesktopIcons ? "active" : ""
-        }" onclick="toggleSetting('showDesktopIcons')"></div>
+                            <div class="toggle-switch ${
+                              settings.showDesktopIcons ? "active" : ""
+                            }" onclick="toggleSetting('showDesktopIcons')"></div>
                         </div>
                     </div>
                 </div>
@@ -2854,12 +2869,13 @@ alt="favicon">
                                 <div class="settings-item-title">Show on Startup</div>
                                 <div class="settings-item-desc">Open What's New window when logging in</div>
                             </div>
-                            <div class="toggle-switch ${localStorage.getItem(
-          "nautilusOS_showWhatsNew"
-        ) !== "false"
-          ? "active"
-          : ""
-        }" onclick="toggleSetting('showWhatsNew')"></div>
+                            <div class="toggle-switch ${
+                              localStorage.getItem(
+                                "nautilusOS_showWhatsNew"
+                              ) !== "false"
+                                ? "active"
+                                : ""
+                            }" onclick="toggleSetting('showWhatsNew')"></div>
                         </div>
                     </div>
                 </div>
@@ -2881,10 +2897,11 @@ alt="favicon">
                         <input type="file" id="loginWallpaperInput" accept="image/png, image/jpeg, image/gif" onchange="handleLoginBackgroundUpload(event)" style="display: none;">
                         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
                             <button class="settings-action-btn" id="desktopWallpaperButton" onclick="document.getElementById('wallpaperInput').click()">
-                                <i class="fas fa-upload"></i> ${hasWallpaper
-          ? "Change Desktop Wallpaper"
-          : "Set Desktop Wallpaper"
-        }
+                                <i class="fas fa-upload"></i> ${
+                                  hasWallpaper
+                                    ? "Change Desktop Wallpaper"
+                                    : "Set Desktop Wallpaper"
+                                }
                             </button>
                             <button class="settings-action-btn" onclick="clearWallpaper()">
                                 <i class="fas fa-undo"></i> Reset Desktop Wallpaper
@@ -2895,17 +2912,20 @@ alt="favicon">
                                 <div class="settings-item-title">Use same for login screen</div>
                                 <div class="settings-item-desc">Mirror the desktop wallpaper on the login page</div>
                             </div>
-                            <div class="toggle-switch ${useSameBackground ? "active" : ""
-        }" id="loginWallpaperToggle" onclick="toggleLoginWallpaperLink(this)"></div>
+                            <div class="toggle-switch ${
+                              useSameBackground ? "active" : ""
+                            }" id="loginWallpaperToggle" onclick="toggleLoginWallpaperLink(this)"></div>
                         </div>
-                        <div id="loginWallpaperControls" style="${useSameBackground ? "display: none;" : ""
-        }">
+                        <div id="loginWallpaperControls" style="${
+                          useSameBackground ? "display: none;" : ""
+                        }">
                             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
                                 <button class="settings-action-btn" id="loginWallpaperButton" onclick="document.getElementById('loginWallpaperInput').click()">
-                                    <i class="fas fa-upload"></i> ${hasLoginWallpaper
-          ? "Change Login Wallpaper"
-          : "Set Login Wallpaper"
-        }
+                                    <i class="fas fa-upload"></i> ${
+                                      hasLoginWallpaper
+                                        ? "Change Login Wallpaper"
+                                        : "Set Login Wallpaper"
+                                    }
                                 </button>
                                 <button class="settings-action-btn" onclick="clearLoginWallpaper()">
                                     <i class="fas fa-undo"></i> Reset Login Wallpaper
@@ -2922,8 +2942,9 @@ alt="favicon">
                     </div>
                     <div class="settings-card-body">
                         <div id="themeSettings">
-                            ${installedThemes.length === 0
-          ? `
+                            ${
+                              installedThemes.length === 0
+                                ? `
                                 <div class="settings-empty">
                                     <i class="fas fa-paint-brush"></i>
                                     <h3>No Themes Installed</h3>
@@ -2933,28 +2954,29 @@ alt="favicon">
                                     </button>
                                 </div>
                             `
-          : `
+                                : `
                                 <div class="theme-grid">
                                     ${installedThemes
-            .map(
-              (theme) => `
+                                      .map(
+                                        (theme) => `
                                         <div class="theme-card">
                                             <div class="theme-preview">
                                                 <i class="fas fa-sun"></i>
                                             </div>
-                                            <div class="theme-name">${theme.charAt(0).toUpperCase() +
-                theme.slice(1)
-                } Theme</div>
+                                            <div class="theme-name">${
+                                              theme.charAt(0).toUpperCase() +
+                                              theme.slice(1)
+                                            } Theme</div>
                                             <button class="settings-action-btn" onclick="applyTheme('${theme}')">
                                                 Apply Theme
                                             </button>
                                         </div>
                                     `
-            )
-            .join("")}
+                                      )
+                                      .join("")}
                                 </div>
                             `
-        }
+                            }
                         </div>
                     </div>
                 </div>
@@ -2970,10 +2992,10 @@ alt="favicon">
                     <div class="settings-card-body">
                         <div class="settings-item">
                             <p class="settings-description">The website all browsers will use to search. The default search engine is Brave.</p>
-                            <select style="margin-left: 10.1px; border-radius: 12.5px;">
+                            <select style="margin-left: 10.1px; background: var(--bg-secondary) !important;">
         <button>
             <div>
-                <selectedcontent style="scale: 1.1;"> </selectedcontent>
+                <selectedcontent style="scale: 1.1;"></selectedcontent>
                 <svg style="scale: 1.8;" width="128" height="128" viewBox="0 0 24 24">
                     <path fill="currentColor" d="m7 10l5 5l5-5z" />
                 </svg>
@@ -3072,10 +3094,11 @@ alt="favicon">
                         <input type="file" id="profilePictureInput" accept="image/png, image/jpeg, image/gif" onchange="handleProfilePictureUpload(event)" style="display: none;">
                         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                             <button class="settings-action-btn" id="profilePictureButton" onclick="document.getElementById('profilePictureInput').click()">
-                                <i class="fas fa-upload"></i> ${hasProfilePicture
-          ? "Change Profile Picture"
-          : "Set Profile Picture"
-        }
+                                <i class="fas fa-upload"></i> ${
+                                  hasProfilePicture
+                                    ? "Change Profile Picture"
+                                    : "Set Profile Picture"
+                                }
                             </button>
                             <button class="settings-action-btn" onclick="clearProfilePicture()">
                                 <i class="fas fa-undo"></i> Reset Profile Picture
@@ -3135,8 +3158,9 @@ alt="favicon">
                   <button class="editor-btn" onclick="saveToDevice()"><i class="fas fa-download"></i> &nbsp;Save to Device</button>
                   <input type="text" id="editorFilename" class="editor-filename" placeholder="filename.txt" value="${filename}">
               </div>
-              <textarea class="editor-textarea" placeholder="Start typing...">${editorContent || ""
-        }</textarea>
+              <textarea class="editor-textarea" placeholder="Start typing...">${
+                editorContent || ""
+              }</textarea>
           `,
       noPadding: true,
       width: 900,
@@ -3211,7 +3235,7 @@ alt="favicon">
 
         if (photoList.length === 0) {
           return `
-                      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: rgba(10, 14, 26, 0.8);">
+                      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; background: var(--bg-secondary);">
                           <i class="fas fa-images" style="font-size: 5rem; color: var(--accent); margin-bottom: 2rem;"></i>
                           <h2 style="margin-bottom: 1rem; color: var(--text-primary);">No Photos Yet</h2>
                           <p style="color: var(--text-secondary);">Take a screenshot to get started!</p>
@@ -3222,8 +3246,8 @@ alt="favicon">
         return `
                   <div class="photos-grid" id="photosGrid">
                       ${photoList
-            .map(
-              (name) => `
+                        .map(
+                          (name) => `
                           <div class="photo-item" onclick="viewPhoto('${name}')">
                               <img src="${photos[name]}" alt="${name}" class="photo-thumbnail">
                               <div class="photo-name">${name}</div>
@@ -3232,8 +3256,8 @@ alt="favicon">
                               </button>
                           </div>
                       `
-            )
-            .join("")}
+                        )
+                        .join("")}
                   </div>
               `;
       })(),
