@@ -41,6 +41,10 @@ button:hover {
     background: var(--bg-secondary) !important;
 }
 
+#snakeCanvas {
+    transition: 0s !important;
+}
+
 body {
     font-family: "SUSE Mono";
     overflow: hidden;
