@@ -117,10 +117,17 @@ const appMetadata = {
     icon: "fa-border-all",
     preinstalled: false,
   },
+<<<<<<< HEAD
   "v86-emulator": {
     name: "V86 Emulator",
     icon: "fa-microchip",
     preinstalled: false,
+=======
+  "ai-snake": {
+    name: "AI Snake Learning",
+    icon: "fa-brain",
+    preinstalled: true,
+>>>>>>> 00f18e4 (Snake AI PPO game)
   },
 };
 
@@ -4155,6 +4162,96 @@ alt="favicon">
       width: 1000,
       height: 700,
     },
+    "ai-snake": {
+      title: "AI Snake Learning",
+      icon: "fas fa-brain",
+      content: `
+        <div id="aiSnakeContainer" style="display: flex; flex-direction: column; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px; overflow-y: auto;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #00d4ff; margin: 0 0 5px 0;">AI Snake Learning</h2>
+            <div style="color: #888; font-size: 12px; margin-bottom: 10px;">by lanefiedler-731</div>
+            <div style="color: #888; font-size: 11px;">Deep Q-Learning Neural Network</div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
+              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Generation</div>
+              <div id="aiGeneration" style="color: #00d4ff; font-size: 20px; font-weight: bold;">0</div>
+            </div>
+            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
+              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Best Score</div>
+              <div id="aiBestScore" style="color: #ffaa00; font-size: 20px; font-weight: bold;">0</div>
+            </div>
+            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
+              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Current Score</div>
+              <div id="aiCurrentScore" style="color: #00ff00; font-size: 20px; font-weight: bold;">0</div>
+            </div>
+            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
+              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Games Played</div>
+              <div id="aiGamesPlayed" style="color: #00d4ff; font-size: 20px; font-weight: bold;">0</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
+              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Average Score</div>
+              <div id="aiAvgScore" style="color: #888; font-size: 18px; font-weight: bold;">0</div>
+            </div>
+            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
+              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Epsilon (Exploration)</div>
+              <div id="aiEpsilon" style="color: #ffaa00; font-size: 18px; font-weight: bold;">1.00</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+            <div style="color: #00d4ff; font-weight: bold; margin-bottom: 10px; font-size: 14px;">Training Settings</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; color: #888; font-size: 11px; margin-bottom: 5px;">Game Speed (ms)</label>
+                <input type="range" id="aiGameSpeed" min="1" max="200" value="10" style="width: 100%;">
+                <div style="text-align: center; color: #00d4ff; font-size: 12px; margin-top: 3px;"><span id="aiGameSpeedValue">10</span> ms</div>
+              </div>
+              <div>
+                <label style="display: block; color: #888; font-size: 11px; margin-bottom: 5px;">Training Speed (iterations)</label>
+                <input type="range" id="aiTrainingSpeed" min="1" max="100" value="10" style="width: 100%;">
+                <div style="text-align: center; color: #00d4ff; font-size: 12px; margin-top: 3px;"><span id="aiTrainingSpeedValue">10</span> iterations</div>
+              </div>
+              <div>
+                <label style="display: block; color: #888; font-size: 11px; margin-bottom: 5px;">Concurrency (parallel games)</label>
+                <input type="range" id="aiConcurrency" min="1" max="20" value="5" style="width: 100%;">
+                <div style="text-align: center; color: #00d4ff; font-size: 12px; margin-top: 3px;"><span id="aiConcurrencyValue">5</span> games</div>
+              </div>
+              <div>
+                <label style="display: flex; align-items: center; gap: 8px; color: #888; font-size: 11px; margin-top: 20px;">
+                  <input type="checkbox" id="aiUseGPU" checked style="width: 18px; height: 18px; cursor: pointer;">
+                  <span>Use GPU Acceleration</span>
+                </label>
+                <div id="aiGPUStatus" style="color: #4ade80; font-size: 10px; margin-top: 5px; margin-left: 26px;">GPU Ready</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button id="aiStartBtn" class="editor-btn" onclick="startAISnakeTraining()" style="flex: 1; background: #00d4ff; color: #000; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold;">Start Training</button>
+            <button id="aiPauseBtn" class="editor-btn" onclick="pauseAISnakeTraining()" style="flex: 1; background: #ffaa00; color: #000; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; display: none;">Pause</button>
+            <button id="aiResetBtn" class="editor-btn" onclick="resetAISnakeModel()" style="flex: 1; background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold;">Reset Model</button>
+          </div>
+
+          <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+            <div style="color: #00d4ff; font-weight: bold; margin-bottom: 10px; font-size: 14px;">Training Status</div>
+            <div id="aiTrainingStatus" style="color: #888; font-size: 11px; line-height: 1.6;">Ready to start training...</div>
+          </div>
+
+          <canvas id="aiSnakeCanvas" width="400" height="400" style="background: #0f0f0f; border: 2px solid #00d4ff; border-radius: 4px; margin: 0 auto; display: block;"></canvas>
+          <div style="color: #888; font-size: 10px; margin-top: 10px; text-align: center;">
+            Watch the AI learn to play Snake!
+          </div>
+        </div>
+      `,
+      noPadding: true,
+      width: 900,
+      height: 800,
+    },
   };
 
   if (appName === "achievements") {
@@ -4208,6 +4305,7 @@ alt="favicon">
         }
       }, 50);
     }
+<<<<<<< HEAD
     if (appName === "2048") {
       setTimeout(() => {
         start2048Game();
@@ -4224,6 +4322,11 @@ alt="favicon">
       setTimeout(() => {
         // Load V86 resources on-demand with progress bar
         loadV86ResourcesOnDemand(windowEl);
+=======
+    if (appName === "ai-snake") {
+      setTimeout(() => {
+        initializeAISnakeApp();
+>>>>>>> 00f18e4 (Snake AI PPO game)
       }, 50);
     }
   }
@@ -5728,6 +5831,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
+<<<<<<< HEAD
                   
                   <div class="appstore-item">
                       <div class="appstore-item-icon">
@@ -5767,6 +5871,16 @@ ${startupInstalled ? "Uninstall" : "Install"}
                               ? "Play"
                               : "Install"
                           }
+=======
+                  <div class="appstore-item">
+                      <div class="appstore-item-icon">
+                          <i class="fas fa-brain"></i>
+                      </div>
+                      <div class="appstore-item-name">AI Snake Learning by lanefiedler-731</div>
+                      <div class="appstore-item-desc">Train an AI neural network to play Snake using Deep Q-Learning. Watch it learn and improve with GPU acceleration, customizable concurrency, game speed, and training speed controls.</div>
+                      <button class="appstore-item-btn installed" onclick="openApp('ai-snake')">
+                          Play
+>>>>>>> 00f18e4 (Snake AI PPO game)
                       </button>
                       <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
@@ -7663,6 +7777,697 @@ function endSnakeGame() {
   showToast('Game Over! Score: ' + snakeGame.score + ' | High Score: ' + snakeGame.highScore, 'fa-skull');
 }
 
+// ========== AI Snake Learning Implementation ==========
+let aiSnake = {
+  model: null,
+  targetModel: null,
+  canvas: null,
+  ctx: null,
+  games: [],
+  memory: [],
+  isTraining: false,
+  isPaused: false,
+  generation: 0,
+  bestScore: 0,
+  gamesPlayed: 0,
+  scores: [],
+  epsilon: 1.0,
+  epsilonMin: 0.01,
+  epsilonDecay: 0.995,
+  learningRate: 0.001,
+  batchSize: 64,
+  memorySize: 10000,
+  gridSize: 20,
+  tileCount: 20,
+  gameSpeed: 10,
+  trainingSpeed: 10,
+  concurrency: 5,
+  useGPU: true,
+  deviceInfo: null
+};
+
+// Initialize AI Snake App
+async function initializeAISnakeApp() {
+  if (typeof tf === 'undefined') {
+    updateAITrainingStatus('Loading TensorFlow.js...');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (typeof tf === 'undefined') {
+      updateAITrainingStatus('Error: TensorFlow.js failed to load. Please refresh the page.');
+      return;
+    }
+  }
+
+  aiSnake.canvas = document.getElementById('aiSnakeCanvas');
+  if (!aiSnake.canvas) return;
+  
+  aiSnake.ctx = aiSnake.canvas.getContext('2d');
+  
+  // Check GPU support
+  try {
+    await tf.ready();
+    aiSnake.deviceInfo = tf.getBackend();
+    const useGPU = document.getElementById('aiUseGPU');
+    if (useGPU) {
+      const useGPUValue = localStorage.getItem('aiSnakeUseGPU');
+      if (useGPUValue !== null) {
+        useGPU.checked = useGPUValue === 'true';
+      }
+      aiSnake.useGPU = useGPU.checked;
+      
+      if (aiSnake.useGPU && aiSnake.deviceInfo === 'webgl') {
+        document.getElementById('aiGPUStatus').textContent = 'GPU: WebGL Active';
+        document.getElementById('aiGPUStatus').style.color = '#4ade80';
+      } else if (aiSnake.useGPU && aiSnake.deviceInfo === 'webgpu') {
+        document.getElementById('aiGPUStatus').textContent = 'GPU: WebGPU Active';
+        document.getElementById('aiGPUStatus').style.color = '#4ade80';
+      } else {
+        document.getElementById('aiGPUStatus').textContent = `GPU: ${aiSnake.deviceInfo} (CPU Fallback)`;
+        document.getElementById('aiGPUStatus').style.color = '#ffaa00';
+      }
+    }
+  } catch (e) {
+    document.getElementById('aiGPUStatus').textContent = 'GPU: CPU Only';
+    document.getElementById('aiGPUStatus').style.color = '#ef4444';
+  }
+
+  // Load saved state
+  loadAISnakeState();
+
+  // Setup UI handlers
+  setupAISnakeUIHandlers();
+
+  // Create neural network model
+  await createAISnakeModel();
+
+  updateAITrainingStatus('Ready to start training. Click "Start Training" to begin.');
+}
+
+// Setup UI event handlers
+function setupAISnakeUIHandlers() {
+  const gameSpeedSlider = document.getElementById('aiGameSpeed');
+  const trainingSpeedSlider = document.getElementById('aiTrainingSpeed');
+  const concurrencySlider = document.getElementById('aiConcurrency');
+  const gpuCheckbox = document.getElementById('aiUseGPU');
+
+  if (gameSpeedSlider) {
+    gameSpeedSlider.addEventListener('input', (e) => {
+      aiSnake.gameSpeed = parseInt(e.target.value);
+      document.getElementById('aiGameSpeedValue').textContent = aiSnake.gameSpeed;
+      localStorage.setItem('aiSnakeGameSpeed', aiSnake.gameSpeed);
+      
+      // Update interval if training is running
+      if (aiSnake.isTraining && aiGameInterval) {
+        clearInterval(aiGameInterval);
+        aiGameInterval = setInterval(() => {
+          if (!aiSnake.isPaused) {
+            runAITrainingCycle().catch(err => {
+              console.error('Training error:', err);
+              updateAITrainingStatus('Error during training: ' + err.message);
+            });
+          }
+        }, aiSnake.gameSpeed);
+      }
+    });
+  }
+
+  if (trainingSpeedSlider) {
+    trainingSpeedSlider.addEventListener('input', (e) => {
+      aiSnake.trainingSpeed = parseInt(e.target.value);
+      document.getElementById('aiTrainingSpeedValue').textContent = aiSnake.trainingSpeed;
+      localStorage.setItem('aiSnakeTrainingSpeed', aiSnake.trainingSpeed);
+    });
+  }
+
+  if (concurrencySlider) {
+    concurrencySlider.addEventListener('input', (e) => {
+      aiSnake.concurrency = parseInt(e.target.value);
+      document.getElementById('aiConcurrencyValue').textContent = aiSnake.concurrency;
+      localStorage.setItem('aiSnakeConcurrency', aiSnake.concurrency);
+    });
+  }
+
+  if (gpuCheckbox) {
+    gpuCheckbox.addEventListener('change', (e) => {
+      aiSnake.useGPU = e.target.checked;
+      localStorage.setItem('aiSnakeUseGPU', aiSnake.useGPU);
+      if (aiSnake.useGPU && aiSnake.deviceInfo === 'webgl') {
+        document.getElementById('aiGPUStatus').textContent = 'GPU: WebGL Active';
+        document.getElementById('aiGPUStatus').style.color = '#4ade80';
+      } else {
+        document.getElementById('aiGPUStatus').textContent = `GPU: ${aiSnake.deviceInfo}`;
+        document.getElementById('aiGPUStatus').style.color = '#ffaa00';
+      }
+    });
+  }
+}
+
+// Create Deep Q-Network model
+async function createAISnakeModel() {
+  if (aiSnake.model) {
+    aiSnake.model.dispose();
+  }
+  if (aiSnake.targetModel) {
+    aiSnake.targetModel.dispose();
+  }
+
+  // Input: 24 features (game state)
+  // Output: 4 actions (up, down, left, right)
+  const model = tf.sequential({
+    layers: [
+      tf.layers.dense({ inputShape: [24], units: 128, activation: 'relu' }),
+      tf.layers.dense({ units: 128, activation: 'relu' }),
+      tf.layers.dense({ units: 64, activation: 'relu' }),
+      tf.layers.dense({ units: 4, activation: 'linear' })
+    ]
+  });
+
+  model.compile({
+    optimizer: tf.train.adam(aiSnake.learningRate),
+    loss: 'meanSquaredError'
+  });
+
+  aiSnake.model = model;
+  aiSnake.targetModel = model.clone();
+  
+  updateAITrainingStatus('Neural network model created successfully.');
+}
+
+// Get game state as feature vector
+function getGameState(game) {
+  const head = game.snake[0];
+  const features = [];
+
+  // Danger straight, right, left
+  const directions = [
+    game.direction,
+    { x: -game.direction.y, y: game.direction.x }, // right
+    { x: game.direction.y, y: -game.direction.x }  // left
+  ];
+
+  directions.forEach(dir => {
+    const nextPos = { x: head.x + dir.x, y: head.y + dir.y };
+    const danger = (
+      nextPos.x < 0 || nextPos.x >= aiSnake.tileCount ||
+      nextPos.y < 0 || nextPos.y >= aiSnake.tileCount ||
+      game.snake.some(segment => segment.x === nextPos.x && segment.y === nextPos.y)
+    ) ? 1 : 0;
+    features.push(danger);
+  });
+
+  // Current direction (one-hot encoded)
+  features.push(game.direction.x === 0 && game.direction.y === -1 ? 1 : 0); // up
+  features.push(game.direction.x === 0 && game.direction.y === 1 ? 1 : 0);  // down
+  features.push(game.direction.x === -1 && game.direction.y === 0 ? 1 : 0); // left
+  features.push(game.direction.x === 1 && game.direction.y === 0 ? 1 : 0);  // right
+
+  // Food direction (normalized)
+  const foodDeltaX = game.food.x - head.x;
+  const foodDeltaY = game.food.y - head.y;
+  features.push(foodDeltaX > 0 ? 1 : (foodDeltaX < 0 ? -1 : 0));
+  features.push(foodDeltaY > 0 ? 1 : (foodDeltaY < 0 ? -1 : 0));
+
+  // Normalized distances
+  features.push(foodDeltaX / aiSnake.tileCount);
+  features.push(foodDeltaY / aiSnake.tileCount);
+
+  // Snake length (normalized)
+  features.push(game.snake.length / (aiSnake.tileCount * aiSnake.tileCount));
+
+  // Additional features: distances to walls
+  features.push(head.x / aiSnake.tileCount);
+  features.push(head.y / aiSnake.tileCount);
+  features.push((aiSnake.tileCount - head.x) / aiSnake.tileCount);
+  features.push((aiSnake.tileCount - head.y) / aiSnake.tileCount);
+
+  // Body proximity (check immediate surroundings)
+  for (let dx = -1; dx <= 1; dx++) {
+    for (let dy = -1; dy <= 1; dy++) {
+      if (dx === 0 && dy === 0) continue;
+      const checkPos = { x: head.x + dx, y: head.y + dy };
+      const hasBody = game.snake.some(segment => segment.x === checkPos.x && segment.y === checkPos.y);
+      features.push(hasBody ? 1 : 0);
+    }
+  }
+
+  return features.slice(0, 24); // Ensure exactly 24 features
+}
+
+// Create a new game instance
+function createAIGame() {
+  return {
+    snake: [{ x: 10, y: 10 }],
+    food: { x: 15, y: 15 },
+    direction: { x: 1, y: 0 },
+    score: 0,
+    steps: 0,
+    gameOver: false,
+    lastFoodDistance: Infinity
+  };
+}
+
+// Generate food position
+function generateAIFood(game) {
+  let newFood;
+  let foodOnSnake = true;
+  while (foodOnSnake) {
+    newFood = {
+      x: Math.floor(Math.random() * aiSnake.tileCount),
+      y: Math.floor(Math.random() * aiSnake.tileCount)
+    };
+    foodOnSnake = game.snake.some(segment => segment.x === newFood.x && segment.y === newFood.y);
+  }
+  return newFood;
+}
+
+// Perform action in game
+function performAIAction(game, action) {
+  if (game.gameOver) return;
+
+  // Actions: 0=up, 1=down, 2=left, 3=right
+  const directions = [
+    { x: 0, y: -1 }, // up
+    { x: 0, y: 1 },  // down
+    { x: -1, y: 0 }, // left
+    { x: 1, y: 0 }   // right
+  ];
+
+  const newDirection = directions[action];
+  // Prevent reversing
+  if (newDirection.x === -game.direction.x && newDirection.y === -game.direction.y) {
+    return;
+  }
+
+  game.direction = newDirection;
+  const head = game.snake[0];
+  const newHead = {
+    x: (head.x + game.direction.x + aiSnake.tileCount) % aiSnake.tileCount,
+    y: (head.y + game.direction.y + aiSnake.tileCount) % aiSnake.tileCount
+  };
+
+  // Check collision
+  if (game.snake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
+    game.gameOver = true;
+    return;
+  }
+
+  game.snake.unshift(newHead);
+  game.steps++;
+
+  // Check food
+  if (newHead.x === game.food.x && newHead.y === game.food.y) {
+    game.score += 10;
+    game.food = generateAIFood(game);
+    game.lastFoodDistance = Infinity;
+  } else {
+    game.snake.pop();
+    const foodDist = Math.abs(game.food.x - newHead.x) + Math.abs(game.food.y - newHead.y);
+    game.lastFoodDistance = foodDist;
+  }
+
+  // Penalty for too many steps without eating
+  if (game.steps > 200 && game.score === 0) {
+    game.gameOver = true;
+  }
+}
+
+// Predict action using model
+async function predictAction(game) {
+  const state = getGameState(game);
+  const stateTensor = tf.tensor2d([state]);
+  
+  try {
+    const prediction = await aiSnake.model.predict(stateTensor);
+    const qValues = await prediction.data();
+    prediction.dispose();
+    stateTensor.dispose();
+    
+    // Epsilon-greedy exploration
+    if (Math.random() < aiSnake.epsilon) {
+      return Math.floor(Math.random() * 4);
+    }
+    
+    return qValues.indexOf(Math.max(...qValues));
+  } catch (e) {
+    stateTensor.dispose();
+    return Math.floor(Math.random() * 4);
+  }
+}
+
+// Train the model
+async function trainAIModel() {
+  if (aiSnake.memory.length < aiSnake.batchSize) {
+    return;
+  }
+
+  const batch = [];
+  const sampleIndices = [];
+  for (let i = 0; i < aiSnake.batchSize; i++) {
+    sampleIndices.push(Math.floor(Math.random() * aiSnake.memory.length));
+  }
+
+  const states = [];
+  const targets = [];
+
+  for (const idx of sampleIndices) {
+    const { state, action, reward, nextState, done } = aiSnake.memory[idx];
+    
+    const stateTensor = tf.tensor2d([state]);
+    const currentQ = await aiSnake.model.predict(stateTensor);
+    const currentQValues = await currentQ.data();
+    currentQ.dispose();
+    stateTensor.dispose();
+
+    let targetQ = [...currentQValues];
+
+    if (done) {
+      targetQ[action] = reward;
+    } else {
+      const nextStateTensor = tf.tensor2d([nextState]);
+      const nextQ = await aiSnake.targetModel.predict(nextStateTensor);
+      const nextQValues = await nextQ.data();
+      nextQ.dispose();
+      nextStateTensor.dispose();
+      
+      targetQ[action] = reward + 0.95 * Math.max(...nextQValues);
+    }
+
+    states.push(state);
+    targets.push(targetQ);
+  }
+
+  const xs = tf.tensor2d(states);
+  const ys = tf.tensor2d(targets);
+
+  await aiSnake.model.fit(xs, ys, {
+    epochs: 1,
+    batchSize: aiSnake.batchSize,
+    verbose: 0
+  });
+
+  xs.dispose();
+  ys.dispose();
+}
+
+// Draw game on canvas
+function drawAISnakeGame(game) {
+  if (!aiSnake.canvas || !aiSnake.ctx) return;
+
+  const ctx = aiSnake.ctx;
+  const gridSize = aiSnake.canvas.width / aiSnake.tileCount;
+
+  ctx.fillStyle = '#0f0f0f';
+  ctx.fillRect(0, 0, aiSnake.canvas.width, aiSnake.canvas.height);
+
+  // Draw grid
+  ctx.strokeStyle = '#1a3a3a';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= aiSnake.tileCount; i++) {
+    const pos = i * gridSize;
+    ctx.beginPath();
+    ctx.moveTo(pos, 0);
+    ctx.lineTo(pos, aiSnake.canvas.height);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, pos);
+    ctx.lineTo(aiSnake.canvas.width, pos);
+    ctx.stroke();
+  }
+
+  // Draw snake
+  game.snake.forEach((segment, index) => {
+    ctx.fillStyle = index === 0 ? '#00ff00' : '#00cc00';
+    ctx.fillRect(
+      segment.x * gridSize + 1,
+      segment.y * gridSize + 1,
+      gridSize - 2,
+      gridSize - 2
+    );
+  });
+
+  // Draw food
+  ctx.fillStyle = '#ff4444';
+  ctx.fillRect(
+    game.food.x * gridSize + 1,
+    game.food.y * gridSize + 1,
+    gridSize - 2,
+    gridSize - 2
+  );
+}
+
+// Main training loop
+let aiTrainingInterval = null;
+let aiGameInterval = null;
+
+async function runAITrainingCycle() {
+  if (!aiSnake.isTraining || aiSnake.isPaused) return;
+
+  // Update concurrency
+  while (aiSnake.games.length < aiSnake.concurrency) {
+    aiSnake.games.push(createAIGame());
+  }
+  while (aiSnake.games.length > aiSnake.concurrency) {
+    aiSnake.games.pop();
+  }
+
+  // Run games
+  for (let i = 0; i < aiSnake.games.length; i++) {
+    const game = aiSnake.games[i];
+    if (game.gameOver) {
+      // Store final state
+      const state = getGameState(game);
+      const reward = game.score * 10 - game.steps;
+      aiSnake.memory.push({
+        state: state,
+        action: 0, // placeholder
+        reward: reward,
+        nextState: state,
+        done: true
+      });
+
+      // Update statistics
+      aiSnake.gamesPlayed++;
+      aiSnake.scores.push(game.score);
+      if (game.score > aiSnake.bestScore) {
+        aiSnake.bestScore = game.score;
+        localStorage.setItem('aiSnakeBestScore', aiSnake.bestScore);
+      }
+
+      // Limit memory size
+      if (aiSnake.memory.length > aiSnake.memorySize) {
+        aiSnake.memory.shift();
+      }
+
+      // Create new game
+      aiSnake.games[i] = createAIGame();
+    } else {
+      // Get action from model
+      const action = await predictAction(game);
+      const state = getGameState(game);
+      const oldScore = game.score;
+
+      performAIAction(game, action);
+
+      if (!game.gameOver) {
+        const nextState = getGameState(game);
+        const reward = (game.score > oldScore ? 10 : 0) - 0.1; // small penalty for each step
+        const foodDist = Math.abs(game.food.x - game.snake[0].x) + Math.abs(game.food.y - game.snake[0].y);
+        const oldFoodDist = game.lastFoodDistance || Infinity;
+        const distanceReward = (oldFoodDist - foodDist) * 0.1;
+
+        aiSnake.memory.push({
+          state: state,
+          action: action,
+          reward: reward + distanceReward,
+          nextState: nextState,
+          done: false
+        });
+
+        // Limit memory size
+        if (aiSnake.memory.length > aiSnake.memorySize) {
+          aiSnake.memory.shift();
+        }
+      }
+    }
+  }
+
+  // Draw first game
+  if (aiSnake.games.length > 0) {
+    drawAISnakeGame(aiSnake.games[0]);
+  }
+
+  // Train model
+  for (let i = 0; i < aiSnake.trainingSpeed; i++) {
+    await trainAIModel();
+  }
+
+  // Update target model periodically
+  if (aiSnake.gamesPlayed % 100 === 0 && aiSnake.gamesPlayed > 0) {
+    if (aiSnake.targetModel) {
+      aiSnake.targetModel.dispose();
+    }
+    aiSnake.targetModel = aiSnake.model.clone();
+  }
+
+  // Decay epsilon
+  if (aiSnake.epsilon > aiSnake.epsilonMin) {
+    aiSnake.epsilon *= aiSnake.epsilonDecay;
+  }
+
+  // Update UI
+  updateAIUI();
+}
+
+// Update UI elements
+function updateAIUI() {
+  document.getElementById('aiGeneration').textContent = aiSnake.generation;
+  document.getElementById('aiBestScore').textContent = aiSnake.bestScore;
+  document.getElementById('aiCurrentScore').textContent = aiSnake.games.length > 0 ? aiSnake.games[0].score : 0;
+  document.getElementById('aiGamesPlayed').textContent = aiSnake.gamesPlayed;
+  document.getElementById('aiEpsilon').textContent = aiSnake.epsilon.toFixed(2);
+  
+  if (aiSnake.scores.length > 0) {
+    const avg = aiSnake.scores.slice(-100).reduce((a, b) => a + b, 0) / Math.min(100, aiSnake.scores.length);
+    document.getElementById('aiAvgScore').textContent = avg.toFixed(1);
+  }
+
+  const status = aiSnake.isTraining 
+    ? `Training... Generation ${aiSnake.generation} | Games: ${aiSnake.gamesPlayed} | Best: ${aiSnake.bestScore} | Epsilon: ${aiSnake.epsilon.toFixed(3)}`
+    : 'Training paused';
+  updateAITrainingStatus(status);
+}
+
+function updateAITrainingStatus(message) {
+  const statusEl = document.getElementById('aiTrainingStatus');
+  if (statusEl) {
+    statusEl.textContent = message;
+  }
+}
+
+// Start training
+async function startAISnakeTraining() {
+  if (aiSnake.isTraining) return;
+
+  if (!aiSnake.model) {
+    await createAISnakeModel();
+  }
+
+  aiSnake.isTraining = true;
+  aiSnake.isPaused = false;
+  
+  document.getElementById('aiStartBtn').style.display = 'none';
+  document.getElementById('aiPauseBtn').style.display = 'block';
+
+  // Initialize games
+  aiSnake.games = [];
+  for (let i = 0; i < aiSnake.concurrency; i++) {
+    aiSnake.games.push(createAIGame());
+  }
+
+  // Start game loop
+  aiGameInterval = setInterval(() => {
+    if (!aiSnake.isPaused) {
+      runAITrainingCycle().catch(err => {
+        console.error('Training error:', err);
+        updateAITrainingStatus('Error during training: ' + err.message);
+      });
+    }
+  }, aiSnake.gameSpeed);
+
+  updateAITrainingStatus('Training started!');
+  aiSnake.generation++;
+  saveAISnakeState();
+}
+
+// Pause training
+function pauseAISnakeTraining() {
+  aiSnake.isPaused = !aiSnake.isPaused;
+  
+  if (aiSnake.isPaused) {
+    document.getElementById('aiPauseBtn').textContent = 'Resume';
+    updateAITrainingStatus('Training paused.');
+  } else {
+    document.getElementById('aiPauseBtn').textContent = 'Pause';
+    updateAITrainingStatus('Training resumed.');
+  }
+}
+
+// Reset model
+async function resetAISnakeModel() {
+  if (confirm('Reset AI model? All training progress will be lost.')) {
+    aiSnake.isTraining = false;
+    aiSnake.isPaused = false;
+    
+    if (aiGameInterval) {
+      clearInterval(aiGameInterval);
+      aiGameInterval = null;
+    }
+
+    document.getElementById('aiStartBtn').style.display = 'block';
+    document.getElementById('aiPauseBtn').style.display = 'none';
+
+    aiSnake.generation = 0;
+    aiSnake.bestScore = 0;
+    aiSnake.gamesPlayed = 0;
+    aiSnake.scores = [];
+    aiSnake.epsilon = 1.0;
+    aiSnake.memory = [];
+    aiSnake.games = [];
+
+    await createAISnakeModel();
+    updateAIUI();
+    updateAITrainingStatus('Model reset. Ready to start training.');
+    
+    localStorage.removeItem('aiSnakeState');
+    saveAISnakeState();
+  }
+}
+
+// Save/Load state
+function saveAISnakeState() {
+  const state = {
+    generation: aiSnake.generation,
+    bestScore: aiSnake.bestScore,
+    gamesPlayed: aiSnake.gamesPlayed,
+    epsilon: aiSnake.epsilon,
+    gameSpeed: aiSnake.gameSpeed,
+    trainingSpeed: aiSnake.trainingSpeed,
+    concurrency: aiSnake.concurrency
+  };
+  localStorage.setItem('aiSnakeState', JSON.stringify(state));
+}
+
+function loadAISnakeState() {
+  const saved = localStorage.getItem('aiSnakeState');
+  if (saved) {
+    const state = JSON.parse(saved);
+    aiSnake.generation = state.generation || 0;
+    aiSnake.bestScore = parseInt(localStorage.getItem('aiSnakeBestScore')) || 0;
+    aiSnake.gamesPlayed = state.gamesPlayed || 0;
+    aiSnake.epsilon = state.epsilon || 1.0;
+    aiSnake.gameSpeed = parseInt(localStorage.getItem('aiSnakeGameSpeed')) || 10;
+    aiSnake.trainingSpeed = parseInt(localStorage.getItem('aiSnakeTrainingSpeed')) || 10;
+    aiSnake.concurrency = parseInt(localStorage.getItem('aiSnakeConcurrency')) || 5;
+  }
+
+  // Update UI sliders
+  const gameSpeedSlider = document.getElementById('aiGameSpeed');
+  const trainingSpeedSlider = document.getElementById('aiTrainingSpeed');
+  const concurrencySlider = document.getElementById('aiConcurrency');
+  
+  if (gameSpeedSlider) {
+    gameSpeedSlider.value = aiSnake.gameSpeed;
+    document.getElementById('aiGameSpeedValue').textContent = aiSnake.gameSpeed;
+  }
+  if (trainingSpeedSlider) {
+    trainingSpeedSlider.value = aiSnake.trainingSpeed;
+    document.getElementById('aiTrainingSpeedValue').textContent = aiSnake.trainingSpeed;
+  }
+  if (concurrencySlider) {
+    concurrencySlider.value = aiSnake.concurrency;
+    document.getElementById('aiConcurrencyValue').textContent = aiSnake.concurrency;
+  }
+}
+
 
 function addDesktopIcon(appName) {
   const iconsContainer = document.getElementById("desktopIcons");
@@ -7689,10 +8494,15 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-globe", label: "Ultraviolet" };
   } else if (appName === "helios") {
     iconConfig = { icon: "fa-globe", label: "Helios" };
+<<<<<<< HEAD
   } else if (appName === "vsc") {
     iconConfig = { icon: "fa-code", label: "Visual Studio Code" };
   } else if (appName === "v86-emulator") {
     iconConfig = { icon: "fa-microchip", label: "V86 Emulator" };
+=======
+  } else if (appName === "ai-snake") {
+    iconConfig = { icon: "fa-brain", label: "AI Snake Learning" };
+>>>>>>> 00f18e4 (Snake AI PPO game)
   } else {
     return;
   }
