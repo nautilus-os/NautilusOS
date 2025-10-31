@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How to Submit PRs - NautilusOS Community</title>
+<meta name="description" content="Learn how to submit pull requests to the NautilusOS community repository." />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css" />
+<link rel="icon" href="data:," />
+<script defer src="./scripts.js"></script>
+</head>
+<body>
+<header class="site-header">
+<div class="container row between center">
+<a class="brand" href="./index.html">NautilusOS <span class="pill">Community</span></a>
+<nav class="nav">
+<a href="./index.html">Home</a>
+<a href="./browse.html">Browse</a>
+<a href="./dev.html">Developers</a>
+<a class="active" href="./request.html">Submit / Request</a>
+<a class="cta" href="./help.html">Help</a>
+</nav>
+</div>
+</header>
+
+
+<main>
+<section class="hero container">
+<h1>How to Submit Pull Requests</h1>
+<p class="lede">Contribute to the NautilusOS community by submitting pull requests to improve the repository.</p>
+</section>
+
+<section class="container">
+<div class="card prose">
+<h2>Step-by-Step Guide</h2>
+<p>Follow these steps to submit a pull request (PR) to the <a href="https://github.com/nautilus-os/community" target="_blank" rel="noopener">NautilusOS Community repository</a>.</p>
+
+<ol>
+<li><strong>Fork the Repository</strong><br>
+Click the "Fork" button on the <a href="https://github.com/nautilus-os/community" target="_blank" rel="noopener">repository page</a> to create your own copy.</li>
+
+<li><strong>Clone Your Fork</strong><br>
+Clone the forked repository to your local machine:<br>
+<code>git clone https://github.com/YOUR_USERNAME/community.git</code><br>
+Replace <code>YOUR_USERNAME</code> with your GitHub username.</li>
+
+<li><strong>Create a Branch</strong><br>
+Create a new branch for your changes:<br>
+<code>git checkout -b your-feature-branch</code><br>
+Use a descriptive name for your branch.</li>
+
+<li><strong>Make Your Changes</strong><br>
+Edit the files as needed. Ensure your changes align with the repository's guidelines (e.g., adding apps, games, or themes via JSON catalogs).</li>
+
+<li><strong>Commit Your Changes</strong><br>
+Stage and commit your changes:<br>
+<code>git add .</code><br>
+<code>git commit -m "Add your commit message here"</code></li>
+
+<li><strong>Push to Your Fork</strong><br>
+Push your branch to GitHub:<br>
+<code>git push origin your-feature-branch</code></li>
+
+<li><strong>Create a Pull Request</strong><br>
+Go to the original repository and click "New Pull Request". Select your branch and provide a clear description of your changes.</li>
+</ol>
+
+<h3>Additional Tips</h3>
+<ul>
+<li>Test your changes locally before submitting.</li>
+<li>Follow the repository's contribution guidelines if available.</li>
+<li>Be respectful and provide detailed descriptions in your PR.</li>
+<li>If you're new to GitHub, check out their <a href="https://docs.github.com/en/github/collaborating-with-pull-requests" target="_blank" rel="noopener">official documentation</a>.</li>
+</ul>
+</div>
+</section>
+</main>
+
+
+<footer class="site-footer">
+<div class="container row between center">
+<small>AGPL-3.0 • © NautilusOS community</small>
+<div class="row gap-sm">
+<a href="./help.html">Help</a>
+<a href="./request.html">Contribute</a>
+<a href="https://github.com/nautilus-os/community" target="_blank" rel="noopener">GitHub</a>
+</div>
+</div>
+</footer>
+</body>
+</html>

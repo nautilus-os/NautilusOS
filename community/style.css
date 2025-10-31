@@ -1,0 +1,84 @@
+:root{
+--bg:#0b0b0f; --bg2:#121219; --text:#e9edf1; --muted:#9aa3ad; --brand:#ff6a00; --brand-2:#f9a826; --card:#171922; --glass:#2a2f3a; --border:#2a2f3a; --success:#22c55e;
+--shadow:0 4px 12px rgba(0,0,0,.2);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+
+.container{max-width:1040px;margin:0 auto;padding:24px}
+.row{display:flex;gap:16px;align-items:center}
+.row.between{justify-content:space-between}
+.row.center{align-items:center}
+.gap-sm{gap:8px}
+
+
+.site-header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:1px solid var(--border)}
+.brand{font-weight:800;text-decoration:none;color:var(--text);letter-spacing:.3px}
+.pill{display:inline-block;margin-left:.4ch;padding:.1rem .5rem;border:1px solid var(--border);border-radius:999px;background:var(--bg2);color:#ffd9b3}
+.nav a{color:var(--muted);text-decoration:none;margin-left:14px}
+.nav a.active,.nav a:hover{color:#fff}
+.nav .cta{padding:.45rem .7rem;border:1px solid var(--border);border-radius:10px;background:var(--bg2)}
+
+
+.hero{padding:56px 24px}
+.hero h1{font-size:clamp(28px,3.6vw,44px);line-height:1.13;margin:0 0 12px}
+.lede{color:var(--muted);max-width:70ch}
+.actions{display:flex;gap:12px;margin-top:18px}
+.btn{appearance:none;border:0;background:var(--brand);color:#111;padding:.7rem 1rem;border-radius:12px;font-weight:700;box-shadow:var(--shadow);cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border);box-shadow:none}
+.btn:active{transform:translateY(1px)}
+
+
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:20px}
+@media (max-width: 860px){.grid-2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.card h3{margin-top:0}
+.link{color:#fff;text-decoration:none}
+.link:hover{text-decoration:underline}
+
+
+.two-col{display:grid;grid-template-columns:2fr 1.2fr;gap:20px}
+@media (max-width: 860px){.two-col{grid-template-columns:1fr}}
+.info{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+.quick-links{display:flex;flex-wrap:wrap;gap:8px}
+.quick-links a{display:inline-block;padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);text-decoration:none;font-size:14px}
+.quick-links a:hover{background:var(--brand);color:#111}
+
+
+.prose h1,.prose h2,.prose h3{margin-top:0}
+.prose p,.prose li{color:var(--text)}
+.prose ul{line-height:1.7}
+.callout{border-left:3px solid var(--brand);padding-left:12px;color:var(--muted)}
+
+
+.site-footer{margin-top:auto;border-top:1px solid var(--border);background:var(--bg2);padding:24px 0}
+.site-footer a{color:var(--muted);text-decoration:none}
+.site-footer a:hover{color:#fff}
+
+
+/* Tabs & Catalog */
+.tabs{display:flex;gap:10px;margin:10px 0 12px}
+.tabs button{background:var(--bg2);border:1px solid var(--border);color:#dfe6ee;padding:.5rem 1rem;border-radius:10px;cursor:pointer}
+.tabs button.active{outline:2px solid var(--brand)}
+.hidden{display:none}
+
+
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:8px}
+.item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.item h4{margin:0}
+.item .meta{font-size:.9rem;color:var(--muted)}
+.item a{color:#fff;text-decoration:none}
+.item a:hover{text-decoration:underline}
+.item .badge{display:inline-block;padding:.15rem .5rem;border:1px solid var(--border);border-radius:999px;background:var(--bg2);color:#dfe6ee;font-size:.75rem}
+
+
+/* Forms */
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.form-grid .wide{grid-column:1/-1}
+label{display:flex;flex-direction:column;gap:6px}
+input,textarea,select{background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:#e9edf1;padding:.6rem .7rem}
+textarea{min-height:110px}
+.muted{color:var(--muted)}

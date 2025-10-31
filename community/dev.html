@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Developers • NautilusOS Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<header class="site-header">
+<div class="container row between center">
+<a class="brand" href="./index.html">NautilusOS <span class="pill">Community</span></a>
+<nav class="nav">
+<a href="./index.html">Home</a>
+<a href="./browse.html">Browse</a>
+<a class="active" href="./dev.html">Developers</a>
+<a href="./request.html">Submit / Request</a>
+<a class="cta" href="./help.html">Help</a>
+</nav>
+</div>
+</header>
+
+
+<main class="container prose">
+<h1>Developer Guide</h1>
+<p>Everything you need to create apps, games, and themes for NautilusOS.</p>
+
+
+<h2 id="getting-started">Getting started</h2>
+<ol>
+<li>Create a new repository under your account with your project name.</li>
+<li>Add your project files there. For HTML apps, include an <code>index.html</code>; for themes, a <code>.css</code> file; for embedded apps, follow the constraints below.</li>
+</ol>
+
+
+<h2 id="making-a-theme">Making a theme</h2>
+<p>Copy the base style from the NautilusOS repo’s <code>style.css</code> into your own <code>[themename].css</code> and customize it.</p>
+
+
+<h2 id="making-an-app">Making an app</h2>
+<h3>HTML app</h3>
+<ul>
+<li>Standard HTML/CSS/JS in your own folder. Can import external scripts, but keep them safe.</li>
+<li>Not supported offline.</li>
+</ul>
+<h3>Embedded app</h3>
+<ul>
+<li>Rendered from JS within NautilusOS; works offline.</li>
+<li>No external scripts/styles; follow built-in theme classes.</li>
+</ul>
+
+
+<h2 id="catalog-info">Catalog info</h2>
+<p>Create an <code>appinfo.json</code> (or equivalent) with:</p>
+<pre><code>[
+{
+"name": "",
+"desc": "",
+"icon": "fas fa-icon-here",
+"author": "",
+"url": "" // optional for themes
+}
+]
+</code></pre>
+
+
+<h2 id="deploying">Deploying for testing</h2>
+<p>Use Netlify or Vercel for quick previews. Grab the deployment URL and place it in <code>url</code> when applicable.</p>
+
+
+<h2 id="submitting">Submitting</h2>
+<ol>
+<li>Open an issue in the community repo with details and checks.</li>
+<li>Expect a reply within hours to a few days with next steps.</li>
+</ol>
+
+
+<p class="callout">Tip: See <a href="./browse.html">Browse</a> to preview how your catalog entry will render.</p>
+</main>
+
+
+<footer class="site-footer">
+<div class="container row between center">
+<small>AGPL-3.0 • © NautilusOS community</small>
+<div class="row gap-sm">
+<a href="./help.html">Help</a>
+<a href="./request.html">Submit</a>
+<a href="https://github.com/nautilus-os/community" target="_blank" rel="noopener">GitHub</a>
+</div>
+</div>
+</footer>
+</body>
+</html>
