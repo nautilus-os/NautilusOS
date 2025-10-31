@@ -51,15 +51,11 @@ Basically... a whole little OS in your browser :D
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Window animation settings
 - [ ] Make taskbar autohide
-- [ ] Embed V86 (lanefiedler-731's job)
-- [ ] Fix styles on proxy list dropdown menu (xor)
 - [ ] Add previews to all apps and themes
 - [ ] Make music player search with itunes and play with ub youtube
 - [ ] Add a scramjet proxy (xor)
 - [ ] Wisp server selection (xor)
-- [ ] Better file system
-- [ ] Fix [object promise] bug when creating new folder
-- [ ] Importing saves in settings (anyone can take this)
+- [x] Fix [object promise] bug when creating new folder
 - [ ] Multiple accounts
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 
