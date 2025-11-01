@@ -4375,10 +4375,12 @@ alt="favicon">
               </div>
               <div style="color: #cbd5e1; line-height: 1.6;">
                 Hello! I'm your Nautilus AI Assistant. I can help you understand and navigate NautilusOS.<br><br>
-                <strong style="color: var(--accent);">⚡ Model: Dumb Fast (SmolLM2-360M)</strong><br>
-                Quick responses, less accurate. Switch to 🧠 Smart Slow for better quality.<br><br>
+                <strong style="color: var(--accent);"><i class="fas fa-brain"></i> Model: Smarty (Qwen3-0.6B)</strong><br>
+                Advanced reasoning with thinking mode enabled. Switch models in the dropdown if needed.<br><br>
                 <strong style="color: var(--accent);">🤖 OS Automation Enabled!</strong><br>
                 I can control NautilusOS for you! I can open apps, run terminal commands, manage files, change settings, and more. Just ask me to do something and I'll request your approval before taking action.<br><br>
+                <strong style="color: var(--accent);">💭 Thinking Mode Active!</strong><br>
+                For complex tasks, I'll show my reasoning process in a collapsible "Thinking" section.<br><br>
                 Try: "Open calculator" or "Change theme to blue"
               </div>
             </div>
@@ -6028,7 +6030,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
                           }
                       </button>
                   </div>
-<<<<<<< HEAD
+HEAD
                   
                   <div class="appstore-item">
                       <div class="appstore-item-icon">
@@ -12681,20 +12683,20 @@ let nautilusAI = {
   pendingTools: [],
   toolsEnabled: true,
   actionLog: [],
-  currentModel: 'fast' // 'fast' or 'smart'
+  currentModel: 'smart' // 'fast' or 'smart' - default to smart (Qwen3 with thinking)
 };
 
 const AI_MODELS = {
   fast: {
     name: 'SmolLM2-360M-Instruct-q4f16_1-MLC',
-    label: 'Dumb Fast',
+    label: 'Dumb',
     description: 'Quick responses, less accurate',
     icon: 'fa-bolt'
   },
   smart: {
-    name: 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',
-    label: 'Smart Slow',
-    description: 'Better responses, takes longer',
+    name: 'Qwen3-0.6B-q4f16_1-MLC',
+    label: 'Smarty',
+    description: 'Advanced reasoning with thinking mode',
     icon: 'fa-brain'
   }
 };
@@ -12811,8 +12813,9 @@ const NAUTILUS_SYSTEM_PROMPT = `You are the Nautilus AI Assistant, an expert gui
 🤖 OS AUTOMATION CAPABILITIES:
 You have the ability to control and automate NautilusOS! You can execute actions on behalf of the user with their approval.
 
-IMPORTANT: When you want to perform an action, use this EXACT format in your response:
+IMPORTANT: When you want to perform an action, output a JSON object in your response with this structure:
 
+PREFERRED FORMAT (with XML tags):
 <tool_call>
 {
   "tool": "tool_name_here",
@@ -12822,6 +12825,11 @@ IMPORTANT: When you want to perform an action, use this EXACT format in your res
   }
 }
 </tool_call>
+
+ALTERNATIVE FORMAT (bare JSON also works):
+{"tool": "tool_name_here", "parameters": {"param1": "value1", "param2": "value2"}}
+
+Both formats are supported. The system will detect and execute your tool calls automatically.
 
 Available tools:
 ${Object.keys(OS_AUTOMATION_TOOLS).map(toolName => {
@@ -13068,6 +13076,26 @@ DEVELOPER INFO:
 - Community contributions welcome
 - Apps can be created by community (Nautilus AI Assistant by lanefiedler-731)
 
+THINKING MODE (QWEN3 CAPABILITY):
+You have advanced reasoning capabilities! For complex tasks, you can use thinking mode to show your reasoning process:
+
+- Wrap your internal reasoning in <think></think> tags
+- Use thinking for: complex calculations, multi-step logic, planning, analysis, debugging
+- Think through problems step-by-step before giving your final answer
+- Thinking content will be displayed separately in a collapsible section
+- Your final response (outside <think> tags) should be clear and concise
+
+Example:
+<think>
+Let me analyze the user's request:
+1. They want to change the theme
+2. I need to check available themes first using get_available_options
+3. Then I'll change the setting if the theme exists
+4. This requires two tool calls in sequence
+</think>
+
+I'll help you change the theme! First, let me check what themes are available...
+
 When helping users:
 1. Be specific and detailed about features
 2. Provide step-by-step instructions when needed
@@ -13076,6 +13104,7 @@ When helping users:
 5. Suggest related features users might find helpful
 6. Be enthusiastic about NautilusOS capabilities
 7. If unsure about something, admit it honestly
+8. Use thinking mode for complex reasoning and problem-solving
 
 Your goal is to make users feel confident and excited about using NautilusOS!`;
 
@@ -13152,8 +13181,12 @@ async function initializeNautilusAI(modelKey = null) {
         updateAiStatus(`Loading ${modelConfig.label}: ${Math.round(progress.progress * 100)}%`, true);
       },
       useWebGPU: useWebGPU,
-      // Optimizations for faster initialization
-      logLevel: 'ERROR' // Reduce logging overhead
+      // Optimizations for faster initialization and TTFT
+      logLevel: 'ERROR', // Reduce logging overhead
+      temperature: 0.7, // Optimal for thinking mode
+      top_p: 0.95,
+      // Enable prompt caching for faster subsequent requests
+      caching: true
     });
     
     // Reset or preserve conversation history
@@ -13307,7 +13340,9 @@ async function sendAiMessage() {
     
     // Generate response with streaming - optimized settings based on model
     const isFastModel = nautilusAI.currentModel === 'fast';
-    const completion = await nautilusAI.engine.chat.completions.create({
+    const isSmartModel = nautilusAI.currentModel === 'smart';
+    
+    const completionConfig = {
       messages: nautilusAI.messages,
       temperature: isFastModel ? 0.5 : 0.7, // Lower temp for faster model = more focused
       max_tokens: isFastModel ? 2048 : 4096, // Fewer tokens for fast model
@@ -13315,8 +13350,22 @@ async function sendAiMessage() {
       // Optimizations for faster first token
       top_p: isFastModel ? 0.9 : 0.95,
       frequency_penalty: 0,
-      presence_penalty: 0
-    });
+      presence_penalty: 0,
+      // Enable streaming for lower latency
+      stream_options: { include_usage: false }
+    };
+    
+    // Enable thinking mode for smart model (Qwen3)
+    if (isSmartModel) {
+      completionConfig.extra_body = {
+        enable_thinking: true,
+        // Additional TTFT optimizations
+        use_beam_search: false,
+        early_stopping: false
+      };
+    }
+    
+    const completion = await nautilusAI.engine.chat.completions.create(completionConfig);
     
     let fullResponse = '';
     let thinkingSection = null;
@@ -13515,6 +13564,7 @@ function clearAiChat() {
   if (!chatContainer) return;
   
   // Clear all messages except the welcome message
+  const currentModelConfig = AI_MODELS[nautilusAI.currentModel] || AI_MODELS['smart'];
   chatContainer.innerHTML = `
     <div style="background: rgba(125, 211, 192, 0.1); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 10px; padding: 15px;">
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -13523,9 +13573,11 @@ function clearAiChat() {
       </div>
       <div style="color: #cbd5e1; line-height: 1.6;">
         Hello! I'm your Nautilus AI Assistant. I can help you understand and navigate NautilusOS.<br><br>
-        <strong style="color: var(--accent);">⚡ Using: Dumb Fast</strong> - Quick responses. Switch to 🧠 Smart Slow for better quality.<br><br>
+        <strong style="color: var(--accent);"><i class="fas ${currentModelConfig.icon}"></i> Using: ${currentModelConfig.label}</strong> - ${currentModelConfig.description}<br><br>
         <strong style="color: var(--accent);">🤖 OS Automation Enabled!</strong><br>
         I can control NautilusOS for you! Just ask me to do something and I'll request your approval before taking action.<br><br>
+        <strong style="color: var(--accent);">💭 Thinking Mode Active!</strong><br>
+        I can show my reasoning process for complex tasks. Watch for the collapsible "Thinking" section!<br><br>
         Try: "Open calculator" or "List available themes"
       </div>
     </div>
@@ -13543,23 +13595,118 @@ function clearAiChat() {
 
 function parseToolCalls(text) {
   const toolCalls = [];
-  const regex = /<tool_call>([\s\S]*?)<\/tool_call>/g;
+  
+  // Method 1: Try to find tool calls wrapped in XML tags (preferred format)
+  const xmlRegex = /<tool_call>([\s\S]*?)<\/tool_call>/g;
   let match;
   
-  while ((match = regex.exec(text)) !== null) {
+  while ((match = xmlRegex.exec(text)) !== null) {
     try {
       const toolData = JSON.parse(match[1].trim());
-      toolCalls.push(toolData);
+      if (toolData.tool && toolData.parameters) {
+        toolCalls.push(toolData);
+      }
     } catch (e) {
-      console.error('Failed to parse tool call:', e);
+      console.error('Failed to parse XML-wrapped tool call:', e);
     }
   }
   
+  // Method 2: If no XML tags found, look for bare JSON objects with "tool" and "parameters"
+  if (toolCalls.length === 0) {
+    // Strategy: Find all potential JSON objects and validate them
+    // Look for patterns that start with { and contain "tool" key
+    const lines = text.split('\n');
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      
+      // Check if line looks like a tool call (starts with { and contains "tool")
+      if (line.startsWith('{') && line.includes('"tool"')) {
+        try {
+          // Try to parse the entire line as JSON
+          const toolData = JSON.parse(line);
+          if (toolData.tool && toolData.parameters && typeof toolData.parameters === 'object') {
+            toolCalls.push(toolData);
+          }
+        } catch (e) {
+          // If single line fails, try to find a complete JSON object across multiple lines
+          let jsonStr = line;
+          let braceCount = (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
+          
+          // Collect lines until braces are balanced
+          let j = i + 1;
+          while (braceCount > 0 && j < lines.length) {
+            jsonStr += '\n' + lines[j];
+            braceCount += (lines[j].match(/\{/g) || []).length;
+            braceCount -= (lines[j].match(/\}/g) || []).length;
+            j++;
+          }
+          
+          try {
+            const toolData = JSON.parse(jsonStr);
+            if (toolData.tool && toolData.parameters && typeof toolData.parameters === 'object') {
+              toolCalls.push(toolData);
+              i = j - 1; // Skip the lines we just processed
+            }
+          } catch (e2) {
+            // Not a valid tool call, continue
+          }
+        }
+      }
+    }
+  }
+  
+  console.log(`Parsed ${toolCalls.length} tool call(s):`, toolCalls);
   return toolCalls;
 }
 
 function removeToolCallsFromText(text) {
-  return text.replace(/<tool_call>[\s\S]*?<\/tool_call>/g, '').trim();
+  // Remove XML-wrapped tool calls
+  let cleaned = text.replace(/<tool_call>[\s\S]*?<\/tool_call>/g, '').trim();
+  
+  // Also remove bare JSON tool calls by parsing the same way
+  const lines = cleaned.split('\n');
+  const filteredLines = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Check if line looks like a tool call
+    if (line.startsWith('{') && line.includes('"tool"')) {
+      try {
+        const toolData = JSON.parse(line);
+        if (toolData.tool && toolData.parameters) {
+          continue; // Skip this line, it's a tool call
+        }
+      } catch (e) {
+        // Try multi-line parsing
+        let jsonStr = line;
+        let braceCount = (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
+        let j = i + 1;
+        
+        while (braceCount > 0 && j < lines.length) {
+          jsonStr += '\n' + lines[j];
+          braceCount += (lines[j].match(/\{/g) || []).length;
+          braceCount -= (lines[j].match(/\}/g) || []).length;
+          j++;
+        }
+        
+        try {
+          const toolData = JSON.parse(jsonStr);
+          if (toolData.tool && toolData.parameters) {
+            i = j - 1; // Skip all these lines
+            continue;
+          }
+        } catch (e2) {
+          // Not a tool call, keep the line
+        }
+      }
+    }
+    
+    filteredLines.push(lines[i]);
+  }
+  
+  return filteredLines.join('\n').trim();
 }
 
 async function executeToolCall(toolCall) {
