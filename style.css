@@ -6992,3 +6992,84 @@ select {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* ========== PYTHON INTERPRETER STYLES ========== */
+
+.python-interpreter {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--bg-primary);
+}
+
+.python-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(30, 35, 48, 0.6);
+    border-bottom: 1px solid var(--border);
+}
+
+.python-editor-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.python-editor-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+}
+
+.python-output-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: rgba(10, 14, 26, 0.8);
+}
+
+.python-section-header {
+    padding: 0.75rem 1rem;
+    background: rgba(30, 35, 48, 0.6);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    font-family: fontb;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.python-code-editor {
+    flex: 1;
+    width: 100%;
+    padding: 1rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: none;
+    outline: none;
+    font-family: "SUSE Mono", monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    resize: none;
+    tab-size: 4;
+}
+
+.python-output {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    font-family: "SUSE Mono", monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.python-output-line {
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
