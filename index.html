@@ -17,11 +17,8 @@
     <script src="/uv/uv.config.js"></script>
     <script src="/uv/uv.sw.js"></script>
     <script src="/baremux/index.js"></script>
-<<<<<<< HEAD
     <script src="v86/cache-detector.js"></script>
-=======
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
->>>>>>> 00f18e4 (Snake AI PPO game)
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://unpkg.com/open-props">
     <link rel="stylesheet" href="https://unpkg.com/open-props/normalize.min.css">
@@ -419,8 +416,11 @@
             <div class="desktop-icon" ondblclick="openApp('ai-snake')" data-app="ai-snake">
                 <i class="fas fa-brain"></i> <span>AI Snake Learning</span>
             </div>
+            <div class="desktop-icon" ondblclick="openApp('nautilus-ai')" data-app="nautilus-ai">
+                <i class="fas fa-robot"></i> <span>Nautilus AI Assistant</span>
+            </div>
         </div>
-        <div class="taskbar">
+        <div id="taskbar" class="taskbar">
             <div class="taskbar-icon" onclick="toggleStartMenu()">
                 <i class="fas fa-fish"></i>
             </div>
