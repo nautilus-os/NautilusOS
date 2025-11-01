@@ -52,13 +52,13 @@ Basically... a whole little OS in your browser :D
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Window animation settings
-- [ ] Make taskbar autohide
+- [x] Make taskbar autohide
 - [ ] Add previews to all apps and themes
 - [ ] Make music player search with itunes and play with ub youtube
 - [ ] Add a scramjet proxy (xor)
 - [ ] Wisp server selection (xor)
 - [x] Fix [object promise] bug when creating new folder
-- [ ] Multiple accounts
+- [x] Multiple accounts
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
