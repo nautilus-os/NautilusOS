@@ -4339,12 +4339,31 @@ alt="favicon">
           </div>
           
           <div style="background: rgba(15, 23, 42, 0.5); border-bottom: 1px solid rgba(125, 211, 192, 0.2); padding: 8px 20px;">
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #64748b;">
-              <i class="fas fa-microchip" style="color: var(--accent);"></i>
-              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                <input type="checkbox" id="aiWebGPUToggle" style="cursor: pointer;">
-                <span>Use WebGPU (Faster)</span>
-              </label>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 11px; color: #64748b;">
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-robot" style="color: var(--accent);"></i>
+                  <span>Model:</span>
+                  <select id="aiModelSelect" onchange="switchAIModel(this.value)" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 4px; padding: 4px 8px; color: var(--accent); cursor: pointer; font-size: 11px;">
+                    <option value="fast" selected>⚡ Dumb Fast</option>
+                    <option value="smart">🧠 Smart Slow</option>
+                  </select>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-microchip" style="color: var(--accent);"></i>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="aiWebGPUToggle" checked style="cursor: pointer;">
+                    <span>WebGPU</span>
+                  </label>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-cogs" style="color: var(--accent);"></i>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="checkbox" id="aiAutomationToggle" checked style="cursor: pointer;" onchange="nautilusAI.toolsEnabled = this.checked; showToast(this.checked ? 'OS Automation Enabled' : 'OS Automation Disabled', 'fa-cogs');">
+                  <span style="color: var(--accent); font-weight: bold;">🤖 Automation</span>
+                </label>
+              </div>
             </div>
           </div>
           
@@ -4355,7 +4374,12 @@ alt="favicon">
                 <strong style="color: var(--accent);">Nautilus AI</strong>
               </div>
               <div style="color: #cbd5e1; line-height: 1.6;">
-                Hello! I'm your Nautilus AI Assistant powered by Qwen3-0.6B. I can help you understand and navigate NautilusOS. Ask me about features, apps, settings, file management, or anything else about the operating system!
+                Hello! I'm your Nautilus AI Assistant. I can help you understand and navigate NautilusOS.<br><br>
+                <strong style="color: var(--accent);">⚡ Model: Dumb Fast (SmolLM2-360M)</strong><br>
+                Quick responses, less accurate. Switch to 🧠 Smart Slow for better quality.<br><br>
+                <strong style="color: var(--accent);">🤖 OS Automation Enabled!</strong><br>
+                I can control NautilusOS for you! I can open apps, run terminal commands, manage files, change settings, and more. Just ask me to do something and I'll request your approval before taking action.<br><br>
+                Try: "Open calculator" or "Change theme to blue"
               </div>
             </div>
           </div>
@@ -12653,10 +12677,244 @@ let nautilusAI = {
   messages: [],
   isInitialized: false,
   isInitializing: false,
-  isGenerating: false
+  isGenerating: false,
+  pendingTools: [],
+  toolsEnabled: true,
+  actionLog: [],
+  currentModel: 'fast' // 'fast' or 'smart'
+};
+
+const AI_MODELS = {
+  fast: {
+    name: 'SmolLM2-360M-Instruct-q4f16_1-MLC',
+    label: 'Dumb Fast',
+    description: 'Quick responses, less accurate',
+    icon: 'fa-bolt'
+  },
+  smart: {
+    name: 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',
+    label: 'Smart Slow',
+    description: 'Better responses, takes longer',
+    icon: 'fa-brain'
+  }
+};
+
+// OS Automation Tools - Available for AI to control the OS
+const OS_AUTOMATION_TOOLS = {
+  open_app: {
+    name: "open_app",
+    description: "Open an application in NautilusOS",
+    parameters: {
+      app_name: "string - Name of the app (e.g., 'files', 'terminal', 'settings', 'browser', 'editor', 'music', 'photos', 'calculator', 'appstore', 'cloaking', 'achievements', 'ai-snake')",
+      reason: "string - Why this app needs to be opened"
+    }
+  },
+  close_app: {
+    name: "close_app",
+    description: "Close a currently open application window",
+    parameters: {
+      app_name: "string - Name of the app to close",
+      reason: "string - Why this app needs to be closed"
+    }
+  },
+  run_terminal_command: {
+    name: "run_terminal_command",
+    description: "Execute a terminal command in NautilusOS",
+    parameters: {
+      command: "string - The terminal command to execute (e.g., 'ls', 'apps', 'help', 'date', 'whoami', 'clear')",
+      reason: "string - Why this command needs to be executed"
+    }
+  },
+  create_file: {
+    name: "create_file",
+    description: "Create a new file in the file system",
+    parameters: {
+      path: "string - Full path including filename (e.g., '/documents/note.txt')",
+      content: "string - Content to write to the file",
+      reason: "string - Why this file needs to be created"
+    }
+  },
+  read_file: {
+    name: "read_file",
+    description: "Read the contents of a file",
+    parameters: {
+      path: "string - Full path to the file to read",
+      reason: "string - Why this file needs to be read"
+    }
+  },
+  create_folder: {
+    name: "create_folder",
+    description: "Create a new folder in the file system",
+    parameters: {
+      path: "string - Full path of the folder to create",
+      reason: "string - Why this folder needs to be created"
+    }
+  },
+  delete_item: {
+    name: "delete_item",
+    description: "Delete a file or folder",
+    parameters: {
+      path: "string - Full path to the item to delete",
+      reason: "string - Why this item needs to be deleted"
+    }
+  },
+  take_screenshot: {
+    name: "take_screenshot",
+    description: "Capture a screenshot of the desktop",
+    parameters: {
+      reason: "string - Why a screenshot is needed"
+    }
+  },
+  change_setting: {
+    name: "change_setting",
+    description: "Change a system setting",
+    parameters: {
+      setting: "string - The setting to change (e.g., 'theme')",
+      value: "string - The new value for the setting",
+      reason: "string - Why this setting needs to be changed"
+    }
+  },
+  list_apps: {
+    name: "list_apps",
+    description: "List all installed applications",
+    parameters: {
+      reason: "string - Why you need to list apps"
+    }
+  },
+  list_files: {
+    name: "list_files",
+    description: "List files and folders in a directory",
+    parameters: {
+      path: "string - Directory path to list (default: '/')",
+      reason: "string - Why you need to list this directory"
+    }
+  },
+  get_system_info: {
+    name: "get_system_info",
+    description: "Get current system information (open apps, username, uptime, etc.)",
+    parameters: {
+      reason: "string - Why you need system information"
+    }
+  },
+  get_available_options: {
+    name: "get_available_options",
+    description: "Get available options for settings (themes, search engines, etc.) - USE THIS FIRST before changing settings!",
+    parameters: {
+      category: "string - Category to query: 'themes', 'apps', 'search_engines', 'settings', 'all'",
+      reason: "string - Why you need this information"
+    }
+  }
 };
 
 const NAUTILUS_SYSTEM_PROMPT = `You are the Nautilus AI Assistant, an expert guide for NautilusOS - a web-based operating system built entirely in HTML, CSS, and JavaScript.
+
+🤖 OS AUTOMATION CAPABILITIES:
+You have the ability to control and automate NautilusOS! You can execute actions on behalf of the user with their approval.
+
+IMPORTANT: When you want to perform an action, use this EXACT format in your response:
+
+<tool_call>
+{
+  "tool": "tool_name_here",
+  "parameters": {
+    "param1": "value1",
+    "param2": "value2"
+  }
+}
+</tool_call>
+
+Available tools:
+${Object.keys(OS_AUTOMATION_TOOLS).map(toolName => {
+  const tool = OS_AUTOMATION_TOOLS[toolName];
+  return `- ${tool.name}: ${tool.description}\n  Parameters: ${JSON.stringify(tool.parameters, null, 2)}`;
+}).join('\n\n')}
+
+TOOL USAGE GUIDELINES:
+1. Always explain what you're about to do BEFORE the tool call
+2. **IMPORTANT: Use get_available_options FIRST before changing settings!** Query available themes, apps, search engines, etc.
+3. Use tool calls when they would be helpful (e.g., if user asks to open an app, use open_app)
+4. You can make multiple tool calls in one response if needed
+5. Always provide a clear "reason" parameter explaining why the action is needed
+6. After making a tool call, explain what you did and what the result was
+7. The user must approve each action - they will see a confirmation dialog
+8. Tool results will be provided to you in a follow-up message
+
+CRITICAL FOR SETTINGS:
+- Before changing theme → use get_available_options with category='themes' to see installed themes
+- Before changing search engine → use get_available_options with category='search_engines'
+- For other settings → use get_available_options with category='settings'
+- This prevents errors from using invalid values!
+
+EXAMPLE CONVERSATIONS:
+
+Example 1 - Opening an app:
+User: "Can you open the calculator app for me?"
+You: "I'll open the Calculator app for you right away!
+
+<tool_call>
+{
+  "tool": "open_app",
+  "parameters": {
+    "app_name": "calculator",
+    "reason": "User requested to open the calculator"
+  }
+}
+</tool_call>
+
+The calculator should now be opening on your screen."
+
+Example 2 - Changing theme (CORRECT way):
+User: "Change the theme to blue"
+You: "I'll check what themes are available and change it to blue!
+
+<tool_call>
+{
+  "tool": "get_available_options",
+  "parameters": {
+    "category": "themes",
+    "reason": "Need to verify blue theme is installed before changing"
+  }
+}
+</tool_call>
+
+Once I confirm the blue theme is installed, I'll change it for you."
+
+[After getting results showing blue is installed]
+
+<tool_call>
+{
+  "tool": "change_setting",
+  "parameters": {
+    "setting": "theme",
+    "value": "blue",
+    "reason": "User requested blue theme, confirmed it's installed"
+  }
+}
+</tool_call>
+
+Example 3 - Multiple actions:
+User: "Open terminal and run the date command"
+You: "I'll open the terminal and run the date command!
+
+<tool_call>
+{
+  "tool": "open_app",
+  "parameters": {
+    "app_name": "terminal",
+    "reason": "Need terminal open to run command"
+  }
+}
+</tool_call>
+
+<tool_call>
+{
+  "tool": "run_terminal_command",
+  "parameters": {
+    "command": "date",
+    "reason": "User wants to see current date"
+  }
+}
+</tool_call>"
 
 CORE KNOWLEDGE ABOUT NAUTILUSOS:
 
@@ -12821,8 +13079,13 @@ When helping users:
 
 Your goal is to make users feel confident and excited about using NautilusOS!`;
 
-async function initializeNautilusAI() {
-  if (nautilusAI.isInitialized || nautilusAI.isInitializing) return;
+async function initializeNautilusAI(modelKey = null) {
+  if (nautilusAI.isInitializing) return;
+  
+  // Allow re-initialization with different model
+  const isModelSwitch = nautilusAI.isInitialized && modelKey !== null;
+  
+  if (nautilusAI.isInitialized && !isModelSwitch) return;
   
   nautilusAI.isInitializing = true;
   const statusEl = document.getElementById('aiStatus');
@@ -12830,9 +13093,13 @@ async function initializeNautilusAI() {
   const inputEl = document.getElementById('aiInput');
   
   try {
-    updateAiStatus('Loading WebLLM library...', true);
+    // Use selected model or current model
+    const selectedModel = modelKey || nautilusAI.currentModel;
+    const modelConfig = AI_MODELS[selectedModel];
     
-    // Load WebLLM from CDN with ES modules support
+    updateAiStatus(`Loading WebLLM library...`, true);
+    
+    // Load WebLLM from CDN with ES modules support (only once)
     if (!window.mlcai) {
       await new Promise((resolve, reject) => {
         const script = document.createElement('script');
@@ -12851,7 +13118,7 @@ async function initializeNautilusAI() {
             clearInterval(checkInterval);
             resolve();
           }
-        }, 100);
+        }, 50); // Reduced from 100ms for faster check
         
         // Timeout after 10 seconds
         setTimeout(() => {
@@ -12863,28 +13130,51 @@ async function initializeNautilusAI() {
       });
     }
     
-    updateAiStatus('Initializing Qwen3-0.6B model (downloading first time)...', true);
+    updateAiStatus(`Initializing ${modelConfig.label} model...`, true);
     
     const { CreateMLCEngine } = window.mlcai;
     
-    // Check WebGPU toggle
-    const useWebGPU = document.getElementById('aiWebGPUToggle')?.checked || false;
+    // Check WebGPU toggle (default to true for speed)
+    const useWebGPU = document.getElementById('aiWebGPUToggle')?.checked !== false;
     
-    nautilusAI.engine = await CreateMLCEngine("Qwen3-0.6B-q4f16_1-MLC", {
+    // Dispose old engine if switching models
+    if (isModelSwitch && nautilusAI.engine) {
+      try {
+        await nautilusAI.engine.unload();
+      } catch (e) {
+        console.warn('Error unloading previous model:', e);
+      }
+    }
+    
+    // Create engine with optimizations for faster first token
+    nautilusAI.engine = await CreateMLCEngine(modelConfig.name, {
       initProgressCallback: (progress) => {
-        updateAiStatus(`Loading model: ${Math.round(progress.progress * 100)}%`, true);
+        updateAiStatus(`Loading ${modelConfig.label}: ${Math.round(progress.progress * 100)}%`, true);
       },
-      useWebGPU: useWebGPU
+      useWebGPU: useWebGPU,
+      // Optimizations for faster initialization
+      logLevel: 'ERROR' // Reduce logging overhead
     });
     
-    // Initialize conversation with system prompt
-    nautilusAI.messages = [
-      { role: "system", content: NAUTILUS_SYSTEM_PROMPT }
-    ];
+    // Reset or preserve conversation history
+    if (isModelSwitch) {
+      // Keep conversation history when switching models
+      const oldMessages = nautilusAI.messages.filter(m => m.role !== 'system');
+      nautilusAI.messages = [
+        { role: "system", content: NAUTILUS_SYSTEM_PROMPT },
+        ...oldMessages
+      ];
+    } else {
+      // Fresh start
+      nautilusAI.messages = [
+        { role: "system", content: NAUTILUS_SYSTEM_PROMPT }
+      ];
+    }
     
+    nautilusAI.currentModel = selectedModel;
     nautilusAI.isInitialized = true;
     nautilusAI.isInitializing = false;
-    updateAiStatus('AI Assistant Ready', false);
+    updateAiStatus(`${modelConfig.label} Ready`, false);
     
     if (sendBtn) sendBtn.disabled = false;
     if (inputEl) {
@@ -12892,7 +13182,11 @@ async function initializeNautilusAI() {
       inputEl.focus();
     }
     
-    showToast('Nautilus AI Assistant is ready!', 'fa-robot');
+    if (isModelSwitch) {
+      showToast(`Switched to ${modelConfig.label}`, modelConfig.icon);
+    } else {
+      showToast(`${modelConfig.label} is ready!`, 'fa-robot');
+    }
     
   } catch (error) {
     console.error('Failed to initialize Nautilus AI:', error);
@@ -12904,6 +13198,24 @@ async function initializeNautilusAI() {
     if (sendBtn) sendBtn.disabled = false;
     if (inputEl) inputEl.disabled = false;
   }
+}
+
+async function switchAIModel(modelKey) {
+  if (nautilusAI.isGenerating) {
+    showToast('Cannot switch models while generating response', 'fa-exclamation-circle');
+    // Reset select to current model
+    const select = document.getElementById('aiModelSelect');
+    if (select) select.value = nautilusAI.currentModel;
+    return;
+  }
+  
+  if (modelKey === nautilusAI.currentModel) return;
+  
+  const modelConfig = AI_MODELS[modelKey];
+  updateAiStatus(`Switching to ${modelConfig.label}...`, true);
+  
+  nautilusAI.isInitialized = false;
+  await initializeNautilusAI(modelKey);
 }
 
 function updateAiStatus(message, loading = false, error = false) {
@@ -12993,12 +13305,17 @@ async function sendAiMessage() {
     chatContainer.appendChild(messageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
     
-    // Generate response with streaming
+    // Generate response with streaming - optimized settings based on model
+    const isFastModel = nautilusAI.currentModel === 'fast';
     const completion = await nautilusAI.engine.chat.completions.create({
       messages: nautilusAI.messages,
-      temperature: 0.7,
-      max_tokens: 4096,
+      temperature: isFastModel ? 0.5 : 0.7, // Lower temp for faster model = more focused
+      max_tokens: isFastModel ? 2048 : 4096, // Fewer tokens for fast model
       stream: true,
+      // Optimizations for faster first token
+      top_p: isFastModel ? 0.9 : 0.95,
+      frequency_penalty: 0,
+      presence_penalty: 0
     });
     
     let fullResponse = '';
@@ -13090,6 +13407,55 @@ async function sendAiMessage() {
     // Add AI response to conversation history
     nautilusAI.messages.push({ role: "assistant", content: fullResponse });
     
+    // Process tool calls if any
+    const toolCalls = parseToolCalls(fullResponse);
+    if (toolCalls.length > 0 && nautilusAI.toolsEnabled) {
+      updateAiStatus('Processing tool calls...', true);
+      
+      // Remove tool call tags from visible text
+      const cleanedText = removeToolCallsFromText(fullResponse);
+      textDiv.textContent = cleanedText;
+      
+      // Process each tool call with user approval
+      for (const toolCall of toolCalls) {
+        await new Promise((resolve) => {
+          showToolApprovalDialog(
+            toolCall,
+            async () => {
+              // User approved - execute the tool
+              updateAiStatus(`Executing: ${toolCall.tool}...`, true);
+              const result = await executeToolCall(toolCall);
+              addToolFeedbackToChat(toolCall, result);
+              
+              // Add tool result to conversation for AI context
+              nautilusAI.messages.push({
+                role: "user",
+                content: `[Tool Execution Result]\nTool: ${toolCall.tool}\nSuccess: ${result.success}\nMessage: ${result.message}\n${result.details ? 'Details: ' + result.details : ''}`
+              });
+              
+              resolve();
+            },
+            () => {
+              // User rejected - show feedback
+              addToolFeedbackToChat(toolCall, {
+                success: false,
+                message: `⛔ Action rejected by user`,
+                details: `The ${toolCall.tool} action was not executed.`
+              });
+              
+              // Inform AI that tool was rejected
+              nautilusAI.messages.push({
+                role: "user",
+                content: `[Tool Execution Result]\nTool: ${toolCall.tool}\nSuccess: false\nMessage: User rejected this action`
+              });
+              
+              resolve();
+            }
+          );
+        });
+      }
+    }
+    
     updateAiStatus('AI Assistant Ready', false);
     
   } catch (error) {
@@ -13156,7 +13522,11 @@ function clearAiChat() {
         <strong style="color: var(--accent);">Nautilus AI</strong>
       </div>
       <div style="color: #cbd5e1; line-height: 1.6;">
-        Hello! I'm your Nautilus AI Assistant powered by Qwen3-0.6B. I can help you understand and navigate NautilusOS. Ask me about features, apps, settings, file management, or anything else about the operating system!
+        Hello! I'm your Nautilus AI Assistant. I can help you understand and navigate NautilusOS.<br><br>
+        <strong style="color: var(--accent);">⚡ Using: Dumb Fast</strong> - Quick responses. Switch to 🧠 Smart Slow for better quality.<br><br>
+        <strong style="color: var(--accent);">🤖 OS Automation Enabled!</strong><br>
+        I can control NautilusOS for you! Just ask me to do something and I'll request your approval before taking action.<br><br>
+        Try: "Open calculator" or "List available themes"
       </div>
     </div>
   `;
@@ -13167,6 +13537,732 @@ function clearAiChat() {
   ];
   
   showToast('Chat cleared', 'fa-trash');
+}
+
+// ==================== OS Automation Tool Execution ====================
+
+function parseToolCalls(text) {
+  const toolCalls = [];
+  const regex = /<tool_call>([\s\S]*?)<\/tool_call>/g;
+  let match;
+  
+  while ((match = regex.exec(text)) !== null) {
+    try {
+      const toolData = JSON.parse(match[1].trim());
+      toolCalls.push(toolData);
+    } catch (e) {
+      console.error('Failed to parse tool call:', e);
+    }
+  }
+  
+  return toolCalls;
+}
+
+function removeToolCallsFromText(text) {
+  return text.replace(/<tool_call>[\s\S]*?<\/tool_call>/g, '').trim();
+}
+
+async function executeToolCall(toolCall) {
+  const { tool, parameters } = toolCall;
+  
+  logAction(`Executing tool: ${tool}`, parameters);
+  
+  try {
+    switch(tool) {
+      case 'open_app':
+        return await executeTool_OpenApp(parameters);
+      case 'close_app':
+        return await executeTool_CloseApp(parameters);
+      case 'run_terminal_command':
+        return await executeTool_RunTerminalCommand(parameters);
+      case 'create_file':
+        return await executeTool_CreateFile(parameters);
+      case 'read_file':
+        return await executeTool_ReadFile(parameters);
+      case 'create_folder':
+        return await executeTool_CreateFolder(parameters);
+      case 'delete_item':
+        return await executeTool_DeleteItem(parameters);
+      case 'take_screenshot':
+        return await executeTool_TakeScreenshot(parameters);
+      case 'change_setting':
+        return await executeTool_ChangeSetting(parameters);
+      case 'list_apps':
+        return await executeTool_ListApps(parameters);
+      case 'list_files':
+        return await executeTool_ListFiles(parameters);
+      case 'get_system_info':
+        return await executeTool_GetSystemInfo(parameters);
+      case 'get_available_options':
+        return await executeTool_GetAvailableOptions(parameters);
+      default:
+        return { success: false, message: `Unknown tool: ${tool}` };
+    }
+  } catch (error) {
+    return { success: false, message: `Error executing ${tool}: ${error.message}` };
+  }
+}
+
+// Tool execution functions
+function executeTool_OpenApp(params) {
+  const { app_name } = params;
+  openApp(app_name);
+  return { 
+    success: true, 
+    message: `✅ Opened ${app_name} application`,
+    details: `The ${app_name} app is now open and visible on your screen.`
+  };
+}
+
+function executeTool_CloseApp(params) {
+  const { app_name } = params;
+  const windows = document.querySelectorAll('.window');
+  let closed = false;
+  
+  windows.forEach(win => {
+    const title = win.querySelector('.window-title')?.textContent?.toLowerCase();
+    if (title && title.includes(app_name.toLowerCase())) {
+      win.remove();
+      closed = true;
+    }
+  });
+  
+  if (closed) {
+    return { 
+      success: true, 
+      message: `✅ Closed ${app_name} application`,
+      details: `The ${app_name} window has been closed.`
+    };
+  } else {
+    return { 
+      success: false, 
+      message: `⚠️ Could not find open ${app_name} window`,
+      details: `No window with that app name was found.`
+    };
+  }
+}
+
+function executeTool_RunTerminalCommand(params) {
+  const { command } = params;
+  
+  // Open terminal if not already open
+  const terminalOpen = Array.from(document.querySelectorAll('.window')).some(
+    win => win.querySelector('.window-title')?.textContent?.includes('Terminal')
+  );
+  
+  if (!terminalOpen) {
+    openApp('terminal');
+  }
+  
+  // Wait a bit for terminal to open, then execute command
+  setTimeout(() => {
+    const terminalInput = document.querySelector('#terminalInput');
+    const terminal = document.getElementById('terminalContent');
+    
+    if (terminalInput && terminal) {
+      // Add command to terminal display
+      const cmdLine = document.createElement('div');
+      cmdLine.className = 'terminal-line';
+      cmdLine.innerHTML = `<span class="terminal-prompt">user@nautilusos:~$ </span>${command}`;
+      terminal.insertBefore(cmdLine, terminal.lastElementChild);
+      
+      // Execute the command logic (simplified version)
+      const output = document.createElement('div');
+      output.className = 'terminal-line';
+      
+      if (command === 'help') {
+        output.innerHTML = "Available commands:<br>help, ls, apps, themes, clear, date, whoami, reset-boot, echo";
+      } else if (command === 'date') {
+        output.textContent = new Date().toString();
+      } else if (command === 'whoami') {
+        output.textContent = localStorage.getItem('nOS_username') || 'user';
+      } else if (command === 'apps') {
+        output.innerHTML = '<span style="color: var(--accent);">Installed Applications:</span><br>Files, Terminal, Browser, Settings, Text Editor, Music, Photos, Calculator, App Store';
+      } else {
+        output.textContent = `Executed: ${command}`;
+      }
+      
+      terminal.insertBefore(output, terminal.lastElementChild);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+  }, 300);
+  
+  return { 
+    success: true, 
+    message: `✅ Executed terminal command: ${command}`,
+    details: `Command "${command}" was executed in the terminal.`
+  };
+}
+
+function executeTool_CreateFile(params) {
+  const { path, content } = params;
+  
+  try {
+    const parts = path.split('/').filter(p => p);
+    const filename = parts.pop();
+    const folderPath = '/' + parts.join('/');
+    
+    let currentLevel = fileSystem;
+    for (const part of parts) {
+      if (!currentLevel[part]) {
+        currentLevel[part] = { type: 'folder', children: {} };
+      }
+      currentLevel = currentLevel[part].children;
+    }
+    
+    currentLevel[filename] = { 
+      type: 'file', 
+      content: content,
+      modified: new Date().toISOString()
+    };
+    
+    saveFileSystem();
+    
+    return { 
+      success: true, 
+      message: `✅ Created file: ${path}`,
+      details: `File created with ${content.length} characters of content.`
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      message: `❌ Failed to create file: ${error.message}`,
+      details: error.message
+    };
+  }
+}
+
+function executeTool_ReadFile(params) {
+  const { path } = params;
+  
+  try {
+    const parts = path.split('/').filter(p => p);
+    let currentLevel = fileSystem;
+    
+    for (const part of parts) {
+      if (!currentLevel[part]) {
+        throw new Error('File not found');
+      }
+      if (currentLevel[part].type === 'folder') {
+        currentLevel = currentLevel[part].children;
+      } else {
+        currentLevel = currentLevel[part];
+        break;
+      }
+    }
+    
+    if (currentLevel.type !== 'file') {
+      throw new Error('Path is not a file');
+    }
+    
+    return { 
+      success: true, 
+      message: `✅ Read file: ${path}`,
+      details: `File content:\n${currentLevel.content || '(empty file)'}`
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      message: `❌ Failed to read file: ${error.message}`,
+      details: error.message
+    };
+  }
+}
+
+function executeTool_CreateFolder(params) {
+  const { path } = params;
+  
+  try {
+    const parts = path.split('/').filter(p => p);
+    let currentLevel = fileSystem;
+    
+    for (const part of parts) {
+      if (!currentLevel[part]) {
+        currentLevel[part] = { type: 'folder', children: {} };
+      }
+      currentLevel = currentLevel[part].children;
+    }
+    
+    saveFileSystem();
+    
+    return { 
+      success: true, 
+      message: `✅ Created folder: ${path}`,
+      details: `Folder created successfully.`
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      message: `❌ Failed to create folder: ${error.message}`,
+      details: error.message
+    };
+  }
+}
+
+function executeTool_DeleteItem(params) {
+  const { path } = params;
+  
+  try {
+    const parts = path.split('/').filter(p => p);
+    const itemName = parts.pop();
+    
+    let currentLevel = fileSystem;
+    for (const part of parts) {
+      if (!currentLevel[part]) {
+        throw new Error('Path not found');
+      }
+      currentLevel = currentLevel[part].children;
+    }
+    
+    if (!currentLevel[itemName]) {
+      throw new Error('Item not found');
+    }
+    
+    delete currentLevel[itemName];
+    saveFileSystem();
+    
+    return { 
+      success: true, 
+      message: `✅ Deleted: ${path}`,
+      details: `Item deleted successfully.`
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      message: `❌ Failed to delete item: ${error.message}`,
+      details: error.message
+    };
+  }
+}
+
+function executeTool_TakeScreenshot(params) {
+  takeScreenshot();
+  return { 
+    success: true, 
+    message: `✅ Screenshot captured`,
+    details: `Screenshot has been saved to your downloads.`
+  };
+}
+
+function executeTool_ChangeSetting(params) {
+  const { setting, value } = params;
+  
+  try {
+    // Theme setting
+    if (setting === 'theme') {
+      // Check if theme is installed
+      if (!installedThemes.includes(value) && value !== 'dark') {
+        return {
+          success: false,
+          message: `❌ Theme '${value}' is not installed`,
+          details: `Available themes: dark, ${installedThemes.join(', ')}. Use get_available_options to see all themes.`
+        };
+      }
+      
+      const themeLink = document.getElementById('themeLink');
+      if (themeLink) {
+        themeLink.href = value === 'dark' ? '' : `/themes/${value}.css`;
+        localStorage.setItem('nOS_selectedTheme', value);
+        return { 
+          success: true, 
+          message: `✅ Changed theme to: ${value}`,
+          details: `Theme has been applied successfully.`
+        };
+      }
+    }
+    
+    // Search engine setting
+    if (setting === 'search_engine' || setting === 'searchEngine') {
+      const searchEngines = {
+        'brave': 'https://search.brave.com/search?q=',
+        'duckduckgo': 'https://duckduckgo.com/?q=',
+        'google': 'https://www.google.com/search?q=',
+        'bing': 'https://www.bing.com/search?q=',
+        'startpage': 'https://www.startpage.com/search?q=',
+        'qwant': 'https://www.qwant.com/?q='
+      };
+      
+      const engineUrl = searchEngines[value.toLowerCase()];
+      if (!engineUrl) {
+        return {
+          success: false,
+          message: `❌ Unknown search engine: ${value}`,
+          details: `Available: ${Object.keys(searchEngines).join(', ')}`
+        };
+      }
+      
+      localStorage.setItem('nOS_searchEngine', engineUrl);
+      return {
+        success: true,
+        message: `✅ Changed search engine to: ${value}`,
+        details: `Default search engine updated.`
+      };
+    }
+    
+    // Boolean settings (use12Hour, showSeconds, showDesktopIcons, showWhatsNew)
+    const booleanSettings = {
+      'use12Hour': 'nOS_use12Hour',
+      'showSeconds': 'nOS_showSeconds',
+      'showDesktopIcons': 'nOS_showDesktopIcons',
+      'showWhatsNew': 'nautilusOS_showWhatsNew'
+    };
+    
+    if (booleanSettings[setting]) {
+      const boolValue = value === 'true' || value === true;
+      localStorage.setItem(booleanSettings[setting], boolValue.toString());
+      
+      // Apply changes immediately
+      if (setting === 'showDesktopIcons') {
+        const icons = document.getElementById('desktopIcons');
+        if (icons) {
+          icons.style.display = boolValue ? 'grid' : 'none';
+        }
+      }
+      
+      return {
+        success: true,
+        message: `✅ Changed ${setting} to: ${boolValue}`,
+        details: `Setting updated. Some changes may require reopening apps.`
+      };
+    }
+    
+    // Wisp URL setting
+    if (setting === 'wispUrl' || setting === 'wisp_url') {
+      localStorage.setItem('nOS_wispUrl', value);
+      return {
+        success: true,
+        message: `✅ Changed Wisp URL to: ${value}`,
+        details: `Proxy configuration updated.`
+      };
+    }
+    
+    // Bare URL setting
+    if (setting === 'bareUrl' || setting === 'bare_url') {
+      localStorage.setItem('nOS_bareUrl', value);
+      return {
+        success: true,
+        message: `✅ Changed Bare URL to: ${value}`,
+        details: `Proxy configuration updated.`
+      };
+    }
+    
+    return { 
+      success: false, 
+      message: `❌ Unknown setting: ${setting}`,
+      details: `Use get_available_options with category 'settings' to see all available settings.`
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: `❌ Failed to change setting: ${error.message}`,
+      details: error.message
+    };
+  }
+}
+
+function executeTool_ListApps(params) {
+  const apps = Object.keys(appMetadata).map(key => {
+    const app = appMetadata[key];
+    return `${app.name} (${app.preinstalled ? 'preinstalled' : 'installed'})`;
+  }).join(', ');
+  
+  return { 
+    success: true, 
+    message: `✅ Listed all applications`,
+    details: `Available apps: ${apps}`
+  };
+}
+
+function executeTool_ListFiles(params) {
+  const { path = '/' } = params;
+  
+  try {
+    const parts = path.split('/').filter(p => p);
+    let currentLevel = fileSystem;
+    
+    for (const part of parts) {
+      if (!currentLevel[part]) {
+        throw new Error('Path not found');
+      }
+      currentLevel = currentLevel[part].children;
+    }
+    
+    const items = Object.keys(currentLevel).map(name => {
+      const item = currentLevel[name];
+      return `${name} (${item.type})`;
+    }).join(', ');
+    
+    return { 
+      success: true, 
+      message: `✅ Listed contents of ${path}`,
+      details: `Contents: ${items || '(empty)'}`
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      message: `❌ Failed to list files: ${error.message}`,
+      details: error.message
+    };
+  }
+}
+
+function executeTool_GetSystemInfo(params) {
+  const username = localStorage.getItem('nOS_username') || 'user';
+  const openWindows = document.querySelectorAll('.window').length;
+  const theme = localStorage.getItem('nOS_selectedTheme') || 'default';
+  
+  const info = {
+    username,
+    openWindows,
+    theme,
+    browser: navigator.userAgent.split(' ').pop(),
+    timestamp: new Date().toLocaleString()
+  };
+  
+  return { 
+    success: true, 
+    message: `✅ Retrieved system information`,
+    details: `User: ${info.username}\nOpen windows: ${info.openWindows}\nTheme: ${info.theme}\nBrowser: ${info.browser}\nTime: ${info.timestamp}`
+  };
+}
+
+function executeTool_GetAvailableOptions(params) {
+  const { category = 'all' } = params;
+  
+  const options = {
+    themes: {
+      installed: ['dark', ...installedThemes],
+      available: ['dark', 'light', 'blue', 'red', 'purple', 'golden', 'green', 'liquidGlass'],
+      current: localStorage.getItem('nOS_selectedTheme') || 'dark',
+      description: 'Available color themes for NautilusOS. Themes must be installed from App Store before use.'
+    },
+    
+    search_engines: {
+      available: ['brave', 'duckduckgo', 'google', 'bing', 'startpage', 'qwant'],
+      current: localStorage.getItem('nOS_searchEngine') || 'https://search.brave.com/search?q=',
+      description: 'Available search engines for the browser'
+    },
+    
+    settings: {
+      boolean: {
+        use12Hour: {
+          current: localStorage.getItem('nOS_use12Hour') === 'true',
+          description: 'Use 12-hour time format (true/false)',
+          values: ['true', 'false']
+        },
+        showSeconds: {
+          current: localStorage.getItem('nOS_showSeconds') === 'true',
+          description: 'Show seconds in taskbar clock (true/false)',
+          values: ['true', 'false']
+        },
+        showDesktopIcons: {
+          current: localStorage.getItem('nOS_showDesktopIcons') !== 'false',
+          description: 'Show icons on desktop (true/false)',
+          values: ['true', 'false']
+        },
+        showWhatsNew: {
+          current: localStorage.getItem('nautilusOS_showWhatsNew') !== 'false',
+          description: 'Show What\'s New on startup (true/false)',
+          values: ['true', 'false']
+        }
+      },
+      urls: {
+        wispUrl: {
+          current: localStorage.getItem('nOS_wispUrl') || 'wss://webmath.help/wisp/',
+          description: 'Wisp proxy URL for browser'
+        },
+        bareUrl: {
+          current: localStorage.getItem('nOS_bareUrl') || 'https://useclassplay.vercel.app/fq/',
+          description: 'Bare proxy URL for browser'
+        }
+      },
+      description: 'System settings that can be changed'
+    },
+    
+    apps: {
+      available: Object.keys(appMetadata).map(key => ({
+        id: key,
+        name: appMetadata[key].name,
+        preinstalled: appMetadata[key].preinstalled
+      })),
+      description: 'All available applications in NautilusOS'
+    }
+  };
+  
+  let result = '';
+  
+  if (category === 'all') {
+    result = JSON.stringify(options, null, 2);
+  } else if (category === 'themes') {
+    result = `THEMES:\n` +
+            `Installed: ${options.themes.installed.join(', ')}\n` +
+            `Available to install: ${options.themes.available.filter(t => !options.themes.installed.includes(t)).join(', ')}\n` +
+            `Current: ${options.themes.current}\n` +
+            `Note: To use a theme, it must first be installed from the App Store.`;
+  } else if (category === 'search_engines') {
+    result = `SEARCH ENGINES:\n` +
+            `Available: ${options.search_engines.available.join(', ')}\n` +
+            `Current: ${options.search_engines.current}`;
+  } else if (category === 'settings') {
+    result = `SETTINGS:\n\n` +
+            `Boolean Settings:\n`;
+    for (const [key, val] of Object.entries(options.settings.boolean)) {
+      result += `  ${key}: ${val.description}\n    Current: ${val.current}\n    Values: ${val.values.join(', ')}\n`;
+    }
+    result += `\nURL Settings:\n`;
+    for (const [key, val] of Object.entries(options.settings.urls)) {
+      result += `  ${key}: ${val.description}\n    Current: ${val.current}\n`;
+    }
+  } else if (category === 'apps') {
+    result = `APPS (${options.apps.available.length} total):\n`;
+    options.apps.available.forEach(app => {
+      result += `  ${app.id}: ${app.name} (${app.preinstalled ? 'preinstalled' : 'installed'})\n`;
+    });
+  } else {
+    return {
+      success: false,
+      message: `❌ Unknown category: ${category}`,
+      details: `Valid categories: themes, apps, search_engines, settings, all`
+    };
+  }
+  
+  return {
+    success: true,
+    message: `✅ Retrieved available options for: ${category}`,
+    details: result
+  };
+}
+
+function logAction(action, details) {
+  const timestamp = new Date().toISOString();
+  nautilusAI.actionLog.push({ timestamp, action, details });
+  console.log(`[AI Action] ${action}`, details);
+}
+
+function showToolApprovalDialog(toolCall, onApprove, onReject) {
+  const { tool, parameters } = toolCall;
+  const toolDef = OS_AUTOMATION_TOOLS[tool];
+  
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    animation: fadeIn 0.2s ease;
+  `;
+  
+  const dialog = document.createElement('div');
+  dialog.style.cssText = `
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid rgba(125, 211, 192, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+  `;
+  
+  dialog.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+      <div style="width: 48px; height: 48px; background: rgba(125, 211, 192, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-robot" style="color: var(--accent); font-size: 24px;"></i>
+      </div>
+      <div>
+        <h3 style="margin: 0; color: var(--text-primary); font-size: 18px;">AI Action Approval Required</h3>
+        <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: 12px;">The AI wants to perform an action</p>
+      </div>
+    </div>
+    
+    <div style="background: rgba(125, 211, 192, 0.1); border: 1px solid rgba(125, 211, 192, 0.2); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <i class="fas fa-bolt" style="color: var(--accent);"></i>
+        <strong style="color: var(--accent);">Action: ${tool}</strong>
+      </div>
+      <div style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
+        ${toolDef ? toolDef.description : 'Execute operation'}
+      </div>
+    </div>
+    
+    <div style="background: rgba(30, 41, 59, 0.6); border-radius: 8px; padding: 12px; margin-bottom: 20px;">
+      <div style="color: var(--text-secondary); font-size: 12px; font-weight: bold; margin-bottom: 8px;">Parameters:</div>
+      <div style="color: var(--text-primary); font-size: 13px; font-family: 'SUSE Mono', monospace;">
+        ${Object.entries(parameters).map(([key, value]) => 
+          `<div style="margin: 4px 0;"><span style="color: var(--accent);">${key}:</span> ${value}</div>`
+        ).join('')}
+      </div>
+    </div>
+    
+    <div style="display: flex; gap: 12px;">
+      <button id="rejectToolBtn" style="flex: 1; padding: 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; color: #ef4444; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s;">
+        <i class="fas fa-times"></i> Reject
+      </button>
+      <button id="approveToolBtn" style="flex: 2; padding: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border: none; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s;">
+        <i class="fas fa-check"></i> Approve & Execute
+      </button>
+    </div>
+  `;
+  
+  modal.appendChild(dialog);
+  document.body.appendChild(modal);
+  
+  document.getElementById('approveToolBtn').onclick = () => {
+    modal.remove();
+    onApprove();
+  };
+  
+  document.getElementById('rejectToolBtn').onclick = () => {
+    modal.remove();
+    onReject();
+  };
+  
+  // Add animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function addToolFeedbackToChat(toolCall, result) {
+  const chatContainer = document.getElementById('aiChatMessages');
+  if (!chatContainer) return;
+  
+  const feedbackDiv = document.createElement('div');
+  feedbackDiv.style.cssText = `
+    background: ${result.success ? 'rgba(125, 211, 192, 0.15)' : 'rgba(239, 68, 68, 0.15)'};
+    border: 1px solid ${result.success ? 'rgba(125, 211, 192, 0.4)' : 'rgba(239, 68, 68, 0.4)'};
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    animation: slideIn 0.3s ease-out;
+  `;
+  
+  feedbackDiv.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <i class="fas fa-cog" style="color: ${result.success ? 'var(--accent)' : '#ef4444'}; font-size: 16px;"></i>
+      <strong style="color: ${result.success ? 'var(--accent)' : '#ef4444'};">Action Result</strong>
+    </div>
+    <div style="color: #cbd5e1; font-size: 13px; line-height: 1.6;">
+      <div style="margin-bottom: 6px;">${result.message}</div>
+      ${result.details ? `<div style="color: #94a3b8; font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(125, 211, 192, 0.2);">${result.details}</div>` : ''}
+    </div>
+  `;
+  
+  chatContainer.appendChild(feedbackDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 // Note: Initialization happens in openApp when nautilus-ai is opened
