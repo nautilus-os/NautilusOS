@@ -117,17 +117,20 @@ const appMetadata = {
     icon: "fa-border-all",
     preinstalled: false,
   },
-<<<<<<< HEAD
   "v86-emulator": {
     name: "V86 Emulator",
     icon: "fa-microchip",
     preinstalled: false,
-=======
+  },
   "ai-snake": {
     name: "AI Snake Learning",
     icon: "fa-brain",
     preinstalled: true,
->>>>>>> 00f18e4 (Snake AI PPO game)
+  },
+  "nautilus-ai": {
+    name: "Nautilus AI Assistant",
+    icon: "fa-robot",
+    preinstalled: true,
   },
 };
 
@@ -1872,6 +1875,7 @@ function maximizeWindow(btn) {
   const window = btn.closest(".window");
   const icon = btn.querySelector("i");
   const appName = window.dataset.appName;
+  const taskbar = document.getElementById("taskbar");
 
   if (window.dataset.maximized === "true") {
     window.style.width = window.dataset.oldWidth;
@@ -1885,6 +1889,13 @@ function maximizeWindow(btn) {
     window.style.borderRadius = "12px";
     const header = window.querySelector(".window-header");
     if (header) header.style.borderRadius = "0";
+    
+    // Show taskbar
+    if (taskbar) {
+      taskbar.style.transform = "translateX(-50%) translateY(0)";
+      const expandBtn = document.getElementById("taskbarExpandBtn");
+      if (expandBtn) expandBtn.remove();
+    }
   } else {
     window.dataset.oldWidth = window.style.width;
     window.dataset.oldHeight = window.style.height;
@@ -1902,6 +1913,62 @@ function maximizeWindow(btn) {
     window.style.borderRadius = "1px";
     const header = window.querySelector(".window-header");
     if (header) header.style.borderRadius = "1px";
+    
+    // Hide taskbar and show expand button
+    if (taskbar) {
+      taskbar.style.transition = "transform 0.3s ease";
+      taskbar.style.transform = "translateX(-50%) translateY(calc(100% + 20px))";
+      
+      // Create expand button if it doesn't exist
+      let expandBtn = document.getElementById("taskbarExpandBtn");
+      if (!expandBtn) {
+        expandBtn = document.createElement("div");
+        expandBtn.id = "taskbarExpandBtn";
+        expandBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
+        expandBtn.style.cssText = `
+          position: fixed;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          background: var(--accent);
+          color: #0f172a;
+          width: 60px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px 8px 0 0;
+          cursor: pointer;
+          z-index: 10001;
+          transition: all 0.2s;
+          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        `;
+        
+        expandBtn.addEventListener("mouseenter", () => {
+          expandBtn.style.height = "25px";
+          taskbar.style.transform = "translateX(-50%) translateY(0)";
+        });
+        
+        expandBtn.addEventListener("mouseleave", () => {
+          setTimeout(() => {
+            if (!taskbar.matches(':hover')) {
+              expandBtn.style.height = "20px";
+              taskbar.style.transform = "translateX(-50%) translateY(calc(100% + 20px))";
+            }
+          }, 300);
+        });
+        
+        taskbar.addEventListener("mouseleave", () => {
+          setTimeout(() => {
+            if (!expandBtn.matches(':hover') && !taskbar.matches(':hover')) {
+              taskbar.style.transform = "translateX(-50%) translateY(calc(100% + 20px))";
+            }
+          }, 300);
+        });
+        
+        document.body.appendChild(expandBtn);
+      }
+    }
   }
 
   // Handle V86 emulator display scaling adjustments
@@ -4252,6 +4319,100 @@ alt="favicon">
       width: 900,
       height: 800,
     },
+    "nautilus-ai": {
+      title: "Nautilus AI Assistant",
+      icon: "fas fa-robot",
+      content: `
+        <div id="nautilusAiContainer" style="display: flex; flex-direction: column; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+          <div style="background: rgba(15, 23, 42, 0.9); border-bottom: 2px solid rgba(125, 211, 192, 0.3); padding: 15px 20px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <i class="fas fa-robot" style="color: var(--accent); font-size: 24px;"></i>
+              <div>
+                <h2 style="color: var(--accent); margin: 0; font-size: 18px;">Nautilus AI Assistant</h2>
+                <div style="color: #94a3b8; font-size: 11px; margin-top: 2px;">by lanefiedler-731 | Powered by WebLLM</div>
+              </div>
+            </div>
+            <div id="aiStatus" style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #64748b;">
+              <div class="loading-spinner" style="width: 12px; height: 12px; border: 2px solid rgba(125, 211, 192, 0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+              <span>Initializing AI model...</span>
+            </div>
+          </div>
+          
+          <div style="background: rgba(15, 23, 42, 0.5); border-bottom: 1px solid rgba(125, 211, 192, 0.2); padding: 8px 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #64748b;">
+              <i class="fas fa-microchip" style="color: var(--accent);"></i>
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="aiWebGPUToggle" style="cursor: pointer;">
+                <span>Use WebGPU (Faster)</span>
+              </label>
+            </div>
+          </div>
+          
+          <div id="aiChatMessages" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+            <div style="background: rgba(125, 211, 192, 0.1); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 10px; padding: 15px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <i class="fas fa-robot" style="color: var(--accent); font-size: 18px;"></i>
+                <strong style="color: var(--accent);">Nautilus AI</strong>
+              </div>
+              <div style="color: #cbd5e1; line-height: 1.6;">
+                Hello! I'm your Nautilus AI Assistant powered by Qwen3-0.6B. I can help you understand and navigate NautilusOS. Ask me about features, apps, settings, file management, or anything else about the operating system!
+              </div>
+            </div>
+          </div>
+          
+          <div style="background: rgba(15, 23, 42, 0.9); border-top: 2px solid rgba(125, 211, 192, 0.3); padding: 15px 20px;">
+            <div style="display: flex; gap: 10px;">
+              <textarea id="aiInput" placeholder="Ask me anything about NautilusOS..." style="flex: 1; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; padding: 12px; color: #e2e8f0; font-size: 14px; resize: none; font-family: inherit; min-height: 50px; max-height: 150px;" rows="2"></textarea>
+              <button id="aiSendBtn" onclick="sendAiMessage()" style="background: var(--accent); border: none; border-radius: 8px; padding: 0 20px; cursor: pointer; color: #0f172a; font-weight: bold; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.background='var(--accent-hover)'" onmouseout="this.style.background='var(--accent)'">
+                <i class="fas fa-paper-plane"></i> Send
+              </button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+              <button onclick="sendQuickQuestion('What apps are available in NautilusOS?')" style="background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); color: var(--accent); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                <i class="fas fa-th"></i> Available Apps
+              </button>
+              <button onclick="sendQuickQuestion('How do I manage files in NautilusOS?')" style="background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); color: var(--accent); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                <i class="fas fa-folder"></i> File Management
+              </button>
+              <button onclick="sendQuickQuestion('How do I customize my NautilusOS experience?')" style="background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); color: var(--accent); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                <i class="fas fa-palette"></i> Customization
+              </button>
+              <button onclick="clearAiChat()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.25)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'">
+                <i class="fas fa-trash"></i> Clear Chat
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <style>
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+          #aiChatMessages::-webkit-scrollbar {
+            width: 8px;
+          }
+          #aiChatMessages::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 4px;
+          }
+          #aiChatMessages::-webkit-scrollbar-thumb {
+            background: rgba(125, 211, 192, 0.3);
+            border-radius: 4px;
+          }
+          #aiChatMessages::-webkit-scrollbar-thumb:hover {
+            background: rgba(125, 211, 192, 0.5);
+          }
+          #aiInput:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(125, 211, 192, 0.2);
+          }
+        </style>
+      `,
+      noPadding: true,
+      width: 700,
+      height: 600,
+    },
   };
 
   if (appName === "achievements") {
@@ -4305,7 +4466,6 @@ alt="favicon">
         }
       }, 50);
     }
-<<<<<<< HEAD
     if (appName === "2048") {
       setTimeout(() => {
         start2048Game();
@@ -4322,11 +4482,18 @@ alt="favicon">
       setTimeout(() => {
         // Load V86 resources on-demand with progress bar
         loadV86ResourcesOnDemand(windowEl);
-=======
+      }, 50);
+    }
+    
     if (appName === "ai-snake") {
       setTimeout(() => {
         initializeAISnakeApp();
->>>>>>> 00f18e4 (Snake AI PPO game)
+      }, 50);
+    }
+    
+    if (appName === "nautilus-ai") {
+      setTimeout(() => {
+        initializeNautilusAI();
       }, 50);
     }
   }
@@ -5725,7 +5892,6 @@ ${startupInstalled ? "Uninstall" : "Install"}
     }">
    ${taskmanagerInstalled ? "Uninstall" : "Install"}
    </button>
-   <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
 </div>
 <div class="appstore-item">
    <div class="appstore-item-icon">
@@ -5742,7 +5908,6 @@ ${startupInstalled ? "Uninstall" : "Install"}
     }">
    ${snapManagerInstalled ? "Uninstall" : "Install"}
    </button>
-   <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
 </div>
 <div class="appstore-item">
    <div class="appstore-item-icon">
@@ -5797,7 +5962,16 @@ ${startupInstalled ? "Uninstall" : "Install"}
     }">
    ${v86Installed ? "Uninstall" : "Install"}
    </button>
-   <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
+</div>
+<div class="appstore-item">
+   <div class="appstore-item-icon">
+      <i class="fas fa-robot"></i>
+   </div>
+   <div class="appstore-item-name">Nautilus AI Assistant by lanefiedler-731</div>
+   <div class="appstore-item-desc">Your personal AI assistant powered by WebLLM. Get instant help with NautilusOS features, apps, settings, and more. Runs entirely in your browser with no server required!</div>
+   <button class="appstore-item-btn installed" onclick="openApp('nautilus-ai')">
+      Open
+   </button>
 </div>
 </div>
 </div>
@@ -5829,7 +6003,6 @@ ${startupInstalled ? "Uninstall" : "Install"}
                               : "Install"
                           }
                       </button>
-                      <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
 <<<<<<< HEAD
                   
@@ -5850,7 +6023,6 @@ ${startupInstalled ? "Uninstall" : "Install"}
                             installedGames.includes("2048") ? "Play" : "Install"
                           }
                       </button>
-                      <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
                   
                   <div class="appstore-item">
@@ -5871,7 +6043,8 @@ ${startupInstalled ? "Uninstall" : "Install"}
                               ? "Play"
                               : "Install"
                           }
-=======
+                      </button>
+                  </div>
                   <div class="appstore-item">
                       <div class="appstore-item-icon">
                           <i class="fas fa-brain"></i>
@@ -5880,9 +6053,7 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       <div class="appstore-item-desc">Train an AI neural network to play Snake using Deep Q-Learning. Watch it learn and improve with GPU acceleration, customizable concurrency, game speed, and training speed controls.</div>
                       <button class="appstore-item-btn installed" onclick="openApp('ai-snake')">
                           Play
->>>>>>> 00f18e4 (Snake AI PPO game)
                       </button>
-                      <div class="offline-support"><i class="fa-solid fa-check"></i> OFFLINE SUPPORT</div>
                   </div>
               </div>
           `;
@@ -8494,17 +8665,22 @@ function addDesktopIcon(appName) {
     iconConfig = { icon: "fa-globe", label: "Ultraviolet" };
   } else if (appName === "helios") {
     iconConfig = { icon: "fa-globe", label: "Helios" };
-<<<<<<< HEAD
   } else if (appName === "vsc") {
     iconConfig = { icon: "fa-code", label: "Visual Studio Code" };
   } else if (appName === "v86-emulator") {
     iconConfig = { icon: "fa-microchip", label: "V86 Emulator" };
-=======
   } else if (appName === "ai-snake") {
     iconConfig = { icon: "fa-brain", label: "AI Snake Learning" };
->>>>>>> 00f18e4 (Snake AI PPO game)
+  } else if (appName === "nautilus-ai") {
+    iconConfig = { icon: "fa-robot", label: "Nautilus AI Assistant" };
   } else {
-    return;
+    // Try to get from appMetadata
+    const metadata = appMetadata[appName];
+    if (metadata) {
+      iconConfig = { icon: metadata.icon, label: metadata.name };
+    } else {
+      return;
+    }
   }
 
   const iconEl = document.createElement("div");
@@ -12469,3 +12645,545 @@ function reportV86Issue(errorType, errorMessage) {
   console.log("V86 Issue Report:", issueData);
   showToast("Issue details logged to console", "fa-bug");
 }
+
+// ==================== WebLLM AI Assistant ====================
+
+let nautilusAI = {
+  engine: null,
+  messages: [],
+  isInitialized: false,
+  isInitializing: false,
+  isGenerating: false
+};
+
+const NAUTILUS_SYSTEM_PROMPT = `You are the Nautilus AI Assistant, an expert guide for NautilusOS - a web-based operating system built entirely in HTML, CSS, and JavaScript.
+
+CORE KNOWLEDGE ABOUT NAUTILUSOS:
+
+ARCHITECTURE & TECHNOLOGY:
+- NautilusOS is a complete web-based OS running entirely in the browser
+- Built with vanilla HTML, CSS, and JavaScript (no frameworks)
+- Uses local storage for persistence (localStorage and sessionStorage)
+- File system is virtual and stored in browser memory/localStorage
+- All windows, apps, and features are DOM-based and fully interactive
+- Supports multiple themes, customization, and user profiles
+
+AVAILABLE APPLICATIONS:
+1. Files - Full file explorer with folder navigation, tree sidebar, create/delete/rename operations
+2. Terminal - Command-line interface with bash-like commands
+3. Nautilus Browser - Built-in web browser with proxy support (Helios Browser embedded)
+4. Text Editor - Create and edit text files with save/load functionality
+5. Music Player - Play music from URLs or uploaded files
+6. Photos - View, upload, and manage photos with screenshot capability
+7. Settings - Customize themes, time format, desktop icons, wallpapers, cloaking
+8. Calculator - Standard calculator with history
+9. Help - Comprehensive documentation and keyboard shortcuts
+10. What's New - Feature showcase carousel with illustrations
+11. App Store - Install themes, apps, and games
+12. Achievements - Track progress and unlock badges
+13. Cloaking - Tab disguise and panic key features
+14. Task Manager - View and manage running applications
+15. Snap Manager - Configure window snapping layouts and keybinds
+16. Startup Apps - Configure apps to launch on boot
+17. V86 Emulator - Run actual operating systems in the browser
+18. AI Snake Learning - Neural network that learns to play Snake (by lanefiedler-731)
+19. Nautilus AI Assistant - That's me! Your helpful AI guide (by lanefiedler-731)
+
+WINDOW MANAGEMENT:
+- Fully draggable windows with title bar drag
+- Resizable from any edge or corner
+- Minimize, maximize, and close buttons
+- Focus management with visual indicators
+- Windows appear in taskbar when open
+- Snap-to-edge functionality (configurable in Snap Manager)
+- Multiple windows can be open simultaneously
+
+FILE SYSTEM:
+- Virtual hierarchical file system
+- Default folders: Photos, TextEditor, Documents, etc.
+- Create folders and files through Files app or Text Editor
+- Files are stored as objects in localStorage
+- Photos stored as blob URLs
+- File operations: create, delete, rename, move, copy
+- Tree view sidebar for easy navigation
+
+CUSTOMIZATION & THEMING:
+Available themes: Dark (default), Light, Golden, Red, Blue, Purple, Green, Liquid Glass
+- Install themes from App Store
+- Apply themes in Settings
+- Custom wallpapers for desktop and login screen
+- Profile pictures
+- Desktop icon visibility toggle
+- Clock format (12h/24h, with/without seconds)
+- Accent colors vary by theme
+
+BOOT & LOGIN:
+- Bootloader with two options: GUI mode or Command Line mode
+- Account setup wizard on first launch
+- Username and password support (or passwordless)
+- Login screen with clock and system info
+- Boot preference saved to localStorage
+- Uptime tracking from boot time
+
+TASKBAR FEATURES:
+- Start menu with app grid and user info
+- Running app indicators
+- Sign out / shut down buttons
+- Quick actions panel (screenshots, close all windows)
+- System clock
+- Notification center
+- Search apps functionality
+
+SETTINGS CATEGORIES:
+1. Appearance - Themes, wallpapers, desktop icons
+2. Time & Date - Clock format, seconds display
+3. Account - Username, profile picture, password
+4. Cloaking - Tab disguise, panic keys, auto-rotation
+5. Import/Export - Backup and restore profiles
+6. Advanced - Reset data, developer options
+
+CLOAKING & SECURITY:
+- Tab disguise to mimic other websites (Google, Drive, Classroom, etc.)
+- Custom tab titles and favicons
+- Panic key support for instant redirects
+- Auto-rotate disguises at configurable intervals
+- Helps bypass school/workplace restrictions
+
+ACHIEVEMENTS SYSTEM:
+- Unlock badges for milestones
+- Categories: Productivity, Exploration, Time-Based, Easter Eggs
+- Persistent across data resets
+- Examples: First File Created, Theme Changer, Early Bird, Night Owl
+
+KEYBOARD SHORTCUTS:
+- Snap windows: Ctrl+Alt+Arrow Keys
+- Quick app launch from Start menu search
+- Focus windows with taskbar clicks
+- Context menus with right-click
+
+BROWSER FEATURES:
+- Embedded Helios Browser with full proxy support
+- Multiple tabs support
+- URL navigation
+- Back/forward buttons
+- Tab cloaking integration
+
+TERMINAL COMMANDS:
+Common commands: ls, cd, mkdir, rm, cat, echo, clear, help, pwd, whoami
+- Bash-like syntax and behavior
+- File system integration
+- Command history
+
+TECHNICAL DETAILS:
+- Uses CSS variables for theming
+- FontAwesome icons throughout
+- Smooth animations and transitions
+- Responsive to different screen sizes
+- Service Worker registration for offline support
+- LocalStorage keys prefixed with "nautilusOS_"
+- File protocol warning for features requiring web server
+
+APP STORE:
+- Install additional themes beyond default dark theme
+- Games: Tic-Tac-Toe, AI Snake Learning
+- Apps: V86 Emulator, Task Manager, Snap Manager, Startup Apps
+- Each item shows install status and description
+
+EXPORT/IMPORT PROFILES:
+- Export entire system state to JSON file
+- Includes: files, settings, themes, installed apps, wallpapers
+- Import profile to restore on any device
+- Great for backups or sharing configurations
+
+ADVANCED FEATURES:
+- Window snapping with customizable layouts
+- Startup apps run automatically on boot
+- Task manager shows resource usage
+- Screenshots using browser screen capture API
+- Drag-and-drop file uploads for photos
+- Context menus for desktop and file operations
+
+DEVELOPER INFO:
+- NautilusOS created by lanefiedler-731, x8r, and dinguschan-owo
+- Open source on GitHub
+- No external frameworks (vanilla JS)
+- Community contributions welcome
+- Apps can be created by community (Nautilus AI Assistant by lanefiedler-731)
+
+When helping users:
+1. Be specific and detailed about features
+2. Provide step-by-step instructions when needed
+3. Reference exact app names and menu locations
+4. Explain both basic and advanced features
+5. Suggest related features users might find helpful
+6. Be enthusiastic about NautilusOS capabilities
+7. If unsure about something, admit it honestly
+
+Your goal is to make users feel confident and excited about using NautilusOS!`;
+
+async function initializeNautilusAI() {
+  if (nautilusAI.isInitialized || nautilusAI.isInitializing) return;
+  
+  nautilusAI.isInitializing = true;
+  const statusEl = document.getElementById('aiStatus');
+  const sendBtn = document.getElementById('aiSendBtn');
+  const inputEl = document.getElementById('aiInput');
+  
+  try {
+    updateAiStatus('Loading WebLLM library...', true);
+    
+    // Load WebLLM from CDN with ES modules support
+    if (!window.mlcai) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.textContent = `
+          import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+          window.mlcai = webllm;
+        `;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error('Failed to load WebLLM library'));
+        document.head.appendChild(script);
+        
+        // Wait for window.mlcai to be available
+        const checkInterval = setInterval(() => {
+          if (window.mlcai) {
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          if (!window.mlcai) {
+            reject(new Error('WebLLM library load timeout'));
+          }
+        }, 10000);
+      });
+    }
+    
+    updateAiStatus('Initializing Qwen3-0.6B model (downloading first time)...', true);
+    
+    const { CreateMLCEngine } = window.mlcai;
+    
+    // Check WebGPU toggle
+    const useWebGPU = document.getElementById('aiWebGPUToggle')?.checked || false;
+    
+    nautilusAI.engine = await CreateMLCEngine("Qwen3-0.6B-q4f16_1-MLC", {
+      initProgressCallback: (progress) => {
+        updateAiStatus(`Loading model: ${Math.round(progress.progress * 100)}%`, true);
+      },
+      useWebGPU: useWebGPU
+    });
+    
+    // Initialize conversation with system prompt
+    nautilusAI.messages = [
+      { role: "system", content: NAUTILUS_SYSTEM_PROMPT }
+    ];
+    
+    nautilusAI.isInitialized = true;
+    nautilusAI.isInitializing = false;
+    updateAiStatus('AI Assistant Ready', false);
+    
+    if (sendBtn) sendBtn.disabled = false;
+    if (inputEl) {
+      inputEl.disabled = false;
+      inputEl.focus();
+    }
+    
+    showToast('Nautilus AI Assistant is ready!', 'fa-robot');
+    
+  } catch (error) {
+    console.error('Failed to initialize Nautilus AI:', error);
+    nautilusAI.isInitializing = false;
+    updateAiStatus(`Error: ${error.message}`, false, true);
+    showToast('Failed to load AI model. Check console for details.', 'fa-exclamation-triangle');
+    
+    // Re-enable input so user can try again
+    if (sendBtn) sendBtn.disabled = false;
+    if (inputEl) inputEl.disabled = false;
+  }
+}
+
+function updateAiStatus(message, loading = false, error = false) {
+  const statusEl = document.getElementById('aiStatus');
+  if (!statusEl) return;
+  
+  const color = error ? '#ef4444' : (loading ? '#64748b' : 'var(--accent)');
+  const spinner = loading ? `
+    <div class="multi-ring-spinner" style="position: relative; width: 40px; height: 40px;">
+      <div style="position: absolute; width: 100%; height: 100%; border: 3px solid transparent; border-top-color: #7dd3c0; border-radius: 50%; animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;"></div>
+      <div style="position: absolute; width: 80%; height: 80%; top: 10%; left: 10%; border: 3px solid transparent; border-top-color: #66d9ef; border-radius: 50%; animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;"></div>
+      <div style="position: absolute; width: 60%; height: 60%; top: 20%; left: 20%; border: 3px solid transparent; border-top-color: #a6e3a1; border-radius: 50%; animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;"></div>
+      <div style="position: absolute; width: 40%; height: 40%; top: 30%; left: 30%; border: 3px solid transparent; border-top-color: #f5c2e7; border-radius: 50%; animation: spin 0.6s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;"></div>
+    </div>
+  ` : '<i class="fas fa-check-circle"></i>';
+  
+  statusEl.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 12px; font-size: 12px; color: ${color};">
+      ${spinner}
+      <span>${message}</span>
+    </div>
+  `;
+}
+
+async function sendAiMessage() {
+  const inputEl = document.getElementById('aiInput');
+  const sendBtn = document.getElementById('aiSendBtn');
+  
+  if (!inputEl || !sendBtn) return;
+  
+  const userMessage = inputEl.value.trim();
+  if (!userMessage) return;
+  
+  if (!nautilusAI.isInitialized) {
+    await initializeNautilusAI();
+    if (!nautilusAI.isInitialized) return;
+  }
+  
+  if (nautilusAI.isGenerating) {
+    showToast('Please wait for the current response to complete', 'fa-hourglass-half');
+    return;
+  }
+  
+  // Add user message to chat
+  addAiChatMessage(userMessage, true);
+  inputEl.value = '';
+  inputEl.style.height = 'auto';
+  
+  // Disable input while generating
+  nautilusAI.isGenerating = true;
+  sendBtn.disabled = true;
+  inputEl.disabled = true;
+  updateAiStatus('Thinking...', true);
+  
+  try {
+    // Add user message to conversation history
+    nautilusAI.messages.push({ role: "user", content: userMessage });
+    
+    // Create placeholder message for streaming
+    const chatContainer = document.getElementById('aiChatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.style.cssText = `
+      background: rgba(125, 211, 192, 0.1);
+      border: 1px solid rgba(125, 211, 192, 0.3);
+      border-radius: 10px;
+      padding: 15px;
+      animation: slideIn 0.3s ease-out;
+    `;
+    
+    const headerDiv = document.createElement('div');
+    headerDiv.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-bottom: 8px;';
+    headerDiv.innerHTML = `
+      <i class="fas fa-robot" style="color: var(--accent); font-size: 18px;"></i>
+      <strong style="color: var(--accent);">Nautilus AI</strong>
+    `;
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.style.cssText = 'color: #cbd5e1; line-height: 1.6;';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'ai-response-text';
+    textDiv.style.cssText = 'white-space: pre-wrap; word-wrap: break-word;';
+    contentDiv.appendChild(textDiv);
+    
+    messageDiv.appendChild(headerDiv);
+    messageDiv.appendChild(contentDiv);
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // Generate response with streaming
+    const completion = await nautilusAI.engine.chat.completions.create({
+      messages: nautilusAI.messages,
+      temperature: 0.7,
+      max_tokens: 4096,
+      stream: true,
+    });
+    
+    let fullResponse = '';
+    let thinkingSection = null;
+    let thinkContentDiv = null;
+    let thinkingSummary = null;
+    
+    for await (const chunk of completion) {
+      const delta = chunk.choices[0]?.delta?.content || '';
+      if (!delta) continue;
+
+      fullResponse += delta;
+
+      const thinkStartIndex = fullResponse.indexOf('<think>');
+      const thinkEndIndex = fullResponse.indexOf('</think>');
+
+      let visibleContent = fullResponse;
+      let currentThinking = '';
+
+      if (thinkStartIndex !== -1) {
+        if (!thinkingSection) {
+          thinkingSection = document.createElement('details');
+          thinkingSection.open = true;
+          thinkingSection.style.cssText = 'margin: 0 0 15px 0; padding: 12px; background: rgba(125, 211, 192, 0.08); border: 1px solid rgba(125, 211, 192, 0.25); border-radius: 8px; order: -1;';
+
+          thinkingSummary = document.createElement('summary');
+          thinkingSummary.style.cssText = 'cursor: pointer; color: var(--accent); font-weight: bold; user-select: none; list-style: none; display: flex; align-items: center; gap: 8px;';
+          thinkingSummary.innerHTML = '<i class="fas fa-brain"></i> Thinking<span class="thinking-dots"></span>';
+
+          thinkingSummary.addEventListener('click', (e) => {
+            e.preventDefault();
+            thinkingSection.open = !thinkingSection.open;
+          });
+
+          thinkContentDiv = document.createElement('div');
+          thinkContentDiv.style.cssText = 'margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(125, 211, 192, 0.15); color: #94a3b8; font-style: italic; white-space: pre-wrap; line-height: 1.6;';
+          thinkContentDiv.className = 'thinking-content';
+
+          thinkingSection.appendChild(thinkingSummary);
+          thinkingSection.appendChild(thinkContentDiv);
+
+          contentDiv.style.display = 'flex';
+          contentDiv.style.flexDirection = 'column';
+          contentDiv.insertBefore(thinkingSection, textDiv);
+
+          if (!document.getElementById('thinking-dots-style')) {
+            const style = document.createElement('style');
+            style.id = 'thinking-dots-style';
+            style.textContent = `
+              @keyframes thinkingDots {
+                0% { content: ''; }
+                25% { content: '.'; }
+                50% { content: '..'; }
+                75% { content: '...'; }
+                100% { content: ''; }
+              }
+              .thinking-dots::after {
+                content: '';
+                animation: thinkingDots 1.5s infinite;
+              }
+              summary::-webkit-details-marker {
+                display: none;
+              }
+            `;
+            document.head.appendChild(style);
+          }
+        }
+
+        if (thinkEndIndex === -1) {
+          currentThinking = fullResponse.substring(thinkStartIndex + 7);
+          visibleContent = fullResponse.substring(0, thinkStartIndex);
+        } else {
+          currentThinking = fullResponse.substring(thinkStartIndex + 7, thinkEndIndex);
+          visibleContent = fullResponse.substring(0, thinkStartIndex) + fullResponse.substring(thinkEndIndex + 8);
+          if (thinkingSummary) {
+            thinkingSummary.innerHTML = '<i class="fas fa-lightbulb"></i> Thought';
+          }
+        }
+
+        if (thinkContentDiv) {
+          thinkContentDiv.textContent = currentThinking;
+        }
+      }
+
+      textDiv.textContent = visibleContent;
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Add AI response to conversation history
+    nautilusAI.messages.push({ role: "assistant", content: fullResponse });
+    
+    updateAiStatus('AI Assistant Ready', false);
+    
+  } catch (error) {
+    console.error('AI generation error:', error);
+    addAiChatMessage('Sorry, I encountered an error while generating a response. Please try again.', false, true);
+    updateAiStatus('Error occurred', false, true);
+  } finally {
+    nautilusAI.isGenerating = false;
+    sendBtn.disabled = false;
+    inputEl.disabled = false;
+    inputEl.focus();
+  }
+}
+
+function addAiChatMessage(message, isUser = false, isError = false) {
+  const chatContainer = document.getElementById('aiChatMessages');
+  if (!chatContainer) return;
+  
+  const messageDiv = document.createElement('div');
+  messageDiv.style.cssText = `
+    background: ${isUser ? 'rgba(125, 211, 192, 0.15)' : (isError ? 'rgba(239, 68, 68, 0.15)' : 'rgba(125, 211, 192, 0.1)')};
+    border: 1px solid ${isUser ? 'rgba(125, 211, 192, 0.4)' : (isError ? 'rgba(239, 68, 68, 0.4)' : 'rgba(125, 211, 192, 0.3)')};
+    border-radius: 10px;
+    padding: 15px;
+    animation: slideIn 0.3s ease-out;
+  `;
+  
+  const headerDiv = document.createElement('div');
+  headerDiv.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-bottom: 8px;';
+  headerDiv.innerHTML = `
+    <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}" style="color: ${isUser ? 'var(--accent)' : (isError ? '#ef4444' : 'var(--accent)')}; font-size: 18px;"></i>
+    <strong style="color: ${isUser ? 'var(--accent)' : (isError ? '#ef4444' : 'var(--accent)')}">${isUser ? 'You' : 'Nautilus AI'}</strong>
+  `;
+  
+  const contentDiv = document.createElement('div');
+  contentDiv.style.cssText = 'color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;';
+  contentDiv.textContent = message;
+  
+  messageDiv.appendChild(headerDiv);
+  messageDiv.appendChild(contentDiv);
+  chatContainer.appendChild(messageDiv);
+  
+  // Scroll to bottom
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function sendQuickQuestion(question) {
+  const inputEl = document.getElementById('aiInput');
+  if (!inputEl) return;
+  
+  inputEl.value = question;
+  sendAiMessage();
+}
+
+function clearAiChat() {
+  const chatContainer = document.getElementById('aiChatMessages');
+  if (!chatContainer) return;
+  
+  // Clear all messages except the welcome message
+  chatContainer.innerHTML = `
+    <div style="background: rgba(125, 211, 192, 0.1); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 10px; padding: 15px;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <i class="fas fa-robot" style="color: var(--accent); font-size: 18px;"></i>
+        <strong style="color: var(--accent);">Nautilus AI</strong>
+      </div>
+      <div style="color: #cbd5e1; line-height: 1.6;">
+        Hello! I'm your Nautilus AI Assistant powered by Qwen3-0.6B. I can help you understand and navigate NautilusOS. Ask me about features, apps, settings, file management, or anything else about the operating system!
+      </div>
+    </div>
+  `;
+  
+  // Reset conversation history (keep system prompt)
+  nautilusAI.messages = [
+    { role: "system", content: NAUTILUS_SYSTEM_PROMPT }
+  ];
+  
+  showToast('Chat cleared', 'fa-trash');
+}
+
+// Note: Initialization happens in openApp when nautilus-ai is opened
+
+// Handle Enter key in textarea
+document.addEventListener('keydown', (e) => {
+  const aiInput = document.getElementById('aiInput');
+  if (e.target === aiInput && e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendAiMessage();
+  }
+  
+  // Auto-resize textarea
+  if (e.target === aiInput) {
+    setTimeout(() => {
+      aiInput.style.height = 'auto';
+      aiInput.style.height = Math.min(aiInput.scrollHeight, 150) + 'px';
+    }, 0);
+  }
+});
