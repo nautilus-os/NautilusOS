@@ -37,7 +37,8 @@ There’s a ton of stuff to play with, but here’s a quick rundown (seriously, 
 - exportable profiles
 - context menus  
 - startup and tools panels  
-- smooth transitions, gradients, and clean UI  
+- smooth transitions, gradients, and clean UI
+- **🤖 AI-powered OS automation** - the AI assistant can control your OS with your approval!
 
 Basically... a whole little OS in your browser :D
 
@@ -45,7 +46,8 @@ Basically... a whole little OS in your browser :D
 
 ## 🚧 todos
 
-
+- [x] AI OS automation with user approval and extensive feedback
+- [x] Dynamic option discovery for settings, themes, and parameters
 - [ ] App store improvements (right now it can only install built-in apps)
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
