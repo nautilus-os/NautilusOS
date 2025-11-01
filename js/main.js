@@ -1,6 +1,7 @@
 let windows = {};
 let zIndexCounter = 100;
 let currentUsername = localStorage.getItem("nautilusOS_username") || "User";
+let currentUserAccount = null; // Current logged-in account object
 let focusedWindow = null;
 let fileSystem = {
   Photos: {},
@@ -24,6 +25,138 @@ let snapTrackingWindow = null;
 let snapKeyCapture = null;
 let snapNewLayoutKeybind = "";
 let snapNewLayoutInput = null;
+
+// ========== ACCOUNT MANAGEMENT SYSTEM ==========
+
+// Account data structure
+class UserAccount {
+  constructor(username, password, role = "standard", isPasswordless = false) {
+    this.username = username;
+    this.password = password; // Hashed
+    this.role = role; // "superuser" or "standard"
+    this.isPasswordless = isPasswordless;
+    this.createdAt = Date.now();
+    this.allowedApps = []; // Empty means all apps allowed
+    this.customAvatar = null;
+  }
+}
+
+// Get all accounts from localStorage
+function getAllAccounts() {
+  const accountsData = localStorage.getItem("nautilusOS_accounts");
+  if (!accountsData) {
+    return [];
+  }
+  try {
+    return JSON.parse(accountsData);
+  } catch (e) {
+    console.error("Error parsing accounts:", e);
+    return [];
+  }
+}
+
+// Save all accounts to localStorage
+function saveAllAccounts(accounts) {
+  localStorage.setItem("nautilusOS_accounts", JSON.stringify(accounts));
+}
+
+// Get account by username
+function getAccountByUsername(username) {
+  const accounts = getAllAccounts();
+  return accounts.find(acc => acc.username === username);
+}
+
+// Create new account
+function createAccount(username, password, role = "standard", isPasswordless = false) {
+  const accounts = getAllAccounts();
+  
+  // Check if username already exists
+  if (accounts.find(acc => acc.username === username)) {
+    return { success: false, message: "Username already exists" };
+  }
+  
+  const hashedPassword = isPasswordless ? "" : hashPassword(password);
+  const newAccount = new UserAccount(username, hashedPassword, role, isPasswordless);
+  accounts.push(newAccount);
+  saveAllAccounts(accounts);
+  
+  return { success: true, message: "Account created successfully" };
+}
+
+// Update account
+function updateAccount(username, updates) {
+  const accounts = getAllAccounts();
+  const index = accounts.findIndex(acc => acc.username === username);
+  
+  if (index === -1) {
+    return { success: false, message: "Account not found" };
+  }
+  
+  // Merge updates
+  accounts[index] = { ...accounts[index], ...updates };
+  saveAllAccounts(accounts);
+  
+  return { success: true, message: "Account updated successfully" };
+}
+
+// Delete account
+function deleteAccount(username) {
+  const accounts = getAllAccounts();
+  const filtered = accounts.filter(acc => acc.username !== username);
+  
+  if (filtered.length === accounts.length) {
+    return { success: false, message: "Account not found" };
+  }
+  
+  saveAllAccounts(filtered);
+  return { success: true, message: "Account deleted successfully" };
+}
+
+// Check if user has permission to use an app
+function hasAppPermission(appName) {
+  if (!currentUserAccount) return true; // Default allow if no account system
+  
+  // Superusers can access everything
+  if (currentUserAccount.role === "superuser") return true;
+  
+  // If allowedApps is empty, all apps are allowed
+  if (!currentUserAccount.allowedApps || currentUserAccount.allowedApps.length === 0) {
+    return true;
+  }
+  
+  // Check if app is in allowed list
+  return currentUserAccount.allowedApps.includes(appName);
+}
+
+// Check if current user is superuser
+function isSuperUser() {
+  return currentUserAccount && currentUserAccount.role === "superuser";
+}
+
+// Migrate old single-user system to new multi-user system
+function migrateToMultiUserSystem() {
+  const accounts = getAllAccounts();
+  
+  // If accounts already exist, no need to migrate
+  if (accounts.length > 0) return;
+  
+  // Check if old system has a user
+  const oldUsername = localStorage.getItem("nautilusOS_username");
+  const oldPassword = localStorage.getItem("nautilusOS_password");
+  const oldIsPasswordless = localStorage.getItem("nautilusOS_isPasswordless") === "true";
+  
+  if (oldUsername) {
+    // Create account from old system as superuser
+    const newAccount = new UserAccount(
+      oldUsername,
+      oldPassword || "",
+      "superuser",
+      oldIsPasswordless
+    );
+    saveAllAccounts([newAccount]);
+    console.log("Migrated to multi-user system");
+  }
+}
 
 let loginStartTime = localStorage.getItem("nautilusOS_bootTime");
 if (!loginStartTime) {
@@ -102,6 +235,7 @@ const appMetadata = {
   browser: { name: "Nautilus Browser", icon: "fa-globe", preinstalled: true },
   cloaking: { name: "Cloaking", icon: "fa-mask", preinstalled: true },
   achievements: { name: "Achievements", icon: "fa-trophy", preinstalled: true },
+  python: { name: "Python Interpreter", icon: "fa-code", preinstalled: true },
   "startup-apps": {
     name: "Startup Apps",
     icon: "fa-rocket",
@@ -1389,36 +1523,67 @@ function login() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
-  const savedUsername = localStorage.getItem("nautilusOS_username");
-  const savedPassword = localStorage.getItem("nautilusOS_password");
-  const isPasswordless =
-    localStorage.getItem("nautilusOS_isPasswordless") === "true";
+  // Migrate old system if needed
+  migrateToMultiUserSystem();
+  
+  // Get account from new multi-user system
+  const account = getAccountByUsername(username);
+  
+  if (!account) {
+    // Fallback to old system for backwards compatibility
+    const savedUsername = localStorage.getItem("nautilusOS_username");
+    const savedPassword = localStorage.getItem("nautilusOS_password");
+    const isPasswordless = localStorage.getItem("nautilusOS_isPasswordless") === "true";
 
-  if (!username) {
-    showToast("Please enter username", "fa-exclamation-circle");
-    return;
-  }
+    if (!username) {
+      showToast("Please enter username", "fa-exclamation-circle");
+      return;
+    }
 
-  if (username !== savedUsername) {
-    showToast("Invalid username", "fa-exclamation-circle");
-    return;
-  }
+    if (username !== savedUsername) {
+      showToast("Invalid username", "fa-exclamation-circle");
+      return;
+    }
 
-  if (isPasswordless) {
+    if (!isPasswordless) {
+      if (!password) {
+        showToast("Please enter password", "fa-exclamation-circle");
+        return;
+      }
+
+      const hashedPassword = hashPassword(password);
+      if (hashedPassword !== savedPassword) {
+        showToast("Invalid password", "fa-exclamation-circle");
+        return;
+      }
+    }
+    
+    currentUsername = username;
+    currentUserAccount = null; // Old system doesn't use account objects
   } else {
-    if (!password) {
-      showToast("Please enter password", "fa-exclamation-circle");
+    // New multi-user system
+    if (!username) {
+      showToast("Please enter username", "fa-exclamation-circle");
       return;
     }
 
-    const hashedPassword = hashPassword(password);
-    if (hashedPassword !== savedPassword) {
-      showToast("Invalid password", "fa-exclamation-circle");
-      return;
+    if (!account.isPasswordless) {
+      if (!password) {
+        showToast("Please enter password", "fa-exclamation-circle");
+        return;
+      }
+
+      const hashedPassword = hashPassword(password);
+      if (hashedPassword !== account.password) {
+        showToast("Invalid password", "fa-exclamation-circle");
+        return;
+      }
     }
+    
+    currentUsername = username;
+    currentUserAccount = account;
   }
-
-  currentUsername = username;
+  
   document.getElementById("displayUsername").textContent = username;
 
   if (username.toLowerCase() === "dinguschan" || username.toLowerCase() === "$xor" || username.toLowerCase() === "lanefiedler-731") {
@@ -2197,8 +2362,14 @@ function openFile(filename) {
         focusWindow(windows["photos"]);
       }
     } else {
-      currentFile = filename;
-      openApp("editor", item, filename);
+      // Check if it's a Python file
+      if (filename.endsWith(".py")) {
+        currentFile = filename;
+        openApp("python", item, filename);
+      } else {
+        currentFile = filename;
+        openApp("editor", item, filename);
+      }
     }
   }
 }
@@ -2326,6 +2497,12 @@ function resetBootloader() {
 }
 
 function openApp(appName, editorContent = "", filename = "") {
+  // Check app permissions
+  if (!hasAppPermission(appName)) {
+    showToast(`Access denied: You don't have permission to use ${appMetadata[appName]?.name || appName}`, "fa-exclamation-circle");
+    return;
+  }
+  
   const menu = document.getElementById("startMenu");
   if (menu.classList.contains("active")) {
     toggleStartMenu();
@@ -3151,7 +3328,7 @@ alt="favicon">
                                 <div class="settings-item-title">Account Type</div>
                                 <div class="settings-item-desc">Permission level</div>
                             </div>
-                            <div class="settings-item-value">Standard User</div>
+                            <div class="settings-item-value">${currentUserAccount?.role === "superuser" ? "Super User" : "Standard User"}</div>
                         </div>
                     </div>
                 </div>
@@ -3195,6 +3372,23 @@ alt="favicon">
                         </button>
                     </div>
                 </div>
+
+                ${currentUserAccount?.role === "superuser" ? `
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Account Management</span>
+                    </div>
+                    <div class="settings-card-body">
+                        <p class="settings-description">
+                            As a super user, you can manage all user accounts and their permissions.
+                        </p>
+                        <button class="settings-action-btn" onclick="openAccountManager()">
+                            <i class="fas fa-users"></i> Manage Accounts
+                        </button>
+                    </div>
+                </div>
+                ` : ''}
             </div>
             
             <div class="settings-tab-content" data-tab="advanced">
@@ -3852,6 +4046,60 @@ alt="favicon">
           `,
       noPadding: true,
       width: 400,
+      height: 600,
+    },
+    python: {
+      title: "Python Interpreter",
+      icon: "fas fa-code",
+      content: `
+              <div class="python-interpreter">
+                  <div class="python-toolbar">
+                      <button class="editor-btn" onclick="runPythonCode()">
+                          <i class="fas fa-play"></i> Run
+                      </button>
+                      <button class="editor-btn" onclick="clearPythonOutput()">
+                          <i class="fas fa-eraser"></i> Clear Output
+                      </button>
+                      <button class="editor-btn" onclick="savePythonFile()">
+                          <i class="fas fa-save"></i> Save
+                      </button>
+                      <button class="editor-btn" onclick="loadPythonFile()">
+                          <i class="fas fa-folder-open"></i> Load
+                      </button>
+                      <input type="text" id="pythonFilename" class="editor-filename" placeholder="script.py" value="${filename || 'script.py'}">
+                  </div>
+                  <div class="python-editor-container">
+                      <div class="python-editor-section">
+                          <div class="python-section-header">
+                              <i class="fas fa-code"></i> Python Code Editor
+                          </div>
+                          <textarea class="python-code-editor" id="pythonCodeEditor" placeholder="# Write your Python code here
+# Example:
+print('Hello from NautilusOS!')
+
+# Basic operations
+x = 10
+y = 20
+result = x + y
+print(f'Result: {result}')
+
+# List operations
+numbers = [1, 2, 3, 4, 5]
+print(f'Numbers: {numbers}')
+print(f'Sum: {sum(numbers)}')
+">${editorContent || ''}</textarea>
+                      </div>
+                      <div class="python-output-section">
+                          <div class="python-section-header">
+                              <i class="fas fa-terminal"></i> Output Console
+                          </div>
+                          <div class="python-output" id="pythonOutput"></div>
+                      </div>
+                  </div>
+              </div>
+          `,
+      noPadding: true,
+      width: 900,
       height: 600,
     },
     "snap-manager": {
@@ -6030,7 +6278,6 @@ ${startupInstalled ? "Uninstall" : "Install"}
                           }
                       </button>
                   </div>
-HEAD
                   
                   <div class="appstore-item">
                       <div class="appstore-item-icon">
@@ -6831,6 +7078,193 @@ function calcBackspace() {
 
   display.textContent = calcCurrentValue;
 }
+
+// ========== PYTHON INTERPRETER FUNCTIONS ==========
+
+// Simple Python interpreter using eval (simulated)
+function runPythonCode() {
+  const editor = document.getElementById("pythonCodeEditor");
+  const output = document.getElementById("pythonOutput");
+  
+  if (!editor || !output) {
+    showToast("Python interpreter not ready", "fa-exclamation-circle");
+    return;
+  }
+  
+  const code = editor.value;
+  output.innerHTML = '<div style="color: var(--text-secondary); margin-bottom: 0.5rem;"><i class="fas fa-play"></i> Running...</div>';
+  
+  // Simulated Python execution
+  try {
+    let outputLines = [];
+    let printOutput = [];
+    
+    // Create a simulated Python environment
+    const pythonEnv = {
+      print: (...args) => {
+        printOutput.push(args.map(String).join(' '));
+      },
+      len: (arr) => arr.length,
+      sum: (arr) => arr.reduce((a, b) => a + b, 0),
+      range: (start, end, step = 1) => {
+        const arr = [];
+        if (end === undefined) {
+          end = start;
+          start = 0;
+        }
+        for (let i = start; i < end; i += step) {
+          arr.push(i);
+        }
+        return arr;
+      },
+      abs: Math.abs,
+      max: Math.max,
+      min: Math.min,
+      round: Math.round,
+      str: String,
+      int: parseInt,
+      float: parseFloat,
+      list: (arr) => Array.from(arr),
+    };
+    
+    // Convert Python-like syntax to JavaScript
+    let jsCode = code
+      .replace(/print\(/g, 'pythonEnv.print(')
+      .replace(/len\(/g, 'pythonEnv.len(')
+      .replace(/sum\(/g, 'pythonEnv.sum(')
+      .replace(/range\(/g, 'pythonEnv.range(')
+      .replace(/abs\(/g, 'pythonEnv.abs(')
+      .replace(/max\(/g, 'pythonEnv.max(')
+      .replace(/min\(/g, 'pythonEnv.min(')
+      .replace(/round\(/g, 'pythonEnv.round(')
+      .replace(/#.*$/gm, '//')  // Convert comments
+      .replace(/def\s+(\w+)\s*\((.*?)\)\s*:/g, 'function $1($2) {')  // Convert function definitions
+      .replace(/for\s+(\w+)\s+in\s+(.*?):/g, 'for (let $1 of $2) {')  // Convert for loops
+      .replace(/if\s+(.*?):/g, 'if ($1) {')  // Convert if statements
+      .replace(/elif\s+(.*?):/g, '} else if ($1) {')  // Convert elif
+      .replace(/else:/g, '} else {')  // Convert else
+      .replace(/True/g, 'true')  // Convert True
+      .replace(/False/g, 'false')  // Convert False
+      .replace(/None/g, 'null');  // Convert None
+    
+    // Count indentation-based blocks and add closing braces
+    const lines = jsCode.split('\n');
+    let indentStack = [0];
+    let processedLines = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmedLine = line.trim();
+      
+      if (trimmedLine === '' || trimmedLine.startsWith('//')) {
+        processedLines.push(line);
+        continue;
+      }
+      
+      const indent = line.search(/\S/);
+      const currentIndent = indent === -1 ? 0 : indent;
+      
+      // Close blocks if dedenting
+      while (indentStack.length > 1 && currentIndent < indentStack[indentStack.length - 1]) {
+        indentStack.pop();
+        processedLines.push(' '.repeat(indentStack[indentStack.length - 1]) + '}');
+      }
+      
+      processedLines.push(line);
+      
+      // Track indentation for blocks
+      if (trimmedLine.endsWith('{')) {
+        indentStack.push(currentIndent);
+      }
+    }
+    
+    // Close remaining blocks
+    while (indentStack.length > 1) {
+      indentStack.pop();
+      processedLines.push('}');
+    }
+    
+    jsCode = processedLines.join('\n');
+    
+    // Execute the code
+    const func = new Function('pythonEnv', jsCode);
+    func(pythonEnv);
+    
+    // Display output
+    if (printOutput.length > 0) {
+      output.innerHTML = printOutput.map(line => 
+        `<div class="python-output-line">${escapeHtml(line)}</div>`
+      ).join('');
+    } else {
+      output.innerHTML = '<div style="color: var(--success-green);"><i class="fas fa-check-circle"></i> Code executed successfully (no output)</div>';
+    }
+    
+  } catch (error) {
+    output.innerHTML = `<div style="color: var(--error-red);"><i class="fas fa-exclamation-circle"></i> Error: ${escapeHtml(error.message)}</div>`;
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function clearPythonOutput() {
+  const output = document.getElementById("pythonOutput");
+  if (output) {
+    output.innerHTML = '';
+  }
+}
+
+function savePythonFile() {
+  const editor = document.getElementById("pythonCodeEditor");
+  const filenameInput = document.getElementById("pythonFilename");
+  
+  if (!editor || !filenameInput) return;
+  
+  const filename = filenameInput.value || 'script.py';
+  const code = editor.value;
+  
+  // Save to file system
+  const folder = getFileSystemAtPath(["Python"]);
+  if (!folder) {
+    // Create Python folder if it doesn't exist
+    fileSystem.Python = {};
+  }
+  
+  fileSystem.Python[filename] = code;
+  showToast(`Saved ${filename}`, "fa-check-circle");
+}
+
+function loadPythonFile() {
+  const filenameInput = document.getElementById("pythonFilename");
+  if (!filenameInput) return;
+  
+  const filename = filenameInput.value;
+  if (!filename) {
+    showToast("Please enter a filename", "fa-exclamation-circle");
+    return;
+  }
+  
+  const folder = getFileSystemAtPath(["Python"]);
+  if (!folder || !folder[filename]) {
+    showToast("File not found", "fa-exclamation-circle");
+    return;
+  }
+  
+  const editor = document.getElementById("pythonCodeEditor");
+  if (editor) {
+    editor.value = folder[filename];
+    showToast(`Loaded ${filename}`, "fa-check-circle");
+  }
+}
+
+// Support opening Python files with double-click
+function openPythonFile(filename, content) {
+  openApp("python", content, filename);
+}
+
 let notificationHistory = [];
 
 function toggleNotificationCenter() {
@@ -9275,6 +9709,195 @@ function exportProfile() {
   URL.revokeObjectURL(url);
   showToast("Profile exported successfully!", "fa-check-circle");
 }
+
+// ========== ACCOUNT MANAGER FUNCTIONS ==========
+
+function openAccountManager() {
+  const accounts = getAllAccounts();
+  
+  const accountListHTML = accounts.map(acc => `
+    <div class="account-manager-item" style="padding: 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.75rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="flex: 1;">
+          <div style="color: var(--text-primary); font-family: fontb; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-user"></i>
+            ${acc.username}
+            ${acc.role === "superuser" ? '<span style="background: var(--accent); color: var(--bg-primary); padding: 0.15rem 0.5rem; border-radius: 5px; font-size: 0.75rem; margin-left: 0.5rem;">SUPER USER</span>' : ''}
+          </div>
+          <div style="color: var(--text-secondary); font-size: 0.85rem;">
+            ${acc.isPasswordless ? 'Passwordless Account' : 'Password Protected'} • Created ${new Date(acc.createdAt).toLocaleDateString()}
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="settings-action-btn" onclick="editAccountPermissions('${acc.username}')" style="padding: 0.5rem 0.75rem;">
+            <i class="fas fa-key"></i> Permissions
+          </button>
+          ${acc.username !== currentUsername ? `
+          <button class="settings-action-btn" onclick="deleteAccountConfirm('${acc.username}')" style="padding: 0.5rem 0.75rem; background: var(--error-red); border-color: var(--error-red);">
+            <i class="fas fa-trash"></i>
+          </button>
+          ` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  showModal({
+    type: "info",
+    icon: "fa-users-cog",
+    title: "Account Management",
+    message: `
+      <div style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
+        ${accountListHTML}
+      </div>
+      <button class="cloaking-btn primary" onclick="closeModal(); openCreateAccountDialog()" style="width: 100%;">
+        <i class="fas fa-user-plus"></i> Create New Account
+      </button>
+    `,
+    confirm: false
+  });
+}
+
+function openCreateAccountDialog() {
+  showModal({
+    type: "info",
+    icon: "fa-user-plus",
+    title: "Create New Account",
+    message: `
+      <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem;">Username</label>
+          <input type="text" id="newAccountUsername" class="login-input" placeholder="Enter username" style="width: 100%;">
+        </div>
+        <div>
+          <label style="display: block; color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem;">Password</label>
+          <input type="password" id="newAccountPassword" class="login-input" placeholder="Enter password" style="width: 100%;">
+        </div>
+        <div>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="newAccountPasswordless">
+            <span style="color: var(--text-primary);">Passwordless Account</span>
+          </label>
+        </div>
+        <div>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="newAccountSuperUser">
+            <span style="color: var(--text-primary);">Super User (Full Permissions)</span>
+          </label>
+        </div>
+      </div>
+    `,
+    confirm: true,
+    confirmText: "Create Account",
+    cancelText: "Cancel"
+  }).then(result => {
+    if (result) {
+      const username = document.getElementById("newAccountUsername").value;
+      const password = document.getElementById("newAccountPassword").value;
+      const isPasswordless = document.getElementById("newAccountPasswordless").checked;
+      const isSuperUser = document.getElementById("newAccountSuperUser").checked;
+      
+      if (!username) {
+        showToast("Username is required", "fa-exclamation-circle");
+        return;
+      }
+      
+      if (!isPasswordless && !password) {
+        showToast("Password is required for non-passwordless accounts", "fa-exclamation-circle");
+        return;
+      }
+      
+      const result = createAccount(username, password, isSuperUser ? "superuser" : "standard", isPasswordless);
+      
+      if (result.success) {
+        showToast(result.message, "fa-check-circle");
+        openAccountManager();
+      } else {
+        showToast(result.message, "fa-exclamation-circle");
+      }
+    }
+  });
+}
+
+function editAccountPermissions(username) {
+  const account = getAccountByUsername(username);
+  if (!account) {
+    showToast("Account not found", "fa-exclamation-circle");
+    return;
+  }
+  
+  // Get all available apps
+  const allApps = Object.keys(appMetadata);
+  const allowedApps = account.allowedApps || [];
+  
+  const appCheckboxes = allApps.map(appKey => {
+    const app = appMetadata[appKey];
+    const isAllowed = allowedApps.length === 0 || allowedApps.includes(appKey);
+    return `
+      <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(30, 35, 48, 0.4); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 0.5rem;">
+        <input type="checkbox" class="app-permission-checkbox" value="${appKey}" ${isAllowed ? 'checked' : ''}>
+        <i class="fas ${app.icon}" style="color: var(--accent);"></i>
+        <span style="color: var(--text-primary);">${app.name}</span>
+      </label>
+    `;
+  }).join('');
+  
+  showModal({
+    type: "info",
+    icon: "fa-key",
+    title: `Permissions for ${username}`,
+    message: `
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">Select which apps this user can access. If none are selected, all apps are allowed.</p>
+      <div style="max-height: 300px; overflow-y: auto;">
+        ${appCheckboxes}
+      </div>
+    `,
+    confirm: true,
+    confirmText: "Save Permissions",
+    cancelText: "Cancel"
+  }).then(result => {
+    if (result) {
+      const checkboxes = document.querySelectorAll('.app-permission-checkbox');
+      const selectedApps = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+      
+      // If all apps are selected, set to empty array (meaning all allowed)
+      const updatedAllowedApps = selectedApps.length === allApps.length ? [] : selectedApps;
+      
+      updateAccount(username, { allowedApps: updatedAllowedApps });
+      showToast(`Permissions updated for ${username}`, "fa-check-circle");
+      
+      // If updating current user, reload their account
+      if (username === currentUsername) {
+        currentUserAccount = getAccountByUsername(username);
+      }
+    }
+  });
+}
+
+function deleteAccountConfirm(username) {
+  showModal({
+    type: "warning",
+    icon: "fa-exclamation-triangle",
+    title: "Delete Account",
+    message: `Are you sure you want to delete the account "${username}"? This action cannot be undone.`,
+    confirm: true,
+    confirmText: "Delete",
+    cancelText: "Cancel"
+  }).then(result => {
+    if (result) {
+      const delResult = deleteAccount(username);
+      if (delResult.success) {
+        showToast(delResult.message, "fa-check-circle");
+        openAccountManager();
+      } else {
+        showToast(delResult.message, "fa-exclamation-circle");
+      }
+    }
+  });
+}
+
 function importProfile(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -10387,22 +11010,107 @@ document.addEventListener("contextmenu", () => {
   hideProperties();
 });
 function updateLoginScreen() {
-  const isPasswordless =
-    localStorage.getItem("nautilusOS_isPasswordless") === "true";
+  // Check for multi-user accounts
+  const accounts = getAllAccounts();
+  
+  if (accounts.length > 0) {
+    // Multi-user system - show account list
+    updateLoginWithAccounts(accounts);
+  } else {
+    // Old single-user system
+    const isPasswordless =
+      localStorage.getItem("nautilusOS_isPasswordless") === "true";
+    const passwordWrapper = document.getElementById("passwordWrapper");
+    const loginSubtitle = document.getElementById("loginSubtitle");
+    const loginContainer = document.querySelector(".login-container");
+
+    if (isPasswordless) {
+      if (passwordWrapper) passwordWrapper.style.display = "none";
+      if (loginSubtitle)
+        loginSubtitle.textContent =
+          "Passwordless account - just enter your username";
+      if (loginContainer) loginContainer.classList.add("passwordless");
+    } else {
+      if (passwordWrapper) passwordWrapper.style.display = "block";
+      if (loginSubtitle) loginSubtitle.textContent = "Sign in to continue";
+      if (loginContainer) loginContainer.classList.remove("passwordless");
+    }
+  }
+}
+
+function updateLoginWithAccounts(accounts) {
+  const loginSubtitle = document.getElementById("loginSubtitle");
+  const usernameInput = document.getElementById("username");
+  const passwordWrapper = document.getElementById("passwordWrapper");
+  
+  if (accounts.length === 1) {
+    // Only one account, pre-fill username
+    const account = accounts[0];
+    if (usernameInput) {
+      usernameInput.value = account.username;
+    }
+    if (loginSubtitle) {
+      loginSubtitle.textContent = account.isPasswordless ? "Passwordless account - click Sign In" : "Enter your password";
+    }
+    if (passwordWrapper) {
+      passwordWrapper.style.display = account.isPasswordless ? "none" : "block";
+    }
+  } else {
+    // Multiple accounts - show account selector
+    if (loginSubtitle) {
+      loginSubtitle.innerHTML = `
+        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Select an account:</div>
+        <div id="accountSelector" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 200px; overflow-y: auto;">
+          ${accounts.map(acc => `
+            <div class="account-select-item" onclick="selectLoginAccount('${acc.username}')" style="padding: 0.75rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.75rem;">
+              <i class="fas fa-user" style="color: var(--accent);"></i>
+              <div style="flex: 1;">
+                <div style="color: var(--text-primary); font-family: fontb;">${acc.username}</div>
+                <div style="color: var(--text-secondary); font-size: 0.8rem;">${acc.role === "superuser" ? "Super User" : "Standard User"}</div>
+              </div>
+              ${acc.isPasswordless ? '<i class="fas fa-unlock" style="color: var(--success-green);" title="Passwordless"></i>' : '<i class="fas fa-lock" style="color: var(--text-secondary);"></i>'}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    
+    // Hide username and password fields initially
+    if (usernameInput) usernameInput.style.display = "none";
+    if (passwordWrapper) passwordWrapper.style.display = "none";
+  }
+}
+
+function selectLoginAccount(username) {
+  const account = getAccountByUsername(username);
+  if (!account) return;
+  
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
   const passwordWrapper = document.getElementById("passwordWrapper");
   const loginSubtitle = document.getElementById("loginSubtitle");
-  const loginContainer = document.querySelector(".login-container");
-
-  if (isPasswordless) {
-    if (passwordWrapper) passwordWrapper.style.display = "none";
-    if (loginSubtitle)
-      loginSubtitle.textContent =
-        "Passwordless account - just enter your username";
-    if (loginContainer) loginContainer.classList.add("passwordless");
-  } else {
-    if (passwordWrapper) passwordWrapper.style.display = "block";
-    if (loginSubtitle) loginSubtitle.textContent = "Sign in to continue";
-    if (loginContainer) loginContainer.classList.remove("passwordless");
+  
+  // Fill username
+  if (usernameInput) {
+    usernameInput.value = username;
+    usernameInput.style.display = "block";
+  }
+  
+  // Show/hide password field
+  if (passwordWrapper) {
+    passwordWrapper.style.display = account.isPasswordless ? "none" : "block";
+  }
+  
+  // Update subtitle
+  if (loginSubtitle) {
+    loginSubtitle.innerHTML = account.isPasswordless ? 
+      `<a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer;">← Back to account list</a>` : 
+      `Enter password for ${username} <a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer; margin-left: 0.5rem;">← Back</a>`;
+  }
+  
+  // Focus password input if needed
+  if (!account.isPasswordless && passwordInput) {
+    setTimeout(() => passwordInput.focus(), 100);
   }
 }
 function switchSettingsTab(tabName, element) {
