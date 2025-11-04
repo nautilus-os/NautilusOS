@@ -13579,6 +13579,19 @@ async init() {
             } else {
                 objectStore = event.target.transaction.objectStore(this.storeName);
             }
+
+            if (event.oldVersion < 1) {
+                const initialItems = [{},{
+"example.txt":
+  "This is an example text file.\n\nYou can edit this file using the Text Editor app.\n\nTry creating your own files by:\n1. Opening the Text Editor\n2. Writing your content\n3. Clicking Save As and entering a filename\n\nHave fun exploring NautilusOS!",
+},
+{Photos: 1},
+{TextEditor: 2}
+];
+initialItems.forEach(item => {
+objectStore.add(item);
+});
+}
 };
 });
 }
@@ -13681,7 +13694,8 @@ close() {
 
 async deleteDB() {
     return new Promise((resolve, reject) => {
-        this.close(); 
+        this.close(); // Ensure connection is closed before deletion
+
         const deleteRequest = window.indexedDB.deleteDatabase(this.dbName);
 
         deleteRequest.onsuccess = () => {
@@ -13897,7 +13911,7 @@ async function saveFS(fs){
     showToast("files loaded", "fa-check-circle");
     list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
-    await saveFS(fileSystem)
+    await saveFS(fileSystem);
 })()
 let currentPath = [];
 let currentFile = null;
@@ -23606,4 +23620,572 @@ function checkImportedAchievements() {
   
   currentUsername = newUsername;
   localStorage.setItem("nautilusOS_username", newUsername);
-  document.getElementById("displayUsernam
+  document.getElementById("displayUsername").textContent = newUsername;
+  
+  showToast(`Username changed to "${newUsername}"`, "fa-check-circle");
+  closeModal();
+  
+  if (windows["settings"]) {
+  closeWindow(
+  windows["settings"].querySelector(".window-btn.close"),
+  "settings"
+  );
+  }
+  }
+
+let game2048 = {
+  board: null,
+  score: 0,
+  best: localStorage.getItem('2048Best') ? parseInt(localStorage.getItem('2048Best')) : 0,
+  size: 4,
+  gameStarted: false,
+  tiles: [],
+  mergedTiles: new Set(),
+  newTiles: new Set(),
+  previousBoard: null,
+  slideDirection: null
+};
+
+function start2048Game() {
+  game2048.board = Array(game2048.size).fill().map(() => Array(game2048.size).fill(0));
+  game2048.score = 0;
+  game2048.gameStarted = true;
+  game2048.tiles = [];
+  game2048.mergedTiles = new Set();
+  game2048.newTiles = new Set();
+  game2048.previousBoard = null;
+  game2048.slideDirection = null;
+
+  document.getElementById('game2048Score').textContent = '0';
+  document.getElementById('game2048Best').textContent = game2048.best;
+
+  addRandomTile2048();
+  addRandomTile2048();
+  render2048Board();
+
+  document.removeEventListener('keydown', handle2048KeyPress);
+  document.addEventListener('keydown', handle2048KeyPress);
+}
+
+function addRandomTile2048() {
+  const emptyCells = [];
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      if (game2048.board[i][j] === 0) {
+        emptyCells.push({row: i, col: j});
+      }
+    }
+  }
+
+  if (emptyCells.length > 0) {
+    const cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    game2048.board[cell.row][cell.col] = Math.random() < 0.9 ? 2 : 4;
+    game2048.newTiles.add(`${cell.row}-${cell.col}`);
+  }
+}
+
+function getTileColor(value) {
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const bgSecondary = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
+  
+  if (value === 0) return bgSecondary;
+  if (value === 2) return 'rgba(125, 211, 192, 0.2)';
+  if (value === 4) return 'rgba(125, 211, 192, 0.3)';
+  if (value === 8) return 'rgba(125, 211, 192, 0.4)';
+  if (value === 16) return 'rgba(125, 211, 192, 0.5)';
+  if (value === 32) return 'rgba(125, 211, 192, 0.6)';
+  if (value === 64) return 'rgba(125, 211, 192, 0.7)';
+  if (value === 128) return 'rgba(125, 211, 192, 0.8)';
+  if (value >= 256) return accentColor;
+  return accentColor;
+}
+
+function getTileTextColor(value) {
+  const textPrimary = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+  const bgPrimary = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim();
+  
+  if (value >= 8) return textPrimary;
+  return textPrimary;
+}
+
+function render2048Board() {
+  const boardEl = document.getElementById('game2048Board');
+  if (!boardEl) return;
+
+  boardEl.innerHTML = '';
+  boardEl.style.display = 'grid';
+  boardEl.style.gridTemplateColumns = `repeat(${game2048.size}, 100px)`;
+  boardEl.style.gap = '10px';
+  boardEl.style.position = 'relative';
+
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      const value = game2048.board[i][j];
+      const tile = document.createElement('div');
+      tile.style.width = '100px';
+      tile.style.height = '100px';
+      tile.style.background = getTileColor(value);
+      tile.style.borderRadius = '8px';
+      tile.style.display = 'flex';
+      tile.style.alignItems = 'center';
+      tile.style.justifyContent = 'center';
+      tile.style.fontSize = value >= 1000 ? '28px' : value >= 100 ? '36px' : '44px';
+      tile.style.fontWeight = 'bold';
+      tile.style.fontFamily = 'fontb';
+      tile.style.color = getTileTextColor(value);
+      tile.style.transition = 'all 0.15s ease';
+      tile.style.border = value > 0 ? '2px solid var(--border)' : 'none';
+      tile.style.boxShadow = value > 0 ? '0 2px 8px rgba(0, 0, 0, 0.3)' : 'none';
+
+      // Add animation classes
+      if (value > 0) {
+        if (game2048.newTiles.has(`${i}-${j}`)) {
+          tile.classList.add('tile-new');
+        } else if (game2048.mergedTiles.has(`${i}-${j}`)) {
+          tile.classList.add('tile-merge');
+        } else if (game2048.slideDirection && game2048.previousBoard) {
+          // Check if this tile moved from a previous position
+          const slideClass = getSlideAnimationClass(i, j, game2048.slideDirection);
+          if (slideClass) {
+            tile.classList.add(slideClass);
+          }
+        }
+      }
+
+      tile.textContent = value || '';
+      boardEl.appendChild(tile);
+    }
+  }
+
+  // Clear animation sets after rendering
+  setTimeout(() => {
+    game2048.newTiles.clear();
+    game2048.mergedTiles.clear();
+    game2048.previousBoard = null;
+    game2048.slideDirection = null;
+  }, 200);
+}
+
+function getSlideAnimationClass(row, col, direction) {
+  if (!game2048.previousBoard) return null;
+
+  // Find where this tile was in the previous board
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      if (game2048.previousBoard[i][j] === game2048.board[row][col] && game2048.previousBoard[i][j] !== 0) {
+        // Check if it's the same tile that moved
+        if (i !== row || j !== col) {
+          switch (direction) {
+            case 'left': return j < col ? 'tile-slide-left' : null;
+            case 'right': return j > col ? 'tile-slide-right' : null;
+            case 'up': return i < row ? 'tile-slide-up' : null;
+            case 'down': return i > row ? 'tile-slide-down' : null;
+          }
+        }
+        break;
+      }
+    }
+  }
+  return null;
+}
+
+function handle2048KeyPress(e) {
+  if (!game2048.gameStarted) return;
+
+  const key = e.key.toLowerCase();
+  let moved = false;
+  let direction = '';
+  let scoreBefore = game2048.score;
+
+  // Store previous board state for slide animations
+  game2048.previousBoard = game2048.board.map(row => [...row]);
+
+  if (key === 'arrowup' || key === 'w') {
+    e.preventDefault();
+    moved = move2048Up();
+    direction = 'up';
+  } else if (key === 'arrowdown' || key === 's') {
+    e.preventDefault();
+    moved = move2048Down();
+    direction = 'down';
+  } else if (key === 'arrowleft' || key === 'a') {
+    e.preventDefault();
+    moved = move2048Left();
+    direction = 'left';
+  } else if (key === 'arrowright' || key === 'd') {
+    e.preventDefault();
+    moved = move2048Right();
+    direction = 'right';
+  }
+
+  if (moved) {
+    game2048.slideDirection = direction;
+    addRandomTile2048();
+    setTimeout(() => {
+      render2048Board();
+    }, 100);
+
+    // Animate score if it increased
+    if (game2048.score > scoreBefore) {
+      const scoreEl = document.getElementById('game2048Score');
+      scoreEl.classList.add('score-increase');
+      setTimeout(() => {
+        scoreEl.classList.remove('score-increase');
+      }, 300);
+    }
+
+    if (game2048.score > game2048.best) {
+      game2048.best = game2048.score;
+      localStorage.setItem('2048Best', game2048.best);
+      document.getElementById('game2048Best').textContent = game2048.best;
+    }
+
+    if (check2048GameOver()) {
+      game2048.gameStarted = false;
+      setTimeout(() => {
+        showToast('Game Over! Score: ' + game2048.score, 'fa-gamepad');
+      }, 300);
+    }
+  } else {
+    // Reset if no move was made
+    game2048.previousBoard = null;
+    game2048.slideDirection = null;
+  }
+}
+
+function move2048Left() {
+  let moved = false;
+  for (let i = 0; i < game2048.size; i++) {
+    const row = game2048.board[i].filter(val => val !== 0);
+    for (let j = 0; j < row.length - 1; j++) {
+      if (row[j] === row[j + 1]) {
+        row[j] *= 2;
+        game2048.score += row[j];
+        document.getElementById('game2048Score').textContent = game2048.score;
+        row.splice(j + 1, 1);
+        // Track merged tile position
+        game2048.mergedTiles.add(`${i}-${j}`);
+      }
+    }
+    while (row.length < game2048.size) row.push(0);
+    if (JSON.stringify(game2048.board[i]) !== JSON.stringify(row)) moved = true;
+    game2048.board[i] = row;
+  }
+  return moved;
+}
+
+function move2048Right() {
+  let moved = false;
+  for (let i = 0; i < game2048.size; i++) {
+    const row = game2048.board[i].filter(val => val !== 0);
+    for (let j = row.length - 1; j > 0; j--) {
+      if (row[j] === row[j - 1]) {
+        row[j] *= 2;
+        game2048.score += row[j];
+        document.getElementById('game2048Score').textContent = game2048.score;
+        row.splice(j - 1, 1);
+        j--;
+        // Track merged tile position
+        game2048.mergedTiles.add(`${i}-${game2048.size - row.length + j}`);
+      }
+    }
+    while (row.length < game2048.size) row.unshift(0);
+    if (JSON.stringify(game2048.board[i]) !== JSON.stringify(row)) moved = true;
+    game2048.board[i] = row;
+  }
+  return moved;
+}
+
+function move2048Up() {
+  let moved = false;
+  for (let j = 0; j < game2048.size; j++) {
+    const col = [];
+    for (let i = 0; i < game2048.size; i++) {
+      if (game2048.board[i][j] !== 0) col.push(game2048.board[i][j]);
+    }
+    for (let i = 0; i < col.length - 1; i++) {
+      if (col[i] === col[i + 1]) {
+        col[i] *= 2;
+        game2048.score += col[i];
+        document.getElementById('game2048Score').textContent = game2048.score;
+        col.splice(i + 1, 1);
+        // Track merged tile position
+        game2048.mergedTiles.add(`${i}-${j}`);
+      }
+    }
+    while (col.length < game2048.size) col.push(0);
+    for (let i = 0; i < game2048.size; i++) {
+      if (game2048.board[i][j] !== col[i]) moved = true;
+      game2048.board[i][j] = col[i];
+    }
+  }
+  return moved;
+}
+
+function move2048Down() {
+  let moved = false;
+  for (let j = 0; j < game2048.size; j++) {
+    const col = [];
+    for (let i = 0; i < game2048.size; i++) {
+      if (game2048.board[i][j] !== 0) col.push(game2048.board[i][j]);
+    }
+    for (let i = col.length - 1; i > 0; i--) {
+      if (col[i] === col[i - 1]) {
+        col[i] *= 2;
+        game2048.score += col[i];
+        document.getElementById('game2048Score').textContent = game2048.score;
+        col.splice(i - 1, 1);
+        i--;
+        // Track merged tile position
+        game2048.mergedTiles.add(`${game2048.size - col.length + i}-${j}`);
+      }
+    }
+    while (col.length < game2048.size) col.unshift(0);
+    for (let i = 0; i < game2048.size; i++) {
+      if (game2048.board[i][j] !== col[i]) moved = true;
+      game2048.board[i][j] = col[i];
+    }
+  }
+  return moved;
+}
+
+function check2048GameOver() {
+  for (let i = 0; i < game2048.size; i++) {
+    for (let j = 0; j < game2048.size; j++) {
+      if (game2048.board[i][j] === 0) return false;
+      if (j < game2048.size - 1 && game2048.board[i][j] === game2048.board[i][j + 1]) return false;
+      if (i < game2048.size - 1 && game2048.board[i][j] === game2048.board[i + 1][j]) return false;
+    }
+  }
+  return true;
+}
+
+let tttGame = {
+  board: Array(9).fill(''),
+  currentPlayer: 'X',
+  gameActive: true,
+  wins: localStorage.getItem('tttWins') ? parseInt(localStorage.getItem('tttWins')) : 0,
+  losses: localStorage.getItem('tttLosses') ? parseInt(localStorage.getItem('tttLosses')) : 0,
+  draws: localStorage.getItem('tttDraws') ? parseInt(localStorage.getItem('tttDraws')) : 0
+};
+
+function startTicTacToe() {
+  tttGame.board = Array(9).fill('');
+  tttGame.currentPlayer = 'X';
+  tttGame.gameActive = true;
+  
+  document.getElementById('tttStatus').textContent = 'Your turn (X)';
+  document.getElementById('tttWins').textContent = tttGame.wins;
+  document.getElementById('tttLosses').textContent = tttGame.losses;
+  document.getElementById('tttDraws').textContent = tttGame.draws;
+  
+  renderTTTBoard();
+}
+
+function renderTTTBoard() {
+  const boardEl = document.getElementById('tttBoard');
+  if (!boardEl) return;
+  
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const textPrimary = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+  const bgSecondary = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim();
+  const border = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+  
+  boardEl.innerHTML = '';
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement('div');
+    cell.style.width = '120px';
+    cell.style.height = '120px';
+    cell.style.background = bgSecondary;
+    cell.style.border = `2px solid ${border}`;
+    cell.style.borderRadius = '12px';
+    cell.style.display = 'flex';
+    cell.style.alignItems = 'center';
+    cell.style.justifyContent = 'center';
+    cell.style.fontSize = '56px';
+    cell.style.fontWeight = 'bold';
+    cell.style.fontFamily = 'fontb';
+    cell.style.cursor = tttGame.board[i] === '' && tttGame.gameActive ? 'pointer' : 'default';
+    cell.style.transition = 'all 0.2s ease';
+    cell.style.color = tttGame.board[i] === 'X' ? accentColor : textPrimary;
+    cell.textContent = tttGame.board[i];
+    
+    if (tttGame.board[i] === '' && tttGame.gameActive) {
+      cell.onmouseover = () => {
+        cell.style.background = `rgba(125, 211, 192, 0.1)`;
+        cell.style.transform = 'scale(1.05)';
+        cell.style.borderColor = accentColor;
+      };
+      cell.onmouseout = () => {
+        cell.style.background = bgSecondary;
+        cell.style.transform = 'scale(1)';
+        cell.style.borderColor = border;
+      };
+    }
+    
+    cell.onclick = () => handleTTTCellClick(i);
+    boardEl.appendChild(cell);
+  }
+}
+
+function handleTTTCellClick(index) {
+  if (tttGame.board[index] !== '' || !tttGame.gameActive || tttGame.currentPlayer !== 'X') return;
+  
+  tttGame.board[index] = 'X';
+  renderTTTBoard();
+  
+  const result = checkTTTWinner();
+  if (result) {
+    endTTTGame(result);
+    return;
+  }
+  
+  if (tttGame.board.every(cell => cell !== '')) {
+    endTTTGame('draw');
+    return;
+  }
+  
+  tttGame.currentPlayer = 'O';
+  document.getElementById('tttStatus').textContent = 'AI is thinking...';
+  
+  setTimeout(() => {
+    makeAIMove();
+  }, 500);
+}
+
+function makeAIMove() {
+  const bestMove = getBestMove();
+  tttGame.board[bestMove] = 'O';
+  renderTTTBoard();
+  
+  const result = checkTTTWinner();
+  if (result) {
+    endTTTGame(result);
+    return;
+  }
+  
+  if (tttGame.board.every(cell => cell !== '')) {
+    endTTTGame('draw');
+    return;
+  }
+  
+  tttGame.currentPlayer = 'X';
+  document.getElementById('tttStatus').textContent = 'Your turn (X)';
+}
+
+function getBestMove() {
+  for (let i = 0; i < 9; i++) {
+    if (tttGame.board[i] === '') {
+      tttGame.board[i] = 'O';
+      if (checkTTTWinner() === 'O') {
+        tttGame.board[i] = '';
+        return i;
+      }
+      tttGame.board[i] = '';
+    }
+  }
+  
+  for (let i = 0; i < 9; i++) {
+    if (tttGame.board[i] === '') {
+      tttGame.board[i] = 'X';
+      if (checkTTTWinner() === 'X') {
+        tttGame.board[i] = '';
+        return i;
+      }
+      tttGame.board[i] = '';
+    }
+  }
+  
+  const corners = [0, 2, 6, 8];
+  const availableCorners = corners.filter(i => tttGame.board[i] === '');
+  if (availableCorners.length > 0) {
+    return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+  }
+  
+  if (tttGame.board[4] === '') return 4;
+  
+  const available = tttGame.board.map((cell, i) => cell === '' ? i : null).filter(i => i !== null);
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+function checkTTTWinner() {
+  const winPatterns = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+  ];
+  
+  for (const pattern of winPatterns) {
+    const [a, b, c] = pattern;
+    if (tttGame.board[a] && tttGame.board[a] === tttGame.board[b] && tttGame.board[a] === tttGame.board[c]) {
+      return tttGame.board[a];
+    }
+  }
+  
+  return null;
+}
+
+function endTTTGame(result) {
+  tttGame.gameActive = false;
+  
+  if (result === 'X') {
+    tttGame.wins++;
+    localStorage.setItem('tttWins', tttGame.wins);
+    document.getElementById('tttStatus').textContent = 'You won! 🎉';
+    document.getElementById('tttWins').textContent = tttGame.wins;
+    showToast('You won!', 'fa-trophy');
+  } else if (result === 'O') {
+    tttGame.losses++;
+    localStorage.setItem('tttLosses', tttGame.losses);
+    document.getElementById('tttStatus').textContent = 'AI won! 🤖';
+    document.getElementById('tttLosses').textContent = tttGame.losses;
+    showToast('AI won!', 'fa-gamepad');
+  } else {
+    tttGame.draws++;
+    localStorage.setItem('tttDraws', tttGame.draws);
+    document.getElementById('tttStatus').textContent = "It's a draw! 🤝";
+    document.getElementById('tttDraws').textContent = tttGame.draws;
+    showToast("It's a draw!", 'fa-handshake');
+  }
+}
+
+</script>
+
+    <script>
+        // register sw
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/uv/sw.js")
+            })
+        }
+    </script>
+
+    <script>
+        const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
+        const wispUrl = localStorage.getItem("nOS_wispUrl") || "wss://webmath.help/wisp/"
+        const bareUrl = localStorage.getItem("nOS_bareUrl") || "https://useclassplay.vercel.app/fq/"
+
+        let searchUrl = localStorage.getItem("nOS_searchEngine") || "https://search.brave.com/search?q="
+
+        document.getElementById("browserUrlInput").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                let url = document.getElementById("browserUrlInput").value
+
+                if (!url.includes(".")) {
+                    // search
+                    url = searchUrl + encodeURIComponent(url)
+                } else {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        // add https
+                        url = "https://" + url
+                    }
+                }
+
+                transport()
+                loadBrowserPage(__uv$config.prefix + __uv$config.encodeUrl(url))
+            }
+        })
+    </script>
+</body>
+
+</html>
