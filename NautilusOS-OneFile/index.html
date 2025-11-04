@@ -13908,12 +13908,10 @@ async function saveFS(fs){
 (async () => {
     await idb.init();
     let list = await idb.getAll();
-    alert("Items loaded from DB: " + list.length);
+    console.log("files loaded");
     list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
     await saveFS(fileSystem)
-    alert("Final List: "+ JSON.stringify(compressFS(fileSystem)))
-    alert("Final FileSystem: "+ JSON.stringify(fileSystem))
 })()
 let currentPath = [];
 let currentFile = null;
