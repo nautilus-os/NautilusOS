@@ -33,20 +33,7 @@ async init() {
                 objectStore = db.createObjectStore(this.storeName, { keyPath: "id", autoIncrement: true });
             } else {
                 objectStore = event.target.transaction.objectStore(this.storeName);
-            }
-
-            if (event.oldVersion < 1) {
-                const initialItems = [{},{
-"example.txt":
-  "This is an example text file.\n\nYou can edit this file using the Text Editor app.\n\nTry creating your own files by:\n1. Opening the Text Editor\n2. Writing your content\n3. Clicking Save As and entering a filename\n\nHave fun exploring NautilusOS!",
-},
-{Photos: 1},
-{TextEditor: 2}
-];
-initialItems.forEach(item => {
-objectStore.add(item);
-});
-}
+            }   
 };
 });
 }
@@ -149,7 +136,7 @@ close() {
 
 async deleteDB() {
     return new Promise((resolve, reject) => {
-        this.close(); // Ensure connection is closed before deletion
+        this.close(); 
 
         const deleteRequest = window.indexedDB.deleteDatabase(this.dbName);
 
