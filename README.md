@@ -60,6 +60,7 @@ Basically... a whole little OS in your browser :D
 - [x] Fix [object promise] bug when creating new folder
 - [x] Multiple accounts
 - [ ] Add illustrations already in css to js for apps and games. themes already added
+- [ ] Don't show any toast notifs until logging in, bootloader shoudl be free of notifs (change to aysnc functions n delay)
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
