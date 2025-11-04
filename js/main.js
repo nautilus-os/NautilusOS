@@ -1,8 +1,347 @@
+class db {
+    constructor(dbName, storeName) {
+        this.dbName = dbName;
+        this.storeName = storeName;
+        this.db = null;
+    }
+async init() {
+    if (this.db) {
+        return this;
+    }
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(this.dbName, 1);
+
+        request.onerror = (event) => {
+            console.error(`Database error: ${event.target.error}`);
+            reject(`Database error: ${event.target.error}`);
+        };
+
+        request.onsuccess = (event) => {
+            this.db = event.target.result;
+            this.db.onversionchange = () => {
+                this.db.close();
+                alert("Database is outdated, please reload the page.");
+            };
+            console.log("Database opened successfully.");
+            resolve(this);
+        };
+
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            let objectStore;
+            if (!db.objectStoreNames.contains(this.storeName)) {
+                objectStore = db.createObjectStore(this.storeName, { keyPath: "id", autoIncrement: true });
+            } else {
+                objectStore = event.target.transaction.objectStore(this.storeName);
+            }
+
+            if (event.oldVersion < 1) {
+                const initialItems = [{},{
+"example.txt":
+  "This is an example text file.\n\nYou can edit this file using the Text Editor app.\n\nTry creating your own files by:\n1. Opening the Text Editor\n2. Writing your content\n3. Clicking Save As and entering a filename\n\nHave fun exploring NautilusOS!",
+},
+{Photos: 1},
+{TextEditor: 2}
+];
+initialItems.forEach(item => {
+objectStore.add(item);
+});
+}
+};
+});
+}
+async add(item) {
+    if (!this.db) {
+        throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([this.storeName], 'readwrite');
+        const objectStore = transaction.objectStore(this.storeName);
+        const addRequest = objectStore.add(item);
+
+        transaction.oncomplete = () => {
+            resolve(addRequest.result); // The new key
+        };
+        transaction.onerror = (event) => {
+            reject(`Error adding item: ${event.target.error}`);
+        };
+    });
+}
+
+async get(id) {
+    if (!this.db) {
+        throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([this.storeName], 'readonly');
+        const objectStore = transaction.objectStore(this.storeName);
+        const getRequest = objectStore.get(id);
+
+        getRequest.onsuccess = (event) => {
+            resolve(event.target.result);
+        };
+        getRequest.onerror = (event) => {
+            reject(`Error getting item with ID ${id}: ${event.target.error}`);
+        };
+    });
+}
+
+async update(item) {
+    if (!this.db) {
+        throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([this.storeName], "readwrite");
+        const objectStore = transaction.objectStore(this.storeName);
+        const putRequest = objectStore.put(item);
+
+        transaction.oncomplete = () => {
+            resolve(`Data with key '${item.id}' updated successfully.`);
+        };
+        transaction.onerror = (event) => {
+            reject(`Error updating data: ${event.target.error}`);
+        };
+    });
+}
+
+async delete(id) {
+    if (!this.db) {
+        throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([this.storeName], "readwrite");
+        const objectStore = transaction.objectStore(this.storeName);
+        const deleteRequest = objectStore.delete(id);
+
+        transaction.oncomplete = () => {
+            resolve(`Data with ID ${id} deleted successfully.`);
+        };
+        transaction.onerror = (event) => {
+            reject(`Error deleting data: ${event.target.error}`);
+        };
+    });
+}
+
+async getAll() {
+    if (!this.db) {
+        throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([this.storeName], 'readonly');
+        const objectStore = transaction.objectStore(this.storeName);
+        const getAllRequest = objectStore.getAll();
+
+        getAllRequest.onsuccess = (event) => {
+            resolve(event.target.result);
+        };
+        getAllRequest.onerror = (event) => {
+            reject(`Error fetching all items: ${event.target.error}`);
+        };
+    });
+}
+
+close() {
+  if (this.db) {
+    this.db.close();
+    this.db = null;
+  }
+}
+
+async deleteDB() {
+    return new Promise((resolve, reject) => {
+        this.close(); // Ensure connection is closed before deletion
+
+        const deleteRequest = window.indexedDB.deleteDatabase(this.dbName);
+
+        deleteRequest.onsuccess = () => {
+            console.log(`Database '${this.dbName}' deleted successfully.`);
+            resolve();
+        };
+        deleteRequest.onerror = (event) => {
+            console.error(`Error deleting database '${this.dbName}'.`, event.target.error);
+            reject(`Error deleting database: ${event.target.error}`);
+        };
+        deleteRequest.onblocked = (event) => {
+            console.warn(`Database '${this.dbName}' deletion is blocked. Close other connections.`);
+            reject(`Database deletion blocked.`);
+        };
+    });
+}
+}
+const idb = new db("asdfsdff","sdffjdk");
 let windows = {};
 let zIndexCounter = 100;
 let currentUsername = localStorage.getItem("nautilusOS_username") || "User";
-let currentUserAccount = null; // Current logged-in account object
 let focusedWindow = null;
+
+function removeIdRecursively(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+        return; 
+    }
+    const keys = Object.keys(obj);
+
+    for (const key of keys) {
+        if (key === 'id') {
+            delete obj[key];
+        } else {
+            removeIdRecursively(obj[key]);
+        }
+    }
+}
+
+function compressFS(fs) {
+    const rootPrimitives = {};
+    const subDirectories = {};
+    for (const key in fs) {
+        const value = fs[key];
+        if (typeof value === 'object' && value !== null) {
+            subDirectories[key] = value;
+        } else {
+            rootPrimitives[key] = value;
+        }
+    }
+
+    const allKeysPostOrder = [];
+    const keyRelationships = new Map();
+
+    const isTerminal = (value) => {
+        if (typeof value !== 'object' || value === null) return false;
+        for (const key in value) {
+            if (typeof value[key] === 'object' && value[key] !== null) return false;
+        }
+        return true;
+    };
+
+    function discover(obj) {
+        for (const key in obj) {
+            const value = obj[key];
+            if (typeof value === 'object' && value !== null) {
+                if (Object.keys(value).length === 0) {
+                    keyRelationships.set(key, { type: 'container', children: [] });
+                } else if (isTerminal(value)) {
+                    keyRelationships.set(key, { type: 'terminal', value: value });
+                } else {
+                    discover(value);
+                    keyRelationships.set(key, { type: 'container', children: Object.keys(value) });
+                }
+            }
+        }
+        allKeysPostOrder.push(...Object.keys(obj));
+    }
+    discover(subDirectories);
+
+    const uniqueTerminalValues = [];
+    const seenValues = new Set();
+    const uniqueKeys = [...new Set(allKeysPostOrder)];
+    if (Object.keys(rootPrimitives).length > 0) {
+        uniqueTerminalValues.push(rootPrimitives);
+        seenValues.add(JSON.stringify(rootPrimitives));
+    }
+
+    for (const key of uniqueKeys) {
+        const data = keyRelationships.get(key);
+        if (data && data.type === 'terminal') {
+            const valueString = JSON.stringify(data.value);
+            if (!seenValues.has(valueString)) {
+                uniqueTerminalValues.push(data.value);
+                seenValues.add(valueString);
+            }
+        }
+    }
+
+    const finalMaps = [];
+    const keyToIndexMap = new Map();
+
+    for (const key of Object.keys(subDirectories).concat(uniqueKeys)) {
+        if (keyToIndexMap.has(key)) continue;
+        const data = keyRelationships.get(key);
+        if (!data) continue;
+
+        let mapObject;
+        let targetIndex;
+
+        if (data.type === 'terminal') {
+            const valueString = JSON.stringify(data.value);
+            targetIndex = uniqueTerminalValues.findIndex(v => JSON.stringify(v) === valueString);
+            mapObject = { [key]: targetIndex };
+        } else if (data.type === 'container') {
+            if (data.children.length === 0) {
+                mapObject = { [key]: null };
+            } else {
+                const firstChildKey = data.children[0];
+                targetIndex = keyToIndexMap.get(firstChildKey);
+                mapObject = { [key]: targetIndex };
+            }
+        }
+
+        if (mapObject) {
+            finalMaps.push(mapObject);
+            const finalIndexOfThisMap = uniqueTerminalValues.length + finalMaps.length -1;
+            keyToIndexMap.set(key, finalIndexOfThisMap);
+        }
+    }
+    
+    return [...uniqueTerminalValues, ...finalMaps];
+}
+
+function decompressFS(transformedArray) {
+    const values = [];
+    const maps = [];
+    for (const item of transformedArray) {
+        delete item.id;
+        const keys = Object.keys(item);
+        const firstValue = item[keys[0]];
+        if (keys.length === 1 && (typeof firstValue === 'number' || firstValue === null)) {
+            maps.push(item);
+        } else {
+            values.push(item);
+        }
+    }
+
+    const builtObjects = {};
+    const allChildKeys = new Set();
+    for (const map of maps) {
+        const key = Object.keys(map)[0];
+        const index = map[key];
+        let resolvedValue;
+
+        if (index === null) {
+            resolvedValue = {};
+        } else if (index < values.length) {
+            resolvedValue = values[index];
+        } else {
+            const childMap = maps[index - values.length];
+            const childKey = Object.keys(childMap)[0];
+            allChildKeys.add(childKey);
+            const childObject = builtObjects[childKey];
+            resolvedValue = { [childKey]: childObject };
+        }
+        builtObjects[key] = resolvedValue;
+    }
+
+    const finalDirs = {};
+    for (const key in builtObjects) {
+        if (!allChildKeys.has(key)) {
+            finalDirs[key] = builtObjects[key];
+        }
+    }
+    const rootPrimitives = {};
+    const referencedValueIndices = new Set();
+    maps.forEach(map => {
+        const index = Object.values(map)[0];
+        if (index !== null) {
+            referencedValueIndices.add(index);
+        }
+    });
+
+    for (let i = 0; i < values.length; i++) {
+        if (!referencedValueIndices.has(i)) {
+            Object.assign(rootPrimitives, values[i]);
+        }
+    }
+
+    return { ...rootPrimitives, ...finalDirs };
+}
 let fileSystem = {
   Photos: {},
   TextEditor: {
@@ -10,6 +349,26 @@ let fileSystem = {
       "This is an example text file.\n\nYou can edit this file using the Text Editor app.\n\nTry creating your own files by:\n1. Opening the Text Editor\n2. Writing your content\n3. Clicking Save As and entering a filename\n\nHave fun exploring NautilusOS!",
   },
 };
+async function saveFS(fs){
+    const l = compressFS(fs);
+    const tx = idb.db.transaction(idb.storeName, 'readwrite');
+    await tx.objectStore(idb.storeName).clear();
+
+    for(let i = 0; i < l.length; i++){
+        const itemToSave = { ...l[i], id: i };
+        await idb.add(itemToSave);
+    }
+}
+
+(async () => {
+    await idb.init();
+    let list = await idb.getAll();
+    showToast("files loaded", "fa-check-circle");
+    list = list.length==0? compressFS(fileSystem):list;
+    fileSystem = decompressFS(list);
+    await saveFS(fileSystem);
+  
+})()
 let currentPath = [];
 let currentFile = null;
 let settings = {
@@ -2404,7 +2763,7 @@ async function signOut() {
     }, 500);
   }
 }
-function saveFile() {
+async function saveFile() {
   const filenameInput = document.getElementById("editorFilename");
   const textarea = document.querySelector(".editor-textarea");
 
@@ -2439,9 +2798,10 @@ function saveFile() {
   if (windows["files"]) {
     updateFileExplorer();
   }
+  await saveFS(fileSystem);
 }
 
-function saveAsNewFile() {
+async function saveAsNewFile() {
   const textarea = document.querySelector(".editor-textarea");
   if (!textarea) return;
 
@@ -2464,6 +2824,7 @@ function saveAsNewFile() {
   if (windows["files"]) {
     updateFileExplorer();
   }
+  await saveFS(fileSystem);
 }
 
 function saveToDevice() {
