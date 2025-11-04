@@ -14,7 +14,7 @@ originally created by **lanefiedler-731, x8rr, and dinguschan** under the **GNU 
 1. **Update index.html**
    - Commit: `98eb4a0`
    - Date: Nov 04, 2025
-   - Author: Cooper Chvotkin
+   - Author: Derpygod1483
 
 
 
