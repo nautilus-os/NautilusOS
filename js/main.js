@@ -350,7 +350,7 @@ async function saveFS(fs){
 (async () => {
     await idb.init();
     let list = await idb.getAll();
-    showToast("files loaded", "fa-check-circle");
+    showToast("Files Loaded", "fa-check-circle");
     list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
     await saveFS(fileSystem);
@@ -3466,7 +3466,7 @@ alt="favicon">
                         <div class="settings-item">
                             <div class="settings-item-text">
                                 <div class="settings-item-title">Show on Startup</div>
-                                <div class="settings-item-desc">Open What's New window when logging in</div>
+                                <div class="settings-item-desc">Open the What's New app automatically after logging in</div>
                             </div>
                             <div class="toggle-switch ${
                               localStorage.getItem(
