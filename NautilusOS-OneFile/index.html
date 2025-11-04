@@ -13713,6 +13713,7 @@ async deleteDB() {
     });
 }
 }
+const idb = new db("asdfsdff","sdffjdk")
 let windows = {};
 let zIndexCounter = 100;
 let currentUsername = localStorage.getItem("nautilusOS_username") || "User";
@@ -13734,121 +13735,157 @@ function removeIdRecursively(obj) {
 }
 
 function compressFS(fs) {
-  const allKeysPostOrder = []; 
-  const keyRelationships = new Map(); 
-
-  const isTerminal = (value) => {
-    if (typeof value !== 'object' || value === null) return false;
-    for (const key in value) {
-      if (typeof value[key] === 'object' && value[key] !== null) return false;
+    const rootPrimitives = {};
+    const subDirectories = {};
+    for (const key in fs) {
+        const value = fs[key];
+        if (typeof value === 'object' && value !== null) {
+            subDirectories[key] = value;
+        } else {
+            rootPrimitives[key] = value;
+        }
     }
-    return true;
-  };
 
-  function discover(obj) {
-    for (const key in obj) {
-      const value = obj[key];
-      if (typeof value === 'object' && value !== null) {
-         if (isTerminal(value)) {
-            keyRelationships.set(key, { type: 'terminal', value: value });
-         } else {
-            discover(value);
-            keyRelationships.set(key, { type: 'container', children: Object.keys(value) });
-         }
-      }
+    const allKeysPostOrder = [];
+    const keyRelationships = new Map();
+
+    const isTerminal = (value) => {
+        if (typeof value !== 'object' || value === null) return false;
+        for (const key in value) {
+            if (typeof value[key] === 'object' && value[key] !== null) return false;
+        }
+        return true;
+    };
+
+    function discover(obj) {
+        for (const key in obj) {
+            const value = obj[key];
+            if (typeof value === 'object' && value !== null) {
+                if (Object.keys(value).length === 0) {
+                    keyRelationships.set(key, { type: 'container', children: [] });
+                } else if (isTerminal(value)) {
+                    keyRelationships.set(key, { type: 'terminal', value: value });
+                } else {
+                    discover(value);
+                    keyRelationships.set(key, { type: 'container', children: Object.keys(value) });
+                }
+            }
+        }
+        allKeysPostOrder.push(...Object.keys(obj));
     }
-    allKeysPostOrder.push(...Object.keys(obj));
-  }
+    discover(subDirectories);
 
-  discover(fs);
-
-  const uniqueTerminalValues = [];
-  const seenValues = new Set();
-  const uniqueKeys = [...new Set(allKeysPostOrder)];
-
-  for (const key of uniqueKeys) {
-    const data = keyRelationships.get(key);
-    if (data && data.type === 'terminal') {
-      const valueString = JSON.stringify(data.value);
-      if (!seenValues.has(valueString)) {
-        uniqueTerminalValues.push(data.value);
-        seenValues.add(valueString);
-      }
+    const uniqueTerminalValues = [];
+    const seenValues = new Set();
+    const uniqueKeys = [...new Set(allKeysPostOrder)];
+    if (Object.keys(rootPrimitives).length > 0) {
+        uniqueTerminalValues.push(rootPrimitives);
+        seenValues.add(JSON.stringify(rootPrimitives));
     }
-  }
 
-  const finalMaps = [];
-  const keyToIndexMap = new Map();
+    for (const key of uniqueKeys) {
+        const data = keyRelationships.get(key);
+        if (data && data.type === 'terminal') {
+            const valueString = JSON.stringify(data.value);
+            if (!seenValues.has(valueString)) {
+                uniqueTerminalValues.push(data.value);
+                seenValues.add(valueString);
+            }
+        }
+    }
 
-  for (const key of uniqueKeys) {
-    const data = keyRelationships.get(key);
-    if (!data) continue;
+    const finalMaps = [];
+    const keyToIndexMap = new Map();
 
-    let mapObject;
-    let targetIndex;
+    for (const key of Object.keys(subDirectories).concat(uniqueKeys)) {
+        if (keyToIndexMap.has(key)) continue;
+        const data = keyRelationships.get(key);
+        if (!data) continue;
 
-    if (data.type === 'terminal') {
-      const valueString = JSON.stringify(data.value);
-      const terminalIndex = uniqueTerminalValues.findIndex(v => JSON.stringify(v) === valueString) ;
-      targetIndex = terminalIndex;
-      mapObject = { [key]: targetIndex };
-    } else if (data.type === 'container') {
-      const firstChildKey = data.children[0];
-      targetIndex = keyToIndexMap.get(firstChildKey);
-      mapObject = { [key]: targetIndex };
+        let mapObject;
+        let targetIndex;
+
+        if (data.type === 'terminal') {
+            const valueString = JSON.stringify(data.value);
+            targetIndex = uniqueTerminalValues.findIndex(v => JSON.stringify(v) === valueString);
+            mapObject = { [key]: targetIndex };
+        } else if (data.type === 'container') {
+            if (data.children.length === 0) {
+                mapObject = { [key]: null };
+            } else {
+                const firstChildKey = data.children[0];
+                targetIndex = keyToIndexMap.get(firstChildKey);
+                mapObject = { [key]: targetIndex };
+            }
+        }
+
+        if (mapObject) {
+            finalMaps.push(mapObject);
+            const finalIndexOfThisMap = uniqueTerminalValues.length + finalMaps.length -1;
+            keyToIndexMap.set(key, finalIndexOfThisMap);
+        }
     }
     
-    if (mapObject) {
-        finalMaps.push(mapObject);
-        const finalIndexOfThisMap = uniqueTerminalValues.length + finalMaps.length;
-        keyToIndexMap.set(key, finalIndexOfThisMap);
-    }
-  }
-  const list = [...uniqueTerminalValues, ...finalMaps]
-  for(const item of list){
-    delete item.id
-  }
-  return list;
+    return [...uniqueTerminalValues, ...finalMaps];
 }
+
 function decompressFS(transformedArray) {
-  const values = [];
-  const maps = [];
-  for (const item of transformedArray) {
-  	delete item.id
-    const keys = Object.keys(item);
-    if (keys.length === 1 && typeof item[keys[0]] === 'number') {
-      maps.push(item);
-    } else {
-      values.push(item);
+    const values = [];
+    const maps = [];
+    for (const item of transformedArray) {
+        delete item.id;
+        const keys = Object.keys(item);
+        const firstValue = item[keys[0]];
+        if (keys.length === 1 && (typeof firstValue === 'number' || firstValue === null)) {
+            maps.push(item);
+        } else {
+            values.push(item);
+        }
     }
-  }
-  const builtObjects = {};
-  const allChildKeys = new Set();
-  for (const map of maps) {
-    const key = Object.keys(map)[0];
-    const index = map[key];
-    const targetIndex = index;
-    let resolvedValue;
 
-    if (targetIndex < values.length) {
-      resolvedValue = values[targetIndex];
-    } else {
-      const childMap = maps[targetIndex - values.length];
-      const childKey = Object.keys(childMap)[0];
-      allChildKeys.add(childKey);
-	  const childObject = builtObjects[childKey];
-      resolvedValue = { [childKey]: childObject };
-    }
-    builtObjects[key] = resolvedValue;
-  }
-  const finalObject = {};
-  for (const key in builtObjects) {
-    if (!allChildKeys.has(key)) {
-      finalObject[key] = builtObjects[key];
-    }
-  }
+    const builtObjects = {};
+    const allChildKeys = new Set();
+    for (const map of maps) {
+        const key = Object.keys(map)[0];
+        const index = map[key];
+        let resolvedValue;
 
-  return finalObject;
+        if (index === null) {
+            resolvedValue = {};
+        } else if (index < values.length) {
+            resolvedValue = values[index];
+        } else {
+            const childMap = maps[index - values.length];
+            const childKey = Object.keys(childMap)[0];
+            allChildKeys.add(childKey);
+            const childObject = builtObjects[childKey];
+            resolvedValue = { [childKey]: childObject };
+        }
+        builtObjects[key] = resolvedValue;
+    }
+
+    const finalDirs = {};
+    for (const key in builtObjects) {
+        if (!allChildKeys.has(key)) {
+            finalDirs[key] = builtObjects[key];
+        }
+    }
+    const rootPrimitives = {};
+    const referencedValueIndices = new Set();
+    maps.forEach(map => {
+        const index = Object.values(map)[0];
+        if (index !== null) {
+            referencedValueIndices.add(index);
+        }
+    });
+
+    for (let i = 0; i < values.length; i++) {
+        if (!referencedValueIndices.has(i)) {
+            Object.assign(rootPrimitives, values[i]);
+        }
+    }
+
+    return { ...rootPrimitives, ...finalDirs };
 }
 let fileSystem = {
   Photos: {},
@@ -13857,22 +13894,27 @@ let fileSystem = {
       "This is an example text file.\n\nYou can edit this file using the Text Editor app.\n\nTry creating your own files by:\n1. Opening the Text Editor\n2. Writing your content\n3. Clicking Save As and entering a filename\n\nHave fun exploring NautilusOS!",
   },
 };
+async function saveFS(fs){
+    const l = compressFS(fs);
+    const tx = idb.db.transaction(idb.storeName, 'readwrite');
+    await tx.objectStore(idb.storeName).clear();
+
+    for(let i = 0; i < l.length; i++){
+        const itemToSave = { ...l[i], id: i };
+        await idb.add(itemToSave);
+    }
+}
+
 (async () => {
     await idb.init();
     let list = await idb.getAll();
-    list = list.length==0 ? compressFS(fileSystem) : list;
+    alert("Items loaded from DB: " + list.length);
+    list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
-    removeIdRecursively(fileSystem);
-
-    saveFS(fileSystem)
+    await saveFS(fileSystem)
+    alert("Final List: "+ JSON.stringify(compressFS(fileSystem)))
+    alert("Final FileSystem: "+ JSON.stringify(fileSystem))
 })()
-async function saveFS(fs){
-    const l = JSON.parse(JSON.stringify(compressFS(fs)));
-    for(let i = 0; i < l.length; i++){
-        l[i].id=i;
-        await idb.update(l[i]);
-    }
-}
 let currentPath = [];
 let currentFile = null;
 let settings = {
@@ -16042,7 +16084,7 @@ async function saveFile() {
   if (windows["files"]) {
     updateFileExplorer();
   }
-  await saveFS();
+  await saveFS(fileSystem);
 }
 
 async function saveAsNewFile() {
@@ -16068,7 +16110,7 @@ async function saveAsNewFile() {
   if (windows["files"]) {
     updateFileExplorer();
   }
-  await saveFS();
+  await saveFS(fileSystem);
 }
 
 function saveToDevice() {
