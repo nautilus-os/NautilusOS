@@ -155,6 +155,72 @@ async deleteDB() {
     });
 }
 }
+class encryption {
+    static #arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+    static #base64ToArrayBuffer(base64) {
+        const binary_string = window.atob(base64);
+        const bytes = new Uint8Array(binary_string.length);
+        for (let i = 0; i < binary_string.length; i++) {
+            bytes[i] = binary_string.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+    static async encrypt(plainText) {
+        const key = await window.crypto.subtle.generateKey({
+                name: "AES-GCM",
+                length: 256,
+            },
+            true,
+            ["encrypt", "decrypt"]
+        );
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        const encodedData = new TextEncoder().encode(plainText);
+        const encryptedBuffer = await window.crypto.subtle.encrypt({
+                name: "AES-GCM",
+                iv: iv,
+            },
+            key,
+            encodedData
+        );
+        const keyJwk = await window.crypto.subtle.exportKey("jwk", key);
+        const packet = {
+            jwk: keyJwk,
+            iv: this.#arrayBufferToBase64(iv),
+            data: this.#arrayBufferToBase64(encryptedBuffer)
+        };
+        const packetString = JSON.stringify(packet);
+        return window.btoa(packetString);
+    }
+    static async decrypt(packetB64) {
+        const packetString = window.atob(packetB64);
+        const packet = JSON.parse(packetString);
+        const key = await window.crypto.subtle.importKey(
+            "jwk",
+            packet.jwk, {
+                name: "AES-GCM",
+            },
+            true, 
+            ["encrypt", "decrypt"]
+        );
+        const iv = this.#base64ToArrayBuffer(packet.iv);
+        const encryptedBuffer = this.#base64ToArrayBuffer(packet.data);
+        const decryptedBuffer = await window.crypto.subtle.decrypt({
+                name: "AES-GCM",
+                iv: iv,
+            },
+            key,
+            encryptedBuffer
+        );
+        return new TextDecoder().decode(decryptedBuffer);
+    }
+}
 const idb = new db("asdfsdff","sdffjdk");
 let windows = {};
 let zIndexCounter = 100;
