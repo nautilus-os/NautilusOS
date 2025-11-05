@@ -10084,7 +10084,7 @@ function updateStartMenu() {
   initStartMenuSearch();
 }
 
-function exportProfile() {
+async function exportProfile() {
   const profile = {
     version: "1.0",
     username: localStorage.getItem("nautilusOS_username"),
@@ -10107,7 +10107,7 @@ function exportProfile() {
   profile.useSameBackground = useSame === null ? "true" : useSame;
   profile.profilePicture = profilePicture || null;
 
-  const profileJson = encryption.encrypt(profile);
+  const profileJson = await encryption.encrypt(profile);
   const blob = new Blob([profileJson], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
@@ -10312,7 +10312,7 @@ function deleteAccountConfirm(username) {
   });
 }
 
-function importProfile(event) {
+async function importProfile(event) {
   const file = event.target.files[0];
   if (!file) return;
 
@@ -10327,7 +10327,7 @@ function importProfile(event) {
   const reader = new FileReader();
   reader.onload = async function (e) {
     try {
-      const profile = encryption.decrypt(e.target.result);
+      const profile = await encryption.decrypt(e.target.result);
 
       if (!profile.version || !profile.username) {
         throw new Error("Invalid profile format");
