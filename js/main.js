@@ -418,11 +418,10 @@ async function saveFS(fs){
     let list = await idb.getAll();
     window.addEventListener('Login Success', function () {
     showToast("files loaded", "fa-check-circle");
-    });
+    }, { once: true });
     list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
     await saveFS(fileSystem);
-  
 })()
 let currentPath = [];
 let currentFile = null;
