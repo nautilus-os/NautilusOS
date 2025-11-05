@@ -416,7 +416,9 @@ async function saveFS(fs){
 (async () => {
     await idb.init();
     let list = await idb.getAll();
+    window.addEventListener('Login Success', function () {
     showToast("files loaded", "fa-check-circle");
+    });
     list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
     await saveFS(fileSystem);
@@ -2003,7 +2005,8 @@ function login() {
   }
 
   showToast("Welcome back, " + username + "!", "fa-circle-check");
-
+  var event = new CustomEvent('Login Success');
+  window.dispatchEvent(event);
   unlockAchievement("first-login");
 
   checkNightOwl();
