@@ -181,7 +181,7 @@ class encryption {
             ["encrypt", "decrypt"]
         );
         const iv = window.crypto.getRandomValues(new Uint8Array(12));
-        const encodedData = new TextEncoder().encode(plainText);
+        const encodedData = new TextEncoder().encode(JSON.stringify(plainText));
         const encryptedBuffer = await window.crypto.subtle.encrypt({
                 name: "AES-GCM",
                 iv: iv,
@@ -218,7 +218,7 @@ class encryption {
             key,
             encryptedBuffer
         );
-        return new TextDecoder().decode(decryptedBuffer);
+        return new JSON.parse(TextDecoder().decode(decryptedBuffer));
     }
 }
 const idb = new db("asdfsdff","sdffjdk");
@@ -10107,7 +10107,7 @@ function exportProfile() {
   profile.useSameBackground = useSame === null ? "true" : useSame;
   profile.profilePicture = profilePicture || null;
 
-  const profileJson = JSON.stringify(profile, null, 2);
+  const profileJson = encryption.encrypt(profile);
   const blob = new Blob([profileJson], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
@@ -10327,7 +10327,7 @@ function importProfile(event) {
   const reader = new FileReader();
   reader.onload = async function (e) {
     try {
-      const profile = JSON.parse(e.target.result);
+      const profile = encryption.decrypt(e.target.result);
 
       if (!profile.version || !profile.username) {
         throw new Error("Invalid profile format");
