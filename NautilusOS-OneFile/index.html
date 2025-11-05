@@ -13704,66 +13704,82 @@ class encryption {
     static #arrayBufferToBase64(buffer) {
         let binary = '';
         const bytes = new Uint8Array(buffer);
-        for (let i = 0; i < bytes.byteLength; i++) {
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
             binary += String.fromCharCode(bytes[i]);
         }
         return window.btoa(binary);
     }
     static #base64ToArrayBuffer(base64) {
         const binary_string = window.atob(base64);
-        const bytes = new Uint8Array(binary_string.length);
-        for (let i = 0; i < binary_string.length; i++) {
+        const len = binary_string.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
             bytes[i] = binary_string.charCodeAt(i);
         }
         return bytes.buffer;
     }
     static async encrypt(plainText) {
-        const key = await window.crypto.subtle.generateKey({
-                name: "AES-GCM",
-                length: 256,
-            },
-            true,
-            ["encrypt", "decrypt"]
-        );
-        const iv = window.crypto.getRandomValues(new Uint8Array(12));
-        const encodedData = new TextEncoder().encode(JSON.stringify(plainText));
-        const encryptedBuffer = await window.crypto.subtle.encrypt({
-                name: "AES-GCM",
-                iv: iv,
-            },
-            key,
-            encodedData
-        );
-        const keyJwk = await window.crypto.subtle.exportKey("jwk", key);
-        const packet = {
-            jwk: keyJwk,
-            iv: this.#arrayBufferToBase64(iv),
-            data: this.#arrayBufferToBase64(encryptedBuffer)
-        };
-        const packetString = JSON.stringify(packet);
-        return window.btoa(packetString);
+        try {
+            const key = await window.crypto.subtle.generateKey(
+                {
+                    name: "AES-GCM",
+                    length: 256,
+                },
+                true,
+                ["encrypt", "decrypt"]
+            );
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const encodedData = new TextEncoder().encode(JSON.stringify(plainText));
+            const encryptedBuffer = await window.crypto.subtle.encrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv,
+                },
+                key,
+                encodedData
+            );
+            const keyJwk = await window.crypto.subtle.exportKey("jwk", key);
+            const packet = {
+                jwk: keyJwk,
+                iv: this.#arrayBufferToBase64(iv),
+                data: this.#arrayBufferToBase64(encryptedBuffer)
+            };
+            const packetString = JSON.stringify(packet);
+            return window.btoa(packetString);
+        } catch (error) {
+            console.error("Encryption failed:", error);
+            throw error;
+        }
     }
     static async decrypt(packetB64) {
-        const packetString = window.atob(packetB64);
-        const packet = JSON.parse(packetString);
-        const key = await window.crypto.subtle.importKey(
-            "jwk",
-            packet.jwk, {
-                name: "AES-GCM",
-            },
-            true, 
-            ["encrypt", "decrypt"]
-        );
-        const iv = this.#base64ToArrayBuffer(packet.iv);
-        const encryptedBuffer = this.#base64ToArrayBuffer(packet.data);
-        const decryptedBuffer = await window.crypto.subtle.decrypt({
-                name: "AES-GCM",
-                iv: iv,
-            },
-            key,
-            encryptedBuffer
-        );
-        return new JSON.parse(TextDecoder().decode(decryptedBuffer));
+        try {
+            const packetString = window.atob(packetB64);
+            const packet = JSON.parse(packetString);
+            const key = await window.crypto.subtle.importKey(
+                "jwk",
+                packet.jwk,
+                {
+                    name: "AES-GCM",
+                },
+                true,
+                ["encrypt", "decrypt"]
+            );
+            const iv = this.#base64ToArrayBuffer(packet.iv);
+            const encryptedBuffer = this.#base64ToArrayBuffer(packet.data);
+            const decryptedBuffer = await window.crypto.subtle.decrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv,
+                },
+                key,
+                encryptedBuffer
+            );
+            return JSON.parse(new TextDecoder().decode(decryptedBuffer));
+        } catch (error) {
+            console.error("Decryption failed:", error);
+            throw error;
+        }
     }
 }
 const idb = new db("asdfsdff","sdffjdk")
@@ -21933,7 +21949,7 @@ async function exportProfile() {
   URL.revokeObjectURL(url);
   showToast("Profile exported successfully!", "fa-check-circle");
 }
-async function importProfile(event) {
+function importProfile(event) {
   const file = event.target.files[0];
   if (!file) return;
 
