@@ -13579,19 +13579,6 @@ async init() {
             } else {
                 objectStore = event.target.transaction.objectStore(this.storeName);
             }
-
-            if (event.oldVersion < 1) {
-                const initialItems = [{},{
-"example.txt":
-  "This is an example text file.\n\nYou can edit this file using the Text Editor app.\n\nTry creating your own files by:\n1. Opening the Text Editor\n2. Writing your content\n3. Clicking Save As and entering a filename\n\nHave fun exploring NautilusOS!",
-},
-{Photos: 1},
-{TextEditor: 2}
-];
-initialItems.forEach(item => {
-objectStore.add(item);
-});
-}
 };
 });
 }
@@ -13908,7 +13895,9 @@ async function saveFS(fs){
 (async () => {
     await idb.init();
     let list = await idb.getAll();
-    showToast("files loaded", "fa-check-circle");
+  window.addEventListener('Login Success', function () {
+    showToast("Files Loaded", "fa-check-circle");
+  }, { once: true });
     list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
     await saveFS(fileSystem);
@@ -15316,7 +15305,8 @@ function login() {
   }
 
   showToast("Welcome back, " + username + "!", "fa-circle-check");
-
+  var event = new CustomEvent('Login Success');
+  window.dispatchEvent(event);
   unlockAchievement("first-login");
 
   checkNightOwl();
