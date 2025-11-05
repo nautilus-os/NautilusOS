@@ -416,7 +416,9 @@ async function saveFS(fs){
 (async () => {
     await idb.init();
     let list = await idb.getAll();
+    window.addEventListener("Login Success", function() {
     showToast("Files Loaded", "fa-check-circle");
+    },{once:true});
     list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
     await saveFS(fileSystem);
