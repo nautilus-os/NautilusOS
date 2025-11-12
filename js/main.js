@@ -3243,7 +3243,7 @@ alt="favicon">
                 <div class="cloaking-tab" data-tab="rotate">
                     <div class="cloaking-header">
                         <h2><i class="fas fa-sync-alt"></i> Auto-Rotate Cloaking</h2>
-                        <p>Automatically cycle through multiple disguises</p>
+                        <p>Automatically cycle through multiple disguises, keeping your tab constantly changing</p>
                     </div>
                     
                     <div class="cloaking-status-card">
