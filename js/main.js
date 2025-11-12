@@ -15581,7 +15581,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (span) {
                 hoverTimeout = setTimeout(() => {
                     span.classList.add('expanded');
-                }, 2000);
+                }, 1200);
             }
         }
     });
