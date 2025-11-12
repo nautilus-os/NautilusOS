@@ -1460,6 +1460,22 @@ select:focus {
     text-align: center;
     font-weight: 500;
     pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.desktop-icon span.expanded {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: visible;
+}
+
+.desktop-icon-hover-script {
+    display: none;
 }
 
 .taskbar {
