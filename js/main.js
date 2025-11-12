@@ -15570,3 +15570,30 @@ document.addEventListener('keydown', (e) => {
     }, 0);
   }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    let hoverTimeout;
+    
+    document.addEventListener('mouseover', function(e) {
+        const desktopIcon = e.target.closest('.desktop-icon');
+        if (desktopIcon) {
+            const span = desktopIcon.querySelector('span');
+            if (span) {
+                hoverTimeout = setTimeout(() => {
+                    span.classList.add('expanded');
+                }, 2000);
+            }
+        }
+    });
+    
+    document.addEventListener('mouseout', function(e) {
+        const desktopIcon = e.target.closest('.desktop-icon');
+        if (desktopIcon) {
+            const span = desktopIcon.querySelector('span');
+            if (span) {
+                clearTimeout(hoverTimeout);
+                span.classList.remove('expanded');
+            }
+        }
+    });
+});
