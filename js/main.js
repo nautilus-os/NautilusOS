@@ -155,6 +155,88 @@ async deleteDB() {
     });
 }
 }
+class encryption {
+    static #arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+    static #base64ToArrayBuffer(base64) {
+        const binary_string = window.atob(base64);
+        const len = binary_string.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binary_string.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+    static async encrypt(plainText) {
+        try {
+            const key = await window.crypto.subtle.generateKey(
+                {
+                    name: "AES-GCM",
+                    length: 256,
+                },
+                true,
+                ["encrypt", "decrypt"]
+            );
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const encodedData = new TextEncoder().encode(JSON.stringify(plainText));
+            const encryptedBuffer = await window.crypto.subtle.encrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv,
+                },
+                key,
+                encodedData
+            );
+            const keyJwk = await window.crypto.subtle.exportKey("jwk", key);
+            const packet = {
+                jwk: keyJwk,
+                iv: this.#arrayBufferToBase64(iv),
+                data: this.#arrayBufferToBase64(encryptedBuffer)
+            };
+            const packetString = JSON.stringify(packet);
+            return window.btoa(packetString);
+        } catch (error) {
+            console.error("Encryption failed:", error);
+            throw error;
+        }
+    }
+    static async decrypt(packetB64) {
+        try {
+            const packetString = window.atob(packetB64);
+            const packet = JSON.parse(packetString);
+            const key = await window.crypto.subtle.importKey(
+                "jwk",
+                packet.jwk,
+                {
+                    name: "AES-GCM",
+                },
+                true,
+                ["encrypt", "decrypt"]
+            );
+            const iv = this.#base64ToArrayBuffer(packet.iv);
+            const encryptedBuffer = this.#base64ToArrayBuffer(packet.data);
+            const decryptedBuffer = await window.crypto.subtle.decrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv,
+                },
+                key,
+                encryptedBuffer
+            );
+            return JSON.parse(new TextDecoder().decode(decryptedBuffer));
+        } catch (error) {
+            console.error("Decryption failed:", error);
+            throw error;
+        }
+    }
+}
 const idb = new db("asdfsdff","sdffjdk");
 let windows = {};
 let zIndexCounter = 100;
@@ -350,11 +432,12 @@ async function saveFS(fs){
 (async () => {
     await idb.init();
     let list = await idb.getAll();
+    window.addEventListener("Login Success", function() {
     showToast("Files Loaded", "fa-check-circle");
+    },{once:true});
     list = list.length==0? compressFS(fileSystem):list;
     fileSystem = decompressFS(list);
     await saveFS(fileSystem);
-  
 })()
 let currentPath = [];
 let currentFile = null;
@@ -1937,7 +2020,8 @@ function login() {
   }
 
   showToast("Welcome back, " + username + "!", "fa-circle-check");
-
+  var event = new CustomEvent('Login Success');
+  window.dispatchEvent(event);
   unlockAchievement("first-login");
 
   checkNightOwl();
@@ -10018,7 +10102,7 @@ function updateStartMenu() {
   initStartMenuSearch();
 }
 
-function exportProfile() {
+async function exportProfile() {
   const profile = {
     version: "1.0",
     username: localStorage.getItem("nautilusOS_username"),
@@ -10041,7 +10125,7 @@ function exportProfile() {
   profile.useSameBackground = useSame === null ? "true" : useSame;
   profile.profilePicture = profilePicture || null;
 
-  const profileJson = JSON.stringify(profile, null, 2);
+  const profileJson = await encryption.encrypt(profile);
   const blob = new Blob([profileJson], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
@@ -10246,7 +10330,7 @@ function deleteAccountConfirm(username) {
   });
 }
 
-function importProfile(event) {
+async function importProfile(event) {
   const file = event.target.files[0];
   if (!file) return;
 
@@ -10261,7 +10345,7 @@ function importProfile(event) {
   const reader = new FileReader();
   reader.onload = async function (e) {
     try {
-      const profile = JSON.parse(e.target.result);
+      const profile = await encryption.decrypt(e.target.result);
 
       if (!profile.version || !profile.username) {
         throw new Error("Invalid profile format");
