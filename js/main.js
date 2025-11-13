@@ -4913,14 +4913,15 @@ print(f'Sum: {sum(numbers)}')
   title: "AI Snake Learning",
   icon: "fas fa-brain",
   content: `
-    <div id="aiSnakeContainer" style="display: flex; flex-direction: column; height: 100%; background: rgba(10, 14, 26, 0.8); padding: 20px; overflow-y: auto; align-items: center;">
-      <div style="text-align: center; margin-bottom: 20px; width: 100%; max-width: 900px;">
+    <div id="aiSnakeContainer" style="display: flex; flex-direction: column; height: 100%; background: rgba(10, 14, 26, 0.8); padding: 20px; overflow-y: auto;">
+      <div style="max-width: 800px; margin: 0 auto; width: 100%;">
+      <div style="text-align: center; margin-bottom: 20px;">
         <h2 style="color: #7dd3c0; margin: 0 0 5px 0; font-family: fontb;">AI Snake Learning</h2>
         <div style="color: #9aa0a6; font-size: 12px; margin-bottom: 10px;">by lanefiedler-731</div>
         <div style="color: #9aa0a6; font-size: 11px;">Deep Q-Learning Neural Network</div>
       </div>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; width: 100%; max-width: 900px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
         <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 12px;">
           <div style="color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Generation</div>
           <div id="aiGeneration" style="color: #7dd3c0; font-size: 20px; font-weight: bold; font-family: fontb;">0</div>
@@ -4939,7 +4940,7 @@ print(f'Sum: {sum(numbers)}')
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; width: 100%; max-width: 900px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
         <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 12px;">
           <div style="color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Average Score</div>
           <div id="aiAvgScore" style="color: #9aa0a6; font-size: 18px; font-weight: bold; font-family: fontb;">0</div>
@@ -4950,7 +4951,7 @@ print(f'Sum: {sum(numbers)}')
         </div>
       </div>
 
-      <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 15px; margin-bottom: 15px; width: 100%; max-width: 900px;">
+      <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
         <div style="color: #7dd3c0; font-weight: bold; margin-bottom: 10px; font-size: 14px; font-family: fontb;">Training Settings</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div>
@@ -4978,13 +4979,13 @@ print(f'Sum: {sum(numbers)}')
         </div>
       </div>
 
-      <div style="display: flex; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 900px;">
+      <div style="display: flex; gap: 10px; margin-bottom: 15px;">
         <button id="aiStartBtn" class="editor-btn" onclick="startAISnakeTraining()" style="flex: 1; background: linear-gradient(135deg, #7dd3c0, #6bc4b0); color: #0a0e1a; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: fontb; transition: all 0.2s ease;">Start Training</button>
         <button id="aiPauseBtn" class="editor-btn" onclick="pauseAISnakeTraining()" style="flex: 1; background: rgba(125, 211, 192, 0.2); color: #7dd3c0; border: 1px solid #7dd3c0; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: fontb; display: none; transition: all 0.2s ease;">Pause</button>
         <button id="aiResetBtn" class="editor-btn" onclick="resetAISnakeModel()" style="flex: 1; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: fontb; transition: all 0.2s ease;">Reset Model</button>
       </div>
 
-      <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 15px; margin-bottom: 15px; width: 100%; max-width: 900px;">
+      <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
         <div style="color: #7dd3c0; font-weight: bold; margin-bottom: 10px; font-size: 14px; font-family: fontb;">Training Status</div>
         <div id="aiTrainingStatus" style="color: #9aa0a6; font-size: 11px; line-height: 1.6; font-family: 'SUSE Mono', monospace;">Ready to start training...</div>
       </div>
@@ -4993,11 +4994,12 @@ print(f'Sum: {sum(numbers)}')
       <div style="color: #9aa0a6; font-size: 10px; margin-top: 10px; text-align: center;">
         Watch the AI learn to play Snake!
       </div>
+      </div>
     </div>
   `,
   noPadding: true,
-  width: 900,
-  height: 650,
+  width: 850,
+  height: 600,
 },
     "nautilus-ai": {
       title: "Nautilus AI Assistant",
