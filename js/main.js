@@ -4909,96 +4909,96 @@ print(f'Sum: {sum(numbers)}')
       width: 1000,
       height: 700,
     },
-    "ai-snake": {
-      title: "AI Snake Learning",
-      icon: "fas fa-brain",
-      content: `
-        <div id="aiSnakeContainer" style="display: flex; flex-direction: column; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px; overflow-y: auto;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: #00d4ff; margin: 0 0 5px 0;">AI Snake Learning</h2>
-            <div style="color: #888; font-size: 12px; margin-bottom: 10px;">by lanefiedler-731</div>
-            <div style="color: #888; font-size: 11px;">Deep Q-Learning Neural Network</div>
-          </div>
-          
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
-              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Generation</div>
-              <div id="aiGeneration" style="color: #00d4ff; font-size: 20px; font-weight: bold;">0</div>
-            </div>
-            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
-              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Best Score</div>
-              <div id="aiBestScore" style="color: #ffaa00; font-size: 20px; font-weight: bold;">0</div>
-            </div>
-            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
-              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Current Score</div>
-              <div id="aiCurrentScore" style="color: #00ff00; font-size: 20px; font-weight: bold;">0</div>
-            </div>
-            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
-              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Games Played</div>
-              <div id="aiGamesPlayed" style="color: #00d4ff; font-size: 20px; font-weight: bold;">0</div>
-            </div>
-          </div>
+"ai-snake": {
+  title: "AI Snake Learning",
+  icon: "fas fa-brain",
+  content: `
+    <div id="aiSnakeContainer" style="display: flex; flex-direction: column; height: 100%; background: rgba(10, 14, 26, 0.8); padding: 20px; overflow-y: auto;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #7dd3c0; margin: 0 0 5px 0; font-family: fontb;">AI Snake Learning</h2>
+        <div style="color: #9aa0a6; font-size: 12px; margin-bottom: 10px;">by lanefiedler-731</div>
+        <div style="color: #9aa0a6; font-size: 11px;">Deep Q-Learning Neural Network</div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+        <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 12px;">
+          <div style="color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Generation</div>
+          <div id="aiGeneration" style="color: #7dd3c0; font-size: 20px; font-weight: bold; font-family: fontb;">0</div>
+        </div>
+        <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 12px;">
+          <div style="color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Best Score</div>
+          <div id="aiBestScore" style="color: #7dd3c0; font-size: 20px; font-weight: bold; font-family: fontb;">0</div>
+        </div>
+        <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 12px;">
+          <div style="color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Current Score</div>
+          <div id="aiCurrentScore" style="color: #4ade80; font-size: 20px; font-weight: bold; font-family: fontb;">0</div>
+        </div>
+        <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 12px;">
+          <div style="color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Games Played</div>
+          <div id="aiGamesPlayed" style="color: #7dd3c0; font-size: 20px; font-weight: bold; font-family: fontb;">0</div>
+        </div>
+      </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
-              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Average Score</div>
-              <div id="aiAvgScore" style="color: #888; font-size: 18px; font-weight: bold;">0</div>
-            </div>
-            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 10px;">
-              <div style="color: #888; font-size: 11px; margin-bottom: 5px;">Epsilon (Exploration)</div>
-              <div id="aiEpsilon" style="color: #ffaa00; font-size: 18px; font-weight: bold;">1.00</div>
-            </div>
-          </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+        <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 12px;">
+          <div style="color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Average Score</div>
+          <div id="aiAvgScore" style="color: #9aa0a6; font-size: 18px; font-weight: bold; font-family: fontb;">0</div>
+        </div>
+        <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 12px;">
+          <div style="color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Epsilon (Exploration)</div>
+          <div id="aiEpsilon" style="color: #7dd3c0; font-size: 18px; font-weight: bold; font-family: fontb;">1.00</div>
+        </div>
+      </div>
 
-          <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-            <div style="color: #00d4ff; font-weight: bold; margin-bottom: 10px; font-size: 14px;">Training Settings</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-              <div>
-                <label style="display: block; color: #888; font-size: 11px; margin-bottom: 5px;">Game Speed (ms)</label>
-                <input type="range" id="aiGameSpeed" min="1" max="200" value="10" style="width: 100%;">
-                <div style="text-align: center; color: #00d4ff; font-size: 12px; margin-top: 3px;"><span id="aiGameSpeedValue">10</span> ms</div>
-              </div>
-              <div>
-                <label style="display: block; color: #888; font-size: 11px; margin-bottom: 5px;">Training Speed (iterations)</label>
-                <input type="range" id="aiTrainingSpeed" min="1" max="100" value="10" style="width: 100%;">
-                <div style="text-align: center; color: #00d4ff; font-size: 12px; margin-top: 3px;"><span id="aiTrainingSpeedValue">10</span> iterations</div>
-              </div>
-              <div>
-                <label style="display: block; color: #888; font-size: 11px; margin-bottom: 5px;">Concurrency (parallel games)</label>
-                <input type="range" id="aiConcurrency" min="1" max="20" value="5" style="width: 100%;">
-                <div style="text-align: center; color: #00d4ff; font-size: 12px; margin-top: 3px;"><span id="aiConcurrencyValue">5</span> games</div>
-              </div>
-              <div>
-                <label style="display: flex; align-items: center; gap: 8px; color: #888; font-size: 11px; margin-top: 20px;">
-                  <input type="checkbox" id="aiUseGPU" checked style="width: 18px; height: 18px; cursor: pointer;">
-                  <span>Use GPU Acceleration</span>
-                </label>
-                <div id="aiGPUStatus" style="color: #4ade80; font-size: 10px; margin-top: 5px; margin-left: 26px;">GPU Ready</div>
-              </div>
-            </div>
+      <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+        <div style="color: #7dd3c0; font-weight: bold; margin-bottom: 10px; font-size: 14px; font-family: fontb;">Training Settings</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Game Speed (ms)</label>
+            <input type="range" id="aiGameSpeed" min="1" max="200" value="10" style="width: 100%; accent-color: #7dd3c0;">
+            <div style="text-align: center; color: #7dd3c0; font-size: 12px; margin-top: 3px; font-family: fontb;"><span id="aiGameSpeedValue">10</span> ms</div>
           </div>
-
-          <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-            <button id="aiStartBtn" class="editor-btn" onclick="startAISnakeTraining()" style="flex: 1; background: #00d4ff; color: #000; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold;">Start Training</button>
-            <button id="aiPauseBtn" class="editor-btn" onclick="pauseAISnakeTraining()" style="flex: 1; background: #ffaa00; color: #000; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; display: none;">Pause</button>
-            <button id="aiResetBtn" class="editor-btn" onclick="resetAISnakeModel()" style="flex: 1; background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold;">Reset Model</button>
+          <div>
+            <label style="display: block; color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Training Speed (iterations)</label>
+            <input type="range" id="aiTrainingSpeed" min="1" max="100" value="10" style="width: 100%; accent-color: #7dd3c0;">
+            <div style="text-align: center; color: #7dd3c0; font-size: 12px; margin-top: 3px; font-family: fontb;"><span id="aiTrainingSpeedValue">10</span> iterations</div>
           </div>
-
-          <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-            <div style="color: #00d4ff; font-weight: bold; margin-bottom: 10px; font-size: 14px;">Training Status</div>
-            <div id="aiTrainingStatus" style="color: #888; font-size: 11px; line-height: 1.6;">Ready to start training...</div>
+          <div>
+            <label style="display: block; color: #9aa0a6; font-size: 11px; margin-bottom: 5px;">Concurrency (parallel games)</label>
+            <input type="range" id="aiConcurrency" min="1" max="20" value="5" style="width: 100%; accent-color: #7dd3c0;">
+            <div style="text-align: center; color: #7dd3c0; font-size: 12px; margin-top: 3px; font-family: fontb;"><span id="aiConcurrencyValue">5</span> games</div>
           </div>
-
-          <canvas id="aiSnakeCanvas" width="400" height="400" style="background: #0f0f0f; border: 2px solid #00d4ff; border-radius: 4px; margin: 0 auto; display: block;"></canvas>
-          <div style="color: #888; font-size: 10px; margin-top: 10px; text-align: center;">
-            Watch the AI learn to play Snake!
+          <div>
+            <label style="display: flex; align-items: center; gap: 8px; color: #9aa0a6; font-size: 11px; margin-top: 20px;">
+              <input type="checkbox" id="aiUseGPU" checked style="width: 18px; height: 18px; cursor: pointer; accent-color: #7dd3c0;">
+              <span>Use GPU Acceleration</span>
+            </label>
+            <div id="aiGPUStatus" style="color: #4ade80; font-size: 10px; margin-top: 5px; margin-left: 26px;">GPU Ready</div>
           </div>
         </div>
-      `,
-      noPadding: true,
-      width: 900,
-      height: 800,
-    },
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <button id="aiStartBtn" class="editor-btn" onclick="startAISnakeTraining()" style="flex: 1; background: linear-gradient(135deg, #7dd3c0, #6bc4b0); color: #0a0e1a; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: fontb; transition: all 0.2s ease;">Start Training</button>
+        <button id="aiPauseBtn" class="editor-btn" onclick="pauseAISnakeTraining()" style="flex: 1; background: rgba(125, 211, 192, 0.2); color: #7dd3c0; border: 1px solid #7dd3c0; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: fontb; display: none; transition: all 0.2s ease;">Pause</button>
+        <button id="aiResetBtn" class="editor-btn" onclick="resetAISnakeModel()" style="flex: 1; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: fontb; transition: all 0.2s ease;">Reset Model</button>
+      </div>
+
+      <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid #7dd3c0; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+        <div style="color: #7dd3c0; font-weight: bold; margin-bottom: 10px; font-size: 14px; font-family: fontb;">Training Status</div>
+        <div id="aiTrainingStatus" style="color: #9aa0a6; font-size: 11px; line-height: 1.6; font-family: 'SUSE Mono', monospace;">Ready to start training...</div>
+      </div>
+
+      <canvas id="aiSnakeCanvas" width="400" height="400" style="background: #0a0e1a; border: 2px solid #7dd3c0; border-radius: 12px; margin: 0 auto; display: block;"></canvas>
+      <div style="color: #9aa0a6; font-size: 10px; margin-top: 10px; text-align: center;">
+        Watch the AI learn to play Snake!
+      </div>
+    </div>
+  `,
+  noPadding: true,
+  width: 900,
+  height: 800,
+},
     "nautilus-ai": {
       title: "Nautilus AI Assistant",
       icon: "fas fa-robot",
