@@ -1,415 +1,415 @@
 class db {
-    constructor(dbName, storeName) {
-        this.dbName = dbName;
-        this.storeName = storeName;
-        this.db = null;
-    }
-async init() {
-    if (this.db) {
-        return this;
-    }
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(this.dbName, 1);
-
-        request.onerror = (event) => {
-            console.error(`Database error: ${event.target.error}`);
-            reject(`Database error: ${event.target.error}`);
-        };
-
-        request.onsuccess = (event) => {
-            this.db = event.target.result;
-            this.db.onversionchange = () => {
-                this.db.close();
-                alert("Database is outdated, please reload the page.");
-            };
-            console.log("Database opened successfully.");
-            resolve(this);
-        };
-
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            let objectStore;
-            if (!db.objectStoreNames.contains(this.storeName)) {
-                objectStore = db.createObjectStore(this.storeName, { keyPath: "id", autoIncrement: true });
-            } else {
-                objectStore = event.target.transaction.objectStore(this.storeName);
-            }   
-};
-});
-}
-async add(item) {
-    if (!this.db) {
-        throw new Error("Database not initialized. Call init() first.");
-    }
-    return new Promise((resolve, reject) => {
-        const transaction = this.db.transaction([this.storeName], 'readwrite');
-        const objectStore = transaction.objectStore(this.storeName);
-        const addRequest = objectStore.add(item);
-
-        transaction.oncomplete = () => {
-            resolve(addRequest.result); // The new key
-        };
-        transaction.onerror = (event) => {
-            reject(`Error adding item: ${event.target.error}`);
-        };
-    });
-}
-
-async get(id) {
-    if (!this.db) {
-        throw new Error("Database not initialized. Call init() first.");
-    }
-    return new Promise((resolve, reject) => {
-        const transaction = this.db.transaction([this.storeName], 'readonly');
-        const objectStore = transaction.objectStore(this.storeName);
-        const getRequest = objectStore.get(id);
-
-        getRequest.onsuccess = (event) => {
-            resolve(event.target.result);
-        };
-        getRequest.onerror = (event) => {
-            reject(`Error getting item with ID ${id}: ${event.target.error}`);
-        };
-    });
-}
-
-async update(item) {
-    if (!this.db) {
-        throw new Error("Database not initialized. Call init() first.");
-    }
-    return new Promise((resolve, reject) => {
-        const transaction = this.db.transaction([this.storeName], "readwrite");
-        const objectStore = transaction.objectStore(this.storeName);
-        const putRequest = objectStore.put(item);
-
-        transaction.oncomplete = () => {
-            resolve(`Data with key '${item.id}' updated successfully.`);
-        };
-        transaction.onerror = (event) => {
-            reject(`Error updating data: ${event.target.error}`);
-        };
-    });
-}
-
-async delete(id) {
-    if (!this.db) {
-        throw new Error("Database not initialized. Call init() first.");
-    }
-    return new Promise((resolve, reject) => {
-        const transaction = this.db.transaction([this.storeName], "readwrite");
-        const objectStore = transaction.objectStore(this.storeName);
-        const deleteRequest = objectStore.delete(id);
-
-        transaction.oncomplete = () => {
-            resolve(`Data with ID ${id} deleted successfully.`);
-        };
-        transaction.onerror = (event) => {
-            reject(`Error deleting data: ${event.target.error}`);
-        };
-    });
-}
-
-async getAll() {
-    if (!this.db) {
-        throw new Error("Database not initialized. Call init() first.");
-    }
-    return new Promise((resolve, reject) => {
-        const transaction = this.db.transaction([this.storeName], 'readonly');
-        const objectStore = transaction.objectStore(this.storeName);
-        const getAllRequest = objectStore.getAll();
-
-        getAllRequest.onsuccess = (event) => {
-            resolve(event.target.result);
-        };
-        getAllRequest.onerror = (event) => {
-            reject(`Error fetching all items: ${event.target.error}`);
-        };
-    });
-}
-
-close() {
-  if (this.db) {
-    this.db.close();
+  constructor(dbName, storeName) {
+    this.dbName = dbName;
+    this.storeName = storeName;
     this.db = null;
   }
-}
-
-async deleteDB() {
+  async init() {
+    if (this.db) {
+      return this;
+    }
     return new Promise((resolve, reject) => {
-        this.close(); 
+      const request = indexedDB.open(this.dbName, 1);
 
-        const deleteRequest = window.indexedDB.deleteDatabase(this.dbName);
+      request.onerror = (event) => {
+        console.error(`Database error: ${event.target.error}`);
+        reject(`Database error: ${event.target.error}`);
+      };
 
-        deleteRequest.onsuccess = () => {
-            console.log(`Database '${this.dbName}' deleted successfully.`);
-            resolve();
+      request.onsuccess = (event) => {
+        this.db = event.target.result;
+        this.db.onversionchange = () => {
+          this.db.close();
+          alert("Database is outdated, please reload the page.");
         };
-        deleteRequest.onerror = (event) => {
-            console.error(`Error deleting database '${this.dbName}'.`, event.target.error);
-            reject(`Error deleting database: ${event.target.error}`);
-        };
-        deleteRequest.onblocked = (event) => {
-            console.warn(`Database '${this.dbName}' deletion is blocked. Close other connections.`);
-            reject(`Database deletion blocked.`);
-        };
+        console.log("Database opened successfully.");
+        resolve(this);
+      };
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        let objectStore;
+        if (!db.objectStoreNames.contains(this.storeName)) {
+          objectStore = db.createObjectStore(this.storeName, { keyPath: "id", autoIncrement: true });
+        } else {
+          objectStore = event.target.transaction.objectStore(this.storeName);
+        }
+      };
     });
-}
+  }
+  async add(item) {
+    if (!this.db) {
+      throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], 'readwrite');
+      const objectStore = transaction.objectStore(this.storeName);
+      const addRequest = objectStore.add(item);
+
+      transaction.oncomplete = () => {
+        resolve(addRequest.result); // The new key
+      };
+      transaction.onerror = (event) => {
+        reject(`Error adding item: ${event.target.error}`);
+      };
+    });
+  }
+
+  async get(id) {
+    if (!this.db) {
+      throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], 'readonly');
+      const objectStore = transaction.objectStore(this.storeName);
+      const getRequest = objectStore.get(id);
+
+      getRequest.onsuccess = (event) => {
+        resolve(event.target.result);
+      };
+      getRequest.onerror = (event) => {
+        reject(`Error getting item with ID ${id}: ${event.target.error}`);
+      };
+    });
+  }
+
+  async update(item) {
+    if (!this.db) {
+      throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], "readwrite");
+      const objectStore = transaction.objectStore(this.storeName);
+      const putRequest = objectStore.put(item);
+
+      transaction.oncomplete = () => {
+        resolve(`Data with key '${item.id}' updated successfully.`);
+      };
+      transaction.onerror = (event) => {
+        reject(`Error updating data: ${event.target.error}`);
+      };
+    });
+  }
+
+  async delete(id) {
+    if (!this.db) {
+      throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], "readwrite");
+      const objectStore = transaction.objectStore(this.storeName);
+      const deleteRequest = objectStore.delete(id);
+
+      transaction.oncomplete = () => {
+        resolve(`Data with ID ${id} deleted successfully.`);
+      };
+      transaction.onerror = (event) => {
+        reject(`Error deleting data: ${event.target.error}`);
+      };
+    });
+  }
+
+  async getAll() {
+    if (!this.db) {
+      throw new Error("Database not initialized. Call init() first.");
+    }
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], 'readonly');
+      const objectStore = transaction.objectStore(this.storeName);
+      const getAllRequest = objectStore.getAll();
+
+      getAllRequest.onsuccess = (event) => {
+        resolve(event.target.result);
+      };
+      getAllRequest.onerror = (event) => {
+        reject(`Error fetching all items: ${event.target.error}`);
+      };
+    });
+  }
+
+  close() {
+    if (this.db) {
+      this.db.close();
+      this.db = null;
+    }
+  }
+
+  async deleteDB() {
+    return new Promise((resolve, reject) => {
+      this.close();
+
+      const deleteRequest = window.indexedDB.deleteDatabase(this.dbName);
+
+      deleteRequest.onsuccess = () => {
+        console.log(`Database '${this.dbName}' deleted successfully.`);
+        resolve();
+      };
+      deleteRequest.onerror = (event) => {
+        console.error(`Error deleting database '${this.dbName}'.`, event.target.error);
+        reject(`Error deleting database: ${event.target.error}`);
+      };
+      deleteRequest.onblocked = (event) => {
+        console.warn(`Database '${this.dbName}' deletion is blocked. Close other connections.`);
+        reject(`Database deletion blocked.`);
+      };
+    });
+  }
 }
 class encryption {
-    static #arrayBufferToBase64(buffer) {
-        let binary = '';
-        const bytes = new Uint8Array(buffer);
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
+  static #arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
     }
-    static #base64ToArrayBuffer(base64) {
-        const binary_string = window.atob(base64);
-        const len = binary_string.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binary_string.charCodeAt(i);
-        }
-        return bytes.buffer;
+    return window.btoa(binary);
+  }
+  static #base64ToArrayBuffer(base64) {
+    const binary_string = window.atob(base64);
+    const len = binary_string.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binary_string.charCodeAt(i);
     }
-    static async encrypt(plainText) {
-        try {
-            const key = await window.crypto.subtle.generateKey(
-                {
-                    name: "AES-GCM",
-                    length: 256,
-                },
-                true,
-                ["encrypt", "decrypt"]
-            );
-            const iv = window.crypto.getRandomValues(new Uint8Array(12));
-            const encodedData = new TextEncoder().encode(JSON.stringify(plainText));
-            const encryptedBuffer = await window.crypto.subtle.encrypt(
-                {
-                    name: "AES-GCM",
-                    iv: iv,
-                },
-                key,
-                encodedData
-            );
-            const keyJwk = await window.crypto.subtle.exportKey("jwk", key);
-            const packet = {
-                jwk: keyJwk,
-                iv: this.#arrayBufferToBase64(iv),
-                data: this.#arrayBufferToBase64(encryptedBuffer)
-            };
-            const packetString = JSON.stringify(packet);
-            return window.btoa(packetString);
-        } catch (error) {
-            console.error("Encryption failed:", error);
-            throw error;
-        }
+    return bytes.buffer;
+  }
+  static async encrypt(plainText) {
+    try {
+      const key = await window.crypto.subtle.generateKey(
+        {
+          name: "AES-GCM",
+          length: 256,
+        },
+        true,
+        ["encrypt", "decrypt"]
+      );
+      const iv = window.crypto.getRandomValues(new Uint8Array(12));
+      const encodedData = new TextEncoder().encode(JSON.stringify(plainText));
+      const encryptedBuffer = await window.crypto.subtle.encrypt(
+        {
+          name: "AES-GCM",
+          iv: iv,
+        },
+        key,
+        encodedData
+      );
+      const keyJwk = await window.crypto.subtle.exportKey("jwk", key);
+      const packet = {
+        jwk: keyJwk,
+        iv: this.#arrayBufferToBase64(iv),
+        data: this.#arrayBufferToBase64(encryptedBuffer)
+      };
+      const packetString = JSON.stringify(packet);
+      return window.btoa(packetString);
+    } catch (error) {
+      console.error("Encryption failed:", error);
+      throw error;
     }
-    static async decrypt(packetB64) {
-        try {
-            const packetString = window.atob(packetB64);
-            const packet = JSON.parse(packetString);
-            const key = await window.crypto.subtle.importKey(
-                "jwk",
-                packet.jwk,
-                {
-                    name: "AES-GCM",
-                },
-                true,
-                ["encrypt", "decrypt"]
-            );
-            const iv = this.#base64ToArrayBuffer(packet.iv);
-            const encryptedBuffer = this.#base64ToArrayBuffer(packet.data);
-            const decryptedBuffer = await window.crypto.subtle.decrypt(
-                {
-                    name: "AES-GCM",
-                    iv: iv,
-                },
-                key,
-                encryptedBuffer
-            );
-            return JSON.parse(new TextDecoder().decode(decryptedBuffer));
-        } catch (error) {
-            console.error("Decryption failed:", error);
-            throw error;
-        }
+  }
+  static async decrypt(packetB64) {
+    try {
+      const packetString = window.atob(packetB64);
+      const packet = JSON.parse(packetString);
+      const key = await window.crypto.subtle.importKey(
+        "jwk",
+        packet.jwk,
+        {
+          name: "AES-GCM",
+        },
+        true,
+        ["encrypt", "decrypt"]
+      );
+      const iv = this.#base64ToArrayBuffer(packet.iv);
+      const encryptedBuffer = this.#base64ToArrayBuffer(packet.data);
+      const decryptedBuffer = await window.crypto.subtle.decrypt(
+        {
+          name: "AES-GCM",
+          iv: iv,
+        },
+        key,
+        encryptedBuffer
+      );
+      return JSON.parse(new TextDecoder().decode(decryptedBuffer));
+    } catch (error) {
+      console.error("Decryption failed:", error);
+      throw error;
     }
+  }
 }
-const idb = new db("asdfsdff","sdffjdk");
+const idb = new db("asdfsdff", "sdffjdk");
 let windows = {};
 let zIndexCounter = 100;
 let currentUsername = localStorage.getItem("nautilusOS_username") || "User";
 let focusedWindow = null;
 
 function removeIdRecursively(obj) {
-    if (typeof obj !== 'object' || obj === null) {
-        return; 
-    }
-    const keys = Object.keys(obj);
+  if (typeof obj !== 'object' || obj === null) {
+    return;
+  }
+  const keys = Object.keys(obj);
 
-    for (const key of keys) {
-        if (key === 'id') {
-            delete obj[key];
-        } else {
-            removeIdRecursively(obj[key]);
-        }
+  for (const key of keys) {
+    if (key === 'id') {
+      delete obj[key];
+    } else {
+      removeIdRecursively(obj[key]);
     }
+  }
 }
 
 function compressFS(fs) {
-    const rootPrimitives = {};
-    const subDirectories = {};
-    for (const key in fs) {
-        const value = fs[key];
-        if (typeof value === 'object' && value !== null) {
-            subDirectories[key] = value;
+  const rootPrimitives = {};
+  const subDirectories = {};
+  for (const key in fs) {
+    const value = fs[key];
+    if (typeof value === 'object' && value !== null) {
+      subDirectories[key] = value;
+    } else {
+      rootPrimitives[key] = value;
+    }
+  }
+
+  const allKeysPostOrder = [];
+  const keyRelationships = new Map();
+
+  const isTerminal = (value) => {
+    if (typeof value !== 'object' || value === null) return false;
+    for (const key in value) {
+      if (typeof value[key] === 'object' && value[key] !== null) return false;
+    }
+    return true;
+  };
+
+  function discover(obj) {
+    for (const key in obj) {
+      const value = obj[key];
+      if (typeof value === 'object' && value !== null) {
+        if (Object.keys(value).length === 0) {
+          keyRelationships.set(key, { type: 'container', children: [] });
+        } else if (isTerminal(value)) {
+          keyRelationships.set(key, { type: 'terminal', value: value });
         } else {
-            rootPrimitives[key] = value;
+          discover(value);
+          keyRelationships.set(key, { type: 'container', children: Object.keys(value) });
         }
+      }
+    }
+    allKeysPostOrder.push(...Object.keys(obj));
+  }
+  discover(subDirectories);
+
+  const uniqueTerminalValues = [];
+  const seenValues = new Set();
+  const uniqueKeys = [...new Set(allKeysPostOrder)];
+  if (Object.keys(rootPrimitives).length > 0) {
+    uniqueTerminalValues.push(rootPrimitives);
+    seenValues.add(JSON.stringify(rootPrimitives));
+  }
+
+  for (const key of uniqueKeys) {
+    const data = keyRelationships.get(key);
+    if (data && data.type === 'terminal') {
+      const valueString = JSON.stringify(data.value);
+      if (!seenValues.has(valueString)) {
+        uniqueTerminalValues.push(data.value);
+        seenValues.add(valueString);
+      }
+    }
+  }
+
+  const finalMaps = [];
+  const keyToIndexMap = new Map();
+
+  for (const key of Object.keys(subDirectories).concat(uniqueKeys)) {
+    if (keyToIndexMap.has(key)) continue;
+    const data = keyRelationships.get(key);
+    if (!data) continue;
+
+    let mapObject;
+    let targetIndex;
+
+    if (data.type === 'terminal') {
+      const valueString = JSON.stringify(data.value);
+      targetIndex = uniqueTerminalValues.findIndex(v => JSON.stringify(v) === valueString);
+      mapObject = { [key]: targetIndex };
+    } else if (data.type === 'container') {
+      if (data.children.length === 0) {
+        mapObject = { [key]: null };
+      } else {
+        const firstChildKey = data.children[0];
+        targetIndex = keyToIndexMap.get(firstChildKey);
+        mapObject = { [key]: targetIndex };
+      }
     }
 
-    const allKeysPostOrder = [];
-    const keyRelationships = new Map();
-
-    const isTerminal = (value) => {
-        if (typeof value !== 'object' || value === null) return false;
-        for (const key in value) {
-            if (typeof value[key] === 'object' && value[key] !== null) return false;
-        }
-        return true;
-    };
-
-    function discover(obj) {
-        for (const key in obj) {
-            const value = obj[key];
-            if (typeof value === 'object' && value !== null) {
-                if (Object.keys(value).length === 0) {
-                    keyRelationships.set(key, { type: 'container', children: [] });
-                } else if (isTerminal(value)) {
-                    keyRelationships.set(key, { type: 'terminal', value: value });
-                } else {
-                    discover(value);
-                    keyRelationships.set(key, { type: 'container', children: Object.keys(value) });
-                }
-            }
-        }
-        allKeysPostOrder.push(...Object.keys(obj));
+    if (mapObject) {
+      finalMaps.push(mapObject);
+      const finalIndexOfThisMap = uniqueTerminalValues.length + finalMaps.length - 1;
+      keyToIndexMap.set(key, finalIndexOfThisMap);
     }
-    discover(subDirectories);
+  }
 
-    const uniqueTerminalValues = [];
-    const seenValues = new Set();
-    const uniqueKeys = [...new Set(allKeysPostOrder)];
-    if (Object.keys(rootPrimitives).length > 0) {
-        uniqueTerminalValues.push(rootPrimitives);
-        seenValues.add(JSON.stringify(rootPrimitives));
-    }
-
-    for (const key of uniqueKeys) {
-        const data = keyRelationships.get(key);
-        if (data && data.type === 'terminal') {
-            const valueString = JSON.stringify(data.value);
-            if (!seenValues.has(valueString)) {
-                uniqueTerminalValues.push(data.value);
-                seenValues.add(valueString);
-            }
-        }
-    }
-
-    const finalMaps = [];
-    const keyToIndexMap = new Map();
-
-    for (const key of Object.keys(subDirectories).concat(uniqueKeys)) {
-        if (keyToIndexMap.has(key)) continue;
-        const data = keyRelationships.get(key);
-        if (!data) continue;
-
-        let mapObject;
-        let targetIndex;
-
-        if (data.type === 'terminal') {
-            const valueString = JSON.stringify(data.value);
-            targetIndex = uniqueTerminalValues.findIndex(v => JSON.stringify(v) === valueString);
-            mapObject = { [key]: targetIndex };
-        } else if (data.type === 'container') {
-            if (data.children.length === 0) {
-                mapObject = { [key]: null };
-            } else {
-                const firstChildKey = data.children[0];
-                targetIndex = keyToIndexMap.get(firstChildKey);
-                mapObject = { [key]: targetIndex };
-            }
-        }
-
-        if (mapObject) {
-            finalMaps.push(mapObject);
-            const finalIndexOfThisMap = uniqueTerminalValues.length + finalMaps.length -1;
-            keyToIndexMap.set(key, finalIndexOfThisMap);
-        }
-    }
-    
-    return [...uniqueTerminalValues, ...finalMaps];
+  return [...uniqueTerminalValues, ...finalMaps];
 }
 
 function decompressFS(transformedArray) {
-    const values = [];
-    const maps = [];
-    for (const item of transformedArray) {
-        delete item.id;
-        const keys = Object.keys(item);
-        const firstValue = item[keys[0]];
-        if (keys.length === 1 && (typeof firstValue === 'number' || firstValue === null)) {
-            maps.push(item);
-        } else {
-            values.push(item);
-        }
+  const values = [];
+  const maps = [];
+  for (const item of transformedArray) {
+    delete item.id;
+    const keys = Object.keys(item);
+    const firstValue = item[keys[0]];
+    if (keys.length === 1 && (typeof firstValue === 'number' || firstValue === null)) {
+      maps.push(item);
+    } else {
+      values.push(item);
     }
+  }
 
-    const builtObjects = {};
-    const allChildKeys = new Set();
-    for (const map of maps) {
-        const key = Object.keys(map)[0];
-        const index = map[key];
-        let resolvedValue;
+  const builtObjects = {};
+  const allChildKeys = new Set();
+  for (const map of maps) {
+    const key = Object.keys(map)[0];
+    const index = map[key];
+    let resolvedValue;
 
-        if (index === null) {
-            resolvedValue = {};
-        } else if (index < values.length) {
-            resolvedValue = values[index];
-        } else {
-            const childMap = maps[index - values.length];
-            const childKey = Object.keys(childMap)[0];
-            allChildKeys.add(childKey);
-            const childObject = builtObjects[childKey];
-            resolvedValue = { [childKey]: childObject };
-        }
-        builtObjects[key] = resolvedValue;
+    if (index === null) {
+      resolvedValue = {};
+    } else if (index < values.length) {
+      resolvedValue = values[index];
+    } else {
+      const childMap = maps[index - values.length];
+      const childKey = Object.keys(childMap)[0];
+      allChildKeys.add(childKey);
+      const childObject = builtObjects[childKey];
+      resolvedValue = { [childKey]: childObject };
     }
+    builtObjects[key] = resolvedValue;
+  }
 
-    const finalDirs = {};
-    for (const key in builtObjects) {
-        if (!allChildKeys.has(key)) {
-            finalDirs[key] = builtObjects[key];
-        }
+  const finalDirs = {};
+  for (const key in builtObjects) {
+    if (!allChildKeys.has(key)) {
+      finalDirs[key] = builtObjects[key];
     }
-    const rootPrimitives = {};
-    const referencedValueIndices = new Set();
-    maps.forEach(map => {
-        const index = Object.values(map)[0];
-        if (index !== null) {
-            referencedValueIndices.add(index);
-        }
-    });
-
-    for (let i = 0; i < values.length; i++) {
-        if (!referencedValueIndices.has(i)) {
-            Object.assign(rootPrimitives, values[i]);
-        }
+  }
+  const rootPrimitives = {};
+  const referencedValueIndices = new Set();
+  maps.forEach(map => {
+    const index = Object.values(map)[0];
+    if (index !== null) {
+      referencedValueIndices.add(index);
     }
+  });
 
-    return { ...rootPrimitives, ...finalDirs };
+  for (let i = 0; i < values.length; i++) {
+    if (!referencedValueIndices.has(i)) {
+      Object.assign(rootPrimitives, values[i]);
+    }
+  }
+
+  return { ...rootPrimitives, ...finalDirs };
 }
 let fileSystem = {
   Photos: {},
@@ -418,26 +418,26 @@ let fileSystem = {
       "This is an example text file.\n\nYou can edit this file using the Text Editor app.\n\nTry creating your own files by:\n1. Opening the Text Editor\n2. Writing your content\n3. Clicking Save As and entering a filename\n\nHave fun exploring NautilusOS!",
   },
 };
-async function saveFS(fs){
-    const l = compressFS(fs);
-    const tx = idb.db.transaction(idb.storeName, 'readwrite');
-    await tx.objectStore(idb.storeName).clear();
+async function saveFS(fs) {
+  const l = compressFS(fs);
+  const tx = idb.db.transaction(idb.storeName, 'readwrite');
+  await tx.objectStore(idb.storeName).clear();
 
-    for(let i = 0; i < l.length; i++){
-        const itemToSave = { ...l[i], id: i };
-        await idb.add(itemToSave);
-    }
+  for (let i = 0; i < l.length; i++) {
+    const itemToSave = { ...l[i], id: i };
+    await idb.add(itemToSave);
+  }
 }
 
 (async () => {
-    await idb.init();
-    let list = await idb.getAll();
-    window.addEventListener("Login Success", function() {
+  await idb.init();
+  let list = await idb.getAll();
+  window.addEventListener("Login Success", function () {
     showToast("Files Loaded", "fa-check-circle");
-    },{once:true});
-    list = list.length==0? compressFS(fileSystem):list;
-    fileSystem = decompressFS(list);
-    await saveFS(fileSystem);
+  }, { once: true });
+  list = list.length == 0 ? compressFS(fileSystem) : list;
+  fileSystem = decompressFS(list);
+  await saveFS(fileSystem);
 })()
 let currentPath = [];
 let currentFile = null;
@@ -445,6 +445,7 @@ let settings = {
   use12Hour: true,
   showSeconds: false,
   showDesktopIcons: true,
+  bypassFileProtocolWarnings: false,
 };
 let bootSelectedIndex = 0;
 let snapSettings = null;
@@ -498,17 +499,17 @@ function getAccountByUsername(username) {
 // Create new account
 function createAccount(username, password, role = "standard", isPasswordless = false) {
   const accounts = getAllAccounts();
-  
+
   // Check if username already exists
   if (accounts.find(acc => acc.username === username)) {
     return { success: false, message: "Username already exists" };
   }
-  
+
   const hashedPassword = isPasswordless ? "" : hashPassword(password);
   const newAccount = new UserAccount(username, hashedPassword, role, isPasswordless);
   accounts.push(newAccount);
   saveAllAccounts(accounts);
-  
+
   return { success: true, message: "Account created successfully" };
 }
 
@@ -516,15 +517,15 @@ function createAccount(username, password, role = "standard", isPasswordless = f
 function updateAccount(username, updates) {
   const accounts = getAllAccounts();
   const index = accounts.findIndex(acc => acc.username === username);
-  
+
   if (index === -1) {
     return { success: false, message: "Account not found" };
   }
-  
+
   // Merge updates
   accounts[index] = { ...accounts[index], ...updates };
   saveAllAccounts(accounts);
-  
+
   return { success: true, message: "Account updated successfully" };
 }
 
@@ -532,11 +533,11 @@ function updateAccount(username, updates) {
 function deleteAccount(username) {
   const accounts = getAllAccounts();
   const filtered = accounts.filter(acc => acc.username !== username);
-  
+
   if (filtered.length === accounts.length) {
     return { success: false, message: "Account not found" };
   }
-  
+
   saveAllAccounts(filtered);
   return { success: true, message: "Account deleted successfully" };
 }
@@ -544,15 +545,15 @@ function deleteAccount(username) {
 // Check if user has permission to use an app
 function hasAppPermission(appName) {
   if (!currentUserAccount) return true; // Default allow if no account system
-  
+
   // Superusers can access everything
   if (currentUserAccount.role === "superuser") return true;
-  
+
   // If allowedApps is empty, all apps are allowed
   if (!currentUserAccount.allowedApps || currentUserAccount.allowedApps.length === 0) {
     return true;
   }
-  
+
   // Check if app is in allowed list
   return currentUserAccount.allowedApps.includes(appName);
 }
@@ -565,15 +566,15 @@ function isSuperUser() {
 // Migrate old single-user system to new multi-user system
 function migrateToMultiUserSystem() {
   const accounts = getAllAccounts();
-  
+
   // If accounts already exist, no need to migrate
   if (accounts.length > 0) return;
-  
+
   // Check if old system has a user
   const oldUsername = localStorage.getItem("nautilusOS_username");
   const oldPassword = localStorage.getItem("nautilusOS_password");
   const oldIsPasswordless = localStorage.getItem("nautilusOS_isPasswordless") === "true";
-  
+
   if (oldUsername) {
     // Create account from old system as superuser
     const newAccount = new UserAccount(
@@ -600,6 +601,11 @@ let hasShownFileProtocolToast = false;
 
 function checkFileProtocol(title = null) {
   if (window.location.protocol === "file:") {
+    // If experimental bypass is enabled, allow it
+    if (settings.bypassFileProtocolWarnings) {
+      return true;
+    }
+
     const shouldShowToast = title && (
       title.toLowerCase().includes("browser") ||
       title === "Visual Studio Code"
@@ -1954,10 +1960,10 @@ function login() {
 
   // Migrate old system if needed
   migrateToMultiUserSystem();
-  
+
   // Get account from new multi-user system
   const account = getAccountByUsername(username);
-  
+
   if (!account) {
     // Fallback to old system for backwards compatibility
     const savedUsername = localStorage.getItem("nautilusOS_username");
@@ -1986,7 +1992,7 @@ function login() {
         return;
       }
     }
-    
+
     currentUsername = username;
     currentUserAccount = null; // Old system doesn't use account objects
   } else {
@@ -2008,11 +2014,11 @@ function login() {
         return;
       }
     }
-    
+
     currentUsername = username;
     currentUserAccount = account;
   }
-  
+
   document.getElementById("displayUsername").textContent = username;
 
   if (username.toLowerCase() === "dinguschan" || username.toLowerCase() === "$xor" || username.toLowerCase() === "lanefiedler-731") {
@@ -2484,7 +2490,7 @@ function maximizeWindow(btn) {
     window.style.borderRadius = "12px";
     const header = window.querySelector(".window-header");
     if (header) header.style.borderRadius = "0";
-    
+
     // Show taskbar
     if (taskbar) {
       taskbar.style.transform = "translateX(-50%) translateY(0)";
@@ -2508,12 +2514,12 @@ function maximizeWindow(btn) {
     window.style.borderRadius = "1px";
     const header = window.querySelector(".window-header");
     if (header) header.style.borderRadius = "1px";
-    
+
     // Hide taskbar and show expand button
     if (taskbar) {
       taskbar.style.transition = "transform 0.3s ease";
       taskbar.style.transform = "translateX(-50%) translateY(calc(100% + 20px))";
-      
+
       // Create expand button if it doesn't exist
       let expandBtn = document.getElementById("taskbarExpandBtn");
       if (!expandBtn) {
@@ -2538,12 +2544,12 @@ function maximizeWindow(btn) {
           transition: all 0.2s;
           box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
         `;
-        
+
         expandBtn.addEventListener("mouseenter", () => {
           expandBtn.style.height = "25px";
           taskbar.style.transform = "translateX(-50%) translateY(0)";
         });
-        
+
         expandBtn.addEventListener("mouseleave", () => {
           setTimeout(() => {
             if (!taskbar.matches(':hover')) {
@@ -2552,7 +2558,7 @@ function maximizeWindow(btn) {
             }
           }, 300);
         });
-        
+
         taskbar.addEventListener("mouseleave", () => {
           setTimeout(() => {
             if (!expandBtn.matches(':hover') && !taskbar.matches(':hover')) {
@@ -2560,7 +2566,7 @@ function maximizeWindow(btn) {
             }
           }, 300);
         });
-        
+
         document.body.appendChild(expandBtn);
       }
     }
@@ -2934,7 +2940,7 @@ function openApp(appName, editorContent = "", filename = "") {
     showToast(`Access denied: You don't have permission to use ${appMetadata[appName]?.name || appName}`, "fa-exclamation-circle");
     return;
   }
-  
+
   const menu = document.getElementById("startMenu");
   if (menu.classList.contains("active")) {
     toggleStartMenu();
@@ -2978,11 +2984,10 @@ function openApp(appName, editorContent = "", filename = "") {
                       </div>
                       <div class="file-main">
                           <div class="file-toolbar">
-                              <button class="editor-btn" onclick="goUpDirectory()" ${
-                                currentPath.length === 0
-                                  ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
-                                  : ""
-                              }>
+                              <button class="editor-btn" onclick="goUpDirectory()" ${currentPath.length === 0
+            ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
+            : ""
+          }>
                                   <i class="fas fa-arrow-up"></i> Up
                               </button>
                               <button class="editor-btn" onclick="createNewFolder()">
@@ -2994,12 +2999,12 @@ function openApp(appName, editorContent = "", filename = "") {
                           </div>
       <div class="file-grid">
                       ${Object.keys(current)
-                        .sort()
-                        .map((file) => {
-                          const isFolder = typeof current[file] === "object";
-                          const icon = isFolder ? "fa-folder" : "fa-file-alt";
-                          const escapedFile = file.replace(/'/g, "\\'");
-                          return `
+            .sort()
+            .map((file) => {
+              const isFolder = typeof current[file] === "object";
+              const icon = isFolder ? "fa-folder" : "fa-file-alt";
+              const escapedFile = file.replace(/'/g, "\\'");
+              return `
                               <div class="file-item" ondblclick="openFile('${escapedFile}')" onclick="selectFileItem(event, this, '${escapedFile}')" draggable="true" ondragstart="handleFileDragStart(event, '${escapedFile}')" ondragover="handleFileDragOver(event, ${isFolder})" ondrop="handleFileDrop(event, '${escapedFile}')">
                                   <i class="fas ${icon}"></i>
                                   <span>${file}</span>
@@ -3013,8 +3018,8 @@ function openApp(appName, editorContent = "", filename = "") {
                                   </div>
                               </div>
                           `;
-                        })
-                        .join("")}
+            })
+            .join("")}
                   </div>
                       </div>
                   </div>
@@ -3247,35 +3252,30 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-status-card">
-                        <div class="cloaking-status-indicator ${
-                          cloakingConfig.autoRotate ? "active" : ""
-                        }">
+                        <div class="cloaking-status-indicator ${cloakingConfig.autoRotate ? "active" : ""
+        }">
                             <div class="cloaking-status-icon">
-                                <i class="fas ${
-                                  cloakingConfig.autoRotate
-                                    ? "fa-rotate"
-                                    : "fa-rotate"
-                                }"></i>
+                                <i class="fas ${cloakingConfig.autoRotate
+          ? "fa-rotate"
+          : "fa-rotate"
+        }"></i>
                             </div>
                             <div class="cloaking-status-text">
                                 <div class="cloaking-status-title">Auto-Rotate Status</div>
-                                <div class="cloaking-status-desc">${
-                                  cloakingConfig.autoRotate
-                                    ? "Currently Active"
-                                    : "Currently Inactive"
-                                }</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.autoRotate
+          ? "Currently Active"
+          : "Currently Inactive"
+        }</div>
                             </div>
-                            <div class="toggle-switch ${
-                              cloakingConfig.autoRotate ? "active" : ""
-                            }" id="autoRotateToggle" onclick="toggleAutoRotate()"></div>
+                            <div class="toggle-switch ${cloakingConfig.autoRotate ? "active" : ""
+        }" id="autoRotateToggle" onclick="toggleAutoRotate()"></div>
                         </div>
                     </div>
                     
-                    <div class="cloaking-form-card" id="rotateSettings" style="${
-                      cloakingConfig.autoRotate
-                        ? ""
-                        : "opacity: 0.5; pointer-events: none;"
-                    }">
+                    <div class="cloaking-form-card" id="rotateSettings" style="${cloakingConfig.autoRotate
+          ? ""
+          : "opacity: 0.5; pointer-events: none;"
+        }">
                         <div class="cloaking-form-group">
                             <label class="cloaking-label">
                                 <i class="fas fa-clock"></i> Rotation Speed (seconds)
@@ -3290,9 +3290,8 @@ alt="favicon">
                                     value="${cloakingConfig.rotateSpeed}"
                                     oninput="updateRotateSpeedDisplay(this.value)"
                                 >
-                                <span class="cloaking-slider-value" id="rotateSpeedValue">${
-                                  cloakingConfig.rotateSpeed
-                                }s</span>
+                                <span class="cloaking-slider-value" id="rotateSpeedValue">${cloakingConfig.rotateSpeed
+        }s</span>
                             </div>
                             <div class="cloaking-hint">How often the tab should change disguise</div>
                         </div>
@@ -3321,27 +3320,23 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-status-card">
-                        <div class="cloaking-status-indicator ${
-                          cloakingConfig.panicKeyEnabled ? "active" : ""
-                        }">
+                        <div class="cloaking-status-indicator ${cloakingConfig.panicKeyEnabled ? "active" : ""
+        }">
                             <div class="cloaking-status-icon">
-                                <i class="fas ${
-                                  cloakingConfig.panicKeyEnabled
-                                    ? "fa-shield-alt"
-                                    : "fa-shield"
-                                }"></i>
+                                <i class="fas ${cloakingConfig.panicKeyEnabled
+          ? "fa-shield-alt"
+          : "fa-shield"
+        }"></i>
                             </div>
                             <div class="cloaking-status-text">
                                 <div class="cloaking-status-title">Panic Key Status</div>
-                                <div class="cloaking-status-desc">${
-                                  cloakingConfig.panicKeyEnabled
-                                    ? "Armed and Ready"
-                                    : "Disabled"
-                                }</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.panicKeyEnabled
+          ? "Armed and Ready"
+          : "Disabled"
+        }</div>
                             </div>
-                            <div class="toggle-switch ${
-                              cloakingConfig.panicKeyEnabled ? "active" : ""
-                            }" onclick="togglePanicKey()"></div>
+                            <div class="toggle-switch ${cloakingConfig.panicKeyEnabled ? "active" : ""
+        }" onclick="togglePanicKey()"></div>
                         </div>
                     </div>
                     
@@ -3351,10 +3346,9 @@ alt="favicon">
                                 <i class="fas fa-keyboard"></i> Panic Hotkey
                             </label>
                             <div class="cloaking-hotkey-display" id="panicHotkeyDisplay" onclick="recordPanicKey()">
-                                ${
-                                  cloakingConfig.panicKey ||
-                                  "Click to set hotkey"
-                                }
+                                ${cloakingConfig.panicKey ||
+        "Click to set hotkey"
+        }
                             </div>
                             <div class="cloaking-hint">Press any key combination to set it as your panic hotkey</div>
                         </div>
@@ -3507,18 +3501,16 @@ alt="favicon">
                                 <div class="settings-item-title">12-Hour Format</div>
                                 <div class="settings-item-desc">Use 12-hour time with AM/PM</div>
                             </div>
-                            <div class="toggle-switch ${
-                              settings.use12Hour ? "active" : ""
-                            }" onclick="toggleSetting('use12Hour')"></div>
+                            <div class="toggle-switch ${settings.use12Hour ? "active" : ""
+        }" onclick="toggleSetting('use12Hour')"></div>
                         </div>
                         <div class="settings-item">
                             <div class="settings-item-text">
                                 <div class="settings-item-title">Show Seconds</div>
                                 <div class="settings-item-desc">Display seconds in taskbar clock</div>
                             </div>
-                            <div class="toggle-switch ${
-                              settings.showSeconds ? "active" : ""
-                            }" onclick="toggleSetting('showSeconds')"></div>
+                            <div class="toggle-switch ${settings.showSeconds ? "active" : ""
+        }" onclick="toggleSetting('showSeconds')"></div>
                         </div>
                     </div>
                 </div>
@@ -3534,9 +3526,8 @@ alt="favicon">
                                 <div class="settings-item-title">Show Desktop Icons</div>
                                 <div class="settings-item-desc">Display application icons on desktop</div>
                             </div>
-                            <div class="toggle-switch ${
-                              settings.showDesktopIcons ? "active" : ""
-                            }" onclick="toggleSetting('showDesktopIcons')"></div>
+                            <div class="toggle-switch ${settings.showDesktopIcons ? "active" : ""
+        }" onclick="toggleSetting('showDesktopIcons')"></div>
                         </div>
                     </div>
                 </div>
@@ -3552,13 +3543,12 @@ alt="favicon">
                                 <div class="settings-item-title">Show on Startup</div>
                                 <div class="settings-item-desc">Open the What's New app automatically after logging in</div>
                             </div>
-                            <div class="toggle-switch ${
-                              localStorage.getItem(
-                                "nautilusOS_showWhatsNew"
-                              ) !== "false"
-                                ? "active"
-                                : ""
-                            }" onclick="toggleSetting('showWhatsNew')"></div>
+                            <div class="toggle-switch ${localStorage.getItem(
+          "nautilusOS_showWhatsNew"
+        ) !== "false"
+          ? "active"
+          : ""
+        }" onclick="toggleSetting('showWhatsNew')"></div>
                         </div>
                     </div>
                 </div>
@@ -3580,11 +3570,10 @@ alt="favicon">
                         <input type="file" id="loginWallpaperInput" accept="image/png, image/jpeg, image/gif" onchange="handleLoginBackgroundUpload(event)" style="display: none;">
                         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
                             <button class="settings-action-btn" id="desktopWallpaperButton" onclick="document.getElementById('wallpaperInput').click()">
-                                <i class="fas fa-upload"></i> ${
-                                  hasWallpaper
-                                    ? "Change Desktop Wallpaper"
-                                    : "Set Desktop Wallpaper"
-                                }
+                                <i class="fas fa-upload"></i> ${hasWallpaper
+          ? "Change Desktop Wallpaper"
+          : "Set Desktop Wallpaper"
+        }
                             </button>
                             <button class="settings-action-btn" onclick="clearWallpaper()">
                                 <i class="fas fa-undo"></i> Reset Desktop Wallpaper
@@ -3595,20 +3584,17 @@ alt="favicon">
                                 <div class="settings-item-title">Use same for login screen</div>
                                 <div class="settings-item-desc">Mirror the desktop wallpaper on the login page</div>
                             </div>
-                            <div class="toggle-switch ${
-                              useSameBackground ? "active" : ""
-                            }" id="loginWallpaperToggle" onclick="toggleLoginWallpaperLink(this)"></div>
+                            <div class="toggle-switch ${useSameBackground ? "active" : ""
+        }" id="loginWallpaperToggle" onclick="toggleLoginWallpaperLink(this)"></div>
                         </div>
-                        <div id="loginWallpaperControls" style="${
-                          useSameBackground ? "display: none;" : ""
-                        }">
+                        <div id="loginWallpaperControls" style="${useSameBackground ? "display: none;" : ""
+        }">
                             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
                                 <button class="settings-action-btn" id="loginWallpaperButton" onclick="document.getElementById('loginWallpaperInput').click()">
-                                    <i class="fas fa-upload"></i> ${
-                                      hasLoginWallpaper
-                                        ? "Change Login Wallpaper"
-                                        : "Set Login Wallpaper"
-                                    }
+                                    <i class="fas fa-upload"></i> ${hasLoginWallpaper
+          ? "Change Login Wallpaper"
+          : "Set Login Wallpaper"
+        }
                                 </button>
                                 <button class="settings-action-btn" onclick="clearLoginWallpaper()">
                                     <i class="fas fa-undo"></i> Reset Login Wallpaper
@@ -3625,9 +3611,8 @@ alt="favicon">
                     </div>
                     <div class="settings-card-body">
                         <div id="themeSettings">
-                            ${
-                              installedThemes.length === 0
-                                ? `
+                            ${installedThemes.length === 0
+          ? `
                                 <div class="settings-empty">
                                     <i class="fas fa-paint-brush"></i>
                                     <h3>No Themes Installed</h3>
@@ -3637,29 +3622,28 @@ alt="favicon">
                                     </button>
                                 </div>
                             `
-                                : `
+          : `
                                 <div class="theme-grid">
                                     ${installedThemes
-                                      .map(
-                                        (theme) => `
+            .map(
+              (theme) => `
                                         <div class="theme-card">
                                             <div class="theme-preview">
                                                 <i class="fas fa-sun"></i>
                                             </div>
-                                            <div class="theme-name">${
-                                              theme.charAt(0).toUpperCase() +
-                                              theme.slice(1)
-                                            } Theme</div>
+                                            <div class="theme-name">${theme.charAt(0).toUpperCase() +
+                theme.slice(1)
+                } Theme</div>
                                             <button class="settings-action-btn" onclick="applyTheme('${theme}')">
                                                 Apply Theme
                                             </button>
                                         </div>
                                     `
-                                      )
-                                      .join("")}
+            )
+            .join("")}
                                 </div>
                             `
-                            }
+        }
                         </div>
                     </div>
                 </div>
@@ -3777,11 +3761,10 @@ alt="favicon">
                         <input type="file" id="profilePictureInput" accept="image/png, image/jpeg, image/gif" onchange="handleProfilePictureUpload(event)" style="display: none;">
                         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                             <button class="settings-action-btn" id="profilePictureButton" onclick="document.getElementById('profilePictureInput').click()">
-                                <i class="fas fa-upload"></i> ${
-                                  hasProfilePicture
-                                    ? "Change Profile Picture"
-                                    : "Set Profile Picture"
-                                }
+                                <i class="fas fa-upload"></i> ${hasProfilePicture
+          ? "Change Profile Picture"
+          : "Set Profile Picture"
+        }
                             </button>
                             <button class="settings-action-btn" onclick="clearProfilePicture()">
                                 <i class="fas fa-undo"></i> Reset Profile Picture
@@ -3823,8 +3806,33 @@ alt="favicon">
                 ` : ''}
             </div>
             
+            
             <div class="settings-tab-content" data-tab="advanced">
                 <h2><i class="fas fa-sliders-h"></i> Advanced</h2>
+                
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-flask"></i>
+                        <span>Experimental Features</span>
+                    </div>
+                    <div class="settings-card-body">
+                        <p class="settings-description" style="color: var(--warning-yellow); font-weight: 500; margin-bottom: 1rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Warning: These features are experimental and may not work as expected.
+                        </p>
+                        <div class="settings-item">
+                            <div class="settings-item-text">
+                                <div class="settings-item-title">Bypass File Protocol Warnings</div>
+                                <div class="settings-item-desc">
+                                    Allow browser features on file:// protocol. By enabling this, you agree to report any bugs as GitHub issues.
+                                    <a href="https://github.com/nautilus-os/NautilusOS/issues" target="_blank" style="color: var(--primary-blue); text-decoration: underline;">Report issues here</a>
+                                </div>
+                            </div>
+                            <div class="toggle-switch ${settings.bypassFileProtocolWarnings ? "active" : ""
+        }" onclick="toggleSetting('bypassFileProtocolWarnings')"></div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="settings-card danger">
                     <div class="settings-card-header">
                         <i class="fas fa-exclamation-triangle"></i>
@@ -3858,9 +3866,8 @@ alt="favicon">
                   <button class="editor-btn" onclick="saveToDevice()"><i class="fas fa-download"></i> &nbsp;Save to Device</button>
                   <input type="text" id="editorFilename" class="editor-filename" placeholder="filename.txt" value="${filename}">
               </div>
-              <textarea class="editor-textarea" placeholder="Start typing...">${
-                editorContent || ""
-              }</textarea>
+              <textarea class="editor-textarea" placeholder="Start typing...">${editorContent || ""
+        }</textarea>
           `,
       noPadding: true,
       width: 900,
@@ -3946,8 +3953,8 @@ alt="favicon">
         return `
                   <div class="photos-grid" id="photosGrid">
                       ${photoList
-                        .map(
-                          (name) => `
+            .map(
+              (name) => `
                           <div class="photo-item" onclick="viewPhoto('${name}')">
                               <img src="${photos[name]}" alt="${name}" class="photo-thumbnail">
                               <div class="photo-name">${name}</div>
@@ -3956,8 +3963,8 @@ alt="favicon">
                               </button>
                           </div>
                       `
-                        )
-                        .join("")}
+            )
+            .join("")}
                   </div>
               `;
       })(),
@@ -4684,13 +4691,11 @@ print(f'Sum: {sum(numbers)}')
                 <div class="appstore-item-name">Light Theme by dinguschan</div>
                 <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with
                     light backgrounds and dark text.</div>
-                <button class="appstore-item-btn ${
-                  lightThemeInstalled ? "installed" : ""
-                }" onclick="${
-          lightThemeInstalled
+                <button class="appstore-item-btn ${lightThemeInstalled ? "installed" : ""
+          }" onclick="${lightThemeInstalled
             ? " uninstallTheme('light')"
             : "installTheme('light')"
-        }">
+          }">
                     ${lightThemeInstalled ? "Uninstall" : "Install"}
                 </button>
             </div>
@@ -4701,19 +4706,16 @@ print(f'Sum: {sum(numbers)}')
                 <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
                 <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect
                     for a premium look.</div>
-                <button class="appstore-item-btn ${
-                  installedThemes.includes("golden") ? "installed" : ""
-                }"
-                    onclick="${
-                      installedThemes.includes("golden")
-                        ? "uninstallTheme('golden')"
-                        : "installTheme('golden')"
-                    }">
-                    ${
-                      installedThemes.includes("golden")
-                        ? "Uninstall"
-                        : "Install"
-                    }
+                <button class="appstore-item-btn ${installedThemes.includes("golden") ? "installed" : ""
+          }"
+                    onclick="${installedThemes.includes("golden")
+            ? "uninstallTheme('golden')"
+            : "installTheme('golden')"
+          }">
+                    ${installedThemes.includes("golden")
+            ? "Uninstall"
+            : "Install"
+          }
                 </button>
             </div>
             <div class="appstore-item">
@@ -4723,14 +4725,12 @@ print(f'Sum: {sum(numbers)}')
                 <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
                 <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy
                     meets elegance.</div>
-                <button class="appstore-item-btn ${
-                  installedThemes.includes("red") ? "installed" : ""
-                }"
-                    onclick="${
-                      installedThemes.includes("red")
-                        ? "uninstallTheme('red')"
-                        : "installTheme('red')"
-                    }">
+                <button class="appstore-item-btn ${installedThemes.includes("red") ? "installed" : ""
+          }"
+                    onclick="${installedThemes.includes("red")
+            ? "uninstallTheme('red')"
+            : "installTheme('red')"
+          }">
                     ${installedThemes.includes("red") ? "Uninstall" : "Install"}
                 </button>
             </div>
@@ -4741,17 +4741,14 @@ print(f'Sum: {sum(numbers)}')
                 <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
                 <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.
                 </div>
-                <button class="appstore-item-btn ${
-                  installedThemes.includes("blue") ? "installed" : ""
-                }"
-                    onclick="${
-                      installedThemes.includes("blue")
-                        ? "uninstallTheme('blue')"
-                        : "installTheme('blue')"
-                    }">
-                    ${
-                      installedThemes.includes("blue") ? "Uninstall" : "Install"
-                    }
+                <button class="appstore-item-btn ${installedThemes.includes("blue") ? "installed" : ""
+          }"
+                    onclick="${installedThemes.includes("blue")
+            ? "uninstallTheme('blue')"
+            : "installTheme('blue')"
+          }">
+                    ${installedThemes.includes("blue") ? "Uninstall" : "Install"
+          }
                 </button>
             </div>
             <div class="appstore-item">
@@ -4760,19 +4757,16 @@ print(f'Sum: {sum(numbers)}')
                 </div>
                 <div class="appstore-item-name">Purple Theme by lanefiedler-731</div>
                 <div class="appstore-item-desc">Deep shades combined with royal hues, crafted together for the perfect purple theme.</div>
-                <button class="appstore-item-btn ${
-                  installedThemes.includes("purple") ? "installed" : ""
-                }"
-                    onclick="${
-                      installedThemes.includes("purple")
-                        ? "uninstallTheme('purple')"
-                        : "installTheme('purple')"
-                    }">
-                    ${
-                      installedThemes.includes("purple")
-                        ? "Uninstall"
-                        : "Install"
-                    }
+                <button class="appstore-item-btn ${installedThemes.includes("purple") ? "installed" : ""
+          }"
+                    onclick="${installedThemes.includes("purple")
+            ? "uninstallTheme('purple')"
+            : "installTheme('purple')"
+          }">
+                    ${installedThemes.includes("purple")
+            ? "Uninstall"
+            : "Install"
+          }
                 </button>
             </div>
             <div class="appstore-item">
@@ -4781,19 +4775,16 @@ print(f'Sum: {sum(numbers)}')
                 </div>
                 <div class="appstore-item-name">Green Theme by lanefiedler-731</div>
                 <div class="appstore-item-desc">Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.</div>
-                <button class="appstore-item-btn ${
-                  installedThemes.includes("green") ? "installed" : ""
-                }"
-                    onclick="${
-                      installedThemes.includes("green")
-                        ? "uninstallTheme('green')"
-                        : "installTheme('green')"
-                    }">
-                    ${
-                      installedThemes.includes("green")
-                        ? "Uninstall"
-                        : "Install"
-                    }
+                <button class="appstore-item-btn ${installedThemes.includes("green") ? "installed" : ""
+          }"
+                    onclick="${installedThemes.includes("green")
+            ? "uninstallTheme('green')"
+            : "installTheme('green')"
+          }">
+                    ${installedThemes.includes("green")
+            ? "Uninstall"
+            : "Install"
+          }
                 </button>
             </div>
             <div class="appstore-item">
@@ -4802,19 +4793,16 @@ print(f'Sum: {sum(numbers)}')
                 </div>
                 <div class="appstore-item-name">Liquid Glass by $xor</div>
                 <div class="appstore-item-desc">An Apple insipired theme with a beautiful translucent look.</div>
-                <button class="appstore-item-btn ${
-                  installedThemes.includes("liquidGlass") ? "installed" : ""
-                }"
-                    onclick="${
-                      installedThemes.includes("liquidGlass")
-                        ? "uninstallTheme('liquidGlass')"
-                        : "installTheme('liquidGlass')"
-                    }">
-                    ${
-                      installedThemes.includes("liquidGlass")
-                        ? "Uninstall"
-                        : "Install"
-                    }
+                <button class="appstore-item-btn ${installedThemes.includes("liquidGlass") ? "installed" : ""
+          }"
+                    onclick="${installedThemes.includes("liquidGlass")
+            ? "uninstallTheme('liquidGlass')"
+            : "installTheme('liquidGlass')"
+          }">
+                    ${installedThemes.includes("liquidGlass")
+            ? "Uninstall"
+            : "Install"
+          }
                 </button>
             </div>
         </div>
@@ -4909,10 +4897,10 @@ print(f'Sum: {sum(numbers)}')
       width: 1000,
       height: 700,
     },
-"ai-snake": {
-  title: "AI Snake Learning",
-  icon: "fas fa-brain",
-  content: `
+    "ai-snake": {
+      title: "AI Snake Learning",
+      icon: "fas fa-brain",
+      content: `
     <div id="aiSnakeContainer" style="display: flex; flex-direction: column; height: 100%; background: rgba(10, 14, 26, 0.8); padding: 20px; overflow-y: auto;">
       <div style="max-width: 800px; margin: 0 auto; width: 100%;">
       <div style="text-align: center; margin-bottom: 20px;">
@@ -4997,10 +4985,10 @@ print(f'Sum: {sum(numbers)}')
       </div>
     </div>
   `,
-  noPadding: true,
-  width: 850,
-  height: 600,
-},
+      noPadding: true,
+      width: 850,
+      height: 600,
+    },
     "nautilus-ai": {
       title: "Nautilus AI Assistant",
       icon: "fas fa-robot",
@@ -5192,13 +5180,13 @@ print(f'Sum: {sum(numbers)}')
         loadV86ResourcesOnDemand(windowEl);
       }, 50);
     }
-    
+
     if (appName === "ai-snake") {
       setTimeout(() => {
         initializeAISnakeApp();
       }, 50);
     }
-    
+
     if (appName === "nautilus-ai") {
       setTimeout(() => {
         initializeNautilusAI();
@@ -5350,6 +5338,11 @@ function toggleSetting(setting) {
     } else if (
       parent.textContent.includes("Show Desktop Icons") &&
       setting === "showDesktopIcons"
+    ) {
+      toggle.classList.toggle("active");
+    } else if (
+      parent.textContent.includes("Bypass File Protocol Warnings") &&
+      setting === "bypassFileProtocolWarnings"
     ) {
       toggle.classList.toggle("active");
     }
@@ -6317,13 +6310,11 @@ function switchAppStoreSection(section, element) {
                       <div class="appstore-item-name">Light Theme by dinguschan</div>
                       <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with
                           light backgrounds and dark text.</div>
-                      <button class="appstore-item-btn ${
-                        lightThemeInstalled ? "installed" : ""
-                      }" onclick="${
-          lightThemeInstalled
-            ? " uninstallTheme('light')"
-            : "installTheme('light')"
-        }">
+                      <button class="appstore-item-btn ${lightThemeInstalled ? "installed" : ""
+      }" onclick="${lightThemeInstalled
+        ? " uninstallTheme('light')"
+        : "installTheme('light')"
+      }">
                           ${lightThemeInstalled ? "Uninstall" : "Install"}
                       </button>
                   </div>
@@ -6343,19 +6334,16 @@ function switchAppStoreSection(section, element) {
                       <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect
                           for a premium look.</div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes("golden") ? "installed" : ""
-                      }"
-                          onclick="${
-                            installedThemes.includes("golden")
-                              ? "uninstallTheme('golden')"
-                              : "installTheme('golden')"
-                          }">
-                          ${
-                            installedThemes.includes("golden")
-                              ? "Uninstall"
-                              : "Install"
-                          }
+                      <button class="appstore-item-btn ${installedThemes.includes("golden") ? "installed" : ""
+      }"
+                          onclick="${installedThemes.includes("golden")
+        ? "uninstallTheme('golden')"
+        : "installTheme('golden')"
+      }">
+                          ${installedThemes.includes("golden")
+        ? "Uninstall"
+        : "Install"
+      }
                       </button>
                   </div>
                   <div class="appstore-item">
@@ -6374,14 +6362,12 @@ function switchAppStoreSection(section, element) {
                       <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy
                           meets elegance.</div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes("red") ? "installed" : ""
-                      }"
-                          onclick="${
-                            installedThemes.includes("red")
-                              ? "uninstallTheme('red')"
-                              : "installTheme('red')"
-                          }">
+                      <button class="appstore-item-btn ${installedThemes.includes("red") ? "installed" : ""
+      }"
+                          onclick="${installedThemes.includes("red")
+        ? "uninstallTheme('red')"
+        : "installTheme('red')"
+      }">
                           ${installedThemes.includes("red") ? "Uninstall" : "Install"}
                       </button>
                   </div>
@@ -6401,17 +6387,14 @@ function switchAppStoreSection(section, element) {
                       <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.
                       </div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes("blue") ? "installed" : ""
-                      }"
-                          onclick="${
-                            installedThemes.includes("blue")
-                              ? "uninstallTheme('blue')"
-                              : "installTheme('blue')"
-                          }">
-                          ${
-                            installedThemes.includes("blue") ? "Uninstall" : "Install"
-                          }
+                      <button class="appstore-item-btn ${installedThemes.includes("blue") ? "installed" : ""
+      }"
+                          onclick="${installedThemes.includes("blue")
+        ? "uninstallTheme('blue')"
+        : "installTheme('blue')"
+      }">
+                          ${installedThemes.includes("blue") ? "Uninstall" : "Install"
+      }
                       </button>
                   </div>
                   <div class="appstore-item">
@@ -6429,19 +6412,16 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Purple Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Deep shades combined with royal hues, crafted together for the perfect purple theme.</div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes("purple") ? "installed" : ""
-                      }"
-                          onclick="${
-                            installedThemes.includes("purple")
-                              ? "uninstallTheme('purple')"
-                              : "installTheme('purple')"
-                          }">
-                          ${
-                            installedThemes.includes("purple")
-                              ? "Uninstall"
-                              : "Install"
-                          }
+                      <button class="appstore-item-btn ${installedThemes.includes("purple") ? "installed" : ""
+      }"
+                          onclick="${installedThemes.includes("purple")
+        ? "uninstallTheme('purple')"
+        : "installTheme('purple')"
+      }">
+                          ${installedThemes.includes("purple")
+        ? "Uninstall"
+        : "Install"
+      }
                       </button>
                   </div>
                   <div class="appstore-item">
@@ -6459,19 +6439,16 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Green Theme by lanefiedler-731</div>
                       <div class="appstore-item-desc">Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.</div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes("green") ? "installed" : ""
-                      }"
-                          onclick="${
-                            installedThemes.includes("green")
-                              ? "uninstallTheme('green')"
-                              : "installTheme('green')"
-                          }">
-                          ${
-                            installedThemes.includes("green")
-                              ? "Uninstall"
-                              : "Install"
-                          }
+                      <button class="appstore-item-btn ${installedThemes.includes("green") ? "installed" : ""
+      }"
+                          onclick="${installedThemes.includes("green")
+        ? "uninstallTheme('green')"
+        : "installTheme('green')"
+      }">
+                          ${installedThemes.includes("green")
+        ? "Uninstall"
+        : "Install"
+      }
                       </button>
                   </div>
                   <div class="appstore-item">
@@ -6489,19 +6466,16 @@ function switchAppStoreSection(section, element) {
                       </div>
                       <div class="appstore-item-name">Liquid Glass by $xor</div>
                       <div class="appstore-item-desc">An Apple insipired theme with a beautiful translucent look.</div>
-                      <button class="appstore-item-btn ${
-                        installedThemes.includes("liquidGlass") ? "installed" : ""
-                      }"
-                          onclick="${
-                            installedThemes.includes("liquidGlass")
-                              ? "uninstallTheme('liquidGlass')"
-                              : "installTheme('liquidGlass')"
-                          }">
-                          ${
-                            installedThemes.includes("liquidGlass")
-                              ? "Uninstall"
-                              : "Install"
-                          }
+                      <button class="appstore-item-btn ${installedThemes.includes("liquidGlass") ? "installed" : ""
+      }"
+                          onclick="${installedThemes.includes("liquidGlass")
+        ? "uninstallTheme('liquidGlass')"
+        : "installTheme('liquidGlass')"
+      }">
+                          ${installedThemes.includes("liquidGlass")
+        ? "Uninstall"
+        : "Install"
+      }
                       </button>
                   </div>
               </div>
@@ -6546,13 +6520,11 @@ function switchAppStoreSection(section, element) {
 </div>
                           <div class="appstore-item-name">Startup Apps by dinguschan</div>
 <div class="appstore-item-desc">Control which applications launch automatically on login with this convenient this built-in app.</div>
-<button class="appstore-item-btn ${
-      startupInstalled ? "installed" : ""
-    }" onclick="${
-      startupInstalled
+<button class="appstore-item-btn ${startupInstalled ? "installed" : ""
+      }" onclick="${startupInstalled
         ? "uninstallApp('startup-apps')"
         : "installApp('startup-apps')"
-    }">
+      }">
 ${startupInstalled ? "Uninstall" : "Install"}
 </button>
 <div class="offline-support" style="top: -90%;"><i class="fa-solid fa-file"></i> OFFLINE SUPPORT</div>
@@ -6591,13 +6563,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Task Manager by dinguschan</div>
    <div class="appstore-item-desc">Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.</div>
-   <button class="appstore-item-btn ${
-     taskmanagerInstalled ? "installed" : ""
-   }" onclick="${
-      taskmanagerInstalled
+   <button class="appstore-item-btn ${taskmanagerInstalled ? "installed" : ""
+      }" onclick="${taskmanagerInstalled
         ? "uninstallApp('task-manager')"
         : "installApp('task-manager')"
-    }">
+      }">
    ${taskmanagerInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -6607,13 +6577,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
    <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
-   <button class="appstore-item-btn ${
-     snapManagerInstalled ? "installed" : ""
-   }" onclick="${
-      snapManagerInstalled
+   <button class="appstore-item-btn ${snapManagerInstalled ? "installed" : ""
+      }" onclick="${snapManagerInstalled
         ? "uninstallApp('snap-manager')"
         : "installApp('snap-manager')"
-    }">
+      }">
    ${snapManagerInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -6623,9 +6591,8 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Ultraviolet by $xor</div>
    <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
-   <button class="appstore-item-btn ${
-     uvInstalled ? "installed" : ""
-   }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
+   <button class="appstore-item-btn ${uvInstalled ? "installed" : ""
+      }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
    ${uvInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -6635,11 +6602,9 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Helios by dinguschan</div>
    <div class="appstore-item-desc">The classic CORS proxy you know and love, fit in to one single file.</div>
-   <button class="appstore-item-btn ${
-     heliosInstalled ? "installed" : ""
-   }" onclick="${
-      heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
-    }">
+   <button class="appstore-item-btn ${heliosInstalled ? "installed" : ""
+      }" onclick="${heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
+      }">
    ${heliosInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -6649,9 +6614,8 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">Visual Studio Code</div>
    <div class="appstore-item-desc">The developer's choice for text editing, now on NautilusOS.</div>
-   <button class="appstore-item-btn ${
-     vscInstalled ? "installed" : ""
-   }" onclick="${vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"}">
+   <button class="appstore-item-btn ${vscInstalled ? "installed" : ""
+      }" onclick="${vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"}">
    ${vscInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -6661,13 +6625,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </div>
    <div class="appstore-item-name">V86 Emulator by lanefiedler-731</div>
    <div class="appstore-item-desc">Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.</div>
-   <button class="appstore-item-btn ${
-     v86Installed ? "installed" : ""
-   }" onclick="${
-      v86Installed
+   <button class="appstore-item-btn ${v86Installed ? "installed" : ""
+      }" onclick="${v86Installed
         ? "uninstallApp('v86-emulator')"
         : "installApp('v86-emulator')"
-    }">
+      }">
    ${v86Installed ? "Uninstall" : "Install"}
    </button>
 </div>
@@ -6698,18 +6660,15 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">Snake by lanefiedler-731</div>
                       <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
-                      <button class="appstore-item-btn ${
-                        installedGames.includes("snake") ? "installed" : ""
-                      }" onclick="${
-      installedGames.includes("snake")
+                      <button class="appstore-item-btn ${installedGames.includes("snake") ? "installed" : ""
+      }" onclick="${installedGames.includes("snake")
         ? "openApp('snake')"
         : "installGame('snake')"
-    }">
-                          ${
-                            installedGames.includes("snake")
-                              ? "Play"
-                              : "Install"
-                          }
+      }">
+                          ${installedGames.includes("snake")
+        ? "Play"
+        : "Install"
+      }
                       </button>
                   </div>
                   
@@ -6719,16 +6678,13 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">2048 by dinguschan</div>
                       <div class="appstore-item-desc">Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.</div>
-                      <button class="appstore-item-btn ${
-                        installedGames.includes("2048") ? "installed" : ""
-                      }" onclick="${
-      installedGames.includes("2048")
+                      <button class="appstore-item-btn ${installedGames.includes("2048") ? "installed" : ""
+      }" onclick="${installedGames.includes("2048")
         ? "openApp('2048')"
         : "installGame('2048')"
-    }">
-                          ${
-                            installedGames.includes("2048") ? "Play" : "Install"
-                          }
+      }">
+                          ${installedGames.includes("2048") ? "Play" : "Install"
+      }
                       </button>
                   </div>
                   
@@ -6738,18 +6694,15 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </div>
                       <div class="appstore-item-name">Tic-Tac-Toe by dinguschan</div>
                       <div class="appstore-item-desc">Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?</div>
-                      <button class="appstore-item-btn ${
-                        installedGames.includes("tictactoe") ? "installed" : ""
-                      }" onclick="${
-      installedGames.includes("tictactoe")
+                      <button class="appstore-item-btn ${installedGames.includes("tictactoe") ? "installed" : ""
+      }" onclick="${installedGames.includes("tictactoe")
         ? "openApp('tictactoe')"
         : "installGame('tictactoe')"
-    }">
-                          ${
-                            installedGames.includes("tictactoe")
-                              ? "Play"
-                              : "Install"
-                          }
+      }">
+                          ${installedGames.includes("tictactoe")
+        ? "Play"
+        : "Install"
+      }
                       </button>
                   </div>
                   <div class="appstore-item">
@@ -7519,20 +7472,20 @@ function calcBackspace() {
 function runPythonCode() {
   const editor = document.getElementById("pythonCodeEditor");
   const output = document.getElementById("pythonOutput");
-  
+
   if (!editor || !output) {
     showToast("Python interpreter not ready", "fa-exclamation-circle");
     return;
   }
-  
+
   const code = editor.value;
   output.innerHTML = '<div style="color: var(--text-secondary); margin-bottom: 0.5rem;"><i class="fas fa-play"></i> Running...</div>';
-  
+
   // Simulated Python execution
   try {
     let outputLines = [];
     let printOutput = [];
-    
+
     // Create a simulated Python environment
     const pythonEnv = {
       print: (...args) => {
@@ -7560,7 +7513,7 @@ function runPythonCode() {
       float: parseFloat,
       list: (arr) => Array.from(arr),
     };
-    
+
     // Convert Python-like syntax to JavaScript
     let jsCode = code
       .replace(/print\(/g, 'pythonEnv.print(')
@@ -7580,59 +7533,59 @@ function runPythonCode() {
       .replace(/True/g, 'true')  // Convert True
       .replace(/False/g, 'false')  // Convert False
       .replace(/None/g, 'null');  // Convert None
-    
+
     // Count indentation-based blocks and add closing braces
     const lines = jsCode.split('\n');
     let indentStack = [0];
     let processedLines = [];
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const trimmedLine = line.trim();
-      
+
       if (trimmedLine === '' || trimmedLine.startsWith('//')) {
         processedLines.push(line);
         continue;
       }
-      
+
       const indent = line.search(/\S/);
       const currentIndent = indent === -1 ? 0 : indent;
-      
+
       // Close blocks if dedenting
       while (indentStack.length > 1 && currentIndent < indentStack[indentStack.length - 1]) {
         indentStack.pop();
         processedLines.push(' '.repeat(indentStack[indentStack.length - 1]) + '}');
       }
-      
+
       processedLines.push(line);
-      
+
       // Track indentation for blocks
       if (trimmedLine.endsWith('{')) {
         indentStack.push(currentIndent);
       }
     }
-    
+
     // Close remaining blocks
     while (indentStack.length > 1) {
       indentStack.pop();
       processedLines.push('}');
     }
-    
+
     jsCode = processedLines.join('\n');
-    
+
     // Execute the code
     const func = new Function('pythonEnv', jsCode);
     func(pythonEnv);
-    
+
     // Display output
     if (printOutput.length > 0) {
-      output.innerHTML = printOutput.map(line => 
+      output.innerHTML = printOutput.map(line =>
         `<div class="python-output-line">${escapeHtml(line)}</div>`
       ).join('');
     } else {
       output.innerHTML = '<div style="color: var(--success-green);"><i class="fas fa-check-circle"></i> Code executed successfully (no output)</div>';
     }
-    
+
   } catch (error) {
     output.innerHTML = `<div style="color: var(--error-red);"><i class="fas fa-exclamation-circle"></i> Error: ${escapeHtml(error.message)}</div>`;
   }
@@ -7654,19 +7607,19 @@ function clearPythonOutput() {
 function savePythonFile() {
   const editor = document.getElementById("pythonCodeEditor");
   const filenameInput = document.getElementById("pythonFilename");
-  
+
   if (!editor || !filenameInput) return;
-  
+
   const filename = filenameInput.value || 'script.py';
   const code = editor.value;
-  
+
   // Save to file system
   const folder = getFileSystemAtPath(["Python"]);
   if (!folder) {
     // Create Python folder if it doesn't exist
     fileSystem.Python = {};
   }
-  
+
   fileSystem.Python[filename] = code;
   showToast(`Saved ${filename}`, "fa-check-circle");
 }
@@ -7674,19 +7627,19 @@ function savePythonFile() {
 function loadPythonFile() {
   const filenameInput = document.getElementById("pythonFilename");
   if (!filenameInput) return;
-  
+
   const filename = filenameInput.value;
   if (!filename) {
     showToast("Please enter a filename", "fa-exclamation-circle");
     return;
   }
-  
+
   const folder = getFileSystemAtPath(["Python"]);
   if (!folder || !folder[filename]) {
     showToast("File not found", "fa-exclamation-circle");
     return;
   }
-  
+
   const editor = document.getElementById("pythonCodeEditor");
   if (editor) {
     editor.value = folder[filename];
@@ -8884,9 +8837,9 @@ async function initializeAISnakeApp() {
 
   aiSnake.canvas = document.getElementById('aiSnakeCanvas');
   if (!aiSnake.canvas) return;
-  
+
   aiSnake.ctx = aiSnake.canvas.getContext('2d');
-  
+
   // Check GPU support
   try {
     await tf.ready();
@@ -8898,7 +8851,7 @@ async function initializeAISnakeApp() {
         useGPU.checked = useGPUValue === 'true';
       }
       aiSnake.useGPU = useGPU.checked;
-      
+
       if (aiSnake.useGPU && aiSnake.deviceInfo === 'webgl') {
         document.getElementById('aiGPUStatus').textContent = 'GPU: WebGL Active';
         document.getElementById('aiGPUStatus').style.color = '#4ade80';
@@ -8939,7 +8892,7 @@ function setupAISnakeUIHandlers() {
       aiSnake.gameSpeed = parseInt(e.target.value);
       document.getElementById('aiGameSpeedValue').textContent = aiSnake.gameSpeed;
       localStorage.setItem('aiSnakeGameSpeed', aiSnake.gameSpeed);
-      
+
       // Update interval if training is running
       if (aiSnake.isTraining && aiGameInterval) {
         clearInterval(aiGameInterval);
@@ -9013,7 +8966,7 @@ async function createAISnakeModel() {
 
   aiSnake.model = model;
   aiSnake.targetModel = model.clone();
-  
+
   updateAITrainingStatus('Neural network model created successfully.');
 }
 
@@ -9159,18 +9112,18 @@ function performAIAction(game, action) {
 async function predictAction(game) {
   const state = getGameState(game);
   const stateTensor = tf.tensor2d([state]);
-  
+
   try {
     const prediction = await aiSnake.model.predict(stateTensor);
     const qValues = await prediction.data();
     prediction.dispose();
     stateTensor.dispose();
-    
+
     // Epsilon-greedy exploration
     if (Math.random() < aiSnake.epsilon) {
       return Math.floor(Math.random() * 4);
     }
-    
+
     return qValues.indexOf(Math.max(...qValues));
   } catch (e) {
     stateTensor.dispose();
@@ -9195,7 +9148,7 @@ async function trainAIModel() {
 
   for (const idx of sampleIndices) {
     const { state, action, reward, nextState, done } = aiSnake.memory[idx];
-    
+
     const stateTensor = tf.tensor2d([state]);
     const currentQ = await aiSnake.model.predict(stateTensor);
     const currentQValues = await currentQ.data();
@@ -9212,7 +9165,7 @@ async function trainAIModel() {
       const nextQValues = await nextQ.data();
       nextQ.dispose();
       nextStateTensor.dispose();
-      
+
       targetQ[action] = reward + 0.95 * Math.max(...nextQValues);
     }
 
@@ -9389,13 +9342,13 @@ function updateAIUI() {
   document.getElementById('aiCurrentScore').textContent = aiSnake.games.length > 0 ? aiSnake.games[0].score : 0;
   document.getElementById('aiGamesPlayed').textContent = aiSnake.gamesPlayed;
   document.getElementById('aiEpsilon').textContent = aiSnake.epsilon.toFixed(2);
-  
+
   if (aiSnake.scores.length > 0) {
     const avg = aiSnake.scores.slice(-100).reduce((a, b) => a + b, 0) / Math.min(100, aiSnake.scores.length);
     document.getElementById('aiAvgScore').textContent = avg.toFixed(1);
   }
 
-  const status = aiSnake.isTraining 
+  const status = aiSnake.isTraining
     ? `Training... Generation ${aiSnake.generation} | Games: ${aiSnake.gamesPlayed} | Best: ${aiSnake.bestScore} | Epsilon: ${aiSnake.epsilon.toFixed(3)}`
     : 'Training paused';
   updateAITrainingStatus(status);
@@ -9418,7 +9371,7 @@ async function startAISnakeTraining() {
 
   aiSnake.isTraining = true;
   aiSnake.isPaused = false;
-  
+
   document.getElementById('aiStartBtn').style.display = 'none';
   document.getElementById('aiPauseBtn').style.display = 'block';
 
@@ -9446,7 +9399,7 @@ async function startAISnakeTraining() {
 // Pause training
 function pauseAISnakeTraining() {
   aiSnake.isPaused = !aiSnake.isPaused;
-  
+
   if (aiSnake.isPaused) {
     document.getElementById('aiPauseBtn').textContent = 'Resume';
     updateAITrainingStatus('Training paused.');
@@ -9461,7 +9414,7 @@ async function resetAISnakeModel() {
   if (confirm('Reset AI model? All training progress will be lost.')) {
     aiSnake.isTraining = false;
     aiSnake.isPaused = false;
-    
+
     if (aiGameInterval) {
       clearInterval(aiGameInterval);
       aiGameInterval = null;
@@ -9481,7 +9434,7 @@ async function resetAISnakeModel() {
     await createAISnakeModel();
     updateAIUI();
     updateAITrainingStatus('Model reset. Ready to start training.');
-    
+
     localStorage.removeItem('aiSnakeState');
     saveAISnakeState();
   }
@@ -9518,7 +9471,7 @@ function loadAISnakeState() {
   const gameSpeedSlider = document.getElementById('aiGameSpeed');
   const trainingSpeedSlider = document.getElementById('aiTrainingSpeed');
   const concurrencySlider = document.getElementById('aiConcurrency');
-  
+
   if (gameSpeedSlider) {
     gameSpeedSlider.value = aiSnake.gameSpeed;
     document.getElementById('aiGameSpeedValue').textContent = aiSnake.gameSpeed;
@@ -10148,7 +10101,7 @@ async function exportProfile() {
 
 function openAccountManager() {
   const accounts = getAllAccounts();
-  
+
   const accountListHTML = accounts.map(acc => `
     <div class="account-manager-item" style="padding: 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.75rem;">
       <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -10175,7 +10128,7 @@ function openAccountManager() {
       </div>
     </div>
   `).join('');
-  
+
   showModal({
     type: "info",
     icon: "fa-users-cog",
@@ -10230,19 +10183,19 @@ function openCreateAccountDialog() {
       const password = document.getElementById("newAccountPassword").value;
       const isPasswordless = document.getElementById("newAccountPasswordless").checked;
       const isSuperUser = document.getElementById("newAccountSuperUser").checked;
-      
+
       if (!username) {
         showToast("Username is required", "fa-exclamation-circle");
         return;
       }
-      
+
       if (!isPasswordless && !password) {
         showToast("Password is required for non-passwordless accounts", "fa-exclamation-circle");
         return;
       }
-      
+
       const result = createAccount(username, password, isSuperUser ? "superuser" : "standard", isPasswordless);
-      
+
       if (result.success) {
         showToast(result.message, "fa-check-circle");
         openAccountManager();
@@ -10259,11 +10212,11 @@ function editAccountPermissions(username) {
     showToast("Account not found", "fa-exclamation-circle");
     return;
   }
-  
+
   // Get all available apps
   const allApps = Object.keys(appMetadata);
   const allowedApps = account.allowedApps || [];
-  
+
   const appCheckboxes = allApps.map(appKey => {
     const app = appMetadata[appKey];
     const isAllowed = allowedApps.length === 0 || allowedApps.includes(appKey);
@@ -10275,7 +10228,7 @@ function editAccountPermissions(username) {
       </label>
     `;
   }).join('');
-  
+
   showModal({
     type: "info",
     icon: "fa-key",
@@ -10295,13 +10248,13 @@ function editAccountPermissions(username) {
       const selectedApps = Array.from(checkboxes)
         .filter(cb => cb.checked)
         .map(cb => cb.value);
-      
+
       // If all apps are selected, set to empty array (meaning all allowed)
       const updatedAllowedApps = selectedApps.length === allApps.length ? [] : selectedApps;
-      
+
       updateAccount(username, { allowedApps: updatedAllowedApps });
       showToast(`Permissions updated for ${username}`, "fa-check-circle");
-      
+
       // If updating current user, reload their account
       if (username === currentUsername) {
         currentUserAccount = getAccountByUsername(username);
@@ -11446,7 +11399,7 @@ document.addEventListener("contextmenu", () => {
 function updateLoginScreen() {
   // Check for multi-user accounts
   const accounts = getAllAccounts();
-  
+
   if (accounts.length > 0) {
     // Multi-user system - show account list
     updateLoginWithAccounts(accounts);
@@ -11476,7 +11429,7 @@ function updateLoginWithAccounts(accounts) {
   const loginSubtitle = document.getElementById("loginSubtitle");
   const usernameInput = document.getElementById("username");
   const passwordWrapper = document.getElementById("passwordWrapper");
-  
+
   if (accounts.length === 1) {
     // Only one account, pre-fill username
     const account = accounts[0];
@@ -11508,7 +11461,7 @@ function updateLoginWithAccounts(accounts) {
         </div>
       `;
     }
-    
+
     // Hide username and password fields initially
     if (usernameInput) usernameInput.style.display = "none";
     if (passwordWrapper) passwordWrapper.style.display = "none";
@@ -11518,30 +11471,30 @@ function updateLoginWithAccounts(accounts) {
 function selectLoginAccount(username) {
   const account = getAccountByUsername(username);
   if (!account) return;
-  
+
   const usernameInput = document.getElementById("username");
   const passwordInput = document.getElementById("password");
   const passwordWrapper = document.getElementById("passwordWrapper");
   const loginSubtitle = document.getElementById("loginSubtitle");
-  
+
   // Fill username
   if (usernameInput) {
     usernameInput.value = username;
     usernameInput.style.display = "block";
   }
-  
+
   // Show/hide password field
   if (passwordWrapper) {
     passwordWrapper.style.display = account.isPasswordless ? "none" : "block";
   }
-  
+
   // Update subtitle
   if (loginSubtitle) {
-    loginSubtitle.innerHTML = account.isPasswordless ? 
-      `<a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer;">← Back to account list</a>` : 
+    loginSubtitle.innerHTML = account.isPasswordless ?
+      `<a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer;">← Back to account list</a>` :
       `Enter password for ${username} <a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer; margin-left: 0.5rem;">← Back</a>`;
   }
-  
+
   // Focus password input if needed
   if (!account.isPasswordless && passwordInput) {
     setTimeout(() => passwordInput.focus(), 100);
@@ -12281,11 +12234,11 @@ function render2048Board() {
       tile.dataset.row = i;
       tile.dataset.col = j;
       tile.dataset.value = value;
-      
+
       // Calculate position
       const left = j * 110;
       const top = i * 110;
-      
+
       tile.style.position = 'absolute';
       tile.style.left = `${left}px`;
       tile.style.top = `${top}px`;
@@ -12303,7 +12256,7 @@ function render2048Board() {
       tile.style.color = getTileTextColor(value);
       tile.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
       tile.style.zIndex = '10';
-      
+
       // Animation handling
       if (game2048.newTiles.has(`${i}-${j}`)) {
         tile.style.transform = 'scale(0)';
@@ -12328,7 +12281,7 @@ function render2048Board() {
           tile.style.left = `${prevLeft}px`;
           tile.style.top = `${prevTop}px`;
           tile.style.transition = 'all 0.15s ease';
-          
+
           setTimeout(() => {
             tile.style.left = `${left}px`;
             tile.style.top = `${top}px`;
@@ -12355,27 +12308,27 @@ function render2048Board() {
 // New helper function to find previous position
 function findPreviousPosition(currentRow, currentCol, value) {
   if (!game2048.previousBoard) return null;
-  
+
   for (let i = 0; i < game2048.size; i++) {
     for (let j = 0; j < game2048.size; j++) {
       if (game2048.previousBoard[i][j] === value) {
         // Check if this could be the source tile
         const rowDiff = Math.abs(i - currentRow);
         const colDiff = Math.abs(j - currentCol);
-        
+
         if (game2048.slideDirection === 'up' && j === currentCol && i > currentRow) {
-          return {row: i, col: j};
+          return { row: i, col: j };
         } else if (game2048.slideDirection === 'down' && j === currentCol && i < currentRow) {
-          return {row: i, col: j};
+          return { row: i, col: j };
         } else if (game2048.slideDirection === 'left' && i === currentRow && j > currentCol) {
-          return {row: i, col: j};
+          return { row: i, col: j };
         } else if (game2048.slideDirection === 'right' && i === currentRow && j < currentCol) {
-          return {row: i, col: j};
+          return { row: i, col: j };
         }
       }
     }
   }
-  
+
   return null;
 }
 
@@ -12740,7 +12693,7 @@ function checkTTTWinner() {
 
 function endTTTGame(result) {
   tttGame.gameActive = false;
-  
+
   const status = document.getElementById('tttStatus');
 
   if (result === 'X') {
@@ -12897,7 +12850,7 @@ function loadScriptWithProgress(src, expectedGlobal, isModule = false) {
       try {
         const cacheBuster = '?v=' + Date.now();
         const module = await import('../' + src + cacheBuster);
-        
+
         // For V86 module, expose it globally
         if (expectedGlobal === 'V86') {
           // V86 is the default export
@@ -12907,7 +12860,7 @@ function loadScriptWithProgress(src, expectedGlobal, isModule = false) {
         } else if (expectedGlobal && module.default) {
           window[expectedGlobal] = module.default;
         }
-        
+
         console.log(`Successfully loaded ${expectedGlobal || 'module'} from ${src}`);
         resolve();
       } catch (error) {
@@ -12916,7 +12869,7 @@ function loadScriptWithProgress(src, expectedGlobal, isModule = false) {
       }
       return;
     }
-    
+
     // Regular script loading
     const script = document.createElement('script');
     // Add cache-busting parameter
@@ -14252,24 +14205,24 @@ Your goal is to make users feel confident and excited about using NautilusOS!`;
 
 async function initializeNautilusAI(modelKey = null) {
   if (nautilusAI.isInitializing) return;
-  
+
   // Allow re-initialization with different model
   const isModelSwitch = nautilusAI.isInitialized && modelKey !== null;
-  
+
   if (nautilusAI.isInitialized && !isModelSwitch) return;
-  
+
   nautilusAI.isInitializing = true;
   const statusEl = document.getElementById('aiStatus');
   const sendBtn = document.getElementById('aiSendBtn');
   const inputEl = document.getElementById('aiInput');
-  
+
   try {
     // Use selected model or current model
     const selectedModel = modelKey || nautilusAI.currentModel;
     const modelConfig = AI_MODELS[selectedModel];
-    
+
     updateAiStatus(`Loading WebLLM library...`, true);
-    
+
     // Load WebLLM from CDN with ES modules support (only once)
     if (!window.mlcai) {
       await new Promise((resolve, reject) => {
@@ -14282,7 +14235,7 @@ async function initializeNautilusAI(modelKey = null) {
         script.onload = resolve;
         script.onerror = () => reject(new Error('Failed to load WebLLM library'));
         document.head.appendChild(script);
-        
+
         // Wait for window.mlcai to be available
         const checkInterval = setInterval(() => {
           if (window.mlcai) {
@@ -14290,7 +14243,7 @@ async function initializeNautilusAI(modelKey = null) {
             resolve();
           }
         }, 50); // Reduced from 100ms for faster check
-        
+
         // Timeout after 10 seconds
         setTimeout(() => {
           clearInterval(checkInterval);
@@ -14300,14 +14253,14 @@ async function initializeNautilusAI(modelKey = null) {
         }, 10000);
       });
     }
-    
+
     updateAiStatus(`Initializing ${modelConfig.label} model...`, true);
-    
+
     const { CreateMLCEngine } = window.mlcai;
-    
+
     // Check WebGPU toggle (default to true for speed)
     const useWebGPU = document.getElementById('aiWebGPUToggle')?.checked !== false;
-    
+
     // Dispose old engine if switching models
     if (isModelSwitch && nautilusAI.engine) {
       try {
@@ -14316,7 +14269,7 @@ async function initializeNautilusAI(modelKey = null) {
         console.warn('Error unloading previous model:', e);
       }
     }
-    
+
     // Create engine with optimizations for faster first token
     nautilusAI.engine = await CreateMLCEngine(modelConfig.name, {
       initProgressCallback: (progress) => {
@@ -14330,7 +14283,7 @@ async function initializeNautilusAI(modelKey = null) {
       // Enable prompt caching for faster subsequent requests
       caching: true
     });
-    
+
     // Reset or preserve conversation history
     if (isModelSwitch) {
       // Keep conversation history when switching models
@@ -14345,30 +14298,30 @@ async function initializeNautilusAI(modelKey = null) {
         { role: "system", content: NAUTILUS_SYSTEM_PROMPT }
       ];
     }
-    
+
     nautilusAI.currentModel = selectedModel;
     nautilusAI.isInitialized = true;
     nautilusAI.isInitializing = false;
     updateAiStatus(`${modelConfig.label} Ready`, false);
-    
+
     if (sendBtn) sendBtn.disabled = false;
     if (inputEl) {
       inputEl.disabled = false;
       inputEl.focus();
     }
-    
+
     if (isModelSwitch) {
       showToast(`Switched to ${modelConfig.label}`, modelConfig.icon);
     } else {
       showToast(`${modelConfig.label} is ready!`, 'fa-robot');
     }
-    
+
   } catch (error) {
     console.error('Failed to initialize Nautilus AI:', error);
     nautilusAI.isInitializing = false;
     updateAiStatus(`Error: ${error.message}`, false, true);
     showToast('Failed to load AI model. Check console for details.', 'fa-exclamation-triangle');
-    
+
     // Re-enable input so user can try again
     if (sendBtn) sendBtn.disabled = false;
     if (inputEl) inputEl.disabled = false;
@@ -14383,12 +14336,12 @@ async function switchAIModel(modelKey) {
     if (select) select.value = nautilusAI.currentModel;
     return;
   }
-  
+
   if (modelKey === nautilusAI.currentModel) return;
-  
+
   const modelConfig = AI_MODELS[modelKey];
   updateAiStatus(`Switching to ${modelConfig.label}...`, true);
-  
+
   nautilusAI.isInitialized = false;
   await initializeNautilusAI(modelKey);
 }
@@ -14396,7 +14349,7 @@ async function switchAIModel(modelKey) {
 function updateAiStatus(message, loading = false, error = false) {
   const statusEl = document.getElementById('aiStatus');
   if (!statusEl) return;
-  
+
   const color = error ? '#ef4444' : (loading ? '#64748b' : 'var(--accent)');
   const spinner = loading ? `
     <div class="multi-ring-spinner" style="position: relative; width: 40px; height: 40px;">
@@ -14406,7 +14359,7 @@ function updateAiStatus(message, loading = false, error = false) {
       <div style="position: absolute; width: 40%; height: 40%; top: 30%; left: 30%; border: 3px solid transparent; border-top-color: #f5c2e7; border-radius: 50%; animation: spin 0.6s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;"></div>
     </div>
   ` : '<i class="fas fa-check-circle"></i>';
-  
+
   statusEl.innerHTML = `
     <div style="display: flex; align-items: center; gap: 12px; font-size: 12px; color: ${color};">
       ${spinner}
@@ -14418,37 +14371,37 @@ function updateAiStatus(message, loading = false, error = false) {
 async function sendAiMessage() {
   const inputEl = document.getElementById('aiInput');
   const sendBtn = document.getElementById('aiSendBtn');
-  
+
   if (!inputEl || !sendBtn) return;
-  
+
   const userMessage = inputEl.value.trim();
   if (!userMessage) return;
-  
+
   if (!nautilusAI.isInitialized) {
     await initializeNautilusAI();
     if (!nautilusAI.isInitialized) return;
   }
-  
+
   if (nautilusAI.isGenerating) {
     showToast('Please wait for the current response to complete', 'fa-hourglass-half');
     return;
   }
-  
+
   // Add user message to chat
   addAiChatMessage(userMessage, true);
   inputEl.value = '';
   inputEl.style.height = 'auto';
-  
+
   // Disable input while generating
   nautilusAI.isGenerating = true;
   sendBtn.disabled = true;
   inputEl.disabled = true;
   updateAiStatus('Thinking...', true);
-  
+
   try {
     // Add user message to conversation history
     nautilusAI.messages.push({ role: "user", content: userMessage });
-    
+
     // Create placeholder message for streaming
     const chatContainer = document.getElementById('aiChatMessages');
     const messageDiv = document.createElement('div');
@@ -14459,14 +14412,14 @@ async function sendAiMessage() {
       padding: 15px;
       animation: slideIn 0.3s ease-out;
     `;
-    
+
     const headerDiv = document.createElement('div');
     headerDiv.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-bottom: 8px;';
     headerDiv.innerHTML = `
       <i class="fas fa-robot" style="color: var(--accent); font-size: 18px;"></i>
       <strong style="color: var(--accent);">Nautilus AI</strong>
     `;
-    
+
     const contentDiv = document.createElement('div');
     contentDiv.style.cssText = 'color: #cbd5e1; line-height: 1.6;';
 
@@ -14474,16 +14427,16 @@ async function sendAiMessage() {
     textDiv.className = 'ai-response-text';
     textDiv.style.cssText = 'white-space: pre-wrap; word-wrap: break-word;';
     contentDiv.appendChild(textDiv);
-    
+
     messageDiv.appendChild(headerDiv);
     messageDiv.appendChild(contentDiv);
     chatContainer.appendChild(messageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
-    
+
     // Generate response with streaming - optimized settings based on model
     const isFastModel = nautilusAI.currentModel === 'fast';
     const isSmartModel = nautilusAI.currentModel === 'smart';
-    
+
     const completionConfig = {
       messages: nautilusAI.messages,
       temperature: isFastModel ? 0.5 : 0.7, // Lower temp for faster model = more focused
@@ -14496,7 +14449,7 @@ async function sendAiMessage() {
       // Enable streaming for lower latency
       stream_options: { include_usage: false }
     };
-    
+
     // Enable thinking mode for smart model (Qwen3)
     if (isSmartModel) {
       completionConfig.extra_body = {
@@ -14506,14 +14459,14 @@ async function sendAiMessage() {
         early_stopping: false
       };
     }
-    
+
     const completion = await nautilusAI.engine.chat.completions.create(completionConfig);
-    
+
     let fullResponse = '';
     let thinkingSection = null;
     let thinkContentDiv = null;
     let thinkingSummary = null;
-    
+
     for await (const chunk of completion) {
       const delta = chunk.choices[0]?.delta?.content || '';
       if (!delta) continue;
@@ -14594,19 +14547,19 @@ async function sendAiMessage() {
       textDiv.textContent = visibleContent;
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    
+
     // Add AI response to conversation history
     nautilusAI.messages.push({ role: "assistant", content: fullResponse });
-    
+
     // Process tool calls if any
     const toolCalls = parseToolCalls(fullResponse);
     if (toolCalls.length > 0 && nautilusAI.toolsEnabled) {
       updateAiStatus('Processing tool calls...', true);
-      
+
       // Remove tool call tags from visible text
       const cleanedText = removeToolCallsFromText(fullResponse);
       textDiv.textContent = cleanedText;
-      
+
       // Process each tool call with user approval
       for (const toolCall of toolCalls) {
         await new Promise((resolve) => {
@@ -14617,13 +14570,13 @@ async function sendAiMessage() {
               updateAiStatus(`Executing: ${toolCall.tool}...`, true);
               const result = await executeToolCall(toolCall);
               addToolFeedbackToChat(toolCall, result);
-              
+
               // Add tool result to conversation for AI context
               nautilusAI.messages.push({
                 role: "user",
                 content: `[Tool Execution Result]\nTool: ${toolCall.tool}\nSuccess: ${result.success}\nMessage: ${result.message}\n${result.details ? 'Details: ' + result.details : ''}`
               });
-              
+
               resolve();
             },
             () => {
@@ -14633,22 +14586,22 @@ async function sendAiMessage() {
                 message: `⛔ Action rejected by user`,
                 details: `The ${toolCall.tool} action was not executed.`
               });
-              
+
               // Inform AI that tool was rejected
               nautilusAI.messages.push({
                 role: "user",
                 content: `[Tool Execution Result]\nTool: ${toolCall.tool}\nSuccess: false\nMessage: User rejected this action`
               });
-              
+
               resolve();
             }
           );
         });
       }
     }
-    
+
     updateAiStatus('AI Assistant Ready', false);
-    
+
   } catch (error) {
     console.error('AI generation error:', error);
     addAiChatMessage('Sorry, I encountered an error while generating a response. Please try again.', false, true);
@@ -14664,7 +14617,7 @@ async function sendAiMessage() {
 function addAiChatMessage(message, isUser = false, isError = false) {
   const chatContainer = document.getElementById('aiChatMessages');
   if (!chatContainer) return;
-  
+
   const messageDiv = document.createElement('div');
   messageDiv.style.cssText = `
     background: ${isUser ? 'rgba(125, 211, 192, 0.15)' : (isError ? 'rgba(239, 68, 68, 0.15)' : 'rgba(125, 211, 192, 0.1)')};
@@ -14673,22 +14626,22 @@ function addAiChatMessage(message, isUser = false, isError = false) {
     padding: 15px;
     animation: slideIn 0.3s ease-out;
   `;
-  
+
   const headerDiv = document.createElement('div');
   headerDiv.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-bottom: 8px;';
   headerDiv.innerHTML = `
     <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}" style="color: ${isUser ? 'var(--accent)' : (isError ? '#ef4444' : 'var(--accent)')}; font-size: 18px;"></i>
     <strong style="color: ${isUser ? 'var(--accent)' : (isError ? '#ef4444' : 'var(--accent)')}">${isUser ? 'You' : 'Nautilus AI'}</strong>
   `;
-  
+
   const contentDiv = document.createElement('div');
   contentDiv.style.cssText = 'color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;';
   contentDiv.textContent = message;
-  
+
   messageDiv.appendChild(headerDiv);
   messageDiv.appendChild(contentDiv);
   chatContainer.appendChild(messageDiv);
-  
+
   // Scroll to bottom
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
@@ -14696,7 +14649,7 @@ function addAiChatMessage(message, isUser = false, isError = false) {
 function sendQuickQuestion(question) {
   const inputEl = document.getElementById('aiInput');
   if (!inputEl) return;
-  
+
   inputEl.value = question;
   sendAiMessage();
 }
@@ -14704,7 +14657,7 @@ function sendQuickQuestion(question) {
 function clearAiChat() {
   const chatContainer = document.getElementById('aiChatMessages');
   if (!chatContainer) return;
-  
+
   // Clear all messages except the welcome message
   const currentModelConfig = AI_MODELS[nautilusAI.currentModel] || AI_MODELS['smart'];
   chatContainer.innerHTML = `
@@ -14724,12 +14677,12 @@ function clearAiChat() {
       </div>
     </div>
   `;
-  
+
   // Reset conversation history (keep system prompt)
   nautilusAI.messages = [
     { role: "system", content: NAUTILUS_SYSTEM_PROMPT }
   ];
-  
+
   showToast('Chat cleared', 'fa-trash');
 }
 
@@ -14737,11 +14690,11 @@ function clearAiChat() {
 
 function parseToolCalls(text) {
   const toolCalls = [];
-  
+
   // Method 1: Try to find tool calls wrapped in XML tags (preferred format)
   const xmlRegex = /<tool_call>([\s\S]*?)<\/tool_call>/g;
   let match;
-  
+
   while ((match = xmlRegex.exec(text)) !== null) {
     try {
       const toolData = JSON.parse(match[1].trim());
@@ -14752,16 +14705,16 @@ function parseToolCalls(text) {
       console.error('Failed to parse XML-wrapped tool call:', e);
     }
   }
-  
+
   // Method 2: If no XML tags found, look for bare JSON objects with "tool" and "parameters"
   if (toolCalls.length === 0) {
     // Strategy: Find all potential JSON objects and validate them
     // Look for patterns that start with { and contain "tool" key
     const lines = text.split('\n');
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-      
+
       // Check if line looks like a tool call (starts with { and contains "tool")
       if (line.startsWith('{') && line.includes('"tool"')) {
         try {
@@ -14774,7 +14727,7 @@ function parseToolCalls(text) {
           // If single line fails, try to find a complete JSON object across multiple lines
           let jsonStr = line;
           let braceCount = (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
-          
+
           // Collect lines until braces are balanced
           let j = i + 1;
           while (braceCount > 0 && j < lines.length) {
@@ -14783,7 +14736,7 @@ function parseToolCalls(text) {
             braceCount -= (lines[j].match(/\}/g) || []).length;
             j++;
           }
-          
+
           try {
             const toolData = JSON.parse(jsonStr);
             if (toolData.tool && toolData.parameters && typeof toolData.parameters === 'object') {
@@ -14797,7 +14750,7 @@ function parseToolCalls(text) {
       }
     }
   }
-  
+
   console.log(`Parsed ${toolCalls.length} tool call(s):`, toolCalls);
   return toolCalls;
 }
@@ -14805,14 +14758,14 @@ function parseToolCalls(text) {
 function removeToolCallsFromText(text) {
   // Remove XML-wrapped tool calls
   let cleaned = text.replace(/<tool_call>[\s\S]*?<\/tool_call>/g, '').trim();
-  
+
   // Also remove bare JSON tool calls by parsing the same way
   const lines = cleaned.split('\n');
   const filteredLines = [];
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    
+
     // Check if line looks like a tool call
     if (line.startsWith('{') && line.includes('"tool"')) {
       try {
@@ -14825,14 +14778,14 @@ function removeToolCallsFromText(text) {
         let jsonStr = line;
         let braceCount = (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
         let j = i + 1;
-        
+
         while (braceCount > 0 && j < lines.length) {
           jsonStr += '\n' + lines[j];
           braceCount += (lines[j].match(/\{/g) || []).length;
           braceCount -= (lines[j].match(/\}/g) || []).length;
           j++;
         }
-        
+
         try {
           const toolData = JSON.parse(jsonStr);
           if (toolData.tool && toolData.parameters) {
@@ -14844,20 +14797,20 @@ function removeToolCallsFromText(text) {
         }
       }
     }
-    
+
     filteredLines.push(lines[i]);
   }
-  
+
   return filteredLines.join('\n').trim();
 }
 
 async function executeToolCall(toolCall) {
   const { tool, parameters } = toolCall;
-  
+
   logAction(`Executing tool: ${tool}`, parameters);
-  
+
   try {
-    switch(tool) {
+    switch (tool) {
       case 'open_app':
         return await executeTool_OpenApp(parameters);
       case 'close_app':
@@ -14896,8 +14849,8 @@ async function executeToolCall(toolCall) {
 function executeTool_OpenApp(params) {
   const { app_name } = params;
   openApp(app_name);
-  return { 
-    success: true, 
+  return {
+    success: true,
     message: `✅ Opened ${app_name} application`,
     details: `The ${app_name} app is now open and visible on your screen.`
   };
@@ -14907,7 +14860,7 @@ function executeTool_CloseApp(params) {
   const { app_name } = params;
   const windows = document.querySelectorAll('.window');
   let closed = false;
-  
+
   windows.forEach(win => {
     const title = win.querySelector('.window-title')?.textContent?.toLowerCase();
     if (title && title.includes(app_name.toLowerCase())) {
@@ -14915,16 +14868,16 @@ function executeTool_CloseApp(params) {
       closed = true;
     }
   });
-  
+
   if (closed) {
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: `✅ Closed ${app_name} application`,
       details: `The ${app_name} window has been closed.`
     };
   } else {
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: `⚠️ Could not find open ${app_name} window`,
       details: `No window with that app name was found.`
     };
@@ -14933,32 +14886,32 @@ function executeTool_CloseApp(params) {
 
 function executeTool_RunTerminalCommand(params) {
   const { command } = params;
-  
+
   // Open terminal if not already open
   const terminalOpen = Array.from(document.querySelectorAll('.window')).some(
     win => win.querySelector('.window-title')?.textContent?.includes('Terminal')
   );
-  
+
   if (!terminalOpen) {
     openApp('terminal');
   }
-  
+
   // Wait a bit for terminal to open, then execute command
   setTimeout(() => {
     const terminalInput = document.querySelector('#terminalInput');
     const terminal = document.getElementById('terminalContent');
-    
+
     if (terminalInput && terminal) {
       // Add command to terminal display
       const cmdLine = document.createElement('div');
       cmdLine.className = 'terminal-line';
       cmdLine.innerHTML = `<span class="terminal-prompt">user@nautilusos:~$ </span>${command}`;
       terminal.insertBefore(cmdLine, terminal.lastElementChild);
-      
+
       // Execute the command logic (simplified version)
       const output = document.createElement('div');
       output.className = 'terminal-line';
-      
+
       if (command === 'help') {
         output.innerHTML = "Available commands:<br>help, ls, apps, themes, clear, date, whoami, reset-boot, echo";
       } else if (command === 'date') {
@@ -14970,14 +14923,14 @@ function executeTool_RunTerminalCommand(params) {
       } else {
         output.textContent = `Executed: ${command}`;
       }
-      
+
       terminal.insertBefore(output, terminal.lastElementChild);
       terminal.scrollTop = terminal.scrollHeight;
     }
   }, 300);
-  
-  return { 
-    success: true, 
+
+  return {
+    success: true,
     message: `✅ Executed terminal command: ${command}`,
     details: `Command "${command}" was executed in the terminal.`
   };
@@ -14985,12 +14938,12 @@ function executeTool_RunTerminalCommand(params) {
 
 function executeTool_CreateFile(params) {
   const { path, content } = params;
-  
+
   try {
     const parts = path.split('/').filter(p => p);
     const filename = parts.pop();
     const folderPath = '/' + parts.join('/');
-    
+
     let currentLevel = fileSystem;
     for (const part of parts) {
       if (!currentLevel[part]) {
@@ -14998,23 +14951,23 @@ function executeTool_CreateFile(params) {
       }
       currentLevel = currentLevel[part].children;
     }
-    
-    currentLevel[filename] = { 
-      type: 'file', 
+
+    currentLevel[filename] = {
+      type: 'file',
       content: content,
       modified: new Date().toISOString()
     };
-    
+
     saveFileSystem();
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       message: `✅ Created file: ${path}`,
       details: `File created with ${content.length} characters of content.`
     };
   } catch (error) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: `❌ Failed to create file: ${error.message}`,
       details: error.message
     };
@@ -15023,11 +14976,11 @@ function executeTool_CreateFile(params) {
 
 function executeTool_ReadFile(params) {
   const { path } = params;
-  
+
   try {
     const parts = path.split('/').filter(p => p);
     let currentLevel = fileSystem;
-    
+
     for (const part of parts) {
       if (!currentLevel[part]) {
         throw new Error('File not found');
@@ -15039,19 +14992,19 @@ function executeTool_ReadFile(params) {
         break;
       }
     }
-    
+
     if (currentLevel.type !== 'file') {
       throw new Error('Path is not a file');
     }
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       message: `✅ Read file: ${path}`,
       details: `File content:\n${currentLevel.content || '(empty file)'}`
     };
   } catch (error) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: `❌ Failed to read file: ${error.message}`,
       details: error.message
     };
@@ -15060,28 +15013,28 @@ function executeTool_ReadFile(params) {
 
 function executeTool_CreateFolder(params) {
   const { path } = params;
-  
+
   try {
     const parts = path.split('/').filter(p => p);
     let currentLevel = fileSystem;
-    
+
     for (const part of parts) {
       if (!currentLevel[part]) {
         currentLevel[part] = { type: 'folder', children: {} };
       }
       currentLevel = currentLevel[part].children;
     }
-    
+
     saveFileSystem();
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       message: `✅ Created folder: ${path}`,
       details: `Folder created successfully.`
     };
   } catch (error) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: `❌ Failed to create folder: ${error.message}`,
       details: error.message
     };
@@ -15090,11 +15043,11 @@ function executeTool_CreateFolder(params) {
 
 function executeTool_DeleteItem(params) {
   const { path } = params;
-  
+
   try {
     const parts = path.split('/').filter(p => p);
     const itemName = parts.pop();
-    
+
     let currentLevel = fileSystem;
     for (const part of parts) {
       if (!currentLevel[part]) {
@@ -15102,22 +15055,22 @@ function executeTool_DeleteItem(params) {
       }
       currentLevel = currentLevel[part].children;
     }
-    
+
     if (!currentLevel[itemName]) {
       throw new Error('Item not found');
     }
-    
+
     delete currentLevel[itemName];
     saveFileSystem();
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       message: `✅ Deleted: ${path}`,
       details: `Item deleted successfully.`
     };
   } catch (error) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: `❌ Failed to delete item: ${error.message}`,
       details: error.message
     };
@@ -15126,8 +15079,8 @@ function executeTool_DeleteItem(params) {
 
 function executeTool_TakeScreenshot(params) {
   takeScreenshot();
-  return { 
-    success: true, 
+  return {
+    success: true,
     message: `✅ Screenshot captured`,
     details: `Screenshot has been saved to your downloads.`
   };
@@ -15135,7 +15088,7 @@ function executeTool_TakeScreenshot(params) {
 
 function executeTool_ChangeSetting(params) {
   const { setting, value } = params;
-  
+
   try {
     // Theme setting
     if (setting === 'theme') {
@@ -15147,19 +15100,19 @@ function executeTool_ChangeSetting(params) {
           details: `Available themes: dark, ${installedThemes.join(', ')}. Use get_available_options to see all themes.`
         };
       }
-      
+
       const themeLink = document.getElementById('themeLink');
       if (themeLink) {
         themeLink.href = value === 'dark' ? '' : `/themes/${value}.css`;
         localStorage.setItem('nOS_selectedTheme', value);
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: `✅ Changed theme to: ${value}`,
           details: `Theme has been applied successfully.`
         };
       }
     }
-    
+
     // Search engine setting
     if (setting === 'search_engine' || setting === 'searchEngine') {
       const searchEngines = {
@@ -15170,7 +15123,7 @@ function executeTool_ChangeSetting(params) {
         'startpage': 'https://www.startpage.com/search?q=',
         'qwant': 'https://www.qwant.com/?q='
       };
-      
+
       const engineUrl = searchEngines[value.toLowerCase()];
       if (!engineUrl) {
         return {
@@ -15179,7 +15132,7 @@ function executeTool_ChangeSetting(params) {
           details: `Available: ${Object.keys(searchEngines).join(', ')}`
         };
       }
-      
+
       localStorage.setItem('nOS_searchEngine', engineUrl);
       return {
         success: true,
@@ -15187,7 +15140,7 @@ function executeTool_ChangeSetting(params) {
         details: `Default search engine updated.`
       };
     }
-    
+
     // Boolean settings (use12Hour, showSeconds, showDesktopIcons, showWhatsNew)
     const booleanSettings = {
       'use12Hour': 'nOS_use12Hour',
@@ -15195,11 +15148,11 @@ function executeTool_ChangeSetting(params) {
       'showDesktopIcons': 'nOS_showDesktopIcons',
       'showWhatsNew': 'nautilusOS_showWhatsNew'
     };
-    
+
     if (booleanSettings[setting]) {
       const boolValue = value === 'true' || value === true;
       localStorage.setItem(booleanSettings[setting], boolValue.toString());
-      
+
       // Apply changes immediately
       if (setting === 'showDesktopIcons') {
         const icons = document.getElementById('desktopIcons');
@@ -15207,14 +15160,14 @@ function executeTool_ChangeSetting(params) {
           icons.style.display = boolValue ? 'grid' : 'none';
         }
       }
-      
+
       return {
         success: true,
         message: `✅ Changed ${setting} to: ${boolValue}`,
         details: `Setting updated. Some changes may require reopening apps.`
       };
     }
-    
+
     // Wisp URL setting
     if (setting === 'wispUrl' || setting === 'wisp_url') {
       localStorage.setItem('nOS_wispUrl', value);
@@ -15224,7 +15177,7 @@ function executeTool_ChangeSetting(params) {
         details: `Proxy configuration updated.`
       };
     }
-    
+
     // Bare URL setting
     if (setting === 'bareUrl' || setting === 'bare_url') {
       localStorage.setItem('nOS_bareUrl', value);
@@ -15234,9 +15187,9 @@ function executeTool_ChangeSetting(params) {
         details: `Proxy configuration updated.`
       };
     }
-    
-    return { 
-      success: false, 
+
+    return {
+      success: false,
       message: `❌ Unknown setting: ${setting}`,
       details: `Use get_available_options with category 'settings' to see all available settings.`
     };
@@ -15254,9 +15207,9 @@ function executeTool_ListApps(params) {
     const app = appMetadata[key];
     return `${app.name} (${app.preinstalled ? 'preinstalled' : 'installed'})`;
   }).join(', ');
-  
-  return { 
-    success: true, 
+
+  return {
+    success: true,
     message: `✅ Listed all applications`,
     details: `Available apps: ${apps}`
   };
@@ -15264,31 +15217,31 @@ function executeTool_ListApps(params) {
 
 function executeTool_ListFiles(params) {
   const { path = '/' } = params;
-  
+
   try {
     const parts = path.split('/').filter(p => p);
     let currentLevel = fileSystem;
-    
+
     for (const part of parts) {
       if (!currentLevel[part]) {
         throw new Error('Path not found');
       }
       currentLevel = currentLevel[part].children;
     }
-    
+
     const items = Object.keys(currentLevel).map(name => {
       const item = currentLevel[name];
       return `${name} (${item.type})`;
     }).join(', ');
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       message: `✅ Listed contents of ${path}`,
       details: `Contents: ${items || '(empty)'}`
     };
   } catch (error) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: `❌ Failed to list files: ${error.message}`,
       details: error.message
     };
@@ -15299,7 +15252,7 @@ function executeTool_GetSystemInfo(params) {
   const username = localStorage.getItem('nOS_username') || 'user';
   const openWindows = document.querySelectorAll('.window').length;
   const theme = localStorage.getItem('nOS_selectedTheme') || 'default';
-  
+
   const info = {
     username,
     openWindows,
@@ -15307,9 +15260,9 @@ function executeTool_GetSystemInfo(params) {
     browser: navigator.userAgent.split(' ').pop(),
     timestamp: new Date().toLocaleString()
   };
-  
-  return { 
-    success: true, 
+
+  return {
+    success: true,
     message: `✅ Retrieved system information`,
     details: `User: ${info.username}\nOpen windows: ${info.openWindows}\nTheme: ${info.theme}\nBrowser: ${info.browser}\nTime: ${info.timestamp}`
   };
@@ -15317,7 +15270,7 @@ function executeTool_GetSystemInfo(params) {
 
 function executeTool_GetAvailableOptions(params) {
   const { category = 'all' } = params;
-  
+
   const options = {
     themes: {
       installed: ['dark', ...installedThemes],
@@ -15325,13 +15278,13 @@ function executeTool_GetAvailableOptions(params) {
       current: localStorage.getItem('nOS_selectedTheme') || 'dark',
       description: 'Available color themes for NautilusOS. Themes must be installed from App Store before use.'
     },
-    
+
     search_engines: {
       available: ['brave', 'duckduckgo', 'google', 'bing', 'startpage', 'qwant'],
       current: localStorage.getItem('nOS_searchEngine') || 'https://search.brave.com/search?q=',
       description: 'Available search engines for the browser'
     },
-    
+
     settings: {
       boolean: {
         use12Hour: {
@@ -15367,7 +15320,7 @@ function executeTool_GetAvailableOptions(params) {
       },
       description: 'System settings that can be changed'
     },
-    
+
     apps: {
       available: Object.keys(appMetadata).map(key => ({
         id: key,
@@ -15377,24 +15330,24 @@ function executeTool_GetAvailableOptions(params) {
       description: 'All available applications in NautilusOS'
     }
   };
-  
+
   let result = '';
-  
+
   if (category === 'all') {
     result = JSON.stringify(options, null, 2);
   } else if (category === 'themes') {
     result = `THEMES:\n` +
-            `Installed: ${options.themes.installed.join(', ')}\n` +
-            `Available to install: ${options.themes.available.filter(t => !options.themes.installed.includes(t)).join(', ')}\n` +
-            `Current: ${options.themes.current}\n` +
-            `Note: To use a theme, it must first be installed from the App Store.`;
+      `Installed: ${options.themes.installed.join(', ')}\n` +
+      `Available to install: ${options.themes.available.filter(t => !options.themes.installed.includes(t)).join(', ')}\n` +
+      `Current: ${options.themes.current}\n` +
+      `Note: To use a theme, it must first be installed from the App Store.`;
   } else if (category === 'search_engines') {
     result = `SEARCH ENGINES:\n` +
-            `Available: ${options.search_engines.available.join(', ')}\n` +
-            `Current: ${options.search_engines.current}`;
+      `Available: ${options.search_engines.available.join(', ')}\n` +
+      `Current: ${options.search_engines.current}`;
   } else if (category === 'settings') {
     result = `SETTINGS:\n\n` +
-            `Boolean Settings:\n`;
+      `Boolean Settings:\n`;
     for (const [key, val] of Object.entries(options.settings.boolean)) {
       result += `  ${key}: ${val.description}\n    Current: ${val.current}\n    Values: ${val.values.join(', ')}\n`;
     }
@@ -15414,7 +15367,7 @@ function executeTool_GetAvailableOptions(params) {
       details: `Valid categories: themes, apps, search_engines, settings, all`
     };
   }
-  
+
   return {
     success: true,
     message: `✅ Retrieved available options for: ${category}`,
@@ -15431,7 +15384,7 @@ function logAction(action, details) {
 function showToolApprovalDialog(toolCall, onApprove, onReject) {
   const { tool, parameters } = toolCall;
   const toolDef = OS_AUTOMATION_TOOLS[tool];
-  
+
   const modal = document.createElement('div');
   modal.style.cssText = `
     position: fixed;
@@ -15444,7 +15397,7 @@ function showToolApprovalDialog(toolCall, onApprove, onReject) {
     z-index: 999999;
     animation: fadeIn 0.2s ease;
   `;
-  
+
   const dialog = document.createElement('div');
   dialog.style.cssText = `
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -15456,7 +15409,7 @@ function showToolApprovalDialog(toolCall, onApprove, onReject) {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     animation: slideUp 0.3s ease;
   `;
-  
+
   dialog.innerHTML = `
     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
       <div style="width: 48px; height: 48px; background: rgba(125, 211, 192, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
@@ -15481,9 +15434,9 @@ function showToolApprovalDialog(toolCall, onApprove, onReject) {
     <div style="background: rgba(30, 41, 59, 0.6); border-radius: 8px; padding: 12px; margin-bottom: 20px;">
       <div style="color: var(--text-secondary); font-size: 12px; font-weight: bold; margin-bottom: 8px;">Parameters:</div>
       <div style="color: var(--text-primary); font-size: 13px; font-family: 'SUSE Mono', monospace;">
-        ${Object.entries(parameters).map(([key, value]) => 
-          `<div style="margin: 4px 0;"><span style="color: var(--accent);">${key}:</span> ${value}</div>`
-        ).join('')}
+        ${Object.entries(parameters).map(([key, value]) =>
+    `<div style="margin: 4px 0;"><span style="color: var(--accent);">${key}:</span> ${value}</div>`
+  ).join('')}
       </div>
     </div>
     
@@ -15496,20 +15449,20 @@ function showToolApprovalDialog(toolCall, onApprove, onReject) {
       </button>
     </div>
   `;
-  
+
   modal.appendChild(dialog);
   document.body.appendChild(modal);
-  
+
   document.getElementById('approveToolBtn').onclick = () => {
     modal.remove();
     onApprove();
   };
-  
+
   document.getElementById('rejectToolBtn').onclick = () => {
     modal.remove();
     onReject();
   };
-  
+
   // Add animations
   const style = document.createElement('style');
   style.textContent = `
@@ -15528,7 +15481,7 @@ function showToolApprovalDialog(toolCall, onApprove, onReject) {
 function addToolFeedbackToChat(toolCall, result) {
   const chatContainer = document.getElementById('aiChatMessages');
   if (!chatContainer) return;
-  
+
   const feedbackDiv = document.createElement('div');
   feedbackDiv.style.cssText = `
     background: ${result.success ? 'rgba(125, 211, 192, 0.15)' : 'rgba(239, 68, 68, 0.15)'};
@@ -15538,7 +15491,7 @@ function addToolFeedbackToChat(toolCall, result) {
     margin: 10px 0;
     animation: slideIn 0.3s ease-out;
   `;
-  
+
   feedbackDiv.innerHTML = `
     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
       <i class="fas fa-cog" style="color: ${result.success ? 'var(--accent)' : '#ef4444'}; font-size: 16px;"></i>
@@ -15549,7 +15502,7 @@ function addToolFeedbackToChat(toolCall, result) {
       ${result.details ? `<div style="color: #94a3b8; font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(125, 211, 192, 0.2);">${result.details}</div>` : ''}
     </div>
   `;
-  
+
   chatContainer.appendChild(feedbackDiv);
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
@@ -15563,7 +15516,7 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault();
     sendAiMessage();
   }
-  
+
   // Auto-resize textarea
   if (e.target === aiInput) {
     setTimeout(() => {
@@ -15573,29 +15526,29 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    let hoverTimeout;
-    
-    document.addEventListener('mouseover', function(e) {
-        const desktopIcon = e.target.closest('.desktop-icon');
-        if (desktopIcon) {
-            const span = desktopIcon.querySelector('span');
-            if (span) {
-                hoverTimeout = setTimeout(() => {
-                    span.classList.add('expanded');
-                }, 1200);
-            }
-        }
-    });
-    
-    document.addEventListener('mouseout', function(e) {
-        const desktopIcon = e.target.closest('.desktop-icon');
-        if (desktopIcon) {
-            const span = desktopIcon.querySelector('span');
-            if (span) {
-                clearTimeout(hoverTimeout);
-                span.classList.remove('expanded');
-            }
-        }
-    });
+document.addEventListener('DOMContentLoaded', function () {
+  let hoverTimeout;
+
+  document.addEventListener('mouseover', function (e) {
+    const desktopIcon = e.target.closest('.desktop-icon');
+    if (desktopIcon) {
+      const span = desktopIcon.querySelector('span');
+      if (span) {
+        hoverTimeout = setTimeout(() => {
+          span.classList.add('expanded');
+        }, 1200);
+      }
+    }
+  });
+
+  document.addEventListener('mouseout', function (e) {
+    const desktopIcon = e.target.closest('.desktop-icon');
+    if (desktopIcon) {
+      const span = desktopIcon.querySelector('span');
+      if (span) {
+        clearTimeout(hoverTimeout);
+        span.classList.remove('expanded');
+      }
+    }
+  });
 });
