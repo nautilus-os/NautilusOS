@@ -25,31 +25,41 @@
 }
 
 :root {
-    --accent: #7dd3c0;
-    --accent-hover: #6bc4b0;
-    --accent-dark: #469483;
-    --bg-primary: #0a0e1a;
-    --bg-secondary: #121724;
-    --text-primary: #e8eaed;
-    --text-secondary: #9aa0a6;
-    --border: #7dd3c0;
+    --accent: #8bedff;
+    --accent-hover: #9c8cff;
+    --accent-dark: #2c3b7c;
+    --accent-secondary: #c18dfb;
+    --bg-primary: #030712;
+    --bg-primary-alt: #090f1f;
+    --bg-secondary: rgba(7, 12, 27, 0.85);
+    --bg-secondary-solid: #0d162d;
+    --bg-gradient: radial-gradient(circle at 25% 20%, rgba(139, 237, 255, 0.25), transparent 50%),
+        radial-gradient(circle at 75% 0%, rgba(193, 141, 251, 0.25), transparent 45%),
+        linear-gradient(135deg, #030712 0%, #080f20 60%, #140926 100%);
+    --text-primary: #f2f5ff;
+    --text-secondary: #9fb3d8;
+    --border: rgba(148, 163, 184, 0.25);
     --error-red: #ef4444;
     --error-red-hover: #dc2626;
     --error-red-bg: rgba(239, 68, 68, 0.15);
     --error-red-border: rgba(239, 68, 68, 0.3);
     --success-green: #4ade80;
-    --overlay-dark: rgba(0, 0, 0, 0.8);
-    --overlay-darker: rgba(0, 0, 0, 0.9);
-    --glass-bg: rgba(21, 25, 35, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --overlay-dark: rgba(3, 6, 18, 0.85);
+    --overlay-darker: rgba(1, 3, 10, 0.92);
+    --glass-bg: rgba(7, 12, 24, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.12);
     --pure-black: #000;
     --pure-white: #fff;
-    --gray-dark: #888;
-    --gray-light: #222;
+    --gray-dark: #7c88a3;
+    --gray-light: #1f263f;
     --transparent-white-1: rgba(255, 255, 255, 0.1);
     --transparent-white-2: rgba(255, 255, 255, 0.2);
     --transparent-white-5: rgba(255, 255, 255, 0.05);
     --transparent-white-8: rgba(255, 255, 255, 0.08);
+    --selection-gradient: linear-gradient(120deg, #8bedff 0%, #b48bff 100%);
+    --panel-shadow: 0 30px 45px rgba(1, 4, 15, 0.65);
+    --panel-shadow-soft: 0 15px 30px rgba(2, 7, 20, 0.5);
+    --accent-glow: 0 0 25px rgba(139, 237, 255, 0.3);
 }
 
 body {
@@ -57,6 +67,28 @@ body {
     overflow: hidden;
     background: var(--bg-primary);
     color: var(--text-primary);
+    min-height: 100vh;
+    position: relative;
+}
+
+body::before,
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+body::before {
+    background: var(--bg-gradient);
+}
+
+body::after {
+    background: radial-gradient(circle at 15% 80%, rgba(130, 221, 255, 0.12), transparent 45%),
+        radial-gradient(circle at 85% 30%, rgba(193, 141, 251, 0.18), transparent 40%);
+    filter: blur(25px);
+    opacity: 0.9;
 }
 
 button,
@@ -67,7 +99,10 @@ input {
 #bootloader {
     position: fixed;
     inset: 0;
-    background: var(--bg-primary);
+    background: radial-gradient(circle at 20% 20%, rgba(139, 237, 255, 0.12), transparent 50%),
+        radial-gradient(circle at 80% 0%, rgba(193, 141, 251, 0.15), transparent 55%),
+        var(--bg-primary-alt);
+    backdrop-filter: blur(25px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -77,6 +112,15 @@ input {
     transition: opacity 0.5s ease;
     cursor: none;
     font-family: "SUSE Mono" !important;
+    box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.6);
+}
+
+#bootloader::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 10%, rgba(139, 237, 255, 0.18), transparent 60%);
+    pointer-events: none;
 }
 
 #bootloader.hidden {
@@ -86,7 +130,9 @@ input {
 
 .boot-logo {
     font-size: 3.1rem;
-    color: var(--text-primary);
+    color: transparent;
+    background: var(--selection-gradient);
+    -webkit-background-clip: text;
     margin-bottom: 0.5rem;
 }
 
@@ -109,13 +155,14 @@ input {
     flex-direction: column;
     gap: 0.75rem;
     width: 600px;
+    backdrop-filter: blur(30px);
 }
 
 .boot-option {
-    background: transparent;
-    border: 1.5px solid var(--gray-dark);
-    border-radius: 5px;
-    padding: 1.2rem 1.5rem;
+    background: rgba(7, 12, 24, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 1.35rem 1.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--text-primary);
@@ -124,6 +171,22 @@ input {
     align-items: center;
     gap: 1rem;
     cursor: none;
+    box-shadow: var(--panel-shadow-soft);
+    position: relative;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.boot-option::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 16px;
+    background: linear-gradient(120deg, rgba(139, 237, 255, 0.15), rgba(193, 141, 251, 0.08));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .boot-option i {
@@ -133,17 +196,29 @@ input {
 }
 
 .boot-option.selected {
-    background: var(--text-primary);
+    background: var(--selection-gradient);
     color: var(--bg-primary);
-    border-color: var(--text-primary);
+    border-color: transparent;
+    box-shadow: 0 12px 45px rgba(139, 237, 255, 0.3);
+}
+
+.boot-option.selected::after {
+    opacity: 1;
+}
+
+.boot-option:not(.selected):hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 15px 35px rgba(5, 9, 20, 0.8);
 }
 
 .boot-hint {
     position: absolute;
     bottom: 2rem;
-    color: var(--gray-dark);
+    color: rgba(255, 255, 255, 0.65);
     font-size: 1rem;
     text-align: center;
+    letter-spacing: 0.2em;
 }
 
 .boot-hint i {
@@ -163,23 +238,25 @@ input {
 .loading-bar-container {
     width: 100%;
     height: 4px;
-    background: var(--gray-light);
+    background: rgba(255, 255, 255, 0.08);
     margin-bottom: 1.5rem;
     overflow: hidden;
-    border-radius: 1px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
 }
 
 .loading-bar {
     height: 100%;
-    background: var(--accent);
+    background: var(--selection-gradient);
     width: 0%;
     transition: width 0.3s ease;
-    border-radius: 1px;
+    border-radius: 999px;
+    box-shadow: 0 0 20px rgba(139, 237, 255, 0.35);
 }
 
 .boot-messages {
     font-size: 0.85rem;
-    color: var(--gray-dark);
+    color: rgba(255, 255, 255, 0.65);
     line-height: 1.6;
 }
 
@@ -197,7 +274,7 @@ input {
 #login {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--accent) 50%, var(--bg-primary) 100%);
+    background: var(--bg-gradient);
     display: none;
     align-items: center;
     justify-content: center;
@@ -205,6 +282,17 @@ input {
     opacity: 0;
     transition: opacity 0.5s ease;
     padding: 2rem;
+    overflow: hidden;
+}
+
+#login::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(139, 237, 255, 0.25), transparent 55%),
+        radial-gradient(circle at 80% 70%, rgba(193, 141, 251, 0.25), transparent 50%);
+    filter: blur(10px);
+    pointer-events: none;
 }
 
 #login.active {
@@ -217,6 +305,8 @@ input {
     align-items: center;
     gap: 3rem;
     max-width: 1200px;
+    position: relative;
+    z-index: 1;
 }
 
 .login-left {
@@ -230,6 +320,7 @@ input {
     text-align: left;
     color: var(--text-primary);
     font-family: font, "font" !important;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .illustration-startup {
@@ -335,7 +426,7 @@ input {
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.3rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-radius: 4px;
     animation: fadeInStore 0s ease forwards;
     opacity: 0;
@@ -399,7 +490,7 @@ input {
 .illustration-snake-cell {
     width: 20px;
     height: 20px;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-radius: 2px;
 }
 
@@ -426,7 +517,7 @@ input {
 }
 
 .illustration-2048-tile {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -450,7 +541,7 @@ input {
 }
 
 .illustration-tictactoe-cell {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -491,7 +582,7 @@ input {
 
 .illustration-uv-header {
     height: 35px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border-bottom: 2px solid #8a2be2;
     display: flex;
     align-items: center;
@@ -517,7 +608,7 @@ input {
 
 .illustration-helios-header {
     height: 35px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border-bottom: 2px solid #ff6b35;
     display: flex;
     align-items: center;
@@ -933,11 +1024,11 @@ input {
     right: 20px;
     width: 300px;
     padding: 1rem;
-    background: rgba(21, 25, 35, 0.95);
-    backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(145deg, rgba(6, 10, 24, 0.95), rgba(18, 12, 36, 0.9));
+    backdrop-filter: blur(45px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    box-shadow: 0 20px 45px rgba(3, 7, 20, 0.8);
     opacity: 0;
     pointer-events: none;
     transform: scale(0.95);
@@ -964,31 +1055,34 @@ input {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 0.875rem;
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    background: rgba(6, 10, 24, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
     margin-bottom: 0.5rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: inset 0 0 20px rgba(2, 6, 15, 0.5);
 }
 
 .tool-item:hover {
-    background: rgba(125, 211, 192, 0.15);
-    border-color: var(--accent);
-    transform: translateX(2px);
+    background: linear-gradient(130deg, rgba(139, 237, 255, 0.18), rgba(193, 141, 251, 0.2));
+    border-color: transparent;
+    transform: translateX(6px);
+    box-shadow: 0 25px 45px rgba(2, 6, 20, 0.7);
 }
 
 .tool-item i {
     width: 40px;
     height: 40px;
-    background: rgba(125, 211, 192, 0.2);
+    background: linear-gradient(135deg, rgba(139, 237, 255, 0.25), rgba(193, 141, 251, 0.25));
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--accent);
+    color: var(--pure-white);
     font-size: 1.1rem;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 .tool-content {
@@ -1027,7 +1121,7 @@ input {
     align-items: center;
     gap: 1rem;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-radius: 10px;
     margin-bottom: 0.5rem;
 }
@@ -1078,7 +1172,7 @@ input {
 }
 
 .taskmanager-stat-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.25rem;
@@ -1115,7 +1209,7 @@ input {
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 10px;
     margin-bottom: 0.5rem;
@@ -1170,23 +1264,37 @@ input {
     margin-bottom: 0.5rem;
     letter-spacing: -0.02em;
     margin-left: -6px;
+    background: var(--selection-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .login-time-date {
     font-size: 1.2rem;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.8);
     font-weight: 400;
     margin-bottom: 2rem;
 }
 
 .login-info-card {
-    background: var(--bg-secondary);
-    backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
-    box-shadow: 0 8px 32px var(--overlay-dark);
-    border-radius: 20px;
-    padding: 2.3rem;
+    background: rgba(4, 7, 20, 0.7);
+    backdrop-filter: blur(45px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 60px rgba(2, 6, 20, 0.85);
+    border-radius: 26px;
+    padding: 2.5rem;
     font-family: font, "font" !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-info-card::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 22px;
+    background: linear-gradient(160deg, rgba(139, 237, 255, 0.08), rgba(193, 141, 251, 0.08));
+    pointer-events: none;
 }
 
 .info-card-title {
@@ -1226,22 +1334,34 @@ input {
 }
 
 .login-container {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    box-shadow: 0 8px 32px var(--overlay-dark);
-    backdrop-filter: blur(40px) saturate(180%);
-    border-radius: 20px;
+    background: rgba(6, 10, 24, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 50px rgba(3, 6, 18, 0.85);
+    backdrop-filter: blur(45px) saturate(180%);
+    border-radius: 28px;
     padding: 3rem 2.5rem;
     width: 380px;
     font-family: font, "font" !important;
     z-index: 2;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 24px;
+    background: linear-gradient(160deg, rgba(139, 237, 255, 0.12), rgba(193, 141, 251, 0.08));
+    pointer-events: none;
+    z-index: -1;
 }
 
 .login-avatar {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    background: var(--selection-gradient);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1272,20 +1392,21 @@ input {
 .login-input {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: rgba(13, 18, 36, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
     color: var(--text-primary);
     font-size: 0.95rem;
     margin-bottom: 0.875rem;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 0 20px rgba(2, 6, 20, 0.7);
 }
 
 .login-input:focus {
     outline: none !important;
-    border-color: var(--accent);
-    background: rgba(30, 35, 48, 0.95);
-    box-shadow: none !important;
+    border-color: rgba(139, 237, 255, 0.6);
+    background: rgba(13, 18, 36, 0.9);
+    box-shadow: 0 0 0 3px rgba(139, 237, 255, 0.15), inset 0 0 25px rgba(0, 0, 0, 0.3);
 }
 
 input:focus,
@@ -1320,26 +1441,27 @@ select:focus {
 .login-btn {
     width: 100%;
     padding: 0.875rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    background: var(--selection-gradient);
     border: none;
-    border-radius: 10px;
+    border-radius: 14px;
     color: var(--bg-primary);
     font-size: 0.95rem;
     font-family: fontb;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     margin-top: 0.5rem;
+    box-shadow: 0 15px 35px rgba(139, 237, 255, 0.35);
 }
 
 .login-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(107, 179, 160, 0.3);
+    box-shadow: 0 20px 40px rgba(139, 237, 255, 0.45);
 }
 
 #desktop {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(107, 179, 160, 0.1) 50%, var(--bg-primary) 100%);
+    background: var(--bg-gradient);
     display: none;
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -1354,7 +1476,7 @@ select:focus {
 .wallpaper {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(107, 179, 160, 0.1) 50%, var(--bg-primary) 100%);
+    background: var(--bg-gradient);
     z-index: 0;
     display: flex;
     flex-direction: column;
@@ -1368,7 +1490,7 @@ select:focus {
 
 .wallpaper-icon {
     font-size: 6.3rem;
-    color: rgba(107, 179, 160, 0.06);
+    color: rgba(139, 237, 255, 0.08);
     margin-bottom: -0.2rem;
     pointer-events: none;
 }
@@ -1376,7 +1498,7 @@ select:focus {
 .wallpaper-text {
     font-size: 6rem;
     font-family: fontb;
-    background: linear-gradient(135deg, rgba(64, 64, 64, 0.04) 0%, rgba(107, 179, 160, 0.06) 100%);
+    background: linear-gradient(135deg, rgba(139, 237, 255, 0.08) 0%, rgba(193, 141, 251, 0.15) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1392,13 +1514,13 @@ select:focus {
     right: 0;
     font-size: 2rem;
     font-weight: 400;
-    color: rgba(107, 179, 160, 0.15);
+    color: rgba(139, 237, 255, 0.25);
 }
 
 .wallpaper-byline {
     font-size: 2rem;
     font-family: fontb;
-    background: linear-gradient(135deg, rgba(64, 64, 64, 0.04) 0%, rgba(107, 179, 160, 0.06) 100%);
+    background: linear-gradient(135deg, rgba(139, 237, 255, 0.08) 0%, rgba(193, 141, 251, 0.15) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -1439,7 +1561,8 @@ select:focus {
 }
 
 .desktop-icon:hover {
-    background: rgba(107, 179, 160, 0.1);
+    background: rgba(139, 237, 255, 0.12);
+    box-shadow: 0 10px 25px rgba(4, 7, 20, 0.7);
 }
 
 .desktop-icon.dragging {
@@ -1483,15 +1606,15 @@ select:focus {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(21, 25, 35, 0.7);
-    backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 0.4rem 1rem;
+    background: linear-gradient(120deg, rgba(6, 10, 24, 0.85), rgba(23, 12, 38, 0.85));
+    backdrop-filter: blur(40px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 22px;
+    padding: 0.55rem 1.2rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 45px rgba(2, 6, 20, 0.85);
     z-index: 1000;
     animation: slideUp 0.5s ease;
 }
@@ -1523,7 +1646,8 @@ select:focus {
 }
 
 .taskbar-icon:hover {
-    background: rgba(107, 179, 160, 0.15);
+    background: rgba(139, 237, 255, 0.15);
+    box-shadow: inset 0 0 12px rgba(139, 237, 255, 0.25);
 }
 
 .taskbar-icon::after {
@@ -1541,7 +1665,7 @@ select:focus {
     bottom: 0px;
     width: 24px;
     height: 2px;
-    background: var(--accent);
+    background: var(--accent-secondary);
     border-radius: 1px;
 }
 
@@ -1557,7 +1681,7 @@ select:focus {
 .taskbar-divider {
     width: 1px;
     height: 28px;
-    background: var(--border);
+    background: rgba(255, 255, 255, 0.1);
     margin: 0 0.5rem;
 }
 
@@ -1578,12 +1702,12 @@ select:focus {
     transform: translateX(-50%) scale(0.95);
     width: 650px;
     height: 520px;
-    background: rgba(21, 25, 35, 0.9);
-    backdrop-filter: blur(50px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: 20px;
+    background: linear-gradient(145deg, rgba(6, 10, 24, 0.9), rgba(23, 12, 38, 0.92));
+    backdrop-filter: blur(55px) saturate(210%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
     padding: 2rem;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 35px 65px rgba(2, 6, 20, 0.8);
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s ease;
@@ -1678,22 +1802,22 @@ select:focus {
 .start-search-input {
     width: 100%;
     padding: 1rem 3.5rem 1rem 1.25rem;
-    background: linear-gradient(135deg, rgba(30, 35, 48, 0.9), rgba(21, 25, 35, 0.8));
-    border: 2px solid var(--border);
-    border-radius: 16px;
+    background: linear-gradient(120deg, rgba(6, 10, 24, 0.9), rgba(18, 12, 36, 0.85));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
     color: var(--text-primary);
     font-size: 1rem;
     font-family: font, "font" !important;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 18px 25px rgba(2, 6, 20, 0.55);
     backdrop-filter: blur(10px);
 }
 
 .start-search-input:focus {
     outline: none;
-    border-color: var(--accent);
-    background: linear-gradient(135deg, rgba(30, 35, 48, 0.95), rgba(21, 25, 35, 0.9));
-    box-shadow: 0 0 0 4px rgba(125, 211, 192, 0.2), 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: rgba(139, 237, 255, 0.3);
+    background: linear-gradient(120deg, rgba(6, 10, 24, 0.95), rgba(18, 12, 36, 0.95));
+    box-shadow: 0 0 0 4px rgba(139, 237, 255, 0.18), 0 12px 28px rgba(0, 0, 0, 0.5);
     transform: translateY(-2px);
 }
 
@@ -1732,10 +1856,10 @@ select:focus {
 }
 
 .app-item {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem 0.875rem;
+    background: rgba(7, 12, 26, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.25rem 1rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1745,12 +1869,14 @@ select:focus {
     justify-content: center;
     height: 120px;
     width: 100%;
+    box-shadow: inset 0 0 20px rgba(2, 6, 15, 0.6);
 }
 
 .app-item:hover {
-    background: rgba(107, 179, 160, 0.1);
-    border-color: rgba(107, 179, 160, 0.3);
-    transform: translateY(-2px);
+    background: linear-gradient(130deg, rgba(139, 237, 255, 0.18), rgba(193, 141, 251, 0.25));
+    border-color: transparent;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(2, 6, 20, 0.7);
 }
 
 .app-item i {
@@ -1779,11 +1905,11 @@ select:focus {
 
 .window {
     position: absolute;
-    background: rgba(21, 25, 35, 0.85);
-    backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    background: rgba(3, 7, 20, 0.85);
+    backdrop-filter: blur(55px) saturate(210%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    box-shadow: 0 35px 65px rgba(2, 6, 20, 0.85);
     overflow: hidden;
     z-index: 100;
     animation: windowOpen 0.25s ease;
@@ -1794,14 +1920,14 @@ select:focus {
 .snap-overlay {
     position: absolute;
     pointer-events: none;
-    border: 2px solid rgba(59, 130, 246, 0.6);
-    border-radius: 14px;
-    background: rgba(59, 130, 246, 0.35);
+    border: 2px solid rgba(139, 237, 255, 0.7);
+    border-radius: 18px;
+    background: rgba(139, 237, 255, 0.18);
     opacity: 0;
     transform: scale(0.96);
     transition: opacity 0.15s ease, transform 0.15s ease;
     z-index: 5000;
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 0 0 rgba(193, 141, 251, 0.25);
 }
 
 .snap-overlay.visible {
@@ -1815,11 +1941,11 @@ select:focus {
 
 @keyframes snapPulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25);
+        box-shadow: 0 0 0 0 rgba(193, 141, 251, 0.25);
     }
 
     100% {
-        box-shadow: 0 0 24px 0 rgba(59, 130, 246, 0.45);
+        box-shadow: 0 0 24px 0 rgba(139, 237, 255, 0.45);
     }
 }
 
@@ -2180,14 +2306,14 @@ select:focus {
 }
 
 .window-header {
-    background: rgba(30, 35, 48, 0.6);
-    padding: 0.625rem 1rem;
+    background: linear-gradient(120deg, rgba(6, 10, 24, 0.9), rgba(14, 19, 36, 0.85));
+    padding: 0.75rem 1.25rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: move;
     user-select: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .window-title {
@@ -2200,7 +2326,7 @@ select:focus {
 }
 
 .window-title i {
-    color: var(--accent);
+    color: var(--accent-secondary);
     font-size: 1rem;
 }
 
@@ -2220,11 +2346,13 @@ select:focus {
     transition: all 0.2s ease;
     font-size: 0.875rem;
     color: var(--text-secondary);
+    border: 1px solid transparent;
 }
 
 .window-btn:hover {
     background: rgba(255, 255, 255, 0.08);
     color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .window-btn.close:hover {
@@ -2234,10 +2362,10 @@ select:focus {
 
 .window-content {
     padding: 0;
-    height: calc(100% - 48px);
+    height: calc(100% - 60px);
     overflow: auto;
     color: var(--text-primary);
-    background: rgba(10, 14, 26, 0.6);
+    background: rgba(6, 10, 24, 0.85);
 }
 
 .window-content.has-padding {
@@ -2397,7 +2525,7 @@ select:focus {
     align-items: center;
     justify-content: space-between;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-radius: 10px;
     margin-bottom: 0.5rem;
 }
@@ -2521,7 +2649,7 @@ select:focus {
     align-items: center;
     gap: 0.5rem;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-bottom: 1px solid var(--border);
 }
 
@@ -2587,13 +2715,13 @@ select:focus {
     gap: 0.5rem;
     padding: 0.875rem 1rem;
     border-bottom: 1px solid var(--border);
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     align-items: center;
 }
 
 .editor-btn {
     padding: 0.5rem 1rem;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
@@ -2887,7 +3015,7 @@ select:focus {
 
 .carousel-container {
     position: relative;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-radius: 16px;
     padding: 2.5rem 2rem;
     margin-bottom: 3rem;
@@ -3014,7 +3142,7 @@ select:focus {
 
 .illustration-window-header {
     height: 30px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border-radius: 10px 10px 0 0;
     border-bottom: 2px solid var(--accent);
 }
@@ -3191,7 +3319,7 @@ select:focus {
     align-items: center;
     gap: 0.75rem;
     padding: 0.5rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-radius: 8px;
     animation: fadeInStore 0.5s ease forwards;
     opacity: 0;
@@ -3297,7 +3425,7 @@ select:focus {
 .illustration-input {
     width: 180px;
     height: 40px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 2px solid var(--accent);
     border-radius: 10px;
     animation: float 3s ease-in-out infinite;
@@ -3306,7 +3434,7 @@ select:focus {
 
 .illustration-window-header {
     height: 30px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border-radius: 10px 10px 0 0;
     border-bottom: 2px solid var(--accent);
 }
@@ -3328,7 +3456,7 @@ select:focus {
     left: 0;
     right: 0;
     height: 20px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border-bottom: 2px solid var(--accent);
     border-radius: 6px 6px 0 0;
 }
@@ -3577,7 +3705,7 @@ select:focus {
 }
 
 .footer-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.5rem;
@@ -3701,7 +3829,7 @@ select:focus {
 
 .file-action-btn {
     padding: 0.4rem 0.8rem;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--text-primary);
@@ -3798,7 +3926,7 @@ select:focus {
 }
 
 .appstore-item {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.5rem;
@@ -3974,7 +4102,7 @@ select:focus {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 1px solid var(--border);
     color: var(--text-primary);
     font-size: 1.2rem;
@@ -4112,7 +4240,7 @@ select:focus {
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 8px;
     min-width: 150px;
@@ -4123,7 +4251,7 @@ select:focus {
 }
 
 .browser-tab:hover {
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
 }
 
 .browser-tab.active {
@@ -4170,7 +4298,7 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 6px;
     cursor: pointer;
@@ -4199,7 +4327,7 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 1px solid var(--border);
     border-radius: 6px;
     cursor: pointer;
@@ -4629,7 +4757,7 @@ select:focus {
 }
 
 .achievement-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 2px solid var(--border);
     border-radius: 12px;
     padding: 1.25rem;
@@ -4741,7 +4869,7 @@ select:focus {
 }
 
 .easter-egg-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 2px solid rgba(138, 43, 226, 0.5);
     border-radius: 12px;
     padding: 1.25rem;
@@ -4872,7 +5000,7 @@ select:focus {
 }
 
 .calculator-btn {
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--text-primary);
@@ -4937,7 +5065,7 @@ select:focus {
 
 .illustration-browser-header {
     height: 35px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border-bottom: 2px solid var(--accent);
     display: flex;
     align-items: center;
@@ -5105,7 +5233,7 @@ select:focus {
 }
 
 .notification-item {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1rem;
@@ -5182,7 +5310,7 @@ select:focus {
 }
 
 .illustration-calc-btn {
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 1px solid var(--border);
     border-radius: 6px;
 }
@@ -5258,7 +5386,7 @@ select:focus {
     align-items: center;
     gap: 1rem;
     padding: 0.875rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 10px;
     margin-bottom: 0.5rem;
@@ -5384,7 +5512,7 @@ select:focus {
 
 .photo-item {
     position: relative;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 0.75rem;
@@ -5526,7 +5654,7 @@ select:focus {
 .modal-input {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--text-primary);
@@ -5789,7 +5917,7 @@ select:focus {
 }
 
 .settings-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     margin-bottom: 1.5rem;
@@ -5973,7 +6101,7 @@ select:focus {
 }
 
 .help-topic-card {
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(8, 12, 30, 0.85);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 2rem 1.5rem;
@@ -6203,7 +6331,7 @@ select:focus {
 }
 
 .cloaking-preview-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.5rem;
@@ -6268,7 +6396,7 @@ select:focus {
 }
 
 .cloaking-form-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.5rem;
@@ -6372,7 +6500,7 @@ select:focus {
 }
 
 .cloaking-status-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.5rem;
@@ -6550,7 +6678,7 @@ select:focus {
 }
 
 .cloaking-preset-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.5rem;
@@ -7023,7 +7151,7 @@ select {
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-bottom: 1px solid var(--border);
 }
 
@@ -7049,7 +7177,7 @@ select {
 
 .python-section-header {
     padding: 0.75rem 1rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(6, 10, 24, 0.65);
     border-bottom: 1px solid var(--border);
     color: var(--text-primary);
     font-family: fontb;
