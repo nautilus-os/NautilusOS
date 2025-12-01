@@ -46,19 +46,15 @@ Basically... a whole little OS in your browser :D
 
 ## 🚧 todos
 
-- [x] AI OS automation with user approval and extensive feedback
-- [x] Dynamic option discovery for settings, themes, and parameters
 - [ ] App store improvements (right now it can only install built-in apps)
+- [ ] if u hit login in without choosing an existing accoutnit just picks the first one, should ask u to pick an acc
 - [ ] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Window animation settings
-- [x] Make taskbar autohide
 - [ ] Add previews to all apps and themes
 - [ ] Make music player search with itunes and play with ub youtube
 - [ ] Add a scramjet proxy (xor)
 - [ ] Wisp server selection (xor)
-- [x] Fix [object promise] bug when creating new folder
-- [x] Multiple accounts
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 - [ ] Don't show any toast notifs until logging in, bootloader shoudl be free of notifs (change to aysnc functions n delay)
 
