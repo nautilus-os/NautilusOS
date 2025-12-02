@@ -5015,8 +5015,8 @@ print(f'Sum: {sum(numbers)}')
                   <i class="fas fa-robot" style="color: var(--accent);"></i>
                   <span>Model:</span>
                   <select id="aiModelSelect" onchange="switchAIModel(this.value)" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 4px; padding: 4px 8px; color: var(--accent); cursor: pointer; font-size: 11px;">
-                    <option value="fast" selected>⚡ Dumb Fast</option>
-                    <option value="smart">🧠 Smart Slow</option>
+                    <option value="fast" selected><i class="fas fa-bolt"></i> Dumb Fast</option>
+                    <option value="smart"><i class="fa-solid fa-brain"></i> Smart Slow</option>
                   </select>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -5031,7 +5031,7 @@ print(f'Sum: {sum(numbers)}')
                 <i class="fas fa-cogs" style="color: var(--accent);"></i>
                 <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
                   <input type="checkbox" id="aiAutomationToggle" checked style="cursor: pointer;" onchange="nautilusAI.toolsEnabled = this.checked; showToast(this.checked ? 'OS Automation Enabled' : 'OS Automation Disabled', 'fa-cogs');">
-                  <span style="color: var(--accent); font-weight: bold;">🤖 Automation</span>
+                  <span style="color: var(--accent); font-weight: bold;"> Automation</span>
                 </label>
               </div>
             </div>
@@ -5047,9 +5047,9 @@ print(f'Sum: {sum(numbers)}')
                 Hello! I'm your Nautilus AI Assistant. I can help you understand and navigate NautilusOS.<br><br>
                 <strong style="color: var(--accent);"><i class="fas fa-brain"></i> Model: Smarty (Qwen3-0.6B)</strong><br>
                 Advanced reasoning with thinking mode enabled. Switch models in the dropdown if needed.<br><br>
-                <strong style="color: var(--accent);">🤖 OS Automation Enabled!</strong><br>
+                <strong style="color: var(--accent);"><i class="fa-solid fa-robot"></i> OS Automation Enabled!</strong><br>
                 I can control NautilusOS for you! I can open apps, run terminal commands, manage files, change settings, and more. Just ask me to do something and I'll request your approval before taking action.<br><br>
-                <strong style="color: var(--accent);">💭 Thinking Mode Active!</strong><br>
+                <strong style="color: var(--accent);"><i class="fa-solid fa-cloud"></i> Thinking Mode Active!</strong><br>
                 For complex tasks, I'll show my reasoning process in a collapsible "Thinking" section.<br><br>
                 Try: "Open calculator" or "Change theme to blue"
               </div>
@@ -5058,10 +5058,31 @@ print(f'Sum: {sum(numbers)}')
           
           <div style="background: rgba(15, 23, 42, 0.9); border-top: 2px solid rgba(125, 211, 192, 0.3); padding: 15px 20px;">
             <div style="display: flex; gap: 10px;">
-              <textarea id="aiInput" placeholder="Ask me anything about NautilusOS..." style="flex: 1; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; padding: 12px; color: #e2e8f0; font-size: 14px; resize: none; font-family: inherit; min-height: 50px; max-height: 150px;" rows="2"></textarea>
-              <button id="aiSendBtn" onclick="sendAiMessage()" style="background: var(--accent); border: none; border-radius: 8px; padding: 0 20px; cursor: pointer; color: #0f172a; font-weight: bold; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.background='var(--accent-hover)'" onmouseout="this.style.background='var(--accent)'">
-                <i class="fas fa-paper-plane"></i> Send
-              </button>
+              <textarea id="aiInput" placeholder="Ask me anything about NautilusOS..." style="flex: 1; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; padding: 12px; color: #e2e8f0; font-size: 14px; resize: none; font-family: inherit; min-height: 25px; max-height: 150px;" rows="1"></textarea>
+              <button
+  id="aiSendBtn"
+  onclick="sendAiMessage()"
+  style="
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    height: 45px;              
+    display: inline-flex;      
+    align-items: center;       
+    gap: 6px;                  
+    cursor: pointer;
+    color: #0f172a;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.2s; 
+  "
+  onmouseover="this.style.background='var(--accent-hover)'"
+  onmouseout="this.style.background='var(--accent)'"
+>
+  <i class="fas fa-paper-plane"></i> Send
+</button>
+
             </div>
             <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
               <button onclick="sendQuickQuestion('What apps are available in NautilusOS?')" style="background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); color: var(--accent); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
@@ -11447,9 +11468,9 @@ function updateLoginWithAccounts(accounts) {
     if (loginSubtitle) {
       loginSubtitle.innerHTML = `
         <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Select an account:</div>
-        <div id="accountSelector" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 200px; overflow-y: auto;">
+        <div id="accountSelector" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: -15px; margin-top: 20px; max-height: 200px; overflow-y: auto;">
           ${accounts.map(acc => `
-            <div class="account-select-item" onclick="selectLoginAccount('${acc.username}')" style="padding: 0.75rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.75rem;">
+            <div class="account-select-item" onclick="selectLoginAccount('${acc.username}')" style="padding: 0.5rem 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.75rem;">
               <i class="fas fa-user" style="color: var(--accent);"></i>
               <div style="flex: 1;">
                 <div style="color: var(--text-primary); font-family: fontb;">${acc.username}</div>
@@ -11491,7 +11512,7 @@ function selectLoginAccount(username) {
   // Update subtitle
   if (loginSubtitle) {
     loginSubtitle.innerHTML = account.isPasswordless ?
-      `<a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer;">← Back to account list</a>` :
+      `<a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer;"><i class="fa-solid fa-arrow-left"></i> Back to account list</a>` :
       `Enter password for ${username} <a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer; margin-left: 0.5rem;">← Back</a>`;
   }
 
@@ -13905,7 +13926,7 @@ const OS_AUTOMATION_TOOLS = {
 
 const NAUTILUS_SYSTEM_PROMPT = `You are the Nautilus AI Assistant, an expert guide for NautilusOS - a web-based operating system built entirely in HTML, CSS, and JavaScript.
 
-🤖 OS AUTOMATION CAPABILITIES:
+<i class="fa-solid fa-robot"></i> OS AUTOMATION CAPABILITIES:
 You have the ability to control and automate NautilusOS! You can execute actions on behalf of the user with their approval.
 
 IMPORTANT: When you want to perform an action, output a JSON object in your response with this structure:
@@ -14669,9 +14690,9 @@ function clearAiChat() {
       <div style="color: #cbd5e1; line-height: 1.6;">
         Hello! I'm your Nautilus AI Assistant. I can help you understand and navigate NautilusOS.<br><br>
         <strong style="color: var(--accent);"><i class="fas ${currentModelConfig.icon}"></i> Using: ${currentModelConfig.label}</strong> - ${currentModelConfig.description}<br><br>
-        <strong style="color: var(--accent);">🤖 OS Automation Enabled!</strong><br>
+        <strong style="color: var(--accent);"><i class="fa-solid fa-robot"></i>&nbsp;OS Automation Enabled!</strong><br>
         I can control NautilusOS for you! Just ask me to do something and I'll request your approval before taking action.<br><br>
-        <strong style="color: var(--accent);">💭 Thinking Mode Active!</strong><br>
+        <strong style="color: var(--accent);"><i class="fa-solid fa-cloud"></i> Thinking Mode Active!</strong><br>
         I can show my reasoning process for complex tasks. Watch for the collapsible "Thinking" section!<br><br>
         Try: "Open calculator" or "List available themes"
       </div>
