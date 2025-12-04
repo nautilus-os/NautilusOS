@@ -15545,6 +15545,15 @@ document.addEventListener('keydown', (e) => {
       aiInput.style.height = Math.min(aiInput.scrollHeight, 150) + 'px';
     }, 0);
   }
+  const focusedElement = document.activeElement;
+  const isTyping = focusedElement.tagName === 'INPUT' || 
+                   focusedElement.tagName === 'TEXTAREA' || 
+                   focusedElement.tagName === 'SELECT' ||
+                   focusedElement.isContentEditable;
+
+  if (isTyping || document.hidden) {
+    return; 
+  }
 });
 
 document.addEventListener('DOMContentLoaded', function () {
