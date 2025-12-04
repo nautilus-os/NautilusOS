@@ -62,6 +62,8 @@ Basically... a whole little OS in your browser :D
 - [ ] Wisp server selection (xor)
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 - [ ] Don't show any toast notifs until logging in, bootloader shoudl be free of notifs (change to aysnc functions n delay)
+- [ ] fix key capturing apps not stopping capturing when switching apps
+- [ ] add anti-monitering section to cloaking
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
