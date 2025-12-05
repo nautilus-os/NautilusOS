@@ -3402,7 +3402,7 @@ alt="favicon">
                             </div>
                             <div class="cloaking-status-text">
                                 <div class="cloaking-status-title">Screen Monitoring Detection</div>
-                                <div class="cloaking-status-desc">${cloakingConfig.antiScreenMonitoring ? "Enabled - NautilusOS will black out when you switch tabs, preventing monitering software from viewing your tabs" : "Disabled"}</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.antiScreenMonitoring ? "Enabled - NautilusOS will black out when you switch tabs, preventing monitering software from viewing Nautilus" : "Disabled"}</div>
                             </div>
                             <div class="toggle-switch ${cloakingConfig.antiScreenMonitoring ? "active" : ""}" id="antiScreenMonitoringToggle" onclick="toggleAntiScreenMonitoring()"></div>
                         </div>
