@@ -18,7 +18,7 @@ You can also do this with Netlify!
 [![Deploy with Netlify](https://netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/nautilus-os/nautilusos)
 
 
-Alternatively you can deploy Nautilus in a Github Codespace:
+You can also deploy NautilusOS in a Github Codespace:
 
 1. click on the green code button in this repo
 2. click on the codespaces tab
@@ -28,7 +28,8 @@ Alternatively you can deploy Nautilus in a Github Codespace:
 6. click on the Forwarded Address in the Ports tab. it should look something like `https://<your-repo-name>-<random-id>.<your-username>.github.dev`
 7. boom! use your temorary link for its full 30 minute lifetime!
 
-*Note: To extend the life of your codespace link visit your profile settings, go to the Codespaces tab, and change the "Default idle timeout" time from 30 minutes to 240 minutes, which is the maximum time.
+*To extend the life of your codespace link visit your profile settings, go to the Codespaces tab, and change the "Default idle timeout" time from 30 minutes to 240 minutes, which is the maximum time.
+
 ---
 
 ## ✨ features
