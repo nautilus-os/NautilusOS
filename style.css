@@ -6130,7 +6130,7 @@ select:focus {
 }
 
 .cloaking-sidebar {
-    width: 180px;
+    width: 200px;
     background: rgba(21, 25, 35, 0.9);
     border-right: 1px solid var(--border);
     padding: 1rem 0.5rem;
