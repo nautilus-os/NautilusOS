@@ -4056,92 +4056,70 @@ alt="favicon">
     help: {
       title: "Help",
       icon: "fas fa-question-circle",
-      content: `
-        <div class="help-topics-container">
-            <div class="help-topics-grid" id="helpTopicsGrid">
-                <div class="help-topic-card" onclick="expandHelpTopic('welcome')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-info-circle"></i>
-                    </div>
-                    <div class="help-topic-title">Welcome</div>
-                    <div class="help-topic-preview">Introduction to NautilusOS</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('cloaking')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-mask"></i>
-                    </div>
-                    <div class="help-topic-title">Cloaking</div>
-                    <div class="help-topic-preview">Tab disguise features</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('boot')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-power-off"></i>
-                    </div>
-                    <div class="help-topic-title">Boot Options</div>
-                    <div class="help-topic-preview">Graphical vs command-line</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('apps')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-th"></i>
-                    </div>
-                    <div class="help-topic-title">Applications</div>
-                    <div class="help-topic-preview">Built-in apps guide</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('desktop')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-desktop"></i>
-                    </div>
-                    <div class="help-topic-title">Desktop</div>
-                    <div class="help-topic-preview">Icons, taskbar & windows</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('notifications')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-bell"></i>
-                    </div>
-                    <div class="help-topic-title">Notifications</div>
-                    <div class="help-topic-preview">Quick actions & alerts</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('screenshots')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-camera"></i>
-                    </div>
-                    <div class="help-topic-title">Screenshots</div>
-                    <div class="help-topic-preview">Capture your desktop</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('settings')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-cog"></i>
-                    </div>
-                    <div class="help-topic-title">Settings</div>
-                    <div class="help-topic-preview">Customize your experience</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('tips')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <div class="help-topic-title">Tips & Tricks</div>
-                    <div class="help-topic-preview">Pro user shortcuts</div>
-                </div>
+      content: (() => {
+      // Base (static) help topics we always want present
+      const baseTopics = [
+        { id: 'welcome', icon: 'fa-info-circle', title: 'Welcome', preview: 'Introduction to NautilusOS' },
+        { id: 'cloaking', icon: 'fa-mask', title: 'Cloaking', preview: 'Tab disguise features' },
+        { id: 'boot', icon: 'fa-power-off', title: 'Boot Options', preview: 'Graphical vs command-line' },
+        { id: 'apps', icon: 'fa-th', title: 'Applications', preview: 'Built-in apps guide' },
+        { id: 'desktop', icon: 'fa-desktop', title: 'Desktop', preview: 'Icons, taskbar & windows' },
+        { id: 'notifications', icon: 'fa-bell', title: 'Notifications', preview: 'Quick actions & alerts' },
+        { id: 'screenshots', icon: 'fa-camera', title: 'Screenshots', preview: 'Capture your desktop' },
+        { id: 'settings', icon: 'fa-cog', title: 'Settings', preview: 'Customize your experience' },
+        { id: 'tips', icon: 'fa-lightbulb', title: 'Tips & Tricks', preview: 'Pro user shortcuts' }
+      ];
+
+      // Build a set of ids/titles already present so we can add missing apps
+      const existingIds = new Set(baseTopics.map(t => t.id));
+
+      // Generate app topics for any app in appMetadata that isn't already covered
+      const appTopics = [];
+      try {
+        for (const key in appMetadata) {
+        if (!Object.prototype.hasOwnProperty.call(appMetadata, key)) continue;
+        const meta = appMetadata[key];
+        // normalize id/title keys we already used
+        const normalized = key.replace(/[^a-z0-9\-]/gi, '').toLowerCase();
+        if (existingIds.has(normalized) || existingIds.has(meta.name.toLowerCase())) continue;
+        // skip the Help topic itself
+        if (key === 'help') continue;
+
+        appTopics.push({ id: `app-${normalized}`, icon: (meta.icon ? meta.icon : 'fa-question-circle'), title: meta.name, preview: meta.preinstalled ? 'Preinstalled app' : 'Optional app' });
+        }
+      } catch (e) {
+        console.error('Error building dynamic help topics', e);
+      }
+
+      const topics = baseTopics.concat(appTopics);
+
+      const topicCards = topics.map(t => `
+          <div class="help-topic-card" onclick="expandHelpTopic('${t.id}')">
+            <div class="help-topic-icon">
+              <i class="fas ${t.icon}"></i>
             </div>
-            
-            <div class="help-expanded-view" id="helpExpandedView">
-                <div class="help-expanded-header">
-                    <button class="help-back-btn" onclick="closeHelpTopic()">
-                        <i class="fas fa-arrow-left"></i> Back to Topics
-                    </button>
-                </div>
-                <div class="help-expanded-content" id="helpExpandedContent"></div>
-            </div>
+            <div class="help-topic-title">${t.title}</div>
+            <div class="help-topic-preview">${t.preview || ''}</div>
+          </div>
+        `).join('');
+
+      return `
+      <div class="help-topics-container">
+        <div class="help-topics-grid" id="helpTopicsGrid">
+          ${topicCards}
         </div>
-    `,
+
+        <div class="help-expanded-view" id="helpExpandedView">
+          <div class="help-expanded-header">
+            <button class="help-back-btn" onclick="closeHelpTopic()">
+              <i class="fas fa-arrow-left"></i> Back to Topics
+            </button>
+          </div>
+          <div class="help-expanded-content" id="helpExpandedContent"></div>
+        </div>
+      </div>
+      `;
+      })(),
       noPadding: true,
       width: 900,
       height: 600,
@@ -10578,7 +10556,7 @@ let cloakingConfig = {
   panicUrl: "https://classroom.google.com",
   antiScreenMonitoring: true,
   antiMonitorDelay: 1000,
-  useAntiMonitorDelay: true,
+  useAntiMonitorDelay: false,
   confirmPageClosing: true,
 };
 let rotationInterval = null;
@@ -11622,11 +11600,25 @@ function setupScreenMonitoringListener() {
   screenMonitoringListener = () => {
     if (!cloakingConfig.antiScreenMonitoring) return;
     
-    // Remove existing overlay if any
+    // Determine current focused window (if any)
+    const currentFocused = typeof focusedWindow !== 'undefined' ? focusedWindow : null;
+
+    // If we've already shown a blackout for this focused app, don't recreate it repeatedly
+    if (screenMonitoringListener.lastShownForApp && screenMonitoringListener.lastShownForApp === currentFocused) {
+      return;
+    }
+
+    // If focus is back on the cloaking window or nothing to protect, clear lastShownForApp and bail
+    if (!document.hidden && (!currentFocused || currentFocused === 'cloaking' || !windows["cloaking"])) {
+      screenMonitoringListener.lastShownForApp = null;
+      return;
+    }
+
+    // If an overlay already exists, a previous trigger is still active — keep it
     const existingOverlay = document.getElementById("screenMonitoringBlackout");
     if (existingOverlay) {
-      existingOverlay.remove();
-      if (blackoutTimeout) clearTimeout(blackoutTimeout);
+      // Do not recreate or remove it here; let the original timeout handle cleanup
+      return;
     }
     
     // Create a fullscreen blackout overlay using the same method as the integrity check
@@ -11634,6 +11626,8 @@ function setupScreenMonitoringListener() {
     blackoutOverlay.id = "screenMonitoringBlackout";
     blackoutOverlay.style.cssText = "position:fixed;inset:0;background:var(--pure-black);z-index:99999;display:block;";
     document.body.appendChild(blackoutOverlay);
+    // Record which app we showed the blackout for so we don't spam it repeatedly
+    screenMonitoringListener.lastShownForApp = currentFocused || 'hidden';
     
     // If delay is disabled, remove immediately, otherwise use the delay
     if (!cloakingConfig.useAntiMonitorDelay) {
@@ -11666,6 +11660,11 @@ function setupScreenMonitoringListener() {
     // If cloaking window is not the focused window, show the blackout
     if (focusedWindow && focusedWindow !== "cloaking" && windows["cloaking"]) {
       screenMonitoringListener();
+    } else {
+      // If cloaking regained focus, clear the last shown marker so future switches will trigger again
+      if (focusedWindow === "cloaking" || !windows["cloaking"]) {
+        if (screenMonitoringListener && screenMonitoringListener.lastShownForApp) screenMonitoringListener.lastShownForApp = null;
+      }
     }
   }, 300);
   
