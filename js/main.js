@@ -2586,6 +2586,16 @@ function closeWindow(btn, appName) {
     handleV86WindowClose(window);
   }
 
+  // Handle Snake game cleanup
+  if (appName === "snake") {
+    snakeGame.gameRunning = false;
+    snakeGame.gameOver = true;
+    if (snakeGame.keyListenerAttached) {
+      document.removeEventListener('keydown', handleSnakeKeyPress);
+      snakeGame.keyListenerAttached = false;
+    }
+  }
+
   window.style.animation = "windowMinimize 0.25s ease forwards";
   setTimeout(() => {
     window.remove();
@@ -3163,7 +3173,7 @@ function openApp(appName, editorContent = "", filename = "") {
       content: `
         <div class="cloaking-container">
             <div class="cloaking-sidebar">
-                <div class="cloaking-nav-item active" onclick="switchCloakingTab('basic', this)">
+                                <div class="cloaking-nav-item active" onclick="switchCloakingTab('basic', this)">
                     <i class="fas fa-mask"></i>
                     <span>Basic Cloak</span>
                 </div>
@@ -3174,6 +3184,10 @@ function openApp(appName, editorContent = "", filename = "") {
                 <div class="cloaking-nav-item" onclick="switchCloakingTab('panic', this)">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Panic Key</span>
+                </div>
+                <div class="cloaking-nav-item" onclick="switchCloakingTab('anti-monitor', this)">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Anti-Monitoring</span>
                 </div>
                 <div class="cloaking-nav-item" onclick="switchCloakingTab('presets', this)">
                     <i class="fas fa-bookmark"></i>
@@ -3375,7 +3389,74 @@ alt="favicon">
                         </div>
                     </div>
                 </div>
-                
+                                <div class="cloaking-tab" data-tab="anti-monitor">
+                    <div class="cloaking-header">
+                        <h2><i class="fas fa-shield-alt"></i> Anti-Monitoring</h2>
+                        <p>Protect your privacy from admin-installed software</p>
+                    </div>
+                    
+                    <div class="cloaking-status-card">
+                        <div class="cloaking-status-indicator ${cloakingConfig.antiScreenMonitoring ? "active" : ""}">
+                            <div class="cloaking-status-icon">
+                                <i class="fas ${cloakingConfig.antiScreenMonitoring ? "fa-eye-slash" : "fa-eye"}"></i>
+                            </div>
+                            <div class="cloaking-status-text">
+                                <div class="cloaking-status-title">Screen Monitoring Detection</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.antiScreenMonitoring ? "Enabled - NautilusOS will black out when you switch tabs, preventing monitering software from viewing your tabs" : "Disabled"}</div>
+                            </div>
+                            <div class="toggle-switch ${cloakingConfig.antiScreenMonitoring ? "active" : ""}" id="antiScreenMonitoringToggle" onclick="toggleAntiScreenMonitoring()"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="cloaking-status-card" style="margin-top: 1rem;">
+                        <div class="cloaking-status-indicator ${cloakingConfig.useAntiMonitorDelay ? "active" : ""}">
+                            <div class="cloaking-status-icon">
+                                <i class="fas ${cloakingConfig.useAntiMonitorDelay ? "fa-sliders-h" : "fa-times-circle"}"></i>
+                            </div>
+                            <div class="cloaking-status-text">
+                                <div class="cloaking-status-title">Use Unblack Delay</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.useAntiMonitorDelay ? "Enabled - Screen will stay black for the configured delay" : "Disabled"}</div>
+                            </div>
+                            <div class="toggle-switch ${cloakingConfig.useAntiMonitorDelay ? "active" : ""}" id="useAntiMonitorDelayToggle" onclick="toggleAntiMonitorDelay()"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="cloaking-form-card" id="antiMonitorSettings" style="${cloakingConfig.useAntiMonitorDelay ? "" : "opacity: 0.5; pointer-events: none;"}">
+                        <div class="cloaking-form-group">
+                            <label class="cloaking-label">
+                                <i class="fas fa-hourglass-end"></i> Unblack Delay (milliseconds)
+                            </label>
+                            <div class="cloaking-slider-group">
+                                <input 
+                                    type="range" 
+                                    id="antiMonitorDelay" 
+                                    class="cloaking-slider"
+                                    min="100"
+                                    max="5000"
+                                    step="100"
+                                    value="${cloakingConfig.antiMonitorDelay}"
+                                    oninput="updateAntiMonitorDelayDisplay(this.value)"
+                                >
+                                <span class="cloaking-slider-value" id="antiMonitorDelayValue">${cloakingConfig.antiMonitorDelay}ms</span>
+                            </div>
+                            <div class="cloaking-hint">How long NautilusOS stays blacked out after you switch tabs (delays unblacking)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="cloaking-status-card" style="margin-top: 2rem;">
+                        <div class="cloaking-status-indicator ${cloakingConfig.confirmPageClosing ? "active" : ""}">
+                            <div class="cloaking-status-icon">
+                                <i class="fas ${cloakingConfig.confirmPageClosing ? "fa-check-circle" : "fa-times-circle"}"></i>
+                            </div>
+                            <div class="cloaking-status-text">
+                                <div class="cloaking-status-title">Confirm Page Closing</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.confirmPageClosing ? "Enabled - Alert will show to confirm page close before closing, preventing admin-installed software from remotely closing your tab" : "Disabled"}</div>
+                            </div>
+                            <div class="toggle-switch ${cloakingConfig.confirmPageClosing ? "active" : ""}" id="confirmPageClosingToggle" onclick="toggleConfirmPageClosing()"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="cloaking-tab" data-tab="presets">
                     <div class="cloaking-header">
                         <h2><i class="fas fa-bookmark"></i> Quick Presets</h2>
@@ -4834,7 +4915,7 @@ print(f'Sum: {sum(numbers)}')
                 <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">High Score</div>
                 <div id="snakeHighScore" style="color: var(--accent); font-size: 32px; font-weight: bold; font-family: fontb;">0</div>
               </div>
-              <button id="snakeStartBtn" class="editor-btn" onclick="startSnakeGame()" style="background: var(--accent); color: var(--bg-primary); border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: fontb;">Start Game</button>
+              <button id="snakeStartBtn" class="editor-btn" onclick="toggleSnakeGame()" style="background: var(--accent); color: var(--bg-primary); border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: fontb;">Start Game</button>
               
               <div style="color: var(--text-secondary); font-size: 11px; text-align: center; line-height: 1.6; margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border);">
                 <div style="margin-bottom: 8px;"><strong>Controls:</strong></div>
@@ -8631,8 +8712,25 @@ let snakeGame = {
   gridSize: 20,
   tileCount: 20,
   gameSpeed: 100,
-  highScore: localStorage.getItem('snakeHighScore') ? parseInt(localStorage.getItem('snakeHighScore')) : 0
+  highScore: localStorage.getItem('snakeHighScore') ? parseInt(localStorage.getItem('snakeHighScore')) : 0,
+  keyListenerAttached: false
 };
+
+function toggleSnakeGame() {
+  if (!snakeGame.gameRunning && !snakeGame.gameOver) {
+    // Game hasn't started yet
+    startSnakeGame();
+  } else if (snakeGame.gameRunning && !snakeGame.gamePaused) {
+    // Game is running, pause it
+    snakeGame.gamePaused = true;
+    document.getElementById('snakeStartBtn').textContent = 'Resume';
+  } else if (snakeGame.gamePaused) {
+    // Game is paused, resume it
+    snakeGame.gamePaused = false;
+    document.getElementById('snakeStartBtn').textContent = 'Pause';
+    gameLoop();
+  }
+}
 
 function startSnakeGame() {
   if (!snakeGame.canvas) {
@@ -8665,11 +8763,15 @@ function startSnakeGame() {
 }
 
 function attachSnakeKeyListeners() {
+  if (snakeGame.keyListenerAttached) return;
+  snakeGame.keyListenerAttached = true;
   document.addEventListener('keydown', handleSnakeKeyPress);
 }
 
 function handleSnakeKeyPress(e) {
-  if (!snakeGame.gameRunning) return;
+  // Only handle input if snake game is running/paused AND the snake window is focused (highest z-index)
+  if (!snakeGame.gameRunning && !snakeGame.gameOver) return;
+  if (focusedWindow !== "snake") return;
 
   if (e.key === ' ') {
     e.preventDefault();
@@ -8811,7 +8913,10 @@ function endSnakeGame() {
 
   document.getElementById('snakeStartBtn').textContent = 'Start Game';
 
-  document.removeEventListener('keydown', handleSnakeKeyPress);
+  if (snakeGame.keyListenerAttached) {
+    document.removeEventListener('keydown', handleSnakeKeyPress);
+    snakeGame.keyListenerAttached = false;
+  }
 
   showToast('Game Over! Score: ' + snakeGame.score + ' | High Score: ' + snakeGame.highScore, 'fa-skull');
 }
@@ -10471,6 +10576,10 @@ let cloakingConfig = {
   panicKeyEnabled: false,
   panicKey: "Escape",
   panicUrl: "https://classroom.google.com",
+  antiScreenMonitoring: true,
+  antiMonitorDelay: 1000,
+  useAntiMonitorDelay: true,
+  confirmPageClosing: true,
 };
 let rotationInterval = null;
 const originalTitle = document.title;
@@ -11397,7 +11506,214 @@ function showProperties(appName, x, y) {
     }
   }, 0);
 }
+function toggleAntiScreenMonitoring() {
+  cloakingConfig.antiScreenMonitoring = !cloakingConfig.antiScreenMonitoring;
+  saveCloakingConfig();
 
+  const toggle = document.getElementById("antiScreenMonitoringToggle");
+  const indicator = document.querySelector(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator'
+  );
+  const statusDesc = document.querySelector(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-desc'
+  );
+  const antiMonitorSettings = document.getElementById("antiMonitorSettings");
+
+  if (cloakingConfig.antiScreenMonitoring) {
+    if (toggle) toggle.classList.add("active");
+    if (indicator) indicator.classList.add("active");
+    if (statusDesc) statusDesc.textContent = "Enabled - NautilusOS will black out when you switch tabs";
+    if (antiMonitorSettings) {
+      antiMonitorSettings.style.opacity = "1";
+      antiMonitorSettings.style.pointerEvents = "auto";
+    }
+    showToast("Anti-screen monitoring enabled!", "fa-shield-alt");
+    setupScreenMonitoringListener();
+  } else {
+    if (toggle) toggle.classList.remove("active");
+    if (indicator) indicator.classList.remove("active");
+    if (statusDesc) statusDesc.textContent = "Disabled";
+    if (antiMonitorSettings) {
+      antiMonitorSettings.style.opacity = "0.5";
+      antiMonitorSettings.style.pointerEvents = "none";
+    }
+    showToast("Anti-screen monitoring disabled", "fa-shield");
+    removeScreenMonitoringListener();
+  }
+}
+
+function updateAntiMonitorDelayDisplay(value) {
+  cloakingConfig.antiMonitorDelay = parseInt(value);
+  saveCloakingConfig();
+  const display = document.getElementById("antiMonitorDelayValue");
+  if (display) {
+    display.textContent = value + "ms";
+  }
+}
+
+function toggleAntiMonitorDelay() {
+  cloakingConfig.useAntiMonitorDelay = !cloakingConfig.useAntiMonitorDelay;
+  saveCloakingConfig();
+
+  const toggle = document.getElementById("useAntiMonitorDelayToggle");
+  const indicator = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator'
+  )[0];
+  const statusDesc = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-desc'
+  )[0];
+  const antiMonitorSettings = document.getElementById("antiMonitorSettings");
+
+  if (cloakingConfig.useAntiMonitorDelay) {
+    if (toggle) toggle.classList.add("active");
+    if (indicator) indicator.classList.add("active");
+    if (statusDesc) statusDesc.textContent = "Enabled - After switching back to Nautilus your screen will stay black briefly for the configured delay";
+    if (antiMonitorSettings) {
+      antiMonitorSettings.style.opacity = "1";
+      antiMonitorSettings.style.pointerEvents = "auto";
+    }
+    showToast("Unblack delay enabled!", "fa-sliders-h");
+  } else {
+    if (toggle) toggle.classList.remove("active");
+    if (indicator) indicator.classList.remove("active");
+    if (statusDesc) statusDesc.textContent = "Disabled";
+    if (antiMonitorSettings) {
+      antiMonitorSettings.style.opacity = "0.5";
+      antiMonitorSettings.style.pointerEvents = "none";
+    }
+    showToast("Unblack delay disabled!", "fa-times-circle");
+  }
+}
+
+function toggleConfirmPageClosing() {
+  cloakingConfig.confirmPageClosing = !cloakingConfig.confirmPageClosing;
+  saveCloakingConfig();
+
+  const toggle = document.getElementById("confirmPageClosingToggle");
+  const indicator = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator'
+  )[1];
+  const statusDesc = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-desc'
+  )[1];
+
+  if (cloakingConfig.confirmPageClosing) {
+    if (toggle) toggle.classList.add("active");
+    if (indicator) indicator.classList.add("active");
+    if (statusDesc) statusDesc.textContent = "Enabled - Alert will show before closing";
+    showToast("Page closing confirmation enabled!", "fa-check-circle");
+    setupPageClosingListener();
+  } else {
+    if (toggle) toggle.classList.remove("active");
+    if (indicator) indicator.classList.remove("active");
+    if (statusDesc) statusDesc.textContent = "Disabled";
+    showToast("Page closing confirmation disabled", "fa-times-circle");
+    removePageClosingListener();
+  }
+}
+
+let screenMonitoringListener = null;
+let pageClosingListener = null;
+let blackoutTimeout = null;
+
+function setupScreenMonitoringListener() {
+  if (screenMonitoringListener) return;
+  
+  screenMonitoringListener = () => {
+    if (!cloakingConfig.antiScreenMonitoring) return;
+    
+    // Remove existing overlay if any
+    const existingOverlay = document.getElementById("screenMonitoringBlackout");
+    if (existingOverlay) {
+      existingOverlay.remove();
+      if (blackoutTimeout) clearTimeout(blackoutTimeout);
+    }
+    
+    // Create a fullscreen blackout overlay using the same method as the integrity check
+    const blackoutOverlay = document.createElement("div");
+    blackoutOverlay.id = "screenMonitoringBlackout";
+    blackoutOverlay.style.cssText = "position:fixed;inset:0;background:var(--pure-black);z-index:99999;display:block;";
+    document.body.appendChild(blackoutOverlay);
+    
+    // If delay is disabled, remove immediately, otherwise use the delay
+    if (!cloakingConfig.useAntiMonitorDelay) {
+      blackoutTimeout = setTimeout(() => {
+        const overlay = document.getElementById("screenMonitoringBlackout");
+        if (overlay) {
+          overlay.remove();
+        }
+      }, 0);
+    } else {
+      blackoutTimeout = setTimeout(() => {
+        const overlay = document.getElementById("screenMonitoringBlackout");
+        if (overlay) {
+          overlay.remove();
+        }
+      }, cloakingConfig.antiMonitorDelay);
+    }
+  };
+  
+  window.addEventListener("visibilitychange", screenMonitoringListener);
+  window.addEventListener("blur", screenMonitoringListener);
+  
+  // Also monitor for when another window gets focus (higher z-index)
+  let focusCheckInterval = setInterval(() => {
+    if (!cloakingConfig.antiScreenMonitoring) {
+      clearInterval(focusCheckInterval);
+      return;
+    }
+    
+    // If cloaking window is not the focused window, show the blackout
+    if (focusedWindow && focusedWindow !== "cloaking" && windows["cloaking"]) {
+      screenMonitoringListener();
+    }
+  }, 300);
+  
+  // Store the interval ID so we can clear it later
+  screenMonitoringListener.focusCheckInterval = focusCheckInterval;
+}
+
+function removeScreenMonitoringListener() {
+  if (screenMonitoringListener) {
+    window.removeEventListener("visibilitychange", screenMonitoringListener);
+    window.removeEventListener("blur", screenMonitoringListener);
+    
+    // Clear the focus check interval if it exists
+    if (screenMonitoringListener.focusCheckInterval) {
+      clearInterval(screenMonitoringListener.focusCheckInterval);
+    }
+    
+    screenMonitoringListener = null;
+  }
+  if (blackoutTimeout) {
+    clearTimeout(blackoutTimeout);
+    blackoutTimeout = null;
+  }
+}
+
+function setupPageClosingListener() {
+  if (pageClosingListener) return;
+  
+  pageClosingListener = (e) => {
+    if (!cloakingConfig.confirmPageClosing) return;
+    
+    e.preventDefault();
+    e.returnValue = "Are you sure you want to leave? You have unsaved changes.";
+    return e.returnValue;
+  };
+  
+  window.addEventListener("beforeunload", pageClosingListener);
+}
+
+function removePageClosingListener() {
+  if (pageClosingListener) {
+    window.removeEventListener("beforeunload", pageClosingListener);
+    pageClosingListener = null;
+  }
+}
+
+if (cloakingConfig.antiScreenMonitoring) setupScreenMonitoringListener();
+if (cloakingConfig.confirmPageClosing) setupPageClosingListener();
 function hideProperties() {
   const tooltip = document.getElementById("propertiesTooltip");
   tooltip.classList.remove("active");
