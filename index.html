@@ -466,7 +466,9 @@
                     <h3 id="displayUsername">User</h3>
                     <p>Standard User</p>
                 </div>
-                <button class="start-signout-btn" onclick="window.open('https://github.com/nautilus-os/NautilusOS', '_blank')" title="GitHub Repository"
+                <button class="start-signout-btn"
+                    onclick="window.open('https://github.com/nautilus-os/NautilusOS', '_blank')"
+                    title="GitHub Repository"
                     style="background: rgba(125, 211, 192, 0.15); border-color: rgba(125, 211, 192, 0.3); color: var(--accent);">
                     <i class="fab fa-github"></i>
                 </button>
@@ -555,6 +557,14 @@
                 <div class="quick-action-desc">Close all windows</div>
             </div>
         </div>
+        <div class="quick-action-item"
+            onclick="hideQuickActions(); window.open('https://raw.githubusercontent.com/nautilus-os/NautilusOS/refs/heads/main/NautilusOS-OneFile/index.html', '_blank')">
+            <i class="fas fa-download"></i>
+            <div class="quick-action-content">
+                <div class="quick-action-title">Get OneFile</div>
+                <div class="quick-action-desc">Download standalone version</div>
+            </div>
+        </div>
         <div class="quick-action-item" onclick="hideQuickActions(); signOutToLogin()">
             <i class="fas fa-sign-out-alt"></i>
             <div class="quick-action-content">
@@ -613,7 +623,7 @@
     <div class="properties-tooltip" id="propertiesTooltip">
         <div class="properties-close" onclick="hideProperties()">
             <i class="fas fa-times"></i>
-        </div> 
+        </div>
         <div class="properties-header">
             <div class="properties-icon" id="propIcon">
                 <i class="fas fa-folder"></i>
