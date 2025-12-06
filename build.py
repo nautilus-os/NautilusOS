@@ -47,11 +47,42 @@ def inline_local_file(path):
 index_text = index_path.read_text(encoding="utf-8")
 
 
+
+def inline_local_assets(css_text, css_file_path):
+    def repl(match):
+        target = match.group(1).strip().strip("\"'")
+        if target.startswith("data:") or target.startswith("#"):
+            return match.group(0)
+        
+        if target.startswith("http://") or target.startswith("https://"):
+            return match.group(0)
+
+        asset_path = (css_file_path.parent / target).resolve()
+        
+        try:
+            if not asset_path.exists():
+                print(f"Warning: Asset not found: {asset_path}")
+                return match.group(0)
+            
+            data = asset_path.read_bytes()
+            mime = mimetypes.guess_type(asset_path)[0] or "application/octet-stream"
+            encoded = base64.b64encode(data).decode("ascii")
+            return f"url('data:{mime};base64,{encoded}')"
+        except Exception as e:
+            print(f"Failed to inline {asset_path}: {e}")
+            return match.group(0)
+
+    return re.sub(r"url\(([^)]+)\)", repl, css_text)
+
+
 def replace_stylesheet(match):
     href = match.group(1)
     if href.startswith("http://") or href.startswith("https://"):
         return inline_remote_css(href)
-    css = inline_local_file(href)
+    
+    css_path = root / href.lstrip("/")
+    css = css_path.read_text(encoding="utf-8")
+    css = inline_local_assets(css, css_path)
     return f"<style>\n{css}\n</style>"
 
 
