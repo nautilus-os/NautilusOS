@@ -60,6 +60,7 @@ Basically... a whole little OS in your browser :D
 ## 🚧 todos
 
 - [ ] App store improvements (right now it can only install built-in apps)
+- [x] fix fonts not loading in onefile 
 - [ ] fix bug in cloaking where the unblack delay and the actual anti monitering toggles are linked
 - [ ] if u hit login in without choosing an existing accoutnit just picks the first one, should ask u to pick an acc
 - [x] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
