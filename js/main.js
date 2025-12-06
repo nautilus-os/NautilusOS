@@ -4450,7 +4450,7 @@ alt="favicon">
     </div>
     <div class="carousel-content">
         <h2>Advanced Tab Cloaking</h2>
-        <p>Stay under the radar with powerful disguise tools! Auto-rotate through multiple tab disguises, set custom rotation speeds, configure panic keys for instant redirects, and use preset templates for popular sites like Google Classroom and Drive.</p>
+        <p>Stay under the radar with powerful disguise tools! Auto-rotate through multiple tab disguises, change what blocking extensions see when you're not on Nautilus, prevent remote tab closing, configure panic keys for instant redirects, and more!</p>
     </div>
 </div>
 
