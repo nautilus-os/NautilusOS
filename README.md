@@ -37,6 +37,7 @@ You can also deploy NautilusOS in a Github Codespace:
 There’s a ton of stuff to play with, but here’s a quick rundown (seriously, check them all out yourself):
 
 - bootloader and login screen
+- advanced cloaking options not seen in other proxies
 - allows creation of multiple accounts with different editable  permissions (superuser or standard users)
 - THREE built in proxy browsers, all using different technologies
 - tons of themes to customize Nautilus to your preference
@@ -47,15 +48,9 @@ There’s a ton of stuff to play with, but here’s a quick rundown (seriously, 
 - taskbar to keep your apps organized
 - custom right-click menu to quickly perform tasks within Nautilus
 - searchable start menu with user info and apps grid  
-- file explorer with folders, files, and side tree  
-- built-in text editor
-- built in terminal 
-- super duper cool proxied browser
-- cloaking and various other settings 
-- terminal
-- built-in app store
+- a multitude of preinstalled apps + an app store to discover more
+- tons of customization and settings
 - exportable/importable profiles
-- startup and tools panels  
 - AI-powered OS automation - NautilusOS comes prepackaged with a built in AI assistant capable of both answering your questions AND controlling your OS! (with your approval ofc)
 
 Basically... a whole little OS in your browser :D
