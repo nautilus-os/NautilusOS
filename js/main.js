@@ -3439,7 +3439,7 @@ alt="favicon">
                                 >
                                 <span class="cloaking-slider-value" id="antiMonitorDelayValue">${cloakingConfig.antiMonitorDelay}ms</span>
                             </div>
-                            <div class="cloaking-hint">How long NautilusOS stays blacked out after you switch tabs (delays unblacking)</div>
+                            <div class="cloaking-hint">How long NautilusOS stays blacked out after you switch back to this tab (delays unblacking.) Helpful if you cycle through tabs</div>
                         </div>
                     </div>
                     
