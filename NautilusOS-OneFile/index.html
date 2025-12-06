@@ -2777,7 +2777,6 @@ select:focus {
     border-color: var(--accent);
     background: linear-gradient(135deg, rgba(30, 35, 48, 0.95), rgba(21, 25, 35, 0.9));
     box-shadow: 0 0 0 4px rgba(125, 211, 192, 0.2), 0 8px 24px rgba(0, 0, 0, 0.3);
-    transform: translateY(-2px);
 }
 
 .start-search-input::placeholder {
@@ -2787,7 +2786,7 @@ select:focus {
 
 .start-search-icon {
     position: absolute;
-    right: 1.75rem;
+    right: 2.65rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--accent);
@@ -7213,7 +7212,7 @@ select:focus {
 }
 
 .cloaking-sidebar {
-    width: 180px;
+    width: 200px;
     background: rgba(21, 25, 35, 0.9);
     border-right: 1px solid var(--border);
     padding: 1rem 0.5rem;
@@ -8626,6 +8625,10 @@ select {
                     <h3 id="displayUsername">User</h3>
                     <p>Standard User</p>
                 </div>
+                <button class="start-signout-btn" onclick="window.open('https://github.com/nautilus-os/NautilusOS', '_blank')" title="GitHub Repository"
+                    style="background: rgba(125, 211, 192, 0.15); border-color: rgba(125, 211, 192, 0.3); color: var(--accent);">
+                    <i class="fab fa-github"></i>
+                </button>
                 <button class="start-signout-btn" onclick="signOutToLogin()" title="Sign Out"
                     style="background: rgba(125, 211, 192, 0.15); border-color: rgba(125, 211, 192, 0.3); color: var(--accent);">
                     <i class="fas fa-sign-out-alt"></i> <span>Sign Out</span>
@@ -8680,6 +8683,9 @@ select {
                 </div>
                 <div class="app-item" onclick="openApp('ai-snake')">
                     <i class="fas fa-brain"></i> <span>AI Snake Learning</span>
+                </div>
+                <div class="app-item" onclick="openApp('nautilus-ai')">
+                    <i class="fa-solid fa-robot"></i> <span>Nautilus AI Assistant</span>
                 </div>
                 <div class="app-item" onclick="openApp('python')">
                     <i class="fas fa-code"></i> <span>Python Interpreter</span>
@@ -11380,6 +11386,16 @@ function closeWindow(btn, appName) {
     handleV86WindowClose(window);
   }
 
+  // Handle Snake game cleanup
+  if (appName === "snake") {
+    snakeGame.gameRunning = false;
+    snakeGame.gameOver = true;
+    if (snakeGame.keyListenerAttached) {
+      document.removeEventListener('keydown', handleSnakeKeyPress);
+      snakeGame.keyListenerAttached = false;
+    }
+  }
+
   window.style.animation = "windowMinimize 0.25s ease forwards";
   setTimeout(() => {
     window.remove();
@@ -11957,7 +11973,7 @@ function openApp(appName, editorContent = "", filename = "") {
       content: `
         <div class="cloaking-container">
             <div class="cloaking-sidebar">
-                <div class="cloaking-nav-item active" onclick="switchCloakingTab('basic', this)">
+                                <div class="cloaking-nav-item active" onclick="switchCloakingTab('basic', this)">
                     <i class="fas fa-mask"></i>
                     <span>Basic Cloak</span>
                 </div>
@@ -11968,6 +11984,10 @@ function openApp(appName, editorContent = "", filename = "") {
                 <div class="cloaking-nav-item" onclick="switchCloakingTab('panic', this)">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Panic Key</span>
+                </div>
+                <div class="cloaking-nav-item" onclick="switchCloakingTab('anti-monitor', this)">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Anti-Monitoring</span>
                 </div>
                 <div class="cloaking-nav-item" onclick="switchCloakingTab('presets', this)">
                     <i class="fas fa-bookmark"></i>
@@ -12169,7 +12189,74 @@ alt="favicon">
                         </div>
                     </div>
                 </div>
-                
+                                <div class="cloaking-tab" data-tab="anti-monitor">
+                    <div class="cloaking-header">
+                        <h2><i class="fas fa-shield-alt"></i> Anti-Monitoring</h2>
+                        <p>Protect your privacy from admin-installed software</p>
+                    </div>
+                    
+                    <div class="cloaking-status-card">
+                        <div class="cloaking-status-indicator ${cloakingConfig.antiScreenMonitoring ? "active" : ""}">
+                            <div class="cloaking-status-icon">
+                                <i class="fas ${cloakingConfig.antiScreenMonitoring ? "fa-eye-slash" : "fa-eye"}"></i>
+                            </div>
+                            <div class="cloaking-status-text">
+                                <div class="cloaking-status-title">Screen Monitoring Detection</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.antiScreenMonitoring ? "Enabled - NautilusOS will black out when you switch tabs, preventing monitering software from viewing Nautilus" : "Disabled"}</div>
+                            </div>
+                            <div class="toggle-switch ${cloakingConfig.antiScreenMonitoring ? "active" : ""}" id="antiScreenMonitoringToggle" onclick="toggleAntiScreenMonitoring()"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="cloaking-status-card" style="margin-top: 1rem;">
+                        <div class="cloaking-status-indicator ${cloakingConfig.useAntiMonitorDelay ? "active" : ""}">
+                            <div class="cloaking-status-icon">
+                                <i class="fas ${cloakingConfig.useAntiMonitorDelay ? "fa-sliders-h" : "fa-times-circle"}"></i>
+                            </div>
+                            <div class="cloaking-status-text">
+                                <div class="cloaking-status-title">Use Unblack Delay</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.useAntiMonitorDelay ? "Enabled - Screen will stay black for the configured delay" : "Disabled"}</div>
+                            </div>
+                            <div class="toggle-switch ${cloakingConfig.useAntiMonitorDelay ? "active" : ""}" id="useAntiMonitorDelayToggle" onclick="toggleAntiMonitorDelay()"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="cloaking-form-card" id="antiMonitorSettings" style="${cloakingConfig.useAntiMonitorDelay ? "" : "opacity: 0.5; pointer-events: none;"}">
+                        <div class="cloaking-form-group">
+                            <label class="cloaking-label">
+                                <i class="fas fa-hourglass-end"></i> Unblack Delay (milliseconds)
+                            </label>
+                            <div class="cloaking-slider-group">
+                                <input 
+                                    type="range" 
+                                    id="antiMonitorDelay" 
+                                    class="cloaking-slider"
+                                    min="100"
+                                    max="5000"
+                                    step="100"
+                                    value="${cloakingConfig.antiMonitorDelay}"
+                                    oninput="updateAntiMonitorDelayDisplay(this.value)"
+                                >
+                                <span class="cloaking-slider-value" id="antiMonitorDelayValue">${cloakingConfig.antiMonitorDelay}ms</span>
+                            </div>
+                            <div class="cloaking-hint">How long NautilusOS stays blacked out after you switch back to this tab (delays unblacking.) Helpful if you cycle through tabs</div>
+                        </div>
+                    </div>
+                    
+                    <div class="cloaking-status-card" style="margin-top: 2rem;">
+                        <div class="cloaking-status-indicator ${cloakingConfig.confirmPageClosing ? "active" : ""}">
+                            <div class="cloaking-status-icon">
+                                <i class="fas ${cloakingConfig.confirmPageClosing ? "fa-check-circle" : "fa-times-circle"}"></i>
+                            </div>
+                            <div class="cloaking-status-text">
+                                <div class="cloaking-status-title">Confirm Page Closing</div>
+                                <div class="cloaking-status-desc">${cloakingConfig.confirmPageClosing ? "Enabled - Alert will show to confirm page close before closing, preventing admin-installed software from remotely closing your tab" : "Disabled"}</div>
+                            </div>
+                            <div class="toggle-switch ${cloakingConfig.confirmPageClosing ? "active" : ""}" id="confirmPageClosingToggle" onclick="toggleConfirmPageClosing()"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="cloaking-tab" data-tab="presets">
                     <div class="cloaking-header">
                         <h2><i class="fas fa-bookmark"></i> Quick Presets</h2>
@@ -12769,92 +12856,70 @@ alt="favicon">
     help: {
       title: "Help",
       icon: "fas fa-question-circle",
-      content: `
-        <div class="help-topics-container">
-            <div class="help-topics-grid" id="helpTopicsGrid">
-                <div class="help-topic-card" onclick="expandHelpTopic('welcome')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-info-circle"></i>
-                    </div>
-                    <div class="help-topic-title">Welcome</div>
-                    <div class="help-topic-preview">Introduction to NautilusOS</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('cloaking')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-mask"></i>
-                    </div>
-                    <div class="help-topic-title">Cloaking</div>
-                    <div class="help-topic-preview">Tab disguise features</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('boot')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-power-off"></i>
-                    </div>
-                    <div class="help-topic-title">Boot Options</div>
-                    <div class="help-topic-preview">Graphical vs command-line</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('apps')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-th"></i>
-                    </div>
-                    <div class="help-topic-title">Applications</div>
-                    <div class="help-topic-preview">Built-in apps guide</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('desktop')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-desktop"></i>
-                    </div>
-                    <div class="help-topic-title">Desktop</div>
-                    <div class="help-topic-preview">Icons, taskbar & windows</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('notifications')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-bell"></i>
-                    </div>
-                    <div class="help-topic-title">Notifications</div>
-                    <div class="help-topic-preview">Quick actions & alerts</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('screenshots')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-camera"></i>
-                    </div>
-                    <div class="help-topic-title">Screenshots</div>
-                    <div class="help-topic-preview">Capture your desktop</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('settings')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-cog"></i>
-                    </div>
-                    <div class="help-topic-title">Settings</div>
-                    <div class="help-topic-preview">Customize your experience</div>
-                </div>
-                
-                <div class="help-topic-card" onclick="expandHelpTopic('tips')">
-                    <div class="help-topic-icon">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <div class="help-topic-title">Tips & Tricks</div>
-                    <div class="help-topic-preview">Pro user shortcuts</div>
-                </div>
+      content: (() => {
+      // Base (static) help topics we always want present
+      const baseTopics = [
+        { id: 'welcome', icon: 'fa-info-circle', title: 'Welcome', preview: 'Introduction to NautilusOS' },
+        { id: 'cloaking', icon: 'fa-mask', title: 'Cloaking', preview: 'Tab disguise features' },
+        { id: 'boot', icon: 'fa-power-off', title: 'Boot Options', preview: 'Graphical vs command-line' },
+        { id: 'apps', icon: 'fa-th', title: 'Applications', preview: 'Built-in apps guide' },
+        { id: 'desktop', icon: 'fa-desktop', title: 'Desktop', preview: 'Icons, taskbar & windows' },
+        { id: 'notifications', icon: 'fa-bell', title: 'Notifications', preview: 'Quick actions & alerts' },
+        { id: 'screenshots', icon: 'fa-camera', title: 'Screenshots', preview: 'Capture your desktop' },
+        { id: 'settings', icon: 'fa-cog', title: 'Settings', preview: 'Customize your experience' },
+        { id: 'tips', icon: 'fa-lightbulb', title: 'Tips & Tricks', preview: 'Pro user shortcuts' }
+      ];
+
+      // Build a set of ids/titles already present so we can add missing apps
+      const existingIds = new Set(baseTopics.map(t => t.id));
+
+      // Generate app topics for any app in appMetadata that isn't already covered
+      const appTopics = [];
+      try {
+        for (const key in appMetadata) {
+        if (!Object.prototype.hasOwnProperty.call(appMetadata, key)) continue;
+        const meta = appMetadata[key];
+        // normalize id/title keys we already used
+        const normalized = key.replace(/[^a-z0-9\-]/gi, '').toLowerCase();
+        if (existingIds.has(normalized) || existingIds.has(meta.name.toLowerCase())) continue;
+        // skip the Help topic itself
+        if (key === 'help') continue;
+
+        appTopics.push({ id: `app-${normalized}`, icon: (meta.icon ? meta.icon : 'fa-question-circle'), title: meta.name, preview: meta.preinstalled ? 'Preinstalled app' : 'Optional app' });
+        }
+      } catch (e) {
+        console.error('Error building dynamic help topics', e);
+      }
+
+      const topics = baseTopics.concat(appTopics);
+
+      const topicCards = topics.map(t => `
+          <div class="help-topic-card" onclick="expandHelpTopic('${t.id}')">
+            <div class="help-topic-icon">
+              <i class="fas ${t.icon}"></i>
             </div>
-            
-            <div class="help-expanded-view" id="helpExpandedView">
-                <div class="help-expanded-header">
-                    <button class="help-back-btn" onclick="closeHelpTopic()">
-                        <i class="fas fa-arrow-left"></i> Back to Topics
-                    </button>
-                </div>
-                <div class="help-expanded-content" id="helpExpandedContent"></div>
-            </div>
+            <div class="help-topic-title">${t.title}</div>
+            <div class="help-topic-preview">${t.preview || ''}</div>
+          </div>
+        `).join('');
+
+      return `
+      <div class="help-topics-container">
+        <div class="help-topics-grid" id="helpTopicsGrid">
+          ${topicCards}
         </div>
-    `,
+
+        <div class="help-expanded-view" id="helpExpandedView">
+          <div class="help-expanded-header">
+            <button class="help-back-btn" onclick="closeHelpTopic()">
+              <i class="fas fa-arrow-left"></i> Back to Topics
+            </button>
+          </div>
+          <div class="help-expanded-content" id="helpExpandedContent"></div>
+        </div>
+      </div>
+      `;
+      })(),
       noPadding: true,
       width: 900,
       height: 600,
@@ -13185,7 +13250,7 @@ alt="favicon">
     </div>
     <div class="carousel-content">
         <h2>Advanced Tab Cloaking</h2>
-        <p>Stay under the radar with powerful disguise tools! Auto-rotate through multiple tab disguises, set custom rotation speeds, configure panic keys for instant redirects, and use preset templates for popular sites like Google Classroom and Drive.</p>
+        <p>Stay under the radar with powerful disguise tools! Auto-rotate through multiple tab disguises, change what blocking extensions see when you're not on Nautilus, prevent remote tab closing, configure panic keys for instant redirects, and more!</p>
     </div>
 </div>
 
@@ -13628,7 +13693,7 @@ print(f'Sum: {sum(numbers)}')
                 <div style="color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">High Score</div>
                 <div id="snakeHighScore" style="color: var(--accent); font-size: 32px; font-weight: bold; font-family: fontb;">0</div>
               </div>
-              <button id="snakeStartBtn" class="editor-btn" onclick="startSnakeGame()" style="background: var(--accent); color: var(--bg-primary); border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: fontb;">Start Game</button>
+              <button id="snakeStartBtn" class="editor-btn" onclick="toggleSnakeGame()" style="background: var(--accent); color: var(--bg-primary); border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: fontb;">Start Game</button>
               
               <div style="color: var(--text-secondary); font-size: 11px; text-align: center; line-height: 1.6; margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border);">
                 <div style="margin-bottom: 8px;"><strong>Controls:</strong></div>
@@ -13809,8 +13874,8 @@ print(f'Sum: {sum(numbers)}')
                   <i class="fas fa-robot" style="color: var(--accent);"></i>
                   <span>Model:</span>
                   <select id="aiModelSelect" onchange="switchAIModel(this.value)" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 4px; padding: 4px 8px; color: var(--accent); cursor: pointer; font-size: 11px;">
-                    <option value="fast" selected>⚡ Dumb Fast</option>
-                    <option value="smart">🧠 Smart Slow</option>
+                    <option value="fast" selected><i class="fas fa-bolt"></i> Dumb Fast</option>
+                    <option value="smart"><i class="fa-solid fa-brain"></i> Smart Slow</option>
                   </select>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -13825,7 +13890,7 @@ print(f'Sum: {sum(numbers)}')
                 <i class="fas fa-cogs" style="color: var(--accent);"></i>
                 <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
                   <input type="checkbox" id="aiAutomationToggle" checked style="cursor: pointer;" onchange="nautilusAI.toolsEnabled = this.checked; showToast(this.checked ? 'OS Automation Enabled' : 'OS Automation Disabled', 'fa-cogs');">
-                  <span style="color: var(--accent); font-weight: bold;">🤖 Automation</span>
+                  <span style="color: var(--accent); font-weight: bold;"> Automation</span>
                 </label>
               </div>
             </div>
@@ -13841,9 +13906,9 @@ print(f'Sum: {sum(numbers)}')
                 Hello! I'm your Nautilus AI Assistant. I can help you understand and navigate NautilusOS.<br><br>
                 <strong style="color: var(--accent);"><i class="fas fa-brain"></i> Model: Smarty (Qwen3-0.6B)</strong><br>
                 Advanced reasoning with thinking mode enabled. Switch models in the dropdown if needed.<br><br>
-                <strong style="color: var(--accent);">🤖 OS Automation Enabled!</strong><br>
+                <strong style="color: var(--accent);"><i class="fa-solid fa-robot"></i> OS Automation Enabled!</strong><br>
                 I can control NautilusOS for you! I can open apps, run terminal commands, manage files, change settings, and more. Just ask me to do something and I'll request your approval before taking action.<br><br>
-                <strong style="color: var(--accent);">💭 Thinking Mode Active!</strong><br>
+                <strong style="color: var(--accent);"><i class="fa-solid fa-cloud"></i> Thinking Mode Active!</strong><br>
                 For complex tasks, I'll show my reasoning process in a collapsible "Thinking" section.<br><br>
                 Try: "Open calculator" or "Change theme to blue"
               </div>
@@ -13852,10 +13917,31 @@ print(f'Sum: {sum(numbers)}')
           
           <div style="background: rgba(15, 23, 42, 0.9); border-top: 2px solid rgba(125, 211, 192, 0.3); padding: 15px 20px;">
             <div style="display: flex; gap: 10px;">
-              <textarea id="aiInput" placeholder="Ask me anything about NautilusOS..." style="flex: 1; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; padding: 12px; color: #e2e8f0; font-size: 14px; resize: none; font-family: inherit; min-height: 50px; max-height: 150px;" rows="2"></textarea>
-              <button id="aiSendBtn" onclick="sendAiMessage()" style="background: var(--accent); border: none; border-radius: 8px; padding: 0 20px; cursor: pointer; color: #0f172a; font-weight: bold; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.background='var(--accent-hover)'" onmouseout="this.style.background='var(--accent)'">
-                <i class="fas fa-paper-plane"></i> Send
-              </button>
+              <textarea id="aiInput" placeholder="Ask me anything about NautilusOS..." style="flex: 1; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; padding: 12px; color: #e2e8f0; font-size: 14px; resize: none; font-family: inherit; min-height: 25px; max-height: 150px;" rows="1"></textarea>
+              <button
+  id="aiSendBtn"
+  onclick="sendAiMessage()"
+  style="
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    height: 45px;              
+    display: inline-flex;      
+    align-items: center;       
+    gap: 6px;                  
+    cursor: pointer;
+    color: #0f172a;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.2s; 
+  "
+  onmouseover="this.style.background='var(--accent-hover)'"
+  onmouseout="this.style.background='var(--accent)'"
+>
+  <i class="fas fa-paper-plane"></i> Send
+</button>
+
             </div>
             <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
               <button onclick="sendQuickQuestion('What apps are available in NautilusOS?')" style="background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); color: var(--accent); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
@@ -17404,8 +17490,25 @@ let snakeGame = {
   gridSize: 20,
   tileCount: 20,
   gameSpeed: 100,
-  highScore: localStorage.getItem('snakeHighScore') ? parseInt(localStorage.getItem('snakeHighScore')) : 0
+  highScore: localStorage.getItem('snakeHighScore') ? parseInt(localStorage.getItem('snakeHighScore')) : 0,
+  keyListenerAttached: false
 };
+
+function toggleSnakeGame() {
+  if (!snakeGame.gameRunning && !snakeGame.gameOver) {
+    // Game hasn't started yet
+    startSnakeGame();
+  } else if (snakeGame.gameRunning && !snakeGame.gamePaused) {
+    // Game is running, pause it
+    snakeGame.gamePaused = true;
+    document.getElementById('snakeStartBtn').textContent = 'Resume';
+  } else if (snakeGame.gamePaused) {
+    // Game is paused, resume it
+    snakeGame.gamePaused = false;
+    document.getElementById('snakeStartBtn').textContent = 'Pause';
+    gameLoop();
+  }
+}
 
 function startSnakeGame() {
   if (!snakeGame.canvas) {
@@ -17438,11 +17541,15 @@ function startSnakeGame() {
 }
 
 function attachSnakeKeyListeners() {
+  if (snakeGame.keyListenerAttached) return;
+  snakeGame.keyListenerAttached = true;
   document.addEventListener('keydown', handleSnakeKeyPress);
 }
 
 function handleSnakeKeyPress(e) {
-  if (!snakeGame.gameRunning) return;
+  // Only handle input if snake game is running/paused AND the snake window is focused (highest z-index)
+  if (!snakeGame.gameRunning && !snakeGame.gameOver) return;
+  if (focusedWindow !== "snake") return;
 
   if (e.key === ' ') {
     e.preventDefault();
@@ -17584,7 +17691,10 @@ function endSnakeGame() {
 
   document.getElementById('snakeStartBtn').textContent = 'Start Game';
 
-  document.removeEventListener('keydown', handleSnakeKeyPress);
+  if (snakeGame.keyListenerAttached) {
+    document.removeEventListener('keydown', handleSnakeKeyPress);
+    snakeGame.keyListenerAttached = false;
+  }
 
   showToast('Game Over! Score: ' + snakeGame.score + ' | High Score: ' + snakeGame.highScore, 'fa-skull');
 }
@@ -19244,6 +19354,10 @@ let cloakingConfig = {
   panicKeyEnabled: false,
   panicKey: "Escape",
   panicUrl: "https://classroom.google.com",
+  antiScreenMonitoring: true,
+  antiMonitorDelay: 1000,
+  useAntiMonitorDelay: false,
+  confirmPageClosing: true,
 };
 let rotationInterval = null;
 const originalTitle = document.title;
@@ -20170,7 +20284,235 @@ function showProperties(appName, x, y) {
     }
   }, 0);
 }
+function toggleAntiScreenMonitoring() {
+  cloakingConfig.antiScreenMonitoring = !cloakingConfig.antiScreenMonitoring;
+  saveCloakingConfig();
 
+  const toggle = document.getElementById("antiScreenMonitoringToggle");
+  const indicator = document.querySelector(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator'
+  );
+  const statusDesc = document.querySelector(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-desc'
+  );
+  const antiMonitorSettings = document.getElementById("antiMonitorSettings");
+
+  if (cloakingConfig.antiScreenMonitoring) {
+    if (toggle) toggle.classList.add("active");
+    if (indicator) indicator.classList.add("active");
+    if (statusDesc) statusDesc.textContent = "Enabled - NautilusOS will black out when you switch tabs";
+    if (antiMonitorSettings) {
+      antiMonitorSettings.style.opacity = "1";
+      antiMonitorSettings.style.pointerEvents = "auto";
+    }
+    showToast("Anti-screen monitoring enabled!", "fa-shield-alt");
+    setupScreenMonitoringListener();
+  } else {
+    if (toggle) toggle.classList.remove("active");
+    if (indicator) indicator.classList.remove("active");
+    if (statusDesc) statusDesc.textContent = "Disabled";
+    if (antiMonitorSettings) {
+      antiMonitorSettings.style.opacity = "0.5";
+      antiMonitorSettings.style.pointerEvents = "none";
+    }
+    showToast("Anti-screen monitoring disabled", "fa-shield");
+    removeScreenMonitoringListener();
+  }
+}
+
+function updateAntiMonitorDelayDisplay(value) {
+  cloakingConfig.antiMonitorDelay = parseInt(value);
+  saveCloakingConfig();
+  const display = document.getElementById("antiMonitorDelayValue");
+  if (display) {
+    display.textContent = value + "ms";
+  }
+}
+
+function toggleAntiMonitorDelay() {
+  cloakingConfig.useAntiMonitorDelay = !cloakingConfig.useAntiMonitorDelay;
+  saveCloakingConfig();
+
+  const toggle = document.getElementById("useAntiMonitorDelayToggle");
+  const indicator = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator'
+  )[0];
+  const statusDesc = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-desc'
+  )[0];
+  const antiMonitorSettings = document.getElementById("antiMonitorSettings");
+
+  if (cloakingConfig.useAntiMonitorDelay) {
+    if (toggle) toggle.classList.add("active");
+    if (indicator) indicator.classList.add("active");
+    if (statusDesc) statusDesc.textContent = "Enabled - After switching back to Nautilus your screen will stay black briefly for the configured delay";
+    if (antiMonitorSettings) {
+      antiMonitorSettings.style.opacity = "1";
+      antiMonitorSettings.style.pointerEvents = "auto";
+    }
+    showToast("Unblack delay enabled!", "fa-sliders-h");
+  } else {
+    if (toggle) toggle.classList.remove("active");
+    if (indicator) indicator.classList.remove("active");
+    if (statusDesc) statusDesc.textContent = "Disabled";
+    if (antiMonitorSettings) {
+      antiMonitorSettings.style.opacity = "0.5";
+      antiMonitorSettings.style.pointerEvents = "none";
+    }
+    showToast("Unblack delay disabled!", "fa-times-circle");
+  }
+}
+
+function toggleConfirmPageClosing() {
+  cloakingConfig.confirmPageClosing = !cloakingConfig.confirmPageClosing;
+  saveCloakingConfig();
+
+  const toggle = document.getElementById("confirmPageClosingToggle");
+  const indicator = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator'
+  )[1];
+  const statusDesc = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-desc'
+  )[1];
+
+  if (cloakingConfig.confirmPageClosing) {
+    if (toggle) toggle.classList.add("active");
+    if (indicator) indicator.classList.add("active");
+    if (statusDesc) statusDesc.textContent = "Enabled - Alert will show before closing";
+    showToast("Page closing confirmation enabled!", "fa-check-circle");
+    setupPageClosingListener();
+  } else {
+    if (toggle) toggle.classList.remove("active");
+    if (indicator) indicator.classList.remove("active");
+    if (statusDesc) statusDesc.textContent = "Disabled";
+    showToast("Page closing confirmation disabled", "fa-times-circle");
+    removePageClosingListener();
+  }
+}
+
+let screenMonitoringListener = null;
+let pageClosingListener = null;
+let blackoutTimeout = null;
+
+function setupScreenMonitoringListener() {
+  if (screenMonitoringListener) return;
+  
+  screenMonitoringListener = () => {
+    if (!cloakingConfig.antiScreenMonitoring) return;
+    
+    // Determine current focused window (if any)
+    const currentFocused = typeof focusedWindow !== 'undefined' ? focusedWindow : null;
+
+    // If we've already shown a blackout for this focused app, don't recreate it repeatedly
+    if (screenMonitoringListener.lastShownForApp && screenMonitoringListener.lastShownForApp === currentFocused) {
+      return;
+    }
+
+    // If focus is back on the cloaking window or nothing to protect, clear lastShownForApp and bail
+    if (!document.hidden && (!currentFocused || currentFocused === 'cloaking' || !windows["cloaking"])) {
+      screenMonitoringListener.lastShownForApp = null;
+      return;
+    }
+
+    // If an overlay already exists, a previous trigger is still active — keep it
+    const existingOverlay = document.getElementById("screenMonitoringBlackout");
+    if (existingOverlay) {
+      // Do not recreate or remove it here; let the original timeout handle cleanup
+      return;
+    }
+    
+    // Create a fullscreen blackout overlay using the same method as the integrity check
+    const blackoutOverlay = document.createElement("div");
+    blackoutOverlay.id = "screenMonitoringBlackout";
+    blackoutOverlay.style.cssText = "position:fixed;inset:0;background:var(--pure-black);z-index:99999;display:block;";
+    document.body.appendChild(blackoutOverlay);
+    // Record which app we showed the blackout for so we don't spam it repeatedly
+    screenMonitoringListener.lastShownForApp = currentFocused || 'hidden';
+    
+    // If delay is disabled, remove immediately, otherwise use the delay
+    if (!cloakingConfig.useAntiMonitorDelay) {
+      blackoutTimeout = setTimeout(() => {
+        const overlay = document.getElementById("screenMonitoringBlackout");
+        if (overlay) {
+          overlay.remove();
+        }
+      }, 0);
+    } else {
+      blackoutTimeout = setTimeout(() => {
+        const overlay = document.getElementById("screenMonitoringBlackout");
+        if (overlay) {
+          overlay.remove();
+        }
+      }, cloakingConfig.antiMonitorDelay);
+    }
+  };
+  
+  window.addEventListener("visibilitychange", screenMonitoringListener);
+  window.addEventListener("blur", screenMonitoringListener);
+  
+  // Also monitor for when another window gets focus (higher z-index)
+  let focusCheckInterval = setInterval(() => {
+    if (!cloakingConfig.antiScreenMonitoring) {
+      clearInterval(focusCheckInterval);
+      return;
+    }
+    
+    // If cloaking window is not the focused window, show the blackout
+    if (focusedWindow && focusedWindow !== "cloaking" && windows["cloaking"]) {
+      screenMonitoringListener();
+    } else {
+      // If cloaking regained focus, clear the last shown marker so future switches will trigger again
+      if (focusedWindow === "cloaking" || !windows["cloaking"]) {
+        if (screenMonitoringListener && screenMonitoringListener.lastShownForApp) screenMonitoringListener.lastShownForApp = null;
+      }
+    }
+  }, 300);
+  
+  // Store the interval ID so we can clear it later
+  screenMonitoringListener.focusCheckInterval = focusCheckInterval;
+}
+
+function removeScreenMonitoringListener() {
+  if (screenMonitoringListener) {
+    window.removeEventListener("visibilitychange", screenMonitoringListener);
+    window.removeEventListener("blur", screenMonitoringListener);
+    
+    // Clear the focus check interval if it exists
+    if (screenMonitoringListener.focusCheckInterval) {
+      clearInterval(screenMonitoringListener.focusCheckInterval);
+    }
+    
+    screenMonitoringListener = null;
+  }
+  if (blackoutTimeout) {
+    clearTimeout(blackoutTimeout);
+    blackoutTimeout = null;
+  }
+}
+
+function setupPageClosingListener() {
+  if (pageClosingListener) return;
+  
+  pageClosingListener = (e) => {
+    if (!cloakingConfig.confirmPageClosing) return;
+    
+    e.preventDefault();
+    e.returnValue = "Are you sure you want to leave? You have unsaved changes.";
+    return e.returnValue;
+  };
+  
+  window.addEventListener("beforeunload", pageClosingListener);
+}
+
+function removePageClosingListener() {
+  if (pageClosingListener) {
+    window.removeEventListener("beforeunload", pageClosingListener);
+    pageClosingListener = null;
+  }
+}
+
+if (cloakingConfig.antiScreenMonitoring) setupScreenMonitoringListener();
+if (cloakingConfig.confirmPageClosing) setupPageClosingListener();
 function hideProperties() {
   const tooltip = document.getElementById("propertiesTooltip");
   tooltip.classList.remove("active");
@@ -20241,9 +20583,9 @@ function updateLoginWithAccounts(accounts) {
     if (loginSubtitle) {
       loginSubtitle.innerHTML = `
         <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Select an account:</div>
-        <div id="accountSelector" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 200px; overflow-y: auto;">
+        <div id="accountSelector" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: -15px; margin-top: 20px; max-height: 200px; overflow-y: auto;">
           ${accounts.map(acc => `
-            <div class="account-select-item" onclick="selectLoginAccount('${acc.username}')" style="padding: 0.75rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.75rem;">
+            <div class="account-select-item" onclick="selectLoginAccount('${acc.username}')" style="padding: 0.5rem 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.75rem;">
               <i class="fas fa-user" style="color: var(--accent);"></i>
               <div style="flex: 1;">
                 <div style="color: var(--text-primary); font-family: fontb;">${acc.username}</div>
@@ -20285,7 +20627,7 @@ function selectLoginAccount(username) {
   // Update subtitle
   if (loginSubtitle) {
     loginSubtitle.innerHTML = account.isPasswordless ?
-      `<a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer;">← Back to account list</a>` :
+      `<a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer;"><i class="fa-solid fa-arrow-left"></i> Back to account list</a>` :
       `Enter password for ${username} <a href="#" onclick="event.preventDefault(); updateLoginScreen();" style="color: var(--accent); text-decoration: underline; cursor: pointer; margin-left: 0.5rem;">← Back</a>`;
   }
 
@@ -22699,7 +23041,7 @@ const OS_AUTOMATION_TOOLS = {
 
 const NAUTILUS_SYSTEM_PROMPT = `You are the Nautilus AI Assistant, an expert guide for NautilusOS - a web-based operating system built entirely in HTML, CSS, and JavaScript.
 
-🤖 OS AUTOMATION CAPABILITIES:
+<i class="fa-solid fa-robot"></i> OS AUTOMATION CAPABILITIES:
 You have the ability to control and automate NautilusOS! You can execute actions on behalf of the user with their approval.
 
 IMPORTANT: When you want to perform an action, output a JSON object in your response with this structure:
@@ -23463,9 +23805,9 @@ function clearAiChat() {
       <div style="color: #cbd5e1; line-height: 1.6;">
         Hello! I'm your Nautilus AI Assistant. I can help you understand and navigate NautilusOS.<br><br>
         <strong style="color: var(--accent);"><i class="fas ${currentModelConfig.icon}"></i> Using: ${currentModelConfig.label}</strong> - ${currentModelConfig.description}<br><br>
-        <strong style="color: var(--accent);">🤖 OS Automation Enabled!</strong><br>
+        <strong style="color: var(--accent);"><i class="fa-solid fa-robot"></i>&nbsp;OS Automation Enabled!</strong><br>
         I can control NautilusOS for you! Just ask me to do something and I'll request your approval before taking action.<br><br>
-        <strong style="color: var(--accent);">💭 Thinking Mode Active!</strong><br>
+        <strong style="color: var(--accent);"><i class="fa-solid fa-cloud"></i> Thinking Mode Active!</strong><br>
         I can show my reasoning process for complex tasks. Watch for the collapsible "Thinking" section!<br><br>
         Try: "Open calculator" or "List available themes"
       </div>
@@ -24317,6 +24659,15 @@ document.addEventListener('keydown', (e) => {
       aiInput.style.height = 'auto';
       aiInput.style.height = Math.min(aiInput.scrollHeight, 150) + 'px';
     }, 0);
+  }
+  const focusedElement = document.activeElement;
+  const isTyping = focusedElement.tagName === 'INPUT' || 
+                   focusedElement.tagName === 'TEXTAREA' || 
+                   focusedElement.tagName === 'SELECT' ||
+                   focusedElement.isContentEditable;
+
+  if (isTyping || document.hidden) {
+    return; 
   }
 });
 
