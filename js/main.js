@@ -619,8 +619,15 @@ function checkFileProtocol(title = null) {
   return true;
 }
 
+let toastQueue = [];
+let isSystemLoggedIn = false;
+
 function showToast(message, icon = "fa-info-circle") {
-  console.log(`[TOAST LOG] ${new Date().toISOString()}: ${message} (icon: ${icon})`);
+  if (!isSystemLoggedIn) {
+    toastQueue.push({ message, icon });
+    return;
+  }
+
   const container = document.getElementById("toastContainer");
   const toast = document.createElement("div");
   toast.className = "toast";
@@ -2025,6 +2032,9 @@ function login() {
     unlockEasterEgg("dev-mode");
   }
 
+  isSystemLoggedIn = true;
+  toastQueue.forEach(t => showToast(t.message, t.icon));
+  toastQueue = [];
   showToast("Welcome back, " + username + "!", "fa-circle-check");
   var event = new CustomEvent('Login Success');
   window.dispatchEvent(event);
@@ -4057,43 +4067,43 @@ alt="favicon">
       title: "Help",
       icon: "fas fa-question-circle",
       content: (() => {
-      // Base (static) help topics we always want present
-      const baseTopics = [
-        { id: 'welcome', icon: 'fa-info-circle', title: 'Welcome', preview: 'Introduction to NautilusOS' },
-        { id: 'cloaking', icon: 'fa-mask', title: 'Cloaking', preview: 'Tab disguise features' },
-        { id: 'boot', icon: 'fa-power-off', title: 'Boot Options', preview: 'Graphical vs command-line' },
-        { id: 'apps', icon: 'fa-th', title: 'Applications', preview: 'Built-in apps guide' },
-        { id: 'desktop', icon: 'fa-desktop', title: 'Desktop', preview: 'Icons, taskbar & windows' },
-        { id: 'notifications', icon: 'fa-bell', title: 'Notifications', preview: 'Quick actions & alerts' },
-        { id: 'screenshots', icon: 'fa-camera', title: 'Screenshots', preview: 'Capture your desktop' },
-        { id: 'settings', icon: 'fa-cog', title: 'Settings', preview: 'Customize your experience' },
-        { id: 'tips', icon: 'fa-lightbulb', title: 'Tips & Tricks', preview: 'Pro user shortcuts' }
-      ];
+        // Base (static) help topics we always want present
+        const baseTopics = [
+          { id: 'welcome', icon: 'fa-info-circle', title: 'Welcome', preview: 'Introduction to NautilusOS' },
+          { id: 'cloaking', icon: 'fa-mask', title: 'Cloaking', preview: 'Tab disguise features' },
+          { id: 'boot', icon: 'fa-power-off', title: 'Boot Options', preview: 'Graphical vs command-line' },
+          { id: 'apps', icon: 'fa-th', title: 'Applications', preview: 'Built-in apps guide' },
+          { id: 'desktop', icon: 'fa-desktop', title: 'Desktop', preview: 'Icons, taskbar & windows' },
+          { id: 'notifications', icon: 'fa-bell', title: 'Notifications', preview: 'Quick actions & alerts' },
+          { id: 'screenshots', icon: 'fa-camera', title: 'Screenshots', preview: 'Capture your desktop' },
+          { id: 'settings', icon: 'fa-cog', title: 'Settings', preview: 'Customize your experience' },
+          { id: 'tips', icon: 'fa-lightbulb', title: 'Tips & Tricks', preview: 'Pro user shortcuts' }
+        ];
 
-      // Build a set of ids/titles already present so we can add missing apps
-      const existingIds = new Set(baseTopics.map(t => t.id));
+        // Build a set of ids/titles already present so we can add missing apps
+        const existingIds = new Set(baseTopics.map(t => t.id));
 
-      // Generate app topics for any app in appMetadata that isn't already covered
-      const appTopics = [];
-      try {
-        for (const key in appMetadata) {
-        if (!Object.prototype.hasOwnProperty.call(appMetadata, key)) continue;
-        const meta = appMetadata[key];
-        // normalize id/title keys we already used
-        const normalized = key.replace(/[^a-z0-9\-]/gi, '').toLowerCase();
-        if (existingIds.has(normalized) || existingIds.has(meta.name.toLowerCase())) continue;
-        // skip the Help topic itself
-        if (key === 'help') continue;
+        // Generate app topics for any app in appMetadata that isn't already covered
+        const appTopics = [];
+        try {
+          for (const key in appMetadata) {
+            if (!Object.prototype.hasOwnProperty.call(appMetadata, key)) continue;
+            const meta = appMetadata[key];
+            // normalize id/title keys we already used
+            const normalized = key.replace(/[^a-z0-9\-]/gi, '').toLowerCase();
+            if (existingIds.has(normalized) || existingIds.has(meta.name.toLowerCase())) continue;
+            // skip the Help topic itself
+            if (key === 'help') continue;
 
-        appTopics.push({ id: `app-${normalized}`, icon: (meta.icon ? meta.icon : 'fa-question-circle'), title: meta.name, preview: meta.preinstalled ? 'Preinstalled app' : 'Optional app' });
+            appTopics.push({ id: `app-${normalized}`, icon: (meta.icon ? meta.icon : 'fa-question-circle'), title: meta.name, preview: meta.preinstalled ? 'Preinstalled app' : 'Optional app' });
+          }
+        } catch (e) {
+          console.error('Error building dynamic help topics', e);
         }
-      } catch (e) {
-        console.error('Error building dynamic help topics', e);
-      }
 
-      const topics = baseTopics.concat(appTopics);
+        const topics = baseTopics.concat(appTopics);
 
-      const topicCards = topics.map(t => `
+        const topicCards = topics.map(t => `
           <div class="help-topic-card" onclick="expandHelpTopic('${t.id}')">
             <div class="help-topic-icon">
               <i class="fas ${t.icon}"></i>
@@ -4103,7 +4113,7 @@ alt="favicon">
           </div>
         `).join('');
 
-      return `
+        return `
       <div class="help-topics-container">
         <div class="help-topics-grid" id="helpTopicsGrid">
           ${topicCards}
@@ -4131,7 +4141,7 @@ alt="favicon">
               <div class="whats-new-content">
                   <center>
                   <div class="whats-new-header">
-                      <h1 style="text-align: center !important">Welcome to NautilusOS v1.0! <br>What's new?</h1>
+                      <h1 style="text-align: center !important; font-size: 2rem; margin-bottom: 0.5rem; line-height: 1.2;">Welcome to NautilusOS <br>v1.0! What's new?</h1>
                       <p>Discover the latest features and improvements</p>
                   </div>
                   </center>
@@ -11431,6 +11441,44 @@ window.openApp = openApp = function (appName, ...args) {
         panicDisplay.textContent =
           cloakingConfig.panicKey || "Click to set hotkey";
       }
+
+      // Initialize Anti-Monitoring Toggles
+      if (cloakingConfig.antiScreenMonitoring) {
+        const amToggle = document.getElementById("antiScreenMonitoringToggle");
+        const amIndicator = document.querySelectorAll('.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator')[0];
+        if (amToggle) amToggle.classList.add("active");
+        if (amIndicator) amIndicator.classList.add("active");
+        const amSettings = document.getElementById("antiMonitorSettings");
+        if (amSettings) {
+          amSettings.style.opacity = "1";
+          amSettings.style.pointerEvents = "auto";
+        }
+      }
+
+      if (cloakingConfig.useAntiMonitorDelay) {
+        const delayToggle = document.getElementById("useAntiMonitorDelayToggle");
+        const delayIndicator = document.querySelectorAll('.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator')[1];
+        const delayIcon = document.querySelectorAll('.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-icon i')[1];
+        if (delayToggle) delayToggle.classList.add("active");
+        if (delayIndicator) delayIndicator.classList.add("active");
+        if (delayIcon) delayIcon.className = "fas fa-check-circle";
+      }
+
+      if (cloakingConfig.confirmPageClosing) {
+        const confirmToggle = document.getElementById("confirmPageClosingToggle");
+        const confirmIndicator = document.querySelectorAll('.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator')[2];
+        const confirmIcon = document.querySelectorAll('.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-icon i')[2];
+        if (confirmToggle) confirmToggle.classList.add("active");
+        if (confirmIndicator) confirmIndicator.classList.add("active");
+        if (confirmIcon) confirmIcon.className = "fas fa-check-circle";
+      }
+
+      const delayInput = document.getElementById("antiMonitorDelay");
+      if (delayInput) {
+        delayInput.value = cloakingConfig.antiMonitorDelay;
+        updateAntiMonitorDelayDisplay(cloakingConfig.antiMonitorDelay);
+      }
+
       updateCloakPreview();
     }, 100);
   }
@@ -11536,16 +11584,22 @@ function toggleAntiMonitorDelay() {
   const toggle = document.getElementById("useAntiMonitorDelayToggle");
   const indicator = document.querySelectorAll(
     '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator'
-  )[0];
+  )[1];
   const statusDesc = document.querySelectorAll(
     '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-desc'
-  )[0];
+  )[1];
+  const icon = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-icon i'
+  )[1];
   const antiMonitorSettings = document.getElementById("antiMonitorSettings");
 
   if (cloakingConfig.useAntiMonitorDelay) {
     if (toggle) toggle.classList.add("active");
     if (indicator) indicator.classList.add("active");
     if (statusDesc) statusDesc.textContent = "Enabled - After switching back to Nautilus your screen will stay black briefly for the configured delay";
+    if (icon) {
+      icon.className = "fas fa-check-circle";
+    }
     if (antiMonitorSettings) {
       antiMonitorSettings.style.opacity = "1";
       antiMonitorSettings.style.pointerEvents = "auto";
@@ -11555,6 +11609,9 @@ function toggleAntiMonitorDelay() {
     if (toggle) toggle.classList.remove("active");
     if (indicator) indicator.classList.remove("active");
     if (statusDesc) statusDesc.textContent = "Disabled";
+    if (icon) {
+      icon.className = "fas fa-times-circle";
+    }
     if (antiMonitorSettings) {
       antiMonitorSettings.style.opacity = "0.5";
       antiMonitorSettings.style.pointerEvents = "none";
@@ -11570,21 +11627,30 @@ function toggleConfirmPageClosing() {
   const toggle = document.getElementById("confirmPageClosingToggle");
   const indicator = document.querySelectorAll(
     '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-indicator'
-  )[1];
+  )[2];
   const statusDesc = document.querySelectorAll(
     '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-desc'
-  )[1];
+  )[2];
+  const icon = document.querySelectorAll(
+    '.cloaking-tab[data-tab="anti-monitor"] .cloaking-status-icon i'
+  )[2];
 
   if (cloakingConfig.confirmPageClosing) {
     if (toggle) toggle.classList.add("active");
     if (indicator) indicator.classList.add("active");
     if (statusDesc) statusDesc.textContent = "Enabled - Alert will show before closing";
+    if (icon) {
+      icon.className = "fas fa-check-circle";
+    }
     showToast("Page closing confirmation enabled!", "fa-check-circle");
     setupPageClosingListener();
   } else {
     if (toggle) toggle.classList.remove("active");
     if (indicator) indicator.classList.remove("active");
     if (statusDesc) statusDesc.textContent = "Disabled";
+    if (icon) {
+      icon.className = "fas fa-times-circle";
+    }
     showToast("Page closing confirmation disabled", "fa-times-circle");
     removePageClosingListener();
   }
@@ -11596,10 +11662,10 @@ let blackoutTimeout = null;
 
 function setupScreenMonitoringListener() {
   if (screenMonitoringListener) return;
-  
+
   screenMonitoringListener = () => {
     if (!cloakingConfig.antiScreenMonitoring) return;
-    
+
     // Determine current focused window (if any)
     const currentFocused = typeof focusedWindow !== 'undefined' ? focusedWindow : null;
 
@@ -11620,7 +11686,7 @@ function setupScreenMonitoringListener() {
       // Do not recreate or remove it here; let the original timeout handle cleanup
       return;
     }
-    
+
     // Create a fullscreen blackout overlay using the same method as the integrity check
     const blackoutOverlay = document.createElement("div");
     blackoutOverlay.id = "screenMonitoringBlackout";
@@ -11628,7 +11694,7 @@ function setupScreenMonitoringListener() {
     document.body.appendChild(blackoutOverlay);
     // Record which app we showed the blackout for so we don't spam it repeatedly
     screenMonitoringListener.lastShownForApp = currentFocused || 'hidden';
-    
+
     // If delay is disabled, remove immediately, otherwise use the delay
     if (!cloakingConfig.useAntiMonitorDelay) {
       blackoutTimeout = setTimeout(() => {
@@ -11646,17 +11712,17 @@ function setupScreenMonitoringListener() {
       }, cloakingConfig.antiMonitorDelay);
     }
   };
-  
+
   window.addEventListener("visibilitychange", screenMonitoringListener);
   window.addEventListener("blur", screenMonitoringListener);
-  
+
   // Also monitor for when another window gets focus (higher z-index)
   let focusCheckInterval = setInterval(() => {
     if (!cloakingConfig.antiScreenMonitoring) {
       clearInterval(focusCheckInterval);
       return;
     }
-    
+
     // If cloaking window is not the focused window, show the blackout
     if (focusedWindow && focusedWindow !== "cloaking" && windows["cloaking"]) {
       screenMonitoringListener();
@@ -11667,7 +11733,7 @@ function setupScreenMonitoringListener() {
       }
     }
   }, 300);
-  
+
   // Store the interval ID so we can clear it later
   screenMonitoringListener.focusCheckInterval = focusCheckInterval;
 }
@@ -11676,12 +11742,12 @@ function removeScreenMonitoringListener() {
   if (screenMonitoringListener) {
     window.removeEventListener("visibilitychange", screenMonitoringListener);
     window.removeEventListener("blur", screenMonitoringListener);
-    
+
     // Clear the focus check interval if it exists
     if (screenMonitoringListener.focusCheckInterval) {
       clearInterval(screenMonitoringListener.focusCheckInterval);
     }
-    
+
     screenMonitoringListener = null;
   }
   if (blackoutTimeout) {
@@ -11692,15 +11758,15 @@ function removeScreenMonitoringListener() {
 
 function setupPageClosingListener() {
   if (pageClosingListener) return;
-  
+
   pageClosingListener = (e) => {
     if (!cloakingConfig.confirmPageClosing) return;
-    
+
     e.preventDefault();
     e.returnValue = "Are you sure you want to leave? You have unsaved changes.";
     return e.returnValue;
   };
-  
+
   window.addEventListener("beforeunload", pageClosingListener);
 }
 
@@ -15861,13 +15927,13 @@ document.addEventListener('keydown', (e) => {
     }, 0);
   }
   const focusedElement = document.activeElement;
-  const isTyping = focusedElement.tagName === 'INPUT' || 
-                   focusedElement.tagName === 'TEXTAREA' || 
-                   focusedElement.tagName === 'SELECT' ||
-                   focusedElement.isContentEditable;
+  const isTyping = focusedElement.tagName === 'INPUT' ||
+    focusedElement.tagName === 'TEXTAREA' ||
+    focusedElement.tagName === 'SELECT' ||
+    focusedElement.isContentEditable;
 
   if (isTyping || document.hidden) {
-    return; 
+    return;
   }
 });
 
