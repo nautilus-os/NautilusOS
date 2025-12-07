@@ -6928,7 +6928,7 @@ select:focus {
     border: 1px solid var(--border);
     border-radius: 12px;
     margin-bottom: 1.5rem;
-    overflow: hidden;
+
 }
 
 .settings-card.danger {
@@ -6939,6 +6939,7 @@ select:focus {
     background: rgba(21, 25, 35, 0.8);
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--border);
+    border-radius: 12px 12px 0 0;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -7870,7 +7871,7 @@ select:focus {
     width: 350px;
     margin-left: 20px;
     padding: 10px 20px;
-    border-radius: 15px;
+    border-radius: 10px;
     border: none;
     background: var(--bg-primary);
     color: var(--text-primary);
@@ -7884,6 +7885,78 @@ select:focus {
     box-shadow: 0 0 0 2px var(--accent);
     background: var(--bg-secondary);
 }
+
+/* Custom Settings Dropdown */
+.custom-select {
+    position: relative;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.select-trigger:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
+}
+
+.select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    z-index: 9999999;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.select-options.show {
+    display: block;
+    animation: fadeIn 0.15s ease;
+}
+
+.select-option {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.select-option:hover {
+    background: rgba(125, 211, 192, 0.1);
+    color: var(--accent);
+}
+
+.select-option i {
+    width: 20px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.select-option:hover i {
+    color: var(--accent);
+}
+
+
 
 @import "https://unpkg.com/open-props";
 @import "https://unpkg.com/open-props/normalize.min.css";
@@ -9297,9 +9370,15 @@ async function saveFS(fs) {
   window.addEventListener("Login Success", function () {
     showToast("Files Loaded", "fa-check-circle");
   }, { once: true });
-  list = list.length == 0 ? compressFS(fileSystem) : list;
-  fileSystem = decompressFS(list);
-  await saveFS(fileSystem);
+  if (list.length == 0) {
+    // First boot or empty DB: Initialize with default FS and save
+    list = compressFS(fileSystem);
+    await saveFS(fileSystem); // Save the default FS to DB
+  } else {
+    // Data exists: Just decompress and load
+    fileSystem = decompressFS(list);
+    // NO redundant saveFS call here!
+  }
 })()
 let currentPath = [];
 let currentFile = null;
@@ -12610,50 +12689,60 @@ alt="favicon">
                         <span>Search Engine</span>
                     </div>
                     <div class="settings-card-body">
-                        <div class="settings-item">
-                            <p class="settings-description">The website all browsers will use to search. The default search engine is Brave.</p>
-                            <select style="margin-left: 10.1px; background: var(--bg-secondary) !important;">
-        <button>
-            <div>
-                <selectedcontent style="scale: 1.1;"></selectedcontent>
-                <svg style="scale: 1.8;" width="128" height="128" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="m7 10l5 5l5-5z" />
-                </svg>
-            </div>
-        </button>
-        <div>
-            <option value="https://search.brave.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://search.brave.com/search?q='); showToast('Search engine set to Brave', 'fa-solid fa-check')">
-                <div class="custom-option">
-                    <span class="option-text">Brave Search</span>
+                        <div class="settings-item" style="flex-direction: column; align-items: flex-start;">
+                            <p class="settings-description" style="margin-bottom: 0.5rem;">The website all browsers will use to search. The default search engine is Brave.</p>
+                            
+                            <div class="custom-select" id="searchEngineSelect">
+                                <div class="select-trigger" onclick="toggleSearchDropdown(this)">
+                                    <span id="currentSearchEngine">Brave Search</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="select-options">
+                                    <div class="select-option" onclick="selectSearchEngine('Brave Search', 'https://search.brave.com/search?q=')">
+                                        Brave Search
+                                    </div>
+                                    <div class="select-option" onclick="selectSearchEngine('Duck Duck Go', 'https://duckduckgo.com/search?q=')">
+                                        Duck Duck Go
+                                    </div>
+                                    <div class="select-option" onclick="selectSearchEngine('Google Search', 'https://www.google.com/search?q=')">
+                                        Google Search
+                                    </div>
+                                    <div class="select-option" onclick="selectSearchEngine('Bing', 'https://www.bing.com/search?q=')">
+                                        Bing
+                                    </div>
+                                    <div class="select-option" onclick="selectSearchEngine('Startpage', 'https://www.startpage.com/search?q=')">
+                                        Startpage
+                                    </div>
+                                    <div class="select-option" onclick="selectSearchEngine('Qwant', 'https://www.qwant.com/search?q=')">
+                                        Qwant
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </option>
-            <option value="https://duckduckgo.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://duckduckgo.com/search?q='); showToast('Search engine set to Duck Duck Go', 'fa-solid fa-check')">
-                <div class="custom-option">
-                    <span class="option-text">Duck Duck Go</span>
-                </div>
-            </option>
-            <option value="https://www.google.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://google.com/search?q='); showToast('Search engine set to Google', 'fa-solid fa-check')">
-                <div class="custom-option">
-                    <span class="option-text">Google Search</span>
-                </div>
-            </option>
-            <option value="https://www.bing.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://bing.com/search?q='); showToast('Search engine set to Bing', 'fa-solid fa-check')">
-                <div class="custom-option">
-                    <span class="option-text">Bing</span>
-                </div>
-            </option>
-            <option value="https://www.startpage.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://startpage.com/search?q='); showToast('Search engine set to Startpage', 'fa-solid fa-check')">
-                <div class="custom-option">
-                    <span class="option-text">Startpage</span>
-                </div>
-            </option>
-            <option value="https://www.qwant.com/search?q=" onclick="localStorage.setItem('nOS_searchEngine', 'https://qwant.com/search?q='); showToast('Search engine set to Qwant', 'fa-solid fa-check')">
-                <div class="custom-option">
-                    <span class="option-text">Qwant</span>
-                </div>
-            </option>
-        </div>
-    </select>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-network-wired"></i>
+                        <span>Network Configuration</span>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-item" style="flex-direction: column; align-items: flex-start;">
+                            <div class="settings-item-title" style="margin-bottom: 0.25rem;">Wisp Server URL</div>
+                            <p class="settings-description" style="margin-bottom: 0.5rem;">The WebSocket server used for proxying traffic.</p>
+                            <div style="display: flex; width: 100%; gap: 0.5rem;">
+                                <input type="text" 
+                                    class="searchEngineI" 
+                                    style="margin-left: 0; width: 100%;" 
+                                    id="wispUrlInput" 
+                                    value="${localStorage.getItem('nOS_wispUrl') || 'wss://webmath.help/wisp/'}"
+                                    placeholder="wss://..."
+                                    onchange="changeWispUrl(this.value)">
+                                <button class="settings-action-btn" onclick="resetWispUrl()" style="padding: 0 1rem; margin-left: 0.5rem;">
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -24825,6 +24914,39 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+// Proxy Settings Helpers
+function toggleSearchDropdown(trigger) {
+  const options = trigger.nextElementSibling;
+  options.classList.toggle('show');
+
+  // Close when clicking outside
+  document.addEventListener('click', function (e) {
+    if (!trigger.contains(e.target) && !options.contains(e.target)) {
+      options.classList.remove('show');
+    }
+  }, { once: true });
+}
+
+function selectSearchEngine(name, url) {
+  localStorage.setItem('nOS_searchEngine', url);
+  const label = document.getElementById('currentSearchEngine');
+  if (label) label.textContent = name;
+  showToast('Search engine set to ' + name, 'fa-check');
+}
+
+function changeWispUrl(url) {
+  localStorage.setItem('nOS_wispUrl', url);
+  showToast('Wisp URL updated', 'fa-check');
+}
+
+function resetWispUrl() {
+  const defaultUrl = 'wss://webmath.help/wisp/';
+  localStorage.setItem('nOS_wispUrl', defaultUrl);
+  const input = document.getElementById('wispUrlInput');
+  if (input) input.value = defaultUrl;
+  showToast('Wisp URL reset to default', 'fa-undo');
+}
 
 </script>
 
