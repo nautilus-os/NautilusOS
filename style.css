@@ -376,6 +376,7 @@ input {
     position: relative;
     overflow: hidden;
 }
+
 /* Snake Game Illustration */
 .illustration-snake {
     width: 260px;
@@ -921,6 +922,7 @@ input {
     border-radius: 2px;
     opacity: 0.4;
 }
+
 .illustration-taskmanager-process-fill {
     height: 100%;
     background: var(--accent);
@@ -3401,6 +3403,7 @@ select:focus {
         transform: scale(0);
         opacity: 0;
     }
+
     to {
         transform: scale(1);
         opacity: 1;
@@ -3408,35 +3411,74 @@ select:focus {
 }
 
 @keyframes tileMerge {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes slideLeft {
-    from { transform: translateX(110px); }
-    to { transform: translateX(0); }
+    from {
+        transform: translateX(110px);
+    }
+
+    to {
+        transform: translateX(0);
+    }
 }
 
 @keyframes slideRight {
-    from { transform: translateX(-110px); }
-    to { transform: translateX(0); }
+    from {
+        transform: translateX(-110px);
+    }
+
+    to {
+        transform: translateX(0);
+    }
 }
 
 @keyframes slideUp {
-    from { transform: translateY(110px); }
-    to { transform: translateY(0); }
+    from {
+        transform: translateY(110px);
+    }
+
+    to {
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideDown {
-    from { transform: translateY(-110px); }
-    to { transform: translateY(0); }
+    from {
+        transform: translateY(-110px);
+    }
+
+    to {
+        transform: translateY(0);
+    }
 }
 
 @keyframes scoreIncrease {
-    0% { transform: scale(1); color: var(--accent); }
-    50% { transform: scale(1.1); color: var(--success-green); }
-    100% { transform: scale(1); color: var(--accent); }
+    0% {
+        transform: scale(1);
+        color: var(--accent);
+    }
+
+    50% {
+        transform: scale(1.1);
+        color: var(--success-green);
+    }
+
+    100% {
+        transform: scale(1);
+        color: var(--accent);
+    }
 }
 
 .tile-new {
@@ -3468,9 +3510,20 @@ select:focus {
 }
 
 @keyframes scoreIncrease {
-    0% { transform: scale(1); color: var(--accent); }
-    50% { transform: scale(1.1); color: var(--success-green); }
-    100% { transform: scale(1); color: var(--accent); }
+    0% {
+        transform: scale(1);
+        color: var(--accent);
+    }
+
+    50% {
+        transform: scale(1.1);
+        color: var(--success-green);
+    }
+
+    100% {
+        transform: scale(1);
+        color: var(--accent);
+    }
 }
 
 .tile-new {
@@ -5792,7 +5845,7 @@ select:focus {
     border: 1px solid var(--border);
     border-radius: 12px;
     margin-bottom: 1.5rem;
-    overflow: hidden;
+
 }
 
 .settings-card.danger {
@@ -5803,6 +5856,7 @@ select:focus {
     background: rgba(21, 25, 35, 0.8);
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--border);
+    border-radius: 12px 12px 0 0;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -6734,7 +6788,7 @@ select:focus {
     width: 350px;
     margin-left: 20px;
     padding: 10px 20px;
-    border-radius: 15px;
+    border-radius: 10px;
     border: none;
     background: var(--bg-primary);
     color: var(--text-primary);
@@ -6748,6 +6802,78 @@ select:focus {
     box-shadow: 0 0 0 2px var(--accent);
     background: var(--bg-secondary);
 }
+
+/* Custom Settings Dropdown */
+.custom-select {
+    position: relative;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.select-trigger:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
+}
+
+.select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    z-index: 9999999;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.select-options.show {
+    display: block;
+    animation: fadeIn 0.15s ease;
+}
+
+.select-option {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.select-option:hover {
+    background: rgba(125, 211, 192, 0.1);
+    color: var(--accent);
+}
+
+.select-option i {
+    width: 20px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.select-option:hover i {
+    color: var(--accent);
+}
+
+
 
 @import "https://unpkg.com/open-props";
 @import "https://unpkg.com/open-props/normalize.min.css";
