@@ -3930,7 +3930,7 @@ alt="favicon">
                             <div class="settings-item-text">
                                 <div class="settings-item-title">Bypass File Protocol Warnings</div>
                                 <div class="settings-item-desc">
-                                    Allow browser features on file:// protocol. By enabling this, you agree to report any bugs as GitHub issues.
+                                    Allow experimental browser features on file:// protocol. By enabling this, you agree to report any bugs as GitHub issues.
                                     <a href="https://github.com/nautilus-os/NautilusOS/issues" target="_blank" style="color: var(--primary-blue); text-decoration: underline;">Report issues here</a>
                                 </div>
                             </div>
