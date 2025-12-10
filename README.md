@@ -68,6 +68,7 @@ Basically... a whole little OS in your browser :D
 - [x] Add a feature to confirm page closing to stop Securly, GoGuardian, Hapara etc.
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Window animation settings
+- [ ] add option to cloak on clickpoff in basic cloaking
 - [ ] Add previews to all apps and themes
 - [ ] Make music player search with itunes and play with ub youtube
 - [ ] Add a scramjet proxy (xor)
