@@ -5,6 +5,9 @@
 NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS.
 Boot it up, log in, and mess around like it’s a real desktop with proxies, games, apps, an app store, windows, a file explorer, taskbar, and more.
 
+NAUTILUS BLOCKED BY YOUR SCHOOL?? DOWNLOAD "index.html" from the NautilusOS-OneFile folder! Open up index.html and you'll have (most*) of Nautilus's features!
+
+*Nautilus Browser is disabled by default in the file, but you may reenable it in the expirmental settings under Advanced. The Ultraviolet browser will not work in the file, unfortunately, due to service workers not working in file:/// or file:// url's :(
 ---
 
 ## DEPLOY ME!!
