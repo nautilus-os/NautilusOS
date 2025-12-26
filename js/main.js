@@ -4680,12 +4680,12 @@ alt="favicon">
       icon: "fas fa-info-circle",
       content: `
         <div class="about-app-container" style="padding: 2rem; max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; min-height: 100%;">
-          <div class="about-header" style="text-align: center; margin-bottom: 2rem;">
+          <div class="about-header" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 2rem;">
             <div style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: float 3s ease-in-out infinite;">
               <i class="fas fa-fish" style="font-size: 3rem; color: var(--bg-primary);"></i>
             </div>
-            <h1 style="font-size: 2rem; margin-bottom: 0; color: var(--text-primary); font-family: fontb;">NautilusOS</h1>
-            <p style="color: var(--text-secondary); font-size: 1rem; margin: 0; text-align: left; display: inline-block;">Version 1.5</p>
+            <h1 style="font-size: 2rem; margin-bottom: 0; color: var(--text-primary); font-family: fontb; text-align: center; width: 100%;">NautilusOS</h1>
+            <p style="color: var(--text-secondary); font-size: 1rem; margin: 0; text-align: center; width: 100%;">Version 1.5</p>
             <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 500px; margin: 1rem auto 0; line-height: 1.6; text-align: center;">
               A beautiful, fully-featured web-based operating system experience. Built with vanilla HTML, CSS, and JavaScript — no frameworks needed! 
               NautilusOS brings you a complete desktop environment right in your browser, with file management, multiple apps, themes, and more.
@@ -4845,7 +4845,67 @@ alt="favicon">
             </div>
           </div>
 
-          <div class="about-footer" style="text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: auto;">
+          <!-- Contributors Section -->
+          <div class="about-section" style="margin-bottom: 2rem;">
+            <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: fontb;">
+              <i class="fas fa-hands-helping" style="color: var(--accent);"></i> Contributors
+            </h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+              Special thanks to our contributors who help improve NautilusOS!
+            </p>
+
+            <div class="contributors-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+              
+              <!-- Contributor: rhenryw (RHW) -->
+              <div class="contributor-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; transition: all 0.3s ease;"
+                   onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'; this.style.borderColor='var(--accent)'" 
+                   onmouseout="this.style.background='rgba(30, 35, 48, 0.6)'; this.style.borderColor='var(--border)'">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                  <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; flex-shrink: 0;">
+                    <i class="fas fa-user-check"></i>
+                  </div>
+                  <div>
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1rem;">RHW</div>
+                    <div style="color: var(--text-secondary); font-size: 0.75rem;">Contributor</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <a href="https://github.com/rhenryw" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 6px; color: var(--text-primary); text-decoration: none; font-size: 0.8rem; transition: all 0.2s ease;" 
+                       onmouseover="this.style.background='rgba(125, 211, 192, 0.3)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                    <i class="fab fa-github"></i> GitHub
+                  </a>
+                  <a href="https://rhw.one/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; color: var(--text-primary); text-decoration: none; font-size: 0.8rem; transition: all 0.2s ease;" 
+                       onmouseover="this.style.background='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.15)'">
+                    <i class="fas fa-globe"></i> Website
+                  </a>
+                </div>
+              </div>
+
+              <!-- Contributor: derpman1483 -->
+              <div class="contributor-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; transition: all 0.3s ease;"
+                   onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'; this.style.borderColor='var(--accent)'" 
+                   onmouseout="this.style.background='rgba(30, 35, 48, 0.6)'; this.style.borderColor='var(--border)'">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                  <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; flex-shrink: 0;">
+                    <i class="fas fa-user-check"></i>
+                  </div>
+                  <div>
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1rem;">derpman1483</div>
+                    <div style="color: var(--text-secondary); font-size: 0.75rem;">Contributor</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <a href="https://github.com/derpman1483" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 6px; color: var(--text-primary); text-decoration: none; font-size: 0.8rem; transition: all 0.2s ease;" 
+                       onmouseover="this.style.background='rgba(125, 211, 192, 0.3)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                    <i class="fab fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="about-footer" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: auto;">
             <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.75rem; text-align: center;">
               Made with <i class="fas fa-heart" style="color: #ef4444;"></i> by the NautilusOS team
             </p>
@@ -4863,7 +4923,7 @@ alt="favicon">
         </div>
       `,
       width: 550,
-      height: 700,
+      height: 850,
     },
     calculator: {
       title: "Calculator",
