@@ -714,6 +714,11 @@ const appMetadata = {
     icon: "fa-robot",
     preinstalled: true,
   },
+  "about": {
+    name: "About NautilusOS",
+    icon: "fa-info-circle",
+    preinstalled: true,
+  },
 };
 
 function getDefaultSnapSettings() {
@@ -1859,7 +1864,7 @@ function handleCLIInput(e) {
         "The bootloader menu will appear on next page reload.";
     } else if (command === "clear") {
       terminal.innerHTML = `
-                      <div class="cli-line" style="color: var(--accent);">NautilusOS Command Line Interface v1.0</div>
+                      <div class="cli-line" style="color: var(--accent);">NautilusOS Command Line Interface v1.5</div>
                       <div class="cli-line" style="color: #888; margin-bottom: 1rem;">Type 'help' for available commands, 'gui' to switch to graphical mode</div>
                   `;
     } else if (command === "date") {
@@ -2077,6 +2082,19 @@ function login() {
         installedApps.forEach((appName) => {
           addDesktopIcon(appName);
         });
+
+        // Bloatless mode: hide all pre-installed apps except App Store and Settings
+        if (bloatlessMode) {
+          const bloatlessKeep = ["appstore", "settings"];
+          const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
+          allIcons.forEach((icon) => {
+            const appName = icon.getAttribute("data-app");
+            // Keep only appstore, settings, and any user-installed apps
+            if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName)) {
+              icon.style.display = "none";
+            }
+          });
+        }
       }
 
       initDesktopIconDragging();
@@ -3060,7 +3078,7 @@ function openApp(appName, editorContent = "", filename = "") {
       icon: "fas fa-terminal",
       content: `
               <div class="terminal" id="terminalContent">
-                  <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.0</div>
+                  <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.5</div>
                   <div class="terminal-line" style="color: #888; margin-bottom: 1rem;">Type 'help' for available commands</div>
                   <div class="terminal-line">
                       <span class="terminal-prompt">user@nautilusos:~$ </span><input type="text" class="terminal-input" id="terminalInput" onkeypress="handleTerminalInput(event)">
@@ -4157,8 +4175,8 @@ alt="favicon">
               <div class="whats-new-content">
                   <center>
                   <div class="whats-new-header">
-                      <h1 style="text-align: center !important; font-size: 2rem; margin-bottom: 0.5rem; line-height: 1.2;">Welcome to NautilusOS <br>v1.0! What's new?</h1>
-                      <p>Discover the latest features and improvements</p>
+                      <h1 style="text-align: center !important; font-size: 2rem; margin-bottom: 0.5rem; line-height: 1.2;">Welcome to NautilusOS <br>v1.5! What's new?</h1>
+                      <p>AI Assistant, 3 Browsers, More Themes, VS Code, Window Snapping, Games, and more!</p>
                   </div>
                   </center>
 
@@ -4480,6 +4498,125 @@ alt="favicon">
     </div>
 </div>
 
+<!-- v1.5 New Features -->
+<div class="carousel-slide" data-slide="16">
+    <div class="carousel-illustration">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+            <div style="width: 120px; height: 120px; background: linear-gradient(135deg, rgba(125, 211, 192, 0.3), rgba(125, 211, 192, 0.1)); border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; color: var(--accent); animation: float 3s ease-in-out infinite; box-shadow: 0 8px 24px rgba(125, 211, 192, 0.3);">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <div style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: float 1s ease-in-out infinite;"></div>
+                <div style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: float 1s ease-in-out infinite 0.2s;"></div>
+                <div style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: float 1s ease-in-out infinite 0.4s;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Nautilus AI Assistant</h2>
+        <p>Meet your new intelligent companion! The Nautilus AI Assistant helps you with tasks, answers questions, and makes your NautilusOS experience smarter. Powered by advanced AI technology right in your browser.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="17">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <div style="width: 80px; height: 80px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); animation: float 3s ease-in-out infinite;">
+                <i class="fas fa-globe"></i>
+            </div>
+            <div style="width: 80px; height: 80px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); animation: float 3s ease-in-out infinite 0.3s;">
+                <i class="fas fa-sun"></i>
+            </div>
+            <div style="width: 80px; height: 80px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); animation: float 3s ease-in-out infinite 0.6s;">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>3 Browser Options</h2>
+        <p>Choose your browsing experience! Nautilus Browser for quick access, Helios Browser for a premium experience, and UV for advanced unblocking. Each browser offers unique features tailored to your needs.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="18">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; max-width: 250px;">
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #7dd3c0; border-radius: 8px; animation: float 3s ease-in-out infinite;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f5f5f5, #e0e0e0); border: 2px solid #333; border-radius: 8px; animation: float 3s ease-in-out infinite 0.2s;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea, #764ba2); border: 2px solid #fff; border-radius: 8px; animation: float 3s ease-in-out infinite 0.4s;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #11998e, #38ef7d); border: 2px solid #fff; border-radius: 8px; animation: float 3s ease-in-out infinite 0.6s;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ff6b6b, #feca57); border: 2px solid #fff; border-radius: 8px; animation: float 3s ease-in-out infinite 0.8s;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #a8edea, #fed6e3); border: 2px solid #333; border-radius: 8px; animation: float 3s ease-in-out infinite 1s;"></div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>More Themes</h2>
+        <p>Express yourself with an expanded collection of beautiful themes! From sleek dark modes to vibrant colors, find the perfect look that matches your style. Install themes from the App Store with one click.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="19">
+    <div class="carousel-illustration">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+            <div style="width: 200px; height: 130px; background: rgba(21, 25, 35, 0.95); border: 2px solid #007acc; border-radius: 8px; overflow: hidden; animation: float 3s ease-in-out infinite;">
+                <div style="height: 25px; background: #1e1e1e; display: flex; align-items: center; padding: 0 0.5rem; gap: 0.5rem;">
+                    <i class="fas fa-code" style="color: #007acc; font-size: 0.75rem;"></i>
+                    <div style="height: 8px; width: 60px; background: rgba(255,255,255,0.2); border-radius: 4px;"></div>
+                </div>
+                <div style="padding: 0.5rem; display: flex; gap: 0.5rem;">
+                    <div style="width: 40px; background: rgba(255,255,255,0.05); height: 80px; border-radius: 4px;"></div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="height: 8px; background: #569cd6; border-radius: 2px; width: 80%;"></div>
+                        <div style="height: 8px; background: #ce9178; border-radius: 2px; width: 60%;"></div>
+                        <div style="height: 8px; background: #4ec9b0; border-radius: 2px; width: 90%;"></div>
+                        <div style="height: 8px; background: #dcdcaa; border-radius: 2px; width: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Visual Studio Code</h2>
+        <p>Code like a pro with VS Code integration! Write, edit, and manage code with syntax highlighting, file explorer, and all the features you love from the world's most popular code editor.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="20">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 0.5rem; align-items: flex-start;">
+            <div style="width: 100px; height: 100px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 8px; animation: float 3s ease-in-out infinite;"></div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div style="width: 100px; height: 47px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 8px; animation: float 3s ease-in-out infinite 0.2s;"></div>
+                <div style="width: 100px; height: 47px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 8px; animation: float 3s ease-in-out infinite 0.4s;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Window Snapping</h2>
+        <p>Organize your workspace like a power user! Drag windows to screen edges to snap them into place. Create custom layouts, use keyboard shortcuts, and manage multiple windows with ease using the Snap Manager.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="21">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <div style="width: 70px; height: 70px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent); animation: float 3s ease-in-out infinite;">
+                <i class="fas fa-gamepad"></i>
+            </div>
+            <div style="width: 70px; height: 70px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent); animation: float 3s ease-in-out infinite 0.3s;">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div style="width: 70px; height: 70px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent); animation: float 3s ease-in-out infinite 0.6s;">
+                <i class="fas fa-puzzle-piece"></i>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Games & More!</h2>
+        <p>Take a break with built-in games! Watch AI learn to play Snake in real-time, challenge yourself with 2048, play Tic-Tac-Toe, and discover more entertainment. Perfect for those moments when you need a fun distraction.</p>
+    </div>
+</div>
+
 <div class="carousel-controls">
                           <div class="carousel-btn" onclick="changeSlide(-1)">
                               <i class="fas fa-chevron-left"></i>
@@ -4506,6 +4643,12 @@ alt="favicon">
           <div class="carousel-dot" onclick="goToSlide(13)"></div>
           <div class="carousel-dot" onclick="goToSlide(14)"></div>
           <div class="carousel-dot" onclick="goToSlide(15)"></div>
+          <div class="carousel-dot" onclick="goToSlide(16)"></div>
+          <div class="carousel-dot" onclick="goToSlide(17)"></div>
+          <div class="carousel-dot" onclick="goToSlide(18)"></div>
+          <div class="carousel-dot" onclick="goToSlide(19)"></div>
+          <div class="carousel-dot" onclick="goToSlide(20)"></div>
+          <div class="carousel-dot" onclick="goToSlide(21)"></div>
 
       </div>
                           </div>
@@ -4531,6 +4674,196 @@ alt="favicon">
       noPadding: true,
       width: 900,
       height: 600,
+    },
+    about: {
+      title: "About NautilusOS",
+      icon: "fas fa-info-circle",
+      content: `
+        <div class="about-app-container" style="padding: 2rem; max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; min-height: 100%;">
+          <div class="about-header" style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: float 3s ease-in-out infinite;">
+              <i class="fas fa-fish" style="font-size: 3rem; color: var(--bg-primary);"></i>
+            </div>
+            <h1 style="font-size: 2rem; margin-bottom: 0; color: var(--text-primary); font-family: fontb;">NautilusOS</h1>
+            <p style="color: var(--text-secondary); font-size: 1rem; margin: 0; text-align: left; display: inline-block;">Version 1.5</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 500px; margin: 1rem auto 0; line-height: 1.6; text-align: center;">
+              A beautiful, fully-featured web-based operating system experience. Built with vanilla HTML, CSS, and JavaScript — no frameworks needed! 
+              NautilusOS brings you a complete desktop environment right in your browser, with file management, multiple apps, themes, and more.
+            </p>
+          </div>
+
+          <div class="about-section" style="margin-bottom: 2rem; flex: 1;">
+            <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: fontb;">
+              <i class="fas fa-users" style="color: var(--accent);"></i> Developers & Contributors
+            </h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+              Click on a developer's card to learn more about them and support their work.
+            </p>
+
+            <div class="developers-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+              
+              <!-- Developer: dinguschan -->
+              <div class="developer-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s ease;">
+                <div class="dev-header" onclick="toggleDevInfo('dinguschan')" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s ease;" 
+                     onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'" onmouseout="this.style.background='transparent'">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--bg-primary); flex-shrink: 0;">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1.1rem;">dinguschan</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Lead Developer & Creator</div>
+                  </div>
+                  <i class="fas fa-chevron-down dev-chevron" id="chevron-dinguschan" style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
+                </div>
+                <div class="dev-info" id="devinfo-dinguschan" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(21, 25, 35, 0.5);">
+                  <div style="padding: 1rem; border-top: 1px solid var(--border);">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">
+                    REMINDER: dinguschan, add your info here (along with XMR wallet if avalible)
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                      <a href="https://github.com/dinguschan-owo" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
+                           onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                        <i class="fab fa-github"></i> GitHub
+                      </a>
+                    </div>
+                    <!-- XMR Wallet Placeholder - Uncomment and add address when available
+                    <div style="background: rgba(255, 107, 53, 0.1); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+                      <h4 style="color: #ff6b35; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-donate"></i> Support with Monero (XMR)
+                      </h4>
+                      <div style="flex: 1;">
+                        <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Monero Address:</p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; word-break: break-all; font-family: monospace; font-size: 0.7rem; color: var(--text-primary); margin-bottom: 0.75rem;">
+                          YOUR_XMR_ADDRESS_HERE
+                        </div>
+                        <a href="monero:YOUR_XMR_ADDRESS_HERE" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #ff6b35, #f7931e); border: none; border-radius: 8px; color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                          <i class="fas fa-wallet"></i> Open in Wallet
+                        </a>
+                      </div>
+                    </div>
+                    -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Developer: X8r -->
+              <div class="developer-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s ease;">
+                <div class="dev-header" onclick="toggleDevInfo('x8r')" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s ease;" 
+                     onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'" onmouseout="this.style.background='transparent'">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #8b5cf6, #6366f1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; flex-shrink: 0;">
+                    <i class="fas fa-laptop-code"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1.1rem;">X8r</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Developer</div>
+                  </div>
+                  <i class="fas fa-chevron-down dev-chevron" id="chevron-x8r" style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
+                </div>
+                <div class="dev-info" id="devinfo-x8r" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(21, 25, 35, 0.5);">
+                  <div style="padding: 1rem; border-top: 1px solid var(--border);">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">
+                      REMINDER: x8r, add your info here (along with XMR wallet if avalible)
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                      <a href="https://github.com/X8r" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
+                           onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                        <i class="fab fa-github"></i> GitHub
+                      </a>
+                    </div>
+                    <!-- XMR Wallet Placeholder - Uncomment and add address when available
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+                      <h4 style="color: #8b5cf6; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-donate"></i> Support with Monero (XMR)
+                      </h4>
+                      <div style="flex: 1;">
+                        <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Monero Address:</p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; word-break: break-all; font-family: monospace; font-size: 0.7rem; color: var(--text-primary); margin-bottom: 0.75rem;">
+                          YOUR_XMR_ADDRESS_HERE
+                        </div>
+                        <a href="monero:YOUR_XMR_ADDRESS_HERE" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); border: none; border-radius: 8px; color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                          <i class="fas fa-wallet"></i> Open in Wallet
+                        </a>
+                      </div>
+                    </div>
+                    -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Developer: lanefiedler731-gif -->
+              <div class="developer-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s ease;">
+                <div class="dev-header" onclick="toggleDevInfo('lanefiedler731')" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s ease;" 
+                     onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'" onmouseout="this.style.background='transparent'">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #ff6b35, #f7931e); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; flex-shrink: 0;">
+                    <i class="fas fa-code"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1.1rem;">lanefiedler731-gif</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Contributor & Developer</div>
+                  </div>
+                  <i class="fas fa-chevron-down dev-chevron" id="chevron-lanefiedler731" style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
+                </div>
+                <div class="dev-info" id="devinfo-lanefiedler731" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(21, 25, 35, 0.5);">
+                  <div style="padding: 1rem; border-top: 1px solid var(--border);">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">
+                      A talented contributor who has helped expand NautilusOS with new features, improvements, and bug fixes. 
+                      Passionate about creating great user experiences and pushing the boundaries of web-based applications.
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                      <a href="https://github.com/lanefiedler731-gif" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
+                           onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                        <i class="fab fa-github"></i> GitHub
+                      </a>
+                    </div>
+                    
+                    <!-- Crypto Donation Section -->
+                    <div style="background: rgba(255, 107, 53, 0.1); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 10px; padding: 1rem; margin-top: 0.5rem;">
+                      <h4 style="color: #ff6b35; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-donate"></i> Support with Monero (XMR)
+                      </h4>
+                      <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start;">
+                        <div style="flex-shrink: 0;">
+                          <img src="/Assets/LFPaymentMonero.png" alt="XMR QR Code" style="width: 100px; height: 100px; border-radius: 8px; background: white; padding: 4px;">
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                          <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Monero Address:</p>
+                          <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; word-break: break-all; font-family: monospace; font-size: 0.7rem; color: var(--text-primary); margin-bottom: 0.75rem;">
+                            47T7eTcAXKGRqVRXAbxqsah8JSTYVUsUQgoe1bD1S4rwigc8EEaTkniBUPkcGwzjQZWNcd6AucPxSh4rceUAjG1o1uQiexu
+                          </div>
+                          <a href="monero:47T7eTcAXKGRqVRXAbxqsah8JSTYVUsUQgoe1bD1S4rwigc8EEaTkniBUPkcGwzjQZWNcd6AucPxSh4rceUAjG1o1uQiexu" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #ff6b35, #f7931e); border: none; border-radius: 8px; color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);"
+                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(255, 107, 53, 0.4)';" 
+                               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(255, 107, 53, 0.3)';">
+                            <i class="fas fa-wallet"></i> Open in Wallet
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="about-footer" style="text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: auto;">
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.75rem; text-align: center;">
+              Made with <i class="fas fa-heart" style="color: #ef4444;"></i> by the NautilusOS team
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+              <a href="https://github.com/nautilus-os/NautilusOS" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;"
+                   onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                <i class="fab fa-github"></i> View on GitHub
+              </a>
+              <a href="#" onclick="event.preventDefault(); openApp('whatsnew');" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;"
+                   onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                <i class="fas fa-star"></i> What's New
+              </a>
+            </div>
+          </div>
+        </div>
+      `,
+      width: 550,
+      height: 700,
     },
     calculator: {
       title: "Calculator",
@@ -5368,7 +5701,7 @@ function handleTerminalInput(e) {
         "The bootloader menu will appear on next page reload.";
     } else if (command === "clear") {
       terminal.innerHTML = `
-                      <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.0</div>
+                      <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.5</div>
                       <div class="terminal-line" style="color: #888; margin-bottom: 1rem;">Type 'help' for available commands</div>
                   `;
     } else if (command === "date") {
@@ -6204,6 +6537,23 @@ function goToSlide(index) {
 
   slides[currentSlide].classList.add("active");
   dots[currentSlide].classList.add("active");
+}
+
+function toggleDevInfo(devId) {
+  const infoEl = document.getElementById('devinfo-' + devId);
+  const chevronEl = document.getElementById('chevron-' + devId);
+
+  if (!infoEl) return;
+
+  const isExpanded = infoEl.style.maxHeight && infoEl.style.maxHeight !== '0px';
+
+  if (isExpanded) {
+    infoEl.style.maxHeight = '0px';
+    if (chevronEl) chevronEl.style.transform = 'rotate(0deg)';
+  } else {
+    infoEl.style.maxHeight = infoEl.scrollHeight + 'px';
+    if (chevronEl) chevronEl.style.transform = 'rotate(180deg)';
+  }
 }
 
 function initScrollIndicator() {
@@ -8044,6 +8394,7 @@ document.addEventListener("click", (e) => {
 function setupStep1Next() {
   const username = document.getElementById("setupUsername").value.trim();
   const isPasswordless = document.getElementById("setupPasswordless").checked;
+  const isBloatless = document.getElementById("setupBloatless").checked;
 
   if (!username) {
     showToast("Please enter a username", "fa-exclamation-circle");
@@ -8059,6 +8410,7 @@ function setupStep1Next() {
   }
 
   window.setupIsPasswordless = isPasswordless;
+  window.setupIsBloatless = isBloatless;
 
   document.getElementById("setupStep1").style.display = "none";
 
@@ -8120,6 +8472,7 @@ function togglePasswordless() {
 function setupComplete() {
   const username = document.getElementById("setupUsername").value.trim();
   const isPasswordless = window.setupIsPasswordless || false;
+  const isBloatless = window.setupIsBloatless || false;
   const password = isPasswordless
     ? ""
     : document.getElementById("setupPassword").value;
@@ -8155,6 +8508,7 @@ function setupComplete() {
     localStorage.setItem("nautilusOS_isPasswordless", "false");
   }
   localStorage.setItem("nautilusOS_setupComplete", "true");
+  localStorage.setItem("nautilusOS_bloatlessMode", isBloatless ? "true" : "false");
   localStorage.setItem(
     "nautilusOS_installedThemes",
     JSON.stringify(installedThemes)
@@ -8170,6 +8524,39 @@ function setupComplete() {
   saveSettingsToLocalStorage();
 
   currentUsername = username;
+
+  // Set global bloatlessMode and apply filtering immediately
+  bloatlessMode = isBloatless;
+  if (bloatlessMode) {
+    const bloatlessKeep = ["appstore", "settings"];
+    const iconsContainer = document.getElementById("desktopIcons");
+    if (iconsContainer) {
+      const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
+      allIcons.forEach((icon) => {
+        const appName = icon.getAttribute("data-app");
+        if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName)) {
+          icon.style.display = "none";
+        }
+      });
+    }
+    // Also hide from start menu
+    const appGrid = document.querySelector(".app-grid");
+    if (appGrid) {
+      const allAppItems = appGrid.querySelectorAll(".app-item");
+      allAppItems.forEach((item) => {
+        const onclickAttr = item.getAttribute("onclick");
+        if (onclickAttr) {
+          const match = onclickAttr.match(/openApp\(['"]([^'"]+)['"]\)/);
+          if (match) {
+            const appName = match[1];
+            if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName)) {
+              item.style.display = "none";
+            }
+          }
+        }
+      });
+    }
+  }
 
   if (selectedThemes.length > 0) {
     setTimeout(() => {
@@ -8340,6 +8727,23 @@ window.addEventListener("DOMContentLoaded", () => {
   installedGames.forEach((gameName) => {
     addDesktopIcon(gameName);
   });
+
+  // Apply bloatless mode: hide pre-installed desktop icons except App Store and Settings
+  if (bloatlessMode) {
+    const bloatlessKeep = ["appstore", "settings"];
+    const iconsContainer = document.getElementById("desktopIcons");
+    if (iconsContainer) {
+      const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
+      allIcons.forEach((icon) => {
+        const appName = icon.getAttribute("data-app");
+        // Keep only appstore, settings, and any user-installed apps/games
+        if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName) && !installedGames.includes(appName)) {
+          icon.style.display = "none";
+        }
+      });
+    }
+  }
+
   applyUserBackgrounds();
   applyProfilePicture();
 });
@@ -8547,6 +8951,7 @@ window.prompt = async (message, defaultValue = "") => {
 let installedApps = [];
 let startupApps = [];
 let installedGames = [];
+let bloatlessMode = false;
 
 function hashPassword(password) {
   const salt = "NautilusOS_Salt_2024"; // Simple salt for demo
@@ -8578,6 +8983,9 @@ function loadInstalledApps() {
       console.error("Failed to load startup apps:", e);
     }
   }
+
+  // Load bloatless mode setting
+  bloatlessMode = localStorage.getItem("nautilusOS_bloatlessMode") === "true";
 }
 
 function installApp(appName) {
@@ -10136,6 +10544,34 @@ function updateStartMenu() {
   );
   existingInstalledGames.forEach((el) => el.remove());
 
+  // Bloatless mode: hide pre-installed apps except App Store and Settings in start menu
+  if (bloatlessMode) {
+    const bloatlessKeep = ["appstore", "settings"];
+    const allAppItems = appGrid.querySelectorAll(".app-item");
+    allAppItems.forEach((item) => {
+      const onclickAttr = item.getAttribute("onclick");
+      if (onclickAttr) {
+        // Extract app name from onclick="openApp('appname')"
+        const match = onclickAttr.match(/openApp\(['"]([^'"]+)['"]\)/);
+        if (match) {
+          const appName = match[1];
+          // Hide pre-installed apps not in bloatlessKeep and not user-installed
+          if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName) && !installedGames.includes(appName)) {
+            item.style.display = "none";
+          } else {
+            item.style.display = "";
+          }
+        }
+      }
+    });
+  } else {
+    // Reset visibility for non-bloatless mode
+    const allAppItems = appGrid.querySelectorAll(".app-item");
+    allAppItems.forEach((item) => {
+      item.style.display = "";
+    });
+  }
+
   installedApps.forEach((appName) => {
     let appConfig = {};
     if (appName === "startup-apps") {
@@ -10193,6 +10629,7 @@ async function exportProfile() {
     username: localStorage.getItem("nautilusOS_username"),
     password: localStorage.getItem("nautilusOS_password"),
     isPasswordless: localStorage.getItem("nautilusOS_isPasswordless") === "true",
+    bloatlessMode: localStorage.getItem("nautilusOS_bloatlessMode") === "true",
     settings: settings,
     installedThemes: installedThemes,
     installedApps: installedApps,
@@ -10460,6 +10897,10 @@ async function importProfile(event) {
         ? String(profile.isPasswordless)
         : (profile.password === "" ? "true" : "false");
       localStorage.setItem("nautilusOS_isPasswordless", isPasswordless);
+
+      // Restore bloatless mode setting
+      bloatlessMode = profile.bloatlessMode || false;
+      localStorage.setItem("nautilusOS_bloatlessMode", bloatlessMode ? "true" : "false");
 
       localStorage.setItem("nautilusOS_setupComplete", "true");
 

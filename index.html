@@ -35,7 +35,7 @@
     <div id="bootloader">
         <div class="boot-logo"><i class="fas fa-fish"></i></div>
         <h1 class="boot-title"><b>NAUTILUS OS</b></h1>
-        <div class="boot-version">Version 1.0</div>
+        <div class="boot-version">Version 1.5</div>
         <div class="boot-options" id="bootOptions">
             <div class="boot-option selected" data-index="0">
                 <i class="fas fa-play"></i> <span>Nautilus OS</span>
@@ -79,7 +79,7 @@
                         </div>
                         <div class="info-stat">
                             <span class="info-stat-label">Version</span>
-                            <span class="info-stat-value">1.0</span>
+                            <span class="info-stat-value">1.5</span>
                         </div>
                         <div class="info-stat">
                             <span class="info-stat-label">Browser</span>
@@ -175,6 +175,19 @@
                     </label>
                     <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem;">
                         Skip password creation for easier access (no security)
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label
+                        style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: var(--text-primary); font-size: 0.9rem; font-weight: 500;">
+                        <label class="cl-checkbox">
+                            <input type="checkbox" id="setupBloatless">
+                            <span>Bloatless Install</span>
+                        </label>
+                    </label>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem;">
+                        Minimal install with only App Store and Settings pre-installed
                     </p>
                 </div>
 
@@ -354,7 +367,7 @@
     <div id="commandLineMode">
         <div class="cli-terminal" id="cliTerminal">
             <div class="cli-line" style="color: var(--accent);">
-                NautilusOS Command Line Interface v1.0
+                NautilusOS Command Line Interface v1.5
             </div>
             <div class="cli-line" style="color: #888; margin-bottom: 1rem;">
                 Type 'help' for available commands, 'gui' to switch to graphical mode
@@ -421,6 +434,9 @@
             </div>
             <div class="desktop-icon" ondblclick="openApp('python')" data-app="python">
                 <i class="fas fa-code"></i> <span>Python Interpreter</span>
+            </div>
+            <div class="desktop-icon" ondblclick="openApp('about')" data-app="about">
+                <i class="fas fa-info-circle"></i> <span>About NautilusOS</span>
             </div>
         </div>
         <div id="taskbar" class="taskbar">
@@ -532,6 +548,9 @@
                 </div>
                 <div class="app-item" onclick="openApp('python')">
                     <i class="fas fa-code"></i> <span>Python Interpreter</span>
+                </div>
+                <div class="app-item" onclick="openApp('about')">
+                    <i class="fas fa-info-circle"></i> <span>About NautilusOS</span>
                 </div>
             </div>
         </div>
