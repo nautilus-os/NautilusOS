@@ -435,6 +435,9 @@
             <div class="desktop-icon" ondblclick="openApp('python')" data-app="python">
                 <i class="fas fa-code"></i> <span>Python Interpreter</span>
             </div>
+            <div class="desktop-icon" ondblclick="openApp('web-app-creator')" data-app="web-app-creator">
+                <i class="fas fa-puzzle-piece"></i> <span>Web App Creator</span>
+            </div>
             <div class="desktop-icon" ondblclick="openApp('about')" data-app="about">
                 <i class="fas fa-info-circle"></i> <span>About NautilusOS</span>
             </div>
@@ -444,22 +447,22 @@
                 <i class="fas fa-fish"></i>
             </div>
             <div class="taskbar-divider"></div>
-            <div class="taskbar-icon" onclick="openApp('files')" title="Files" data-app="files">
+            <div class="taskbar-icon" onclick="toggleApp('files')" title="Files" data-app="files">
                 <i class="fas fa-folder"></i>
             </div>
-            <div class="taskbar-icon" onclick="openApp('terminal')" title="Terminal" data-app="terminal">
+            <div class="taskbar-icon" onclick="toggleApp('terminal')" title="Terminal" data-app="terminal">
                 <i class="fas fa-terminal"></i>
             </div>
-            <div class="taskbar-icon" onclick="openApp('browser')" title="Browser" data-app="browser">
+            <div class="taskbar-icon" onclick="toggleApp('browser')" title="Browser" data-app="browser">
                 <i class="fas fa-globe"></i>
             </div>
-            <div class="taskbar-icon" onclick="openApp('settings')" title="Settings" data-app="settings">
+            <div class="taskbar-icon" onclick="toggleApp('settings')" title="Settings" data-app="settings">
                 <i class="fas fa-cog"></i>
             </div>
-            <div class="taskbar-icon" onclick="openApp('cloaking')" title="Cloaking" data-app="cloaking">
+            <div class="taskbar-icon" onclick="toggleApp('cloaking')" title="Cloaking" data-app="cloaking">
                 <i class="fas fa-mask"></i>
             </div>
-            <div class="taskbar-icon" onclick="openApp('achievements')" title="Achievements" data-app="achievements">
+            <div class="taskbar-icon" onclick="toggleApp('achievements')" title="Achievements" data-app="achievements">
                 <i class="fas fa-trophy"></i>
             </div>
             <div class="taskbar-divider"></div>
@@ -548,6 +551,9 @@
                 </div>
                 <div class="app-item" onclick="openApp('python')">
                     <i class="fas fa-code"></i> <span>Python Interpreter</span>
+                </div>
+                <div class="app-item" onclick="openApp('web-app-creator')">
+                    <i class="fas fa-puzzle-piece"></i> <span>Web App Creator</span>
                 </div>
                 <div class="app-item" onclick="openApp('about')">
                     <i class="fas fa-info-circle"></i> <span>About NautilusOS</span>

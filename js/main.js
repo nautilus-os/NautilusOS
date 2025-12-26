@@ -1,3 +1,281 @@
+// ==================== NAUTILUS BIOS SYSTEM ====================
+// Press Delete, F2, or Shift during boot to enter BIOS
+(function () {
+  const bootloader = document.getElementById('bootloader');
+  let biosTriggered = false;
+
+  // Add hint to bootloader
+  if (bootloader) {
+    const hint = document.createElement('div');
+    hint.style.position = 'absolute';
+    hint.style.bottom = '10px';
+    hint.style.right = '10px';
+    hint.style.color = '#555';
+    hint.style.fontSize = '12px';
+    hint.style.fontFamily = 'monospace';
+    hint.innerText = 'Press DEL or F2 to enter BIOS';
+    bootloader.appendChild(hint);
+  }
+
+  // Listen for keys during boot
+  window.addEventListener('keydown', function checkBiosKey(e) {
+    // Only if bootloader is still visible (check for hidden class and display style)
+    if (bootloader && !bootloader.classList.contains('hidden') && bootloader.style.display !== 'none') {
+      if (e.key === 'Delete' || e.key === 'F2' || e.key === 'Shift') {
+        e.preventDefault();
+        showBIOS();
+        // Stop checking
+        window.removeEventListener('keydown', checkBiosKey);
+      }
+    }
+  });
+
+  // Also check if Shift is held right at load (for reloads)
+  if (bootloader && !bootloader.classList.contains('hidden') && (window.event && window.event.shiftKey)) {
+    showBIOS();
+  }
+
+  function showBIOS() {
+    // Create BIOS overlay
+    const biosOverlay = document.createElement('div');
+    biosOverlay.id = 'nautilusBIOS';
+    biosOverlay.innerHTML = `
+      <style>
+        #nautilusBIOS {
+          position: fixed;
+          inset: 0;
+          background: #0000aa;
+          z-index: 999999;
+          font-family: 'Courier New', monospace;
+          color: #aaaaaa;
+          padding: 20px;
+          overflow: auto;
+        }
+        #nautilusBIOS .bios-header {
+          background: #aaaaaa;
+          color: #0000aa;
+          padding: 8px 16px;
+          font-weight: bold;
+          font-size: 18px;
+          margin-bottom: 20px;
+        }
+        #nautilusBIOS .bios-section {
+          border: 1px solid #aaaaaa;
+          margin: 10px 0;
+          padding: 10px;
+        }
+        #nautilusBIOS .bios-section-title {
+          background: #aaaaaa;
+          color: #0000aa;
+          padding: 4px 8px;
+          margin: -10px -10px 10px -10px;
+          font-weight: bold;
+        }
+        #nautilusBIOS .bios-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 4px 0;
+        }
+        #nautilusBIOS .bios-label {
+          color: #ffffff;
+        }
+        #nautilusBIOS .bios-value {
+          color: #ffff00;
+        }
+        #nautilusBIOS .bios-menu-item {
+          padding: 6px 12px;
+          cursor: pointer;
+        }
+        #nautilusBIOS .bios-menu-item.selected {
+          background: #aaaaaa;
+          color: #0000aa;
+        }
+        #nautilusBIOS .bios-menu-item:hover:not(.selected) {
+          background: #555555;
+        }
+        #nautilusBIOS .bios-toggle {
+          cursor: pointer;
+          padding: 4px 8px;
+        }
+        #nautilusBIOS .bios-toggle:hover {
+          background: #555555;
+        }
+        #nautilusBIOS .bios-footer {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #aaaaaa;
+          color: #0000aa;
+          padding: 8px 16px;
+          display: flex;
+          justify-content: space-between;
+        }
+        #nautilusBIOS .bios-warning {
+          color: #ff5555;
+          font-weight: bold;
+        }
+      </style>
+      <div class="bios-header">NautilusOS BIOS Setup Utility v1.0</div>
+      
+      <div style="display: flex; gap: 20px;">
+        <div style="flex: 1;">
+          <div class="bios-section">
+            <div class="bios-section-title">System Information</div>
+            <div class="bios-row">
+              <span class="bios-label">OS Version:</span>
+              <span class="bios-value">NautilusOS 1.5</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Browser:</span>
+              <span class="bios-value" id="biosBrowser">Detecting...</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Platform:</span>
+              <span class="bios-value">${navigator.platform}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Language:</span>
+              <span class="bios-value">${navigator.language}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Cores:</span>
+              <span class="bios-value">${navigator.hardwareConcurrency || 'Unknown'}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Memory:</span>
+              <span class="bios-value">${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Unknown'}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Screen:</span>
+              <span class="bios-value">${screen.width}x${screen.height}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Color Depth:</span>
+              <span class="bios-value">${screen.colorDepth}-bit</span>
+            </div>
+          </div>
+          
+          <div class="bios-section">
+            <div class="bios-section-title">Storage Information</div>
+            <div class="bios-row">
+              <span class="bios-label">LocalStorage Used:</span>
+              <span class="bios-value" id="biosLocalStorage">Calculating...</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Cookies Enabled:</span>
+              <span class="bios-value">${navigator.cookieEnabled ? 'Yes' : 'No'}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">IndexedDB:</span>
+              <span class="bios-value">${window.indexedDB ? 'Available' : 'Not Available'}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div style="flex: 1;">
+          <div class="bios-section">
+            <div class="bios-section-title">Advanced Settings</div>
+            
+            <!-- Bypass File Protocol Warning -->
+            <div class="bios-row bios-toggle" onclick="toggleBiosSetting('bypassFileWarning')">
+              <span class="bios-label">[${localStorage.getItem('nautilusOS_bypassFileWarning') === 'true' ? 'X' : ' '}] Bypass File Protocol Warnings</span>
+            </div>
+            
+            <!-- Custom WebLLM Model -->
+            <div style="margin-top: 10px;">
+              <div class="bios-label" style="margin-bottom: 4px;">Custom WebLLM Model ID:</div>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="biosWebLLMModel" 
+                  value="${localStorage.getItem('nautilusOS_customWebLLMModel') || ''}" 
+                  placeholder="e.g. Qwen2.5-0.5B-Instruct-q4f16_1-MLC"
+                  style="flex: 1; background: #aaaaaa; color: #0000aa; border: none; font-family: 'Courier New', monospace; padding: 4px;"
+                  onchange="localStorage.setItem('nautilusOS_customWebLLMModel', this.value)">
+              </div>
+              <div style="font-size: 10px; color: #888; margin-top: 2px;">Leave empty to use default. Reload required.</div>
+            </div>
+          </div>
+          
+          <div class="bios-section">
+            <div class="bios-section-title">Danger Zone</div>
+            <div class="bios-row bios-toggle" onclick="biosResetAll()" style="color: #ff5555;">
+              <span class="bios-label">> Reset All Settings</span>
+            </div>
+            <div class="bios-row bios-toggle" onclick="biosClearData()" style="color: #ff5555;">
+              <span class="bios-label">> Clear All Data & Cache</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bios-footer">
+        <span>↑↓ Navigate | Enter Select | ESC Exit</span>
+        <span>NautilusOS BIOS ${new Date().toLocaleString()}</span>
+      </div>
+    `;
+
+    document.body.innerHTML = '';
+    document.body.appendChild(biosOverlay);
+
+    // Detect browser
+    const ua = navigator.userAgent;
+    let browser = 'Unknown';
+    if (ua.includes('Firefox')) browser = 'Mozilla Firefox';
+    else if (ua.includes('Edg')) browser = 'Microsoft Edge';
+    else if (ua.includes('Chrome')) browser = 'Google Chrome';
+    else if (ua.includes('Safari')) browser = 'Apple Safari';
+    else if (ua.includes('Opera')) browser = 'Opera';
+    document.getElementById('biosBrowser').textContent = browser;
+
+    // Calculate localStorage size
+    let totalSize = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        totalSize += localStorage[key].length * 2; // UTF-16 = 2 bytes per char
+      }
+    }
+    document.getElementById('biosLocalStorage').textContent = (totalSize / 1024).toFixed(2) + ' KB';
+
+    // ESC to exit
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        location.reload();
+      }
+    });
+  }
+
+  // Global BIOS functions
+  window.toggleBiosSetting = function (setting) {
+    const key = 'nautilusOS_' + setting;
+    const current = localStorage.getItem(key) === 'true';
+    localStorage.setItem(key, (!current).toString());
+    location.reload();
+  };
+
+  window.biosResetAll = function () {
+    if (confirm('Are you sure you want to reset all NautilusOS settings? This cannot be undone.')) {
+      const keys = Object.keys(localStorage).filter(k => k.startsWith('nautilusOS_'));
+      keys.forEach(k => localStorage.removeItem(k));
+      alert('Settings reset. The system will now reload.');
+      location.reload();
+    }
+  };
+
+  window.biosClearData = function () {
+    if (confirm('WARNING: This will delete ALL NautilusOS data including files, settings, and accounts. Continue?')) {
+      if (confirm('Are you ABSOLUTELY sure? This cannot be undone!')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        indexedDB.deleteDatabase('NautilusFS');
+        alert('All data cleared. The system will now reload.');
+        location.reload();
+      }
+    }
+  };
+})();
+
+// ==================== END BIOS SYSTEM ====================
+
 class db {
   constructor(dbName, storeName) {
     this.dbName = dbName;
@@ -717,6 +995,11 @@ const appMetadata = {
   "about": {
     name: "About NautilusOS",
     icon: "fa-info-circle",
+    preinstalled: true,
+  },
+  "web-app-creator": {
+    name: "Web App Creator",
+    icon: "fa-puzzle-piece",
     preinstalled: true,
   },
 };
@@ -2198,16 +2481,7 @@ function addDynamicTaskbarIcon(appName, icon) {
   );
   iconEl.innerHTML = `<i class="${icon}"></i>`;
   iconEl.onclick = () => {
-    if (windows[appName]) {
-      const win = windows[appName];
-      if (win.style.display === "none") {
-        win.style.display = "block";
-        win.classList.remove("minimized");
-      }
-      focusWindow(win);
-      focusedWindow = appName;
-      updateTaskbarIndicators();
-    }
+    toggleApp(appName);
   };
 
   const allIcons = taskbar.querySelectorAll(".taskbar-icon[data-app]");
@@ -2665,6 +2939,35 @@ function closeWindowByAppName(appName) {
   if (closeBtn) closeWindow(closeBtn, appName);
 }
 
+// Toggle app visibility from taskbar - minimize if visible, restore if minimized, open if not running
+function toggleApp(appName) {
+  if (windows[appName]) {
+    const win = windows[appName];
+    const isMinimized = win.style.display === "none" || win.classList.contains("minimized");
+    const isFocused = focusedWindow === appName;
+
+    if (isMinimized) {
+      // Restore the window
+      win.style.display = "block";
+      win.classList.remove("minimized");
+      focusWindow(win);
+      focusedWindow = appName;
+      updateTaskbarIndicators();
+    } else if (isFocused) {
+      // Minimize the window (it's visible and focused)
+      minimizeWindowByAppName(appName);
+    } else {
+      // Window is open but not focused, just focus it
+      focusWindow(win);
+      focusedWindow = appName;
+      updateTaskbarIndicators();
+    }
+  } else {
+    // App not open, open it
+    openApp(appName);
+  }
+}
+
 function makeDraggable(element) {
   const header = element.querySelector(".window-header");
   let pos1 = 0,
@@ -2982,6 +3285,12 @@ function openApp(appName, editorContent = "", filename = "") {
   // Check app permissions
   if (!hasAppPermission(appName)) {
     showToast(`Access denied: You don't have permission to use ${appMetadata[appName]?.name || appName}`, "fa-exclamation-circle");
+    return;
+  }
+
+  // Handle custom web apps
+  if (appName.startsWith("webapp_")) {
+    launchCustomWebApp(appName);
     return;
   }
 
@@ -5608,6 +5917,90 @@ print(f'Sum: {sum(numbers)}')
       width: 700,
       height: 600,
     },
+    "web-app-creator": {
+      title: "Web App Creator",
+      icon: "fas fa-puzzle-piece",
+      content: `
+        <div style="padding: 2rem; height: 100%; overflow-y: auto; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+          <div style="max-width: 500px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: float 3s ease-in-out infinite;">
+                <i class="fas fa-puzzle-piece" style="font-size: 2.5rem; color: var(--bg-primary);"></i>
+              </div>
+              <h1 style="color: var(--text-primary); font-family: fontb; font-size: 1.5rem; margin-bottom: 0.5rem;">Web App Creator</h1>
+              <p style="color: var(--text-secondary); font-size: 0.9rem;">Create custom web apps that run like native apps</p>
+            </div>
+            
+            <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">
+                  <i class="fas fa-tag" style="color: var(--accent); margin-right: 0.5rem;"></i>App Name
+                </label>
+                <input type="text" id="webAppName" placeholder="My Custom App" 
+                  style="width: 100%; padding: 0.75rem 1rem; background: rgba(21, 25, 35, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem;"
+                  onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+              </div>
+              
+              <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">
+                  <i class="fas fa-globe" style="color: var(--accent); margin-right: 0.5rem;"></i>Website URL
+                </label>
+                <input type="url" id="webAppUrl" placeholder="https://example.com" 
+                  style="width: 100%; padding: 0.75rem 1rem; background: rgba(21, 25, 35, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem;"
+                  onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+              </div>
+              
+              <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">
+                  <i class="fas fa-icons" style="color: var(--accent); margin-right: 0.5rem;"></i>Icon (FontAwesome)
+                </label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="text" id="webAppIcon" placeholder="fa-globe" value="fa-globe"
+                    style="flex: 1; padding: 0.75rem 1rem; background: rgba(21, 25, 35, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem;"
+                    onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+                    oninput="document.getElementById('webAppIconPreview').className = 'fas ' + this.value">
+                  <div style="width: 48px; height: 48px; background: rgba(21, 25, 35, 0.8); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <i id="webAppIconPreview" class="fas fa-globe" style="font-size: 1.5rem; color: var(--accent);"></i>
+                  </div>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 0.5rem;">
+                  Examples: fa-music, fa-gamepad, fa-video, fa-shopping-cart
+                </p>
+              </div>
+              
+              <div style="margin-bottom: 1.25rem;">
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: var(--text-primary); font-size: 0.9rem;">
+                  <input type="checkbox" id="webAppDesktopIcon" checked style="width: 18px; height: 18px; cursor: pointer;">
+                  <span>Add icon to desktop</span>
+                </label>
+              </div>
+            </div>
+            
+            <button onclick="createCustomWebApp()" 
+              style="width: 100%; padding: 0.875rem; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border: none; border-radius: 10px; color: var(--bg-primary); font-size: 1rem; font-family: fontb; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+              onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(125, 211, 192, 0.3)'"
+              onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+              <i class="fas fa-plus-circle"></i> Create Web App
+            </button>
+            
+            <div style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+              <h3 style="color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-list" style="color: var(--accent);"></i> Your Web Apps
+              </h3>
+              <div id="customWebAppsList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 1rem;">Loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+      noPadding: true,
+      width: 550,
+      height: 650,
+      onOpen: function () {
+        setTimeout(refreshCustomWebAppsList, 100);
+      }
+    },
   };
 
   if (appName === "achievements") {
@@ -5689,6 +6082,12 @@ print(f'Sum: {sum(numbers)}')
     if (appName === "nautilus-ai") {
       setTimeout(() => {
         initializeNautilusAI();
+      }, 50);
+    }
+
+    if (appName === "web-app-creator") {
+      setTimeout(() => {
+        refreshCustomWebAppsList();
       }, 50);
     }
   }
@@ -16513,3 +16912,196 @@ function resetWispUrl() {
   if (input) input.value = defaultUrl;
   showToast('Wisp URL reset to default', 'fa-undo');
 }
+
+// ==================== WEB APP CREATOR FUNCTIONS ====================
+
+function getCustomWebApps() {
+  const appsJson = localStorage.getItem('nautilusOS_customWebApps');
+  return appsJson ? JSON.parse(appsJson) : [];
+}
+
+function saveCustomWebApps(apps) {
+  localStorage.setItem('nautilusOS_customWebApps', JSON.stringify(apps));
+}
+
+function createCustomWebApp() {
+  const nameInput = document.getElementById('webAppName');
+  const urlInput = document.getElementById('webAppUrl');
+  const iconInput = document.getElementById('webAppIcon');
+  const desktopIconInput = document.getElementById('webAppDesktopIcon');
+
+  const name = nameInput.value.trim();
+  let url = urlInput.value.trim();
+  const icon = 'fas ' + (iconInput.value.trim() || 'fa-globe');
+  const addToDesktop = desktopIconInput.checked;
+
+  if (!name || !url) {
+    showToast('Please enter an app name and URL', 'fa-exclamation-circle');
+    return;
+  }
+
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = 'https://' + url;
+  }
+
+  const appId = 'webapp_' + Date.now();
+  const newApp = {
+    id: appId,
+    name: name,
+    url: url,
+    icon: icon,
+    created: Date.now()
+  };
+
+  // Save to storage
+  const apps = getCustomWebApps();
+  apps.push(newApp);
+  saveCustomWebApps(apps);
+
+  // Add to desktop if requested
+  if (addToDesktop) {
+    createDesktopIcon(appId, name, icon);
+    saveDesktopIconOrder(); // Should enable persistence
+  }
+
+  showToast(`App "${name}" created successfully!`, 'fa-check');
+
+  // Reset inputs
+  nameInput.value = '';
+  urlInput.value = '';
+
+  // Refresh list
+  refreshCustomWebAppsList();
+}
+
+function refreshCustomWebAppsList() {
+  const listEl = document.getElementById('customWebAppsList');
+  if (!listEl) return;
+
+  const apps = getCustomWebApps();
+
+  if (apps.length === 0) {
+    listEl.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 1rem; background: rgba(30, 35, 48, 0.4); border-radius: 8px;">No custom apps created yet.</p>';
+    return;
+  }
+
+  listEl.innerHTML = apps.map(app => `
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 10px; transition: all 0.2s ease;">
+      <div style="width: 40px; height: 40px; background: rgba(125, 211, 192, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--accent);">
+        <i class="${app.icon}"></i>
+      </div>
+      <div style="flex: 1;">
+        <div style="color: var(--text-primary); font-family: fontb; font-size: 0.95rem; margin-bottom: 0.25rem;">${app.name}</div>
+        <div style="color: var(--text-secondary); font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">${app.url}</div>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <button onclick="launchCustomWebApp('${app.id}')" title="Launch" 
+          style="padding: 0.5rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 6px; color: var(--accent); cursor: pointer;">
+          <i class="fas fa-play"></i>
+        </button>
+        <button onclick="deleteCustomWebApp('${app.id}')" title="Delete" 
+          style="padding: 0.5rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; color: #ef4444; cursor: pointer;">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteCustomWebApp(appId) {
+  if (!confirm('Are you sure you want to delete this app?')) return;
+
+  let apps = getCustomWebApps();
+  apps = apps.filter(a => a.id !== appId);
+  saveCustomWebApps(apps);
+
+  // Remove desktop icon if it exists
+  const desktopIcon = document.querySelector(`.desktop-icon[data-app="${appId}"]`);
+  if (desktopIcon) {
+    desktopIcon.remove();
+    saveDesktopIconOrder(); // Update persistence
+  }
+
+  refreshCustomWebAppsList();
+  showToast('App deleted', 'fa-trash');
+}
+
+function launchCustomWebApp(appId) {
+  const apps = getCustomWebApps();
+  const app = apps.find(a => a.id === appId);
+
+  if (!app) {
+    showToast('App not found', 'fa-exclamation-circle');
+    return;
+  }
+
+  // Force open the app using the specialized launcher
+  openCustomWebAppWindow(app);
+}
+
+function openCustomWebAppWindow(app) {
+  // Use UV proxy for seamless embedding like the main browser
+  // Construct proxy URL
+  let proxyUrl = app.url;
+  if (window.__uv$config) {
+    proxyUrl = window.__uv$config.prefix + window.__uv$config.encodeUrl(app.url);
+  } else {
+    // Fallback if UV not ready (shouldn't happen usually)
+    console.warn("UV config not found, using direct URL");
+  }
+
+  const content = `
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; background: #fff;">
+      <iframe src="${proxyUrl}" style="flex: 1; width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+    </div>
+  `;
+
+  createWindow(
+    app.name,
+    app.icon,
+    content,
+    1000,
+    700,
+    app.id,
+    true // noPadding
+  );
+}
+
+// Helper to create desktop icon dynamically
+function createDesktopIcon(appId, name, iconClass) {
+  const desktopIcons = document.getElementById('desktopIcons');
+  if (!desktopIcons) return;
+
+  // Check duplicate
+  if (document.querySelector(`.desktop-icon[data-app="${appId}"]`)) return;
+
+  const iconDiv = document.createElement('div');
+  iconDiv.className = 'desktop-icon';
+  iconDiv.setAttribute('ondblclick', `openApp('${appId}')`);
+  iconDiv.setAttribute('data-app', appId);
+
+  iconDiv.innerHTML = `
+    <i class="${iconClass}"></i> <span>${name}</span>
+  `;
+
+  desktopIcons.appendChild(iconDiv);
+
+  // Re-init dragging
+  if (typeof initDesktopIconDragging === 'function') {
+    initDesktopIconDragging();
+  }
+}
+
+// Initialize custom apps on startup
+window.addEventListener('DOMContentLoaded', () => {
+  const apps = getCustomWebApps();
+  apps.forEach(app => {
+    appMetadata[app.id] = {
+      name: app.name,
+      icon: app.icon.replace('fas ', '').replace('fa-solid ', ''),
+      preinstalled: false,
+      type: 'custom-web-app'
+    };
+  });
+});
+
