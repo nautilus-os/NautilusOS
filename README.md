@@ -70,7 +70,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Window animation settings
 - [ ] add option to cloak on clickpoff in basic cloaking
 - [ ] Add previews to all apps and themes
-- [ ] Make music player search with itunes and play with ub youtube
+- [ ] Make music player search and download via spotify
 - [ ] Add a scramjet proxy (xor)
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 - [ ] add option to upload custom image to tab blackout for monitering extensions
