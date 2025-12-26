@@ -1,5 +1,5 @@
 
-# `WE NEED TO SEEK FUNDING FOR DOMAIN! SEE DOMAIN IDEAS FOR MORE DETAILS`
+### `WE NEED TO SEEK FUNDING FOR DOMAIN! SEE DOMAIN IDEAS FOR MORE DETAILS`
 ## NautilusOS
 
 NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS.
@@ -87,6 +87,12 @@ Basically... a whole little OS in your browser :D
 - `nautilusos.me` $2.99/first year at dreamhost
 - `nautliusos.xyz` $2.00/year at namecheap (some 90% off deal)
 - `nautiluson.top` $4.63/year at porkbun
+  
+Feel like donating? We accept Monero (XMR)!
+
+<img width="219" height="220" alt="image" src="https://github.com/user-attachments/assets/01f175ca-dfa5-4625-9483-71621fe4dcdc" />
+
+
 ---
 
 ## 🖼 screenshots (this is like 5% of the entire project, check it out to see it all yourself!!)
