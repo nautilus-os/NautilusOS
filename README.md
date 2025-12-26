@@ -75,6 +75,7 @@ Basically... a whole little OS in your browser :D
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 - [ ] add option to upload custom image to tab blackout for monitering extensions
 - [ ] add option to do a panic image instead of a panic redirect
+- [ ] add default coverup, chrome unsafe pages oage failked to load etc
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
