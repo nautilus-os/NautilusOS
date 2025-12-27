@@ -7487,8 +7487,11 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
 <div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-border-all"></i>
+   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+      <div class="illustration-snap">
+          <div class="illustration-snap-zone"></div>
+          <div class="illustration-snap-zone"></div>
+      </div>
    </div>
    <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
    <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
@@ -7501,8 +7504,12 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
 <div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-globe"></i>
+   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+      <div class="illustration-uv">
+        <div class="illustration-uv-header">
+            <div class="illustration-uv-logo"></div>
+        </div>
+      </div>
    </div>
    <div class="appstore-item-name">Ultraviolet by $xor</div>
    <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
@@ -7512,8 +7519,12 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
 <div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-globe"></i>
+   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+      <div class="illustration-helios">
+        <div class="illustration-helios-header">
+            <div class="illustration-helios-logo"></div>
+        </div>
+      </div>
    </div>
    <div class="appstore-item-name">Helios by dinguschan</div>
    <div class="appstore-item-desc">The classic CORS proxy you know and love, fit in to one single file.</div>
@@ -7524,8 +7535,15 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
 <div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-globe"></i>
+   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+      <div class="illustration-vscode">
+        <div class="illustration-vscode-header"></div>
+        <div class="illustration-vscode-content">
+            <div class="illustration-vscode-line"></div>
+            <div class="illustration-vscode-line" style="width: 80%;"></div>
+            <div class="illustration-vscode-line" style="width: 60%;"></div>
+        </div>
+      </div>
    </div>
    <div class="appstore-item-name">Visual Studio Code</div>
    <div class="appstore-item-desc">The developer's choice for text editing, now on NautilusOS.</div>
@@ -7535,8 +7553,12 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
 <div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-microchip"></i>
+   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+      <div class="illustration-v86">
+        <div class="illustration-v86-line"></div>
+        <div class="illustration-v86-line" style="width: 60%;"></div>
+        <div class="illustration-v86-cursor"></div>
+      </div>
    </div>
    <div class="appstore-item-name">V86 Emulator by lanefiedler-731</div>
    <div class="appstore-item-desc">Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.</div>
@@ -7549,8 +7571,22 @@ ${startupInstalled ? "Uninstall" : "Install"}
    </button>
 </div>
 <div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-robot"></i>
+   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+      <div class="illustration-nautilus-ai">
+        <div class="illustration-nautilus-ai-header">
+            <div class="illustration-nautilus-ai-icon"><i class="fas fa-robot"></i></div>
+            <div class="illustration-nautilus-ai-title">Nautilus AI</div>
+        </div>
+        <div class="illustration-nautilus-ai-content">
+            <div class="illustration-nautilus-ai-msg-ai">
+                 <div class="illustration-nautilus-ai-line" style="width: 90%;"></div>
+                 <div class="illustration-nautilus-ai-line" style="width: 60%;"></div>
+            </div>
+            <div class="illustration-nautilus-ai-msg-user">
+                 <div class="illustration-nautilus-ai-line" style="width: 80%;"></div>
+            </div>
+        </div>
+      </div>
    </div>
    <div class="appstore-item-name">Nautilus AI Assistant by lanefiedler-731</div>
    <div class="appstore-item-desc">Your personal AI assistant powered by WebLLM. Get instant help with NautilusOS features, apps, settings, and more. Runs entirely in your browser with no server required!</div>
@@ -7570,8 +7606,15 @@ ${startupInstalled ? "Uninstall" : "Install"}
               </div>
               <div class="appstore-grid">
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-gamepad"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-snake">
+                              <div class="illustration-snake-grid">
+                                  ${Array(64).fill(0).map((_, i) =>
+      `<div class="illustration-snake-cell${[27, 28, 29].includes(i) ? " snake" : i === 35 ? " food" : ""
+      }"></div>`
+    ).join("")}
+                              </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Snake by lanefiedler-731</div>
                       <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
@@ -7588,8 +7631,17 @@ ${startupInstalled ? "Uninstall" : "Install"}
                   </div>
                   
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-th"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-2048">
+                              <div class="illustration-2048-tile">2</div>
+                              <div class="illustration-2048-tile">4</div>
+                              <div class="illustration-2048-tile">8</div>
+                              <div class="illustration-2048-tile">16</div>
+                              <div class="illustration-2048-tile">32</div>
+                              <div class="illustration-2048-tile">64</div>
+                              <div class="illustration-2048-tile">128</div>
+                              ${Array(9).fill('<div class="illustration-2048-tile"></div>').join("")}
+                          </div>
                       </div>
                       <div class="appstore-item-name">2048 by dinguschan</div>
                       <div class="appstore-item-desc">Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.</div>
@@ -7604,8 +7656,18 @@ ${startupInstalled ? "Uninstall" : "Install"}
                   </div>
                   
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-circle"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-tictactoe">
+                              <div class="illustration-tictactoe-cell">X</div>
+                              <div class="illustration-tictactoe-cell">O</div>
+                              <div class="illustration-tictactoe-cell">X</div>
+                              <div class="illustration-tictactoe-cell"></div>
+                              <div class="illustration-tictactoe-cell">O</div>
+                              <div class="illustration-tictactoe-cell"></div>
+                              <div class="illustration-tictactoe-cell"></div>
+                              <div class="illustration-tictactoe-cell"></div>
+                              <div class="illustration-tictactoe-cell"></div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">Tic-Tac-Toe by dinguschan</div>
                       <div class="appstore-item-desc">Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?</div>
@@ -7621,8 +7683,33 @@ ${startupInstalled ? "Uninstall" : "Install"}
                       </button>
                   </div>
                   <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-brain"></i>
+                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                          <div class="illustration-ai-snake">
+                               <div class="illustration-ai-snake-stats">
+                                   <div class="illustration-ai-snake-stat">
+                                       <div class="illustration-ai-snake-stat-icon"></div>
+                                       <div class="illustration-ai-snake-stat-line"></div>
+                                   </div>
+                                   <div class="illustration-ai-snake-stat">
+                                       <div class="illustration-ai-snake-stat-icon"></div>
+                                       <div class="illustration-ai-snake-stat-line" style="width: 60%"></div>
+                                   </div>
+                                   <div class="illustration-ai-snake-stat">
+                                       <div class="illustration-ai-snake-stat-icon"></div>
+                                       <div class="illustration-ai-snake-stat-line" style="width: 40%"></div>
+                                   </div>
+                                   <div class="illustration-ai-snake-stat">
+                                       <div class="illustration-ai-snake-stat-icon"></div>
+                                       <div class="illustration-ai-snake-stat-line" style="width: 80%"></div>
+                                   </div>
+                               </div>
+                               <div class="illustration-ai-snake-board">
+                                    ${Array(25).fill(0).map((_, i) =>
+        `<div class="illustration-ai-snake-cell${[12, 13].includes(i) ? " snake" : ""
+        }"></div>`
+      ).join("")}
+                               </div>
+                          </div>
                       </div>
                       <div class="appstore-item-name">AI Snake Learning by lanefiedler-731</div>
                       <div class="appstore-item-desc">Train an AI neural network to play Snake using Deep Q-Learning. Watch it learn and improve with GPU acceleration, customizable concurrency, game speed, and training speed controls.</div>
