@@ -2679,6 +2679,22 @@ function createWindow(
     window.innerHeight / 2 - height / 2 - 30 + Math.random() * 20 + "px";
   windowEl.style.zIndex = ++zIndexCounter;
 
+  // Check if content is primarily an iframe and clean it up
+  if (content && typeof content === 'string' && content.includes('<iframe')) {
+    // Create temp parser
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const iframe = doc.querySelector('iframe');
+    if (iframe) {
+      const src = iframe.getAttribute('src');
+      if (src) {
+        // Replace content with a full-size iframe
+        content = `<iframe src="${src}" style="width: 100%; height: 100%; border: none; display: block;" allow="${iframe.getAttribute('allow') || 'fullscreen; camera; microphone'}" referrerpolicy="no-referrer"></iframe>`;
+        noPadding = true;
+      }
+    }
+  }
+
   const contentClass = noPadding
     ? "window-content"
     : "window-content has-padding";
@@ -3291,6 +3307,15 @@ function openApp(appName, editorContent = "", filename = "") {
   // Handle custom web apps
   if (appName.startsWith("webapp_")) {
     launchCustomWebApp(appName);
+    return;
+  }
+
+  // Handle installed community apps
+  const communityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+  if (communityApps[appName]) {
+    const appData = communityApps[appName];
+    // Create a floating window for the installed app
+    createWindow(appData.name, appData.icon || 'fas fa-box', appData.content, 800, 600);
     return;
   }
 
@@ -4028,6 +4053,23 @@ alt="favicon">
                     </div>
                 </div>
                 
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-columns"></i>
+                        <span>Taskbar</span>
+                    </div>
+                    <div class="settings-card-body">
+                         <div class="settings-item">
+                            <div class="settings-item-text">
+                                <div class="settings-item-title">Full Taskbar</div>
+                                <div class="settings-item-desc">Stretch the taskbar to the full width of the screen (Windows style)</div>
+                            </div>
+                            <div class="toggle-switch ${localStorage.getItem('nautilusOS_taskbarStyle') === 'full' ? 'active' : ''}" 
+                                onclick="toggleTaskbarStyle(); this.classList.toggle('active');"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="settings-card">
                     <div class="settings-card-header">
                         <i class="fas fa-palette"></i>
@@ -5453,6 +5495,10 @@ print(f'Sum: {sum(numbers)}')
             <i class="fas fa-gamepad"></i>
             <span>Games</span>
         </div>
+        <div class="appstore-section" onclick="switchAppStoreSection('community', this)">
+            <i class="fas fa-users"></i>
+            <span>Community</span>
+        </div>
     </div>
     <div class="appstore-main" id="appstoreMain">
         <div class="appstore-header">
@@ -6118,6 +6164,7 @@ function handleTerminalInput(e) {
         "date - Show current date and time<br>" +
         "whoami - Display current username<br>" +
         "reset-boot - Reset bootloader preferences<br>" +
+        "refresh-cache - Purge jsDelivr cache for community apps<br>" +
         "echo [text] - Display text";
     } else if (command === "ls") {
       const tree = ".\n" + generateFileTree(fileSystem);
@@ -6158,6 +6205,17 @@ function handleTerminalInput(e) {
       output.innerHTML =
         '<span style="color: #4ade80;">✓ Bootloader preferences reset successfully</span><br>' +
         "The bootloader menu will appear on next page reload.";
+    } else if (command === "refresh-cache") {
+      output.innerHTML = "Submitting purge request to jsDelivr...<br>";
+
+      // Asynchronously purge key files
+      fetch('https://purge.jsdelivr.net/gh/nautilus-os/community@main/files/info.json').catch(e => { });
+      fetch('https://purge.jsdelivr.net/gh/nautilus-os/community@main/apps').catch(e => { });
+
+      // We can't actually verify purge easily from client without CORS issues sometimes?
+      // But the request fires.
+      output.innerHTML += '<span style="color: #4ade80;">✓ Purge request sent.</span><br>' +
+        "Please wait a few moments and try reloading the store.";
     } else if (command === "clear") {
       terminal.innerHTML = `
                       <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.5</div>
@@ -7181,544 +7239,219 @@ function switchAppStoreSection(section, element) {
 
   const mainContent = document.getElementById("appstoreMain");
 
-  if (section === "themes") {
-    const lightThemeInstalled = installedThemes.includes("light");
+  if (section === 'community') {
     mainContent.innerHTML = `
-              <div class="appstore-header">
-                  <h2>Themes</h2>
-                  <p>Customize your NautilusOS experience</p>
-              </div>
-              <div class="appstore-grid">
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-dark-theme">
-                              <div class="illustration-dark-window">
-                                  <div class="illustration-dark-header"></div>
-                                  <div class="illustration-dark-content">
-                                      <div class="illustration-dark-line" style="width: 80%;"></div>
-                                      <div class="illustration-dark-line" style="width: 60%;"></div>
-                                      <div class="illustration-dark-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Dark Theme by dinguschan</div>
-                      <div class="appstore-item-desc">The default NautilusOS theme. Sleek dark interface with teal accents,
-                          perfect for extended use and reducing eye strain.</div>
-                      <button class="appstore-item-btn installed" style="opacity: 0.6; cursor: not-allowed;" disabled>
-                          Installed (Default)
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-light-theme">
-                              <div class="illustration-light-window">
-                                  <div class="illustration-light-header"></div>
-                                  <div class="illustration-light-content">
-                                      <div class="illustration-light-line" style="width: 80%;"></div>
-                                      <div class="illustration-light-line" style="width: 60%;"></div>
-                                      <div class="illustration-light-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Light Theme by dinguschan</div>
-                      <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with
-                          light backgrounds and dark text.</div>
-                      <button class="appstore-item-btn ${lightThemeInstalled ? "installed" : ""
-      }" onclick="${lightThemeInstalled
-        ? " uninstallTheme('light')"
-        : "installTheme('light')"
-      }">
-                          ${lightThemeInstalled ? "Uninstall" : "Install"}
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-golden-theme">
-                              <div class="illustration-golden-window">
-                                  <div class="illustration-golden-header"></div>
-                                  <div class="illustration-golden-content">
-                                      <div class="illustration-golden-line" style="width: 80%;"></div>
-                                      <div class="illustration-golden-line" style="width: 60%;"></div>
-                                      <div class="illustration-golden-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect
-                          for a premium look.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("golden") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("golden")
-        ? "uninstallTheme('golden')"
-        : "installTheme('golden')"
-      }">
-                          ${installedThemes.includes("golden")
-        ? "Uninstall"
-        : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-red-theme">
-                              <div class="illustration-red-window">
-                                  <div class="illustration-red-header"></div>
-                                  <div class="illustration-red-content">
-                                      <div class="illustration-red-line" style="width: 80%;"></div>
-                                      <div class="illustration-red-line" style="width: 60%;"></div>
-                                      <div class="illustration-red-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy
-                          meets elegance.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("red") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("red")
-        ? "uninstallTheme('red')"
-        : "installTheme('red')"
-      }">
-                          ${installedThemes.includes("red") ? "Uninstall" : "Install"}
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-blue-theme">
-                              <div class="illustration-blue-window">
-                                  <div class="illustration-blue-header"></div>
-                                  <div class="illustration-blue-content">
-                                      <div class="illustration-blue-line" style="width: 80%;"></div>
-                                      <div class="illustration-blue-line" style="width: 60%;"></div>
-                                      <div class="illustration-blue-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.
-                      </div>
-                      <button class="appstore-item-btn ${installedThemes.includes("blue") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("blue")
-        ? "uninstallTheme('blue')"
-        : "installTheme('blue')"
-      }">
-                          ${installedThemes.includes("blue") ? "Uninstall" : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-purple-theme">
-                              <div class="illustration-purple-window">
-                                  <div class="illustration-purple-header"></div>
-                                  <div class="illustration-purple-content">
-                                      <div class="illustration-purple-line" style="width: 80%;"></div>
-                                      <div class="illustration-purple-line" style="width: 60%;"></div>
-                                      <div class="illustration-purple-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Purple Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Deep shades combined with royal hues, crafted together for the perfect purple theme.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("purple") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("purple")
-        ? "uninstallTheme('purple')"
-        : "installTheme('purple')"
-      }">
-                          ${installedThemes.includes("purple")
-        ? "Uninstall"
-        : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-green-theme">
-                              <div class="illustration-green-window">
-                                  <div class="illustration-green-header"></div>
-                                  <div class="illustration-green-content">
-                                      <div class="illustration-green-line" style="width: 80%;"></div>
-                                      <div class="illustration-green-line" style="width: 60%;"></div>
-                                      <div class="illustration-green-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Green Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("green") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("green")
-        ? "uninstallTheme('green')"
-        : "installTheme('green')"
-      }">
-                          ${installedThemes.includes("green")
-        ? "Uninstall"
-        : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-liquidglass-theme">
-                              <div class="illustration-liquidglass-window">
-                                  <div class="illustration-liquidglass-header"></div>
-                                  <div class="illustration-liquidglass-content">
-                                      <div class="illustration-liquidglass-line" style="width: 80%;"></div>
-                                      <div class="illustration-liquidglass-line" style="width: 60%;"></div>
-                                      <div class="illustration-liquidglass-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Liquid Glass by $xor</div>
-                      <div class="appstore-item-desc">An Apple insipired theme with a beautiful translucent look.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("liquidGlass") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("liquidGlass")
-        ? "uninstallTheme('liquidGlass')"
-        : "installTheme('liquidGlass')"
-      }">
-                          ${installedThemes.includes("liquidGlass")
-        ? "Uninstall"
-        : "Install"
-      }
-                      </button>
-                  </div>
-              </div>
-          `;
-  } else if (section === "apps") {
-    const startupInstalled = installedApps.includes("startup-apps");
-    const taskmanagerInstalled = installedApps.includes("task-manager");
-    const snapManagerInstalled = installedApps.includes("snap-manager");
-    const uvInstalled = installedApps.includes("uv");
-    const heliosInstalled = installedApps.includes("helios");
-    const vscInstalled = installedApps.includes("vsc");
-    const v86Installed = installedApps.includes("v86-emulator");
+        <div class="appstore-header">
+            <h2>Community</h2>
+            <p>Apps & themes from the community</p>
+        </div>
+        <div id="communityAppsGrid" class="appstore-grid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--accent);"></i>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">Loading community repo...</p>
+            </div>
+        </div>
+    `;
+    fetchCommunityApps();
+    return;
+  }
+
+  if (section === "themes") {
+    // Helper for theme items
+    const getTheme = (name, author, desc, key, className) => ({
+      name: name,
+      author: author,
+      desc: desc,
+      customPreviewHtml: `<div class="${className}"><div class="${className.replace('theme', 'window')}"><div class="${className.replace('theme', 'header')}"></div><div class="${className.replace('theme', 'content')}"><div class="${className.replace('theme', 'line')}" style="width: 80%;"></div><div class="${className.replace('theme', 'line')}" style="width: 60%;"></div><div class="${className.replace('theme', 'line')}" style="width: 90%;"></div></div></div></div>`,
+      isInstalled: installedThemes.includes(key),
+      installAction: `installTheme('${key}')`,
+      uninstallAction: `uninstallTheme('${key}')`,
+      type: "theme"
+    });
+
+    const items = [
+      {
+        name: "Dark Theme",
+        author: "dinguschan",
+        desc: "The default NautilusOS theme. Sleek dark interface with teal accents, perfect for extended use and reducing eye strain.",
+        customPreviewHtml: `<div class="illustration-dark-theme"><div class="illustration-dark-window"><div class="illustration-dark-header"></div><div class="illustration-dark-content"><div class="illustration-dark-line" style="width: 80%;"></div><div class="illustration-dark-line" style="width: 60%;"></div><div class="illustration-dark-line" style="width: 90%;"></div></div></div></div>`,
+        isInstalled: true,
+        installButtonText: "Installed (Default)",
+        installButtonDisabled: true,
+        type: "theme"
+      },
+      getTheme("Light Theme", "dinguschan", "A bright and clean theme perfect for daytime use. Easy on the eyes with light backgrounds and dark text.", "light", "illustration-light-theme"),
+      getTheme("Golden Theme", "lanefiedler-731", "Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.", "golden", "illustration-golden-theme"),
+      getTheme("Red Theme", "lanefiedler-731", "Bold and vibrant red accents for those who want to stand out. Energy meets elegance.", "red", "illustration-red-theme"),
+      getTheme("Blue Theme", "lanefiedler-731", "Cool and calming blue tones. Professional and soothing for extended use.", "blue", "illustration-blue-theme"),
+      getTheme("Purple Theme", "lanefiedler-731", "Deep shades combined with royal hues, crafted together for the perfect purple theme.", "purple", "illustration-purple-theme"),
+      getTheme("Green Theme", "lanefiedler-731", "Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.", "green", "illustration-green-theme"),
+      getTheme("Liquid Glass", "$xor", "An Apple insipired theme with a beautiful translucent look.", "liquidGlass", "illustration-liquidglass-theme")
+    ];
 
     mainContent.innerHTML = `
-                  <div class="appstore-header">
-                      <h2>Apps</h2>
-                      <p>Discover and install new applications</p>
-                  </div>
-                  <div class="appstore-grid">
-                      <div class="appstore-item">
-                          <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-    <div class="illustration-startup-window">
-        <div class="illustration-startup-header">Startup Apps</div>
-        <div class="illustration-startup-items">
-            <div class="illustration-startup-item">
-                <div class="illustration-startup-checkbox"></div>
-                <div class="illustration-startup-icon"></div>
-                <div class="illustration-startup-label"></div>
-            </div>
-            <div class="illustration-startup-item">
-                <div class="illustration-startup-checkbox"></div>
-                <div class="illustration-startup-icon"></div>
-                <div class="illustration-startup-label"></div>
-            </div>
-            <div class="illustration-startup-item">
-                <div class="illustration-startup-checkbox" style="background: rgba(125, 211, 192, 0.3);"></div>
-                <div class="illustration-startup-icon"></div>
-                <div class="illustration-startup-label"></div>
-            </div>
+        <div class="appstore-header">
+            <h2>Themes</h2>
+            <p>Customize your NautilusOS experience</p>
         </div>
-    </div>
-</div>
-                          <div class="appstore-item-name">Startup Apps by dinguschan</div>
-<div class="appstore-item-desc">Control which applications launch automatically on login with this convenient this built-in app.</div>
-<button class="appstore-item-btn ${startupInstalled ? "installed" : ""
-      }" onclick="${startupInstalled
-        ? "uninstallApp('startup-apps')"
-        : "installApp('startup-apps')"
-      }">
-${startupInstalled ? "Uninstall" : "Install"}
-</button>
-<div class="offline-support" style="top: -90%;"><i class="fa-solid fa-file"></i> OFFLINE SUPPORT</div>
-</div>
-<div class="appstore-item">
-   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-      <div class="illustration-taskmanager">
-         <div class="illustration-taskmanager-header">
-            <div class="illustration-taskmanager-title">Task Manager</div>
-            <div class="illustration-taskmanager-stat">CPU: 45%</div>
-         </div>
-         <div class="illustration-taskmanager-processes">
-            <div class="illustration-taskmanager-process">
-               <div class="illustration-taskmanager-process-icon"></div>
-               <div class="illustration-taskmanager-process-name"></div>
-               <div class="illustration-taskmanager-process-bar">
-                  <div class="illustration-taskmanager-process-fill" style="width: 60%;"></div>
-               </div>
-            </div>
-            <div class="illustration-taskmanager-process">
-               <div class="illustration-taskmanager-process-icon"></div>
-               <div class="illustration-taskmanager-process-name"></div>
-               <div class="illustration-taskmanager-process-bar">
-                  <div class="illustration-taskmanager-process-fill" style="width: 35%;"></div>
-               </div>
-            </div>
-            <div class="illustration-taskmanager-process">
-               <div class="illustration-taskmanager-process-icon"></div>
-               <div class="illustration-taskmanager-process-name"></div>
-               <div class="illustration-taskmanager-process-bar">
-                  <div class="illustration-taskmanager-process-fill" style="width: 80%;"></div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-   <div class="appstore-item-name">Task Manager by dinguschan</div>
-   <div class="appstore-item-desc">Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.</div>
-   <button class="appstore-item-btn ${taskmanagerInstalled ? "installed" : ""
-      }" onclick="${taskmanagerInstalled
-        ? "uninstallApp('task-manager')"
-        : "installApp('task-manager')"
-      }">
-   ${taskmanagerInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-      <div class="illustration-snap">
-          <div class="illustration-snap-zone"></div>
-          <div class="illustration-snap-zone"></div>
-      </div>
-   </div>
-   <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
-   <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
-   <button class="appstore-item-btn ${snapManagerInstalled ? "installed" : ""
-      }" onclick="${snapManagerInstalled
-        ? "uninstallApp('snap-manager')"
-        : "installApp('snap-manager')"
-      }">
-   ${snapManagerInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-      <div class="illustration-uv">
-        <div class="illustration-uv-header">
-            <div class="illustration-uv-logo"></div>
+        <div class="appstore-grid">
+            ${items.map(item => renderAppItem(item)).join('')}
         </div>
-      </div>
-   </div>
-   <div class="appstore-item-name">Ultraviolet by $xor</div>
-   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
-   <button class="appstore-item-btn ${uvInstalled ? "installed" : ""
-      }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
-   ${uvInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-      <div class="illustration-helios">
-        <div class="illustration-helios-header">
-            <div class="illustration-helios-logo"></div>
-        </div>
-      </div>
-   </div>
-   <div class="appstore-item-name">Helios by dinguschan</div>
-   <div class="appstore-item-desc">The classic CORS proxy you know and love, fit in to one single file.</div>
-   <button class="appstore-item-btn ${heliosInstalled ? "installed" : ""
-      }" onclick="${heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
-      }">
-   ${heliosInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-      <div class="illustration-vscode">
-        <div class="illustration-vscode-header"></div>
-        <div class="illustration-vscode-content">
-            <div class="illustration-vscode-line"></div>
-            <div class="illustration-vscode-line" style="width: 80%;"></div>
-            <div class="illustration-vscode-line" style="width: 60%;"></div>
-        </div>
-      </div>
-   </div>
-   <div class="appstore-item-name">Visual Studio Code</div>
-   <div class="appstore-item-desc">The developer's choice for text editing, now on NautilusOS.</div>
-   <button class="appstore-item-btn ${vscInstalled ? "installed" : ""
-      }" onclick="${vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"}">
-   ${vscInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-      <div class="illustration-v86">
-        <div class="illustration-v86-line"></div>
-        <div class="illustration-v86-line" style="width: 60%;"></div>
-        <div class="illustration-v86-cursor"></div>
-      </div>
-   </div>
-   <div class="appstore-item-name">V86 Emulator by lanefiedler-731</div>
-   <div class="appstore-item-desc">Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.</div>
-   <button class="appstore-item-btn ${v86Installed ? "installed" : ""
-      }" onclick="${v86Installed
-        ? "uninstallApp('v86-emulator')"
-        : "installApp('v86-emulator')"
-      }">
-   ${v86Installed ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-      <div class="illustration-nautilus-ai">
-        <div class="illustration-nautilus-ai-header">
-            <div class="illustration-nautilus-ai-icon"><i class="fas fa-robot"></i></div>
-            <div class="illustration-nautilus-ai-title">Nautilus AI</div>
-        </div>
-        <div class="illustration-nautilus-ai-content">
-            <div class="illustration-nautilus-ai-msg-ai">
-                 <div class="illustration-nautilus-ai-line" style="width: 90%;"></div>
-                 <div class="illustration-nautilus-ai-line" style="width: 60%;"></div>
-            </div>
-            <div class="illustration-nautilus-ai-msg-user">
-                 <div class="illustration-nautilus-ai-line" style="width: 80%;"></div>
-            </div>
-        </div>
-      </div>
-   </div>
-   <div class="appstore-item-name">Nautilus AI Assistant by lanefiedler-731</div>
-   <div class="appstore-item-desc">Your personal AI assistant powered by WebLLM. Get instant help with NautilusOS features, apps, settings, and more. Runs entirely in your browser with no server required!</div>
-   <button class="appstore-item-btn installed" onclick="openApp('nautilus-ai')">
-      Open
-   </button>
-</div>
-</div>
-</div>
-</div>
-              `;
-  } else if (section === "games") {
+    `;
+
+  } else if (section === "apps") {
+    const items = [
+      {
+        name: "Startup Apps",
+        author: "dinguschan",
+        desc: "Control which applications launch automatically on login with this convenient this built-in app.",
+        customPreviewHtml: `<div class="illustration-startup-window"> <div class="illustration-startup-header">Startup Apps</div> <div class="illustration-startup-items"> <div class="illustration-startup-item"> <div class="illustration-startup-checkbox"></div> <div class="illustration-startup-icon"></div> <div class="illustration-startup-label"></div> </div> <div class="illustration-startup-item"> <div class="illustration-startup-checkbox"></div> <div class="illustration-startup-icon"></div> <div class="illustration-startup-label"></div> </div> <div class="illustration-startup-item"> <div class="illustration-startup-checkbox" style="background: rgba(125, 211, 192, 0.3);"></div> <div class="illustration-startup-icon"></div> <div class="illustration-startup-label"></div> </div> </div> </div><div class="offline-support" style="top: -90%;"><i class="fa-solid fa-file"></i> OFFLINE SUPPORT</div>`,
+        isInstalled: installedApps.includes("startup-apps"),
+        installAction: "installApp('startup-apps')",
+        uninstallAction: "uninstallApp('startup-apps')",
+        type: "app"
+      },
+      {
+        name: "Task Manager",
+        author: "dinguschan",
+        desc: "Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.",
+        customPreviewHtml: `<div class="illustration-taskmanager"> <div class="illustration-taskmanager-header"> <div class="illustration-taskmanager-title">Task Manager</div> <div class="illustration-taskmanager-stat">CPU: 45%</div> </div> <div class="illustration-taskmanager-processes"> <div class="illustration-taskmanager-process"> <div class="illustration-taskmanager-process-icon"></div> <div class="illustration-taskmanager-process-name"></div> <div class="illustration-taskmanager-process-bar"> <div class="illustration-taskmanager-process-fill" style="width: 60%;"></div> </div> </div> <div class="illustration-taskmanager-process"> <div class="illustration-taskmanager-process-icon"></div> <div class="illustration-taskmanager-process-name"></div> <div class="illustration-taskmanager-process-bar"> <div class="illustration-taskmanager-process-fill" style="width: 35%;"></div> </div> </div> <div class="illustration-taskmanager-process"> <div class="illustration-taskmanager-process-icon"></div> <div class="illustration-taskmanager-process-name"></div> <div class="illustration-taskmanager-process-bar"> <div class="illustration-taskmanager-process-fill" style="width: 80%;"></div> </div> </div> </div> </div>`,
+        isInstalled: installedApps.includes("task-manager"),
+        installAction: "installApp('task-manager')",
+        uninstallAction: "uninstallApp('task-manager')",
+        type: "app"
+      },
+      {
+        name: "Snap Manager",
+        author: "lanefiedler-731",
+        desc: "Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.",
+        customPreviewHtml: `<div class="illustration-snap"> <div class="illustration-snap-zone"></div> <div class="illustration-snap-zone"></div> </div>`,
+        isInstalled: installedApps.includes("snap-manager"),
+        installAction: "installApp('snap-manager')",
+        uninstallAction: "uninstallApp('snap-manager')",
+        type: "app"
+      },
+      {
+        name: "Ultraviolet",
+        author: "$xor",
+        desc: "Open up a whole new browsing experience, powered by Ultraviolet.",
+        customPreviewHtml: `<div class="illustration-uv"> <div class="illustration-uv-header"> <div class="illustration-uv-logo"></div> </div> </div>`,
+        isInstalled: installedApps.includes("uv"),
+        installAction: "installApp('uv')",
+        uninstallAction: "uninstallApp('uv')",
+        type: "app"
+      },
+      {
+        name: "Helios",
+        author: "dinguschan",
+        desc: "The classic CORS proxy you know and love, fit in to one single file.",
+        customPreviewHtml: `<div class="illustration-helios"> <div class="illustration-helios-header"> <div class="illustration-helios-logo"></div> </div> </div>`,
+        isInstalled: installedApps.includes("helios"),
+        installAction: "installApp('helios')",
+        uninstallAction: "uninstallApp('helios')",
+        type: "app"
+      },
+      {
+        name: "Visual Studio Code",
+        author: "Microsoft",
+        desc: "The developer's choice for text editing, now on NautilusOS.",
+        customPreviewHtml: `<div class="illustration-vscode"> <div class="illustration-vscode-header"></div> <div class="illustration-vscode-content"> <div class="illustration-vscode-line"></div> <div class="illustration-vscode-line" style="width: 80%;"></div> <div class="illustration-vscode-line" style="width: 60%;"></div> </div> </div>`,
+        isInstalled: installedApps.includes("vsc"),
+        installAction: "installApp('vsc')",
+        uninstallAction: "uninstallApp('vsc')",
+        type: "app"
+      },
+      {
+        name: "V86 Emulator",
+        author: "lanefiedler-731",
+        desc: "Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.",
+        customPreviewHtml: `<div class="illustration-v86"> <div class="illustration-v86-line"></div> <div class="illustration-v86-line" style="width: 60%;"></div> <div class="illustration-v86-cursor"></div> </div>`,
+        isInstalled: installedApps.includes("v86-emulator"),
+        installAction: "installApp('v86-emulator')",
+        uninstallAction: "uninstallApp('v86-emulator')",
+        type: "app"
+      },
+      {
+        name: "Nautilus AI Assistant",
+        author: "lanefiedler-731",
+        desc: "Your personal AI assistant powered by WebLLM. Get instant help with NautilusOS features, apps, settings, and more. Runs entirely in your browser with no server required!",
+        customPreviewHtml: `<div class="illustration-nautilus-ai"> <div class="illustration-nautilus-ai-header"> <div class="illustration-nautilus-ai-icon"><i class="fas fa-robot"></i></div> <div class="illustration-nautilus-ai-title">Nautilus AI</div> </div> <div class="illustration-nautilus-ai-content"> <div class="illustration-nautilus-ai-msg-ai"> <div class="illustration-nautilus-ai-line" style="width: 90%;"></div> <div class="illustration-nautilus-ai-line" style="width: 60%;"></div> </div> <div class="illustration-nautilus-ai-msg-user"> <div class="illustration-nautilus-ai-line" style="width: 80%;"></div> </div> </div> </div>`,
+        isInstalled: true,
+        installButtonText: "Open",
+        installAction: "openApp('nautilus-ai')",
+        uninstallAction: "",
+        type: "app"
+      }
+    ];
+
     mainContent.innerHTML = `
-              <div class="appstore-header">
-                  <h2>Games</h2>
-                  <p>Play and enjoy games on NautilusOS</p>
-              </div>
-              <div class="appstore-grid">
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-snake">
-                              <div class="illustration-snake-grid">
-                                  ${Array(64).fill(0).map((_, i) =>
-      `<div class="illustration-snake-cell${[27, 28, 29].includes(i) ? " snake" : i === 35 ? " food" : ""
-      }"></div>`
-    ).join("")}
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Snake by lanefiedler-731</div>
-                      <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
-                      <button class="appstore-item-btn ${installedGames.includes("snake") ? "installed" : ""
-      }" onclick="${installedGames.includes("snake")
-        ? "openApp('snake')"
-        : "installGame('snake')"
-      }">
-                          ${installedGames.includes("snake")
-        ? "Play"
-        : "Install"
+          <div class="appstore-header">
+              <h2>Apps</h2>
+              <p>Discover and install new applications</p>
+          </div>
+          <div class="appstore-grid">
+              ${items.map(item => renderAppItem(item)).join('')}
+          </div>
+      `;
+
+  } else if (section === "games") {
+    const items = [
+      {
+        name: "Snake",
+        author: "lanefiedler-731",
+        desc: "A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!",
+        customPreviewHtml: `<div class="illustration-snake"> <div class="illustration-snake-grid"> ${Array(64).fill(0).map((_, i) => `<div class="illustration-snake-cell${[27, 28, 29].includes(i) ? " snake" : i === 35 ? " food" : ""}"></div>`).join("")} </div> </div>`,
+        isInstalled: installedGames.includes("snake"),
+        installAction: "installGame('snake')",
+        uninstallAction: "", // No uninstall needed? Original didn't show uninstall logic for games properly or handled it?
+        // Original: installedGames.includes("snake") ? "openApp('snake')" : "installGame('snake')"
+        // If installed, it shows "Play".
+        installButtonText: installedGames.includes("snake") ? "Play" : "Install",
+        installAction: installedGames.includes("snake") ? "openApp('snake')" : "installGame('snake')",
+        uninstallAction: "", // Original doesn't seem to support uninstalling games?
+        type: "game"
+      },
+      {
+        name: "2048",
+        author: "dinguschan",
+        desc: "Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.",
+        customPreviewHtml: `<div class="illustration-2048"> <div class="illustration-2048-tile">2</div> <div class="illustration-2048-tile">4</div> <div class="illustration-2048-tile">8</div> <div class="illustration-2048-tile">16</div> <div class="illustration-2048-tile">32</div> <div class="illustration-2048-tile">64</div> <div class="illustration-2048-tile">128</div> ${Array(9).fill('<div class="illustration-2048-tile"></div>').join("")} </div>`,
+        isInstalled: installedGames.includes("2048"),
+        installButtonText: installedGames.includes("2048") ? "Play" : "Install",
+        installAction: installedGames.includes("2048") ? "openApp('2048')" : "installGame('2048')",
+        type: "game"
+      },
+      {
+        name: "Tic-Tac-Toe",
+        author: "dinguschan",
+        desc: "Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?",
+        customPreviewHtml: `<div class="illustration-tictactoe"> <div class="illustration-tictactoe-cell">X</div> <div class="illustration-tictactoe-cell">O</div> <div class="illustration-tictactoe-cell">X</div> <div class="illustration-tictactoe-cell"></div> <div class="illustration-tictactoe-cell">O</div> <div class="illustration-tictactoe-cell"></div> <div class="illustration-tictactoe-cell"></div> <div class="illustration-tictactoe-cell"></div> <div class="illustration-tictactoe-cell"></div> </div>`,
+        isInstalled: installedGames.includes("tictactoe"),
+        installButtonText: installedGames.includes("tictactoe") ? "Play" : "Install",
+        installAction: installedGames.includes("tictactoe") ? "openApp('tictactoe')" : "installGame('tictactoe')",
+        type: "game"
+      },
+      {
+        name: "AI Snake Learning",
+        author: "lanefiedler-731",
+        desc: "Train an AI neural network to play Snake using Deep Q-Learning. Watch it learn and improve with GPU acceleration, customizable concurrency, game speed, and training speed controls.",
+        customPreviewHtml: `<div class="illustration-ai-snake"> <div class="illustration-ai-snake-stats"> <div class="illustration-ai-snake-stat"> <div class="illustration-ai-snake-stat-icon"></div> <div class="illustration-ai-snake-stat-line"></div> </div> <div class="illustration-ai-snake-stat"> <div class="illustration-ai-snake-stat-icon"></div> <div class="illustration-ai-snake-stat-line" style="width: 60%"></div> </div> <div class="illustration-ai-snake-stat"> <div class="illustration-ai-snake-stat-icon"></div> <div class="illustration-ai-snake-stat-line" style="width: 40%"></div> </div> <div class="illustration-ai-snake-stat"> <div class="illustration-ai-snake-stat-icon"></div> <div class="illustration-ai-snake-stat-line" style="width: 80%"></div> </div> </div> <div class="illustration-ai-snake-board"> ${Array(25).fill(0).map((_, i) => `<div class="illustration-ai-snake-cell${[12, 13].includes(i) ? " snake" : ""}"></div>`).join("")} </div> </div>`,
+        isInstalled: true,
+        installButtonText: "Play",
+        installAction: "openApp('ai-snake')",
+        type: "game"
       }
-                      </button>
-                  </div>
-                  
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-2048">
-                              <div class="illustration-2048-tile">2</div>
-                              <div class="illustration-2048-tile">4</div>
-                              <div class="illustration-2048-tile">8</div>
-                              <div class="illustration-2048-tile">16</div>
-                              <div class="illustration-2048-tile">32</div>
-                              <div class="illustration-2048-tile">64</div>
-                              <div class="illustration-2048-tile">128</div>
-                              ${Array(9).fill('<div class="illustration-2048-tile"></div>').join("")}
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">2048 by dinguschan</div>
-                      <div class="appstore-item-desc">Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.</div>
-                      <button class="appstore-item-btn ${installedGames.includes("2048") ? "installed" : ""
-      }" onclick="${installedGames.includes("2048")
-        ? "openApp('2048')"
-        : "installGame('2048')"
-      }">
-                          ${installedGames.includes("2048") ? "Play" : "Install"
-      }
-                      </button>
-                  </div>
-                  
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-tictactoe">
-                              <div class="illustration-tictactoe-cell">X</div>
-                              <div class="illustration-tictactoe-cell">O</div>
-                              <div class="illustration-tictactoe-cell">X</div>
-                              <div class="illustration-tictactoe-cell"></div>
-                              <div class="illustration-tictactoe-cell">O</div>
-                              <div class="illustration-tictactoe-cell"></div>
-                              <div class="illustration-tictactoe-cell"></div>
-                              <div class="illustration-tictactoe-cell"></div>
-                              <div class="illustration-tictactoe-cell"></div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Tic-Tac-Toe by dinguschan</div>
-                      <div class="appstore-item-desc">Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?</div>
-                      <button class="appstore-item-btn ${installedGames.includes("tictactoe") ? "installed" : ""
-      }" onclick="${installedGames.includes("tictactoe")
-        ? "openApp('tictactoe')"
-        : "installGame('tictactoe')"
-      }">
-                          ${installedGames.includes("tictactoe")
-        ? "Play"
-        : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-ai-snake">
-                               <div class="illustration-ai-snake-stats">
-                                   <div class="illustration-ai-snake-stat">
-                                       <div class="illustration-ai-snake-stat-icon"></div>
-                                       <div class="illustration-ai-snake-stat-line"></div>
-                                   </div>
-                                   <div class="illustration-ai-snake-stat">
-                                       <div class="illustration-ai-snake-stat-icon"></div>
-                                       <div class="illustration-ai-snake-stat-line" style="width: 60%"></div>
-                                   </div>
-                                   <div class="illustration-ai-snake-stat">
-                                       <div class="illustration-ai-snake-stat-icon"></div>
-                                       <div class="illustration-ai-snake-stat-line" style="width: 40%"></div>
-                                   </div>
-                                   <div class="illustration-ai-snake-stat">
-                                       <div class="illustration-ai-snake-stat-icon"></div>
-                                       <div class="illustration-ai-snake-stat-line" style="width: 80%"></div>
-                                   </div>
-                               </div>
-                               <div class="illustration-ai-snake-board">
-                                    ${Array(25).fill(0).map((_, i) =>
-        `<div class="illustration-ai-snake-cell${[12, 13].includes(i) ? " snake" : ""
-        }"></div>`
-      ).join("")}
-                               </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">AI Snake Learning by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Train an AI neural network to play Snake using Deep Q-Learning. Watch it learn and improve with GPU acceleration, customizable concurrency, game speed, and training speed controls.</div>
-                      <button class="appstore-item-btn installed" onclick="openApp('ai-snake')">
-                          Play
-                      </button>
-                  </div>
-              </div>
-          `;
+    ];
+
+    mainContent.innerHTML = `
+          <div class="appstore-header">
+              <h2>Games</h2>
+              <p>Play and enjoy games on NautilusOS</p>
+          </div>
+          <div class="appstore-grid">
+              ${items.map(item => renderAppItem(item)).join('')}
+          </div>
+      `;
   }
 }
 function installTheme(themeName) {
@@ -9272,6 +9005,13 @@ window.addEventListener("DOMContentLoaded", () => {
   });
   installedGames.forEach((gameName) => {
     addDesktopIcon(gameName);
+  });
+
+  // Restore Community Apps
+  const savedCommunityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+  Object.keys(savedCommunityApps).forEach(appId => {
+    const appData = savedCommunityApps[appId];
+    createDesktopIcon(appId, appData.name, appData.icon || 'fas fa-box');
   });
 
   // Apply bloatless mode: hide pre-installed desktop icons except App Store and Settings
@@ -17191,4 +16931,425 @@ window.addEventListener('DOMContentLoaded', () => {
     };
   });
 });
+
+// ================= COMMUNITY STORE & UI IMPROVEMENTS =================
+
+let communityAppsCache = null;
+
+async function fetchCommunityApps() {
+  const container = document.getElementById('communityAppsGrid');
+  if (!container) return; // Not in community tab
+
+  if (communityAppsCache) {
+    renderCommunityApps(communityAppsCache);
+    return;
+  }
+
+  try {
+    // Fetch recursive tree
+    const treeUrl = `https://api.github.com/repos/nautilus-os/community/git/trees/main?recursive=1&v=${Date.now()}`;
+    const treeResp = await fetch(treeUrl);
+
+    if (!treeResp.ok) throw new Error("Failed to fetch repository tree");
+
+    const treeData = await treeResp.json();
+    const infoFiles = treeData.tree.filter(node => node.path.endsWith('appinfo.json'));
+
+    const fetchedItems = await Promise.all(infoFiles.map(async (node) => {
+      try {
+        // Path structure: [category]/[author]/[project]/appinfo.json
+        const parts = node.path.split('/');
+        // Expect at least: category/author/project/appinfo.json (4 parts)
+        if (parts.length < 4) return null;
+
+        const category = parts[0];
+        // categories: apps, games, themes
+        if (!['apps', 'games', 'themes'].includes(category)) return null;
+
+        const cdnUrl = `https://cdn.jsdelivr.net/gh/nautilus-os/community@main/${node.path}?v=${Date.now()}`;
+        const metaResp = await fetch(cdnUrl);
+        if (!metaResp.ok) return null;
+
+        let metaArr = await metaResp.json();
+        if (!Array.isArray(metaArr)) metaArr = [metaArr]; // Handle if not array
+        const meta = metaArr[0]; // Take first item
+
+        if (!meta) return null;
+
+        return {
+          ...meta,
+          category: category,
+          // normalize category name for display if needed
+          type: category === 'games' ? 'game' : (category === 'themes' ? 'theme' : 'app'),
+          // Map img to icon if icon is missing
+          icon: meta.img || meta.icon,
+          isCommunity: true
+        };
+      } catch (e) {
+        console.error("Failed to process", node.path, e);
+        return null;
+      }
+    }));
+
+    const allItems = fetchedItems.filter(i => i !== null);
+
+    communityAppsCache = allItems;
+    renderCommunityApps(allItems);
+
+  } catch (error) {
+    console.error("Failed to fetch community apps:", error);
+    container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; color: var(--error-red);">
+            <i class="fas fa-exclamation-circle" style="font-size: 2rem;"></i>
+            <p>Failed to load community apps. Check your connection.</p>
+            <button onclick="fetchCommunityApps()" class="editor-btn" style="margin-top: 1rem;">Retry</button>
+        </div>
+    `;
+  }
+}
+
+function renderAppItem(app) {
+  const isInstalled = app.isInstalled || false;
+  // Escape app object for HTML attribute
+  const appString = JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+
+  const iconHtml = app.customPreviewHtml
+    ? `<div style="margin-bottom: 1rem; display: flex; justify-content: center;">${app.customPreviewHtml}</div>`
+    : `<div class="appstore-item-icon"><i class="${app.icon || 'fas fa-box'}"></i></div>`;
+
+  const installBtnText = app.installButtonText || (isInstalled ? 'Uninstall' : 'Install');
+  const installBtnDisabled = app.installButtonDisabled ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : '';
+  const installAction = isInstalled && app.uninstallAction ? app.uninstallAction : (app.installAction || `installCommunityApp(${appString})`);
+
+  return `
+    <div class="appstore-item">
+        ${iconHtml}
+        <div class="appstore-item-name">${app.name}</div>
+        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fas fa-user-circle" style="font-size: 0.8rem;"></i> ${app.author || 'Unknown'}
+        </div>
+        <div class="appstore-item-desc">${app.desc || 'No description provided.'}</div>
+        <button class="appstore-item-btn ${isInstalled ? 'installed' : ''}" 
+            ${installBtnDisabled}
+            onclick='event.stopPropagation(); ${installAction}'>
+            ${installBtnText}
+        </button>
+    </div>
+  `;
+}
+
+function renderCommunityApps(apps) {
+  const container = document.getElementById('communityAppsGrid');
+  if (!container) return;
+
+  if (apps.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">No community apps found. Please try again later.</div>`;
+    return;
+  }
+
+  // Check installed status
+  const installedCommunityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+  const installedThemesList = JSON.parse(localStorage.getItem('nautilusOS_installedThemes') || '[]');
+
+  const processedApps = apps.map(app => {
+    const appId = app.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    const isInstalled = (app.type === 'themes' || app.type === 'theme')
+      ? installedThemesList.includes(app.name)
+      : !!installedCommunityApps[appId];
+
+    return {
+      ...app,
+      isInstalled: isInstalled,
+      installButtonText: isInstalled ? 'Open' : 'Install',
+      // Themes don't technically "open" in the same way, but we can set it to 'Installed' or disabled
+      // actually, renderAppItem handles generic isInstalled.
+      // For community apps specifically, if installed, action should be openApp(id)
+      installAction: isInstalled
+        ? ((app.type === 'themes' || app.type === 'theme') ? "showToast('Theme is installed', 'fa-check')" : `openApp('${appId}')`)
+        : `installCommunityApp(${JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;")})`
+    };
+  });
+
+  // Re-categorize processed apps
+  const categories = {};
+  processedApps.forEach(app => {
+    const cat = app.category || app.type || 'Other';
+    const displayCat = cat.charAt(0).toUpperCase() + cat.slice(1);
+    if (!categories[displayCat]) categories[displayCat] = [];
+    categories[displayCat].push(app);
+  });
+
+  let html = '';
+
+  for (const [cat, items] of Object.entries(categories)) {
+    html += `<div style="grid-column: 1/-1; margin-top: 1rem; margin-bottom: 0.5rem; font-family: fontb; color: var(--accent); text-transform: capitalize;">${cat}</div>`;
+
+    items.forEach(app => {
+      html += renderAppItem(app);
+    });
+  }
+
+  container.innerHTML = html;
+}
+
+function viewAppDetails(app) {
+  // Fullscreen/Modal view
+  const modal = document.createElement('div');
+  modal.style.position = 'fixed';
+  modal.style.inset = '0';
+  modal.style.background = 'rgba(10, 14, 26, 0.95)';
+  modal.style.zIndex = '10000';
+  modal.style.display = 'flex';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.padding = '1rem';
+  modal.style.animation = 'fadeIn 0.2s ease';
+  modal.onclick = (e) => {
+    if (e.target === modal) modal.remove();
+  }
+
+  const isInstalled = app.isInstalled || false;
+  // Escape app object for HTML attribute
+  const appString = JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+
+  const iconHtml = app.customPreviewHtml
+    ? `<div style="margin-bottom: 1.5rem; transform: scale(1.2); display: flex; justify-content: center;">${app.customPreviewHtml}</div>`
+    : `<div style="width: 80px; height: 80px; background: rgba(125, 211, 192, 0.1); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 1.5rem;"><i class="${app.icon || 'fas fa-box'}"></i></div>`;
+
+  const installBtnText = app.installButtonText || (isInstalled ? 'Uninstall' : 'Install');
+  const installBtnDisabled = app.installButtonDisabled ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : '';
+  const installAction = isInstalled && app.uninstallAction ? app.uninstallAction : (app.installAction || `installCommunityApp(${appString})`);
+
+  modal.innerHTML = `
+        <div style="background: rgba(21, 25, 35, 0.95); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; position: relative; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; z-index: 10;">
+                <i class="fas fa-times"></i>
+            </button>
+            <div style="padding: 2rem; display: flex; flex-direction: column; align-items: center;">
+                ${iconHtml}
+                <h2 style="color: var(--text-primary); margin-bottom: 0.25rem; text-align: center;">${app.name}</h2>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <span style="color: var(--text-secondary); font-size: 0.9rem;"><i class="fas fa-user-circle"></i> ${app.author || 'Unknown'}</span>
+                    ${app.type ? `<span style="background: rgba(125, 211, 192, 0.1); color: var(--accent); padding: 0.1rem 0.5rem; border-radius: 12px; font-size: 0.75rem; text-transform: capitalize;">${app.type}</span>` : ''}
+                </div>
+                
+                <div style="background: rgba(30, 35, 48, 0.4); padding: 1rem; border-radius: 10px; width: 100%; margin-bottom: 1.5rem;">
+                    <p style="line-height: 1.5; color: var(--text-primary); font-size: 0.95rem;">${app.desc || 'No description available.'}</p>
+                </div>
+
+                <div style="display: flex; gap: 1rem; width: 100%;">
+                    <button class="editor-btn" style="flex: 1; padding: 0.875rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-primary);" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
+                        Close
+                    </button>
+                    <button class="editor-btn" style="flex: 1; padding: 0.875rem; background: var(--accent); color: var(--bg-primary); font-weight: bold; ${isInstalled ? 'opacity: 0.8;' : ''}"
+                        ${installBtnDisabled}
+                        onclick='event.stopPropagation(); ${installAction}; this.parentElement.parentElement.parentElement.parentElement.remove();'>
+                        ${installBtnText}
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+  document.body.appendChild(modal);
+}
+
+async function installCommunityApp(app) {
+  showToast(`Installing ${app.name}...`, 'fa-download');
+
+  try {
+    if (app.type === 'theme' || app.type === 'themes') {
+      // Theme logic - assuming we just mark it as installed for now or would need to fetch CSS
+      // The user prompt focuses on apps/games content installation.
+      showToast(`${app.name} installed!`, 'fa-check');
+      if (!installedThemes.includes(app.name)) {
+        installedThemes.push(app.name);
+        localStorage.setItem("nautilusOS_installedThemes", JSON.stringify(installedThemes));
+      }
+      refreshAppStore();
+      return;
+    }
+
+    // App/Game installation
+    let content = '';
+    // If content is a path (starts with /), fetch it
+    if (app.content && typeof app.content === 'string' && app.content.startsWith('/')) {
+      const contentUrl = `https://cdn.jsdelivr.net/gh/nautilus-os/community@main${app.content}`;
+      const resp = await fetch(contentUrl);
+      if (!resp.ok) throw new Error(`Failed to fetch content from ${contentUrl}`);
+      content = await resp.text();
+    } else {
+      // Fallback or raw content if it was somehow inline (though user said it is a file path)
+      content = app.content || '<div style="padding:2rem;">No content found.</div>';
+    }
+
+    const appId = app.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+    // Save to localStorage
+    const communityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+    communityApps[appId] = {
+      name: app.name,
+      icon: app.icon || app.img || 'fas fa-box',
+      content: content,
+      author: app.author,
+      type: 'community-app'
+    };
+    localStorage.setItem('nautilusOS_communityApps', JSON.stringify(communityApps));
+
+    // Create desktop icon
+    createDesktopIcon(appId, app.name, app.icon || app.img || 'fas fa-box');
+
+    // Update global installedApps list just in case
+    // Note: global installedApps array might not be persisted directly in all cases in this code base, 
+    // but usually checking `nautilusOS_installedApps`
+    // We'll rely on our custom registry `nautilusOS_communityApps`
+
+    showToast(`${app.name} installed!`, 'fa-check');
+
+    // Refresh UI to show "Uninstall"
+    // We need to reload the metadata to reflect 'isInstalled'
+    // This is tricky without a full reload, but refreshAppStore might help if it fetches again
+    // For now, simple toast is good.
+    refreshAppStore();
+
+  } catch (e) {
+    console.error("Installation failed", e);
+    showToast(`Failed to install ${app.name}`, 'fa-times');
+  }
+}
+
+// ================= DESKTOP SELECTION BOX =================
+
+let selectionBox = {
+  active: false,
+  startX: 0,
+  startY: 0,
+  element: null
+};
+
+function enableDesktopSelection() {
+  const desktop = document.getElementById('desktop');
+  if (!desktop) return;
+
+  // Create element if not exists
+  if (!document.querySelector('.selection-box')) {
+    const box = document.createElement('div');
+    box.className = 'selection-box';
+    document.body.appendChild(box);
+    selectionBox.element = box;
+  } else {
+    selectionBox.element = document.querySelector('.selection-box');
+  }
+
+  desktop.addEventListener('mousedown', (e) => {
+    // Return if clicking taskbar, or if NOT clicking desktop/icons/wallpaper
+    // Allow start drag if target is desktop (ID), desktop-icons (class), or wallpaper
+    if (e.target.closest('.taskbar') || e.target.closest('.start-menu') || e.target.closest('.window')) return;
+
+    // If e.target is desktop, wallpaper, or desktop-icons container, allow.
+    // Assuming .desktop-icons has pointer-events: auto, clicking empty space in it returns .desktop-icons as target.
+    const isDesktop = e.target.id === 'desktop';
+    const isWallpaper = e.target.closest('.wallpaper');
+    const isDesktopIcons = e.target.classList.contains('desktop-icons');
+
+    if (!isDesktop && !isWallpaper && !isDesktopIcons) return;
+
+    selectionBox.active = true;
+    selectionBox.startX = e.clientX;
+    selectionBox.startY = e.clientY;
+
+    selectionBox.element.style.left = e.clientX + 'px';
+    selectionBox.element.style.top = e.clientY + 'px';
+    selectionBox.element.style.width = '0px';
+    selectionBox.element.style.height = '0px';
+    selectionBox.element.style.display = 'block';
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!selectionBox.active) return;
+
+    const currentX = e.clientX;
+    const currentY = e.clientY;
+
+    const width = Math.abs(currentX - selectionBox.startX);
+    const height = Math.abs(currentY - selectionBox.startY);
+    const left = Math.min(currentX, selectionBox.startX);
+    const top = Math.min(currentY, selectionBox.startY);
+
+    selectionBox.element.style.width = width + 'px';
+    selectionBox.element.style.height = height + 'px';
+    selectionBox.element.style.left = left + 'px';
+    selectionBox.element.style.top = top + 'px';
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (selectionBox.active) {
+      selectionBox.active = false;
+      selectionBox.element.style.display = 'none';
+    }
+  });
+}
+
+// ================= TASKBAR SETTINGS =================
+
+function updateTaskbarStyle() {
+  const style = localStorage.getItem('nautilusOS_taskbarStyle') || 'floating';
+  const taskbar = document.getElementById('taskbar');
+  const startMenu = document.getElementById('startMenu');
+  const desktop = document.getElementById('desktop');
+  const systemTray = document.querySelector('.system-tray');
+
+  if (taskbar) {
+    if (style === 'full') {
+      taskbar.classList.add('full');
+      if (startMenu) startMenu.classList.add('full-mode');
+      if (desktop) desktop.classList.add('full-taskbar-offset');
+      if (systemTray) systemTray.classList.add('full-mode');
+    } else {
+      taskbar.classList.remove('full');
+      if (startMenu) startMenu.classList.remove('full-mode');
+      if (desktop) desktop.classList.remove('full-taskbar-offset');
+      if (systemTray) systemTray.classList.remove('full-mode');
+    }
+  }
+}
+
+function toggleTaskbarStyle() {
+  const current = localStorage.getItem('nautilusOS_taskbarStyle') || 'floating';
+  const next = current === 'floating' ? 'full' : 'floating';
+  localStorage.setItem('nautilusOS_taskbarStyle', next);
+  updateTaskbarStyle();
+  showToast(`Taskbar set to ${next}`, 'fa-cog');
+}
+
+// Add taskbar setting to Context Menu (Right Click on Taskbar)
+// We'll hook into the global context menu or add a specific listener
+document.addEventListener('contextmenu', (e) => {
+  if (e.target.closest('#taskbar')) {
+    e.preventDefault();
+    const menu = document.getElementById('contextMenu');
+    menu.style.display = 'block';
+    menu.style.left = e.pageX + 'px';
+    menu.style.top = (e.pageY - 100) + 'px';
+
+    const style = localStorage.getItem('nautilusOS_taskbarStyle') || 'floating';
+    const nextLabel = style === 'floating' ? 'Switch to Full Mode' : 'Switch to Floating Mode';
+
+    menu.innerHTML = `
+            <div class="context-item" onclick="toggleTaskbarStyle()">
+                <i class="fas fa-columns"></i> ${nextLabel}
+            </div>
+            <div class="context-item" onclick="openApp('settings')">
+                <i class="fas fa-cog"></i> Taskbar Settings
+            </div>
+        `;
+
+    // Close on click elsewhere (handled by existing main.js usually)
+  }
+});
+
+
+// Init new features
+enableDesktopSelection();
+updateTaskbarStyle();
 

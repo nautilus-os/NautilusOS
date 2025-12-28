@@ -57,6 +57,7 @@ body {
     overflow: hidden;
     background: var(--bg-primary);
     color: var(--text-primary);
+    user-select: none;
 }
 
 button,
@@ -1346,6 +1347,7 @@ select:focus {
     opacity: 0;
     transition: opacity 0.5s ease;
     font-family: font, "font" !important;
+    z-index: 1;
 }
 
 #desktop.active {
@@ -1506,6 +1508,35 @@ select:focus {
 
     to {
         transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.taskbar.full {
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    justify-content: flex-start;
+    border-top: 1px solid var(--border);
+    background: rgba(21, 25, 35, 0.85);
+    /* Slightly more opaque */
+    animation: slideUpFull 0.5s ease;
+}
+
+@keyframes slideUpFull {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
         opacity: 1;
     }
 }
@@ -7214,6 +7245,7 @@ select {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+
 /* Nautilus AI Illustration */
 .illustration-nautilus-ai {
     width: 260px;
@@ -7347,4 +7379,55 @@ select {
 
 .illustration-ai-snake-cell.snake {
     background: var(--accent);
+}
+
+/* Desktop Selection Box */
+.selection-box {
+    position: fixed;
+    border: 1px solid var(--accent);
+    background: rgba(125, 211, 192, 0.2);
+    display: none;
+    z-index: 999;
+    pointer-events: none;
+}
+/* Start Menu Full Mode */
+.start-menu.full-mode {
+    bottom: 55px; /* Just above taskbar */
+    left: 10px;
+    transform: none !important;
+    transform-origin: bottom left;
+    -webkit-transform: none !important;
+}
+
+.start-menu.full-mode.active {
+    animation: menuSlideInFull 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes menuSlideInFull {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* System Tray Full Mode Adjustment */
+.system-tray.full-mode {
+   /* Push to the right in flex-start container */
+   margin-left: auto; 
+   padding-right: 1rem;
+}
+
+/* Desktop Offset for Full Taskbar */
+#desktop.full-taskbar-offset {
+    bottom: 48px; /* Height of full taskbar */
+}
+
+/* Adjust Full Taskbar Layout */
+.taskbar.full {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
