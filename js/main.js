@@ -205,7 +205,8 @@ window.addEventListener('keydown', function checkBiosKey(e) {
       </div>
       
       <div class="bios-footer">
-        <span>↑↓ Navigate | Enter Select | ESC Exit</span>
+        <span><i class="fa fa-mouse-pointer"></i>
+ Navigate | Enter Select | ESC Exit</span>
         <span>NautilusOS BIOS ${new Date().toLocaleString()}</span>
       </div>
     `;
