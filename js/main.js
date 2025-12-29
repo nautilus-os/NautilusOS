@@ -1,5 +1,5 @@
 // ==================== NAUTILUS BIOS SYSTEM ====================
-// Press Delete or Backspace during boot to enter BIOS
+// Press Delete, ~, or ` during boot to enter BIOS
 (function () {
   const bootloader = document.getElementById('bootloader');
   let biosTriggered = false;
@@ -13,27 +13,23 @@
     hint.style.color = 'var(--gray-dark)';
     hint.style.fontSize = '0.75rem';
     hint.style.fontFamily = 'monospace';
-    hint.innerHTML = 'Press DEL or Backspace to enter BIOS';
+    hint.innerHTML = 'Press DEL or ~ to enter BIOS';
     bootloader.appendChild(hint);
   }
 
-  // Listen for keys during boot
-  window.addEventListener('keydown', function checkBiosKey(e) {
-    // Only if bootloader is still visible (check for hidden class and display style)
-    if (bootloader && !bootloader.classList.contains('hidden') && bootloader.style.display !== 'none') {
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        e.preventDefault();
-        showBIOS();
-        // Stop checking
-        window.removeEventListener('keydown', checkBiosKey);
-      }
-    }
-  });
+window.addEventListener('keydown', function checkBiosKey(e) {
+  if (!bootloader || bootloader.classList.contains('hidden') || bootloader.style.display === 'none') return;
 
-  // Also check if Shift is held right at load (for reloads)
-  if (bootloader && !bootloader.classList.contains('hidden') && (window.event && window.event.shiftKey)) {
+  const key = e.key;
+
+  // Trigger on Delete or ~ (backtick / tilde key)
+  if (key === 'Delete' || key === '`' || key === '~') {
+    e.preventDefault();
     showBIOS();
+    window.removeEventListener('keydown', checkBiosKey);
   }
+});
+
 
   function showBIOS() {
     // Create BIOS overlay
