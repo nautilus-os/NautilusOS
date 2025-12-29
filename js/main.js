@@ -1,5 +1,5 @@
 // ==================== NAUTILUS BIOS SYSTEM ====================
-// Press Delete, F2, or Shift during boot to enter BIOS
+// Press Delete or Backspace during boot to enter BIOS
 (function () {
   const bootloader = document.getElementById('bootloader');
   let biosTriggered = false;
@@ -8,12 +8,12 @@
   if (bootloader) {
     const hint = document.createElement('div');
     hint.style.position = 'absolute';
-    hint.style.bottom = '10px';
-    hint.style.right = '10px';
-    hint.style.color = '#555';
-    hint.style.fontSize = '12px';
+    hint.style.bottom = '0.5rem';
+    hint.style.right = '0.75rem';
+    hint.style.color = 'var(--gray-dark)';
+    hint.style.fontSize = '0.75rem';
     hint.style.fontFamily = 'monospace';
-    hint.innerText = 'Press DEL or F2 to enter BIOS';
+    hint.innerHTML = 'Press DEL or Backspace to enter BIOS';
     bootloader.appendChild(hint);
   }
 
@@ -21,7 +21,7 @@
   window.addEventListener('keydown', function checkBiosKey(e) {
     // Only if bootloader is still visible (check for hidden class and display style)
     if (bootloader && !bootloader.classList.contains('hidden') && bootloader.style.display !== 'none') {
-      if (e.key === 'Delete' || e.key === 'F2' || e.key === 'Shift') {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
         e.preventDefault();
         showBIOS();
         // Stop checking
