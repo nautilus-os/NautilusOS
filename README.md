@@ -7,7 +7,7 @@ Boot it up, log in, and mess around like it’s a real desktop with proxies, gam
 
 NAUTILUS BLOCKED BY YOUR SCHOOL?? DOWNLOAD "index.html" from the NautilusOS-OneFile folder! Open up index.html and you'll have (most*) of Nautilus's features!
 
-*Nautilus Browser is disabled by default in the file, but you may reenable it in the expirmental settings under Advanced. The Ultraviolet browser will not work in the file, unfortunately, due to service workers not working in file:/// or file:// url's :(
+*Nautilus Browser is disabled by default in the file, but you may reenable it in the experimental settings under the BIOS (Left shift/F2 during boot), or in the experimental settings under Advanced. The Ultraviolet browser will not work in the file, unfortunately, due to service workers not working in file:/// or file:// url's :(
 ---
 
 ## DEPLOY ME!!
@@ -44,7 +44,8 @@ There’s a ton of stuff to play with, but here’s a quick rundown (seriously, 
 - allows creation of multiple accounts with different editable  permissions (superuser or standard users)
 - THREE built in proxy browsers, all using different technologies
 - tons of themes to customize Nautilus to your preference
-- fully animated desktop environment  
+- fully animated desktop environment
+- BIOS for power users
 - draggable + resizable windows
 - notifications and a quick action menu
 - built in screenshotting, media viewing, music playing and more
@@ -60,7 +61,7 @@ Basically... a whole little OS in your browser :D
 
 ---
 
-## 🚧 todos
+## 🚧 todos (devs view dev discord for more)
 
 - [ ] App store improvements (right now it can only install built-in apps not stuff from community repo)
 - [ ] fix light theme gosh it sucks
@@ -75,7 +76,9 @@ Basically... a whole little OS in your browser :D
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 - [ ] add option to upload custom image to tab blackout for monitering extensions
 - [ ] add option to do a panic image instead of a panic redirect
-- [ ] add default coverup, chrome unsafe pages oage failked to load etc
+- [ ] add default coverup, chrome unsafe pages page failed to load etc
+- [ ] add achivement for opening bootloader (Power User)
+- [ ] add documentation in help for all apps (community as well) and update whats new carosel
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 

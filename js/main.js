@@ -1,3 +1,281 @@
+// ==================== NAUTILUS BIOS SYSTEM ====================
+// Press Delete, F2, or Shift during boot to enter BIOS
+(function () {
+  const bootloader = document.getElementById('bootloader');
+  let biosTriggered = false;
+
+  // Add hint to bootloader
+  if (bootloader) {
+    const hint = document.createElement('div');
+    hint.style.position = 'absolute';
+    hint.style.bottom = '10px';
+    hint.style.right = '10px';
+    hint.style.color = '#555';
+    hint.style.fontSize = '12px';
+    hint.style.fontFamily = 'monospace';
+    hint.innerText = 'Press DEL or F2 to enter BIOS';
+    bootloader.appendChild(hint);
+  }
+
+  // Listen for keys during boot
+  window.addEventListener('keydown', function checkBiosKey(e) {
+    // Only if bootloader is still visible (check for hidden class and display style)
+    if (bootloader && !bootloader.classList.contains('hidden') && bootloader.style.display !== 'none') {
+      if (e.key === 'Delete' || e.key === 'F2' || e.key === 'Shift') {
+        e.preventDefault();
+        showBIOS();
+        // Stop checking
+        window.removeEventListener('keydown', checkBiosKey);
+      }
+    }
+  });
+
+  // Also check if Shift is held right at load (for reloads)
+  if (bootloader && !bootloader.classList.contains('hidden') && (window.event && window.event.shiftKey)) {
+    showBIOS();
+  }
+
+  function showBIOS() {
+    // Create BIOS overlay
+    const biosOverlay = document.createElement('div');
+    biosOverlay.id = 'nautilusBIOS';
+    biosOverlay.innerHTML = `
+      <style>
+        #nautilusBIOS {
+          position: fixed;
+          inset: 0;
+          background: #0000aa;
+          z-index: 999999;
+          font-family: 'Courier New', monospace;
+          color: #aaaaaa;
+          padding: 20px;
+          overflow: auto;
+        }
+        #nautilusBIOS .bios-header {
+          background: #aaaaaa;
+          color: #0000aa;
+          padding: 8px 16px;
+          font-weight: bold;
+          font-size: 18px;
+          margin-bottom: 20px;
+        }
+        #nautilusBIOS .bios-section {
+          border: 1px solid #aaaaaa;
+          margin: 10px 0;
+          padding: 10px;
+        }
+        #nautilusBIOS .bios-section-title {
+          background: #aaaaaa;
+          color: #0000aa;
+          padding: 4px 8px;
+          margin: -10px -10px 10px -10px;
+          font-weight: bold;
+        }
+        #nautilusBIOS .bios-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 4px 0;
+        }
+        #nautilusBIOS .bios-label {
+          color: #ffffff;
+        }
+        #nautilusBIOS .bios-value {
+          color: #ffff00;
+        }
+        #nautilusBIOS .bios-menu-item {
+          padding: 6px 12px;
+          cursor: pointer;
+        }
+        #nautilusBIOS .bios-menu-item.selected {
+          background: #aaaaaa;
+          color: #0000aa;
+        }
+        #nautilusBIOS .bios-menu-item:hover:not(.selected) {
+          background: #555555;
+        }
+        #nautilusBIOS .bios-toggle {
+          cursor: pointer;
+          padding: 4px 8px;
+        }
+        #nautilusBIOS .bios-toggle:hover {
+          background: #555555;
+        }
+        #nautilusBIOS .bios-footer {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #aaaaaa;
+          color: #0000aa;
+          padding: 8px 16px;
+          display: flex;
+          justify-content: space-between;
+        }
+        #nautilusBIOS .bios-warning {
+          color: #ff5555;
+          font-weight: bold;
+        }
+      </style>
+      <div class="bios-header">NautilusOS BIOS Setup Utility v1.0</div>
+      
+      <div style="display: flex; gap: 20px;">
+        <div style="flex: 1;">
+          <div class="bios-section">
+            <div class="bios-section-title">System Information</div>
+            <div class="bios-row">
+              <span class="bios-label">OS Version:</span>
+              <span class="bios-value">NautilusOS 1.5</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Browser:</span>
+              <span class="bios-value" id="biosBrowser">Detecting...</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Platform:</span>
+              <span class="bios-value">${navigator.platform}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Language:</span>
+              <span class="bios-value">${navigator.language}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Cores:</span>
+              <span class="bios-value">${navigator.hardwareConcurrency || 'Unknown'}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Memory:</span>
+              <span class="bios-value">${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Unknown'}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Screen:</span>
+              <span class="bios-value">${screen.width}x${screen.height}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Color Depth:</span>
+              <span class="bios-value">${screen.colorDepth}-bit</span>
+            </div>
+          </div>
+          
+          <div class="bios-section">
+            <div class="bios-section-title">Storage Information</div>
+            <div class="bios-row">
+              <span class="bios-label">LocalStorage Used:</span>
+              <span class="bios-value" id="biosLocalStorage">Calculating...</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">Cookies Enabled:</span>
+              <span class="bios-value">${navigator.cookieEnabled ? 'Yes' : 'No'}</span>
+            </div>
+            <div class="bios-row">
+              <span class="bios-label">IndexedDB:</span>
+              <span class="bios-value">${window.indexedDB ? 'Available' : 'Not Available'}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div style="flex: 1;">
+          <div class="bios-section">
+            <div class="bios-section-title">Advanced Settings</div>
+            
+            <!-- Bypass File Protocol Warning -->
+            <div class="bios-row bios-toggle" onclick="toggleBiosSetting('bypassFileWarning')">
+              <span class="bios-label">[${localStorage.getItem('nautilusOS_bypassFileWarning') === 'true' ? 'X' : ' '}] Bypass File Protocol Warnings</span>
+            </div>
+            
+            <!-- Custom WebLLM Model -->
+            <div style="margin-top: 10px;">
+              <div class="bios-label" style="margin-bottom: 4px;">Custom WebLLM Model ID:</div>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="biosWebLLMModel" 
+                  value="${localStorage.getItem('nautilusOS_customWebLLMModel') || ''}" 
+                  placeholder="e.g. Qwen2.5-0.5B-Instruct-q4f16_1-MLC"
+                  style="flex: 1; background: #aaaaaa; color: #0000aa; border: none; font-family: 'Courier New', monospace; padding: 4px;"
+                  onchange="localStorage.setItem('nautilusOS_customWebLLMModel', this.value)">
+              </div>
+              <div style="font-size: 10px; color: #888; margin-top: 2px;">Leave empty to use default. Reload required.</div>
+            </div>
+          </div>
+          
+          <div class="bios-section">
+            <div class="bios-section-title">Danger Zone</div>
+            <div class="bios-row bios-toggle" onclick="biosResetAll()" style="color: #ff5555;">
+              <span class="bios-label">> Reset All Settings</span>
+            </div>
+            <div class="bios-row bios-toggle" onclick="biosClearData()" style="color: #ff5555;">
+              <span class="bios-label">> Clear All Data & Cache</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bios-footer">
+        <span>↑↓ Navigate | Enter Select | ESC Exit</span>
+        <span>NautilusOS BIOS ${new Date().toLocaleString()}</span>
+      </div>
+    `;
+
+    document.body.innerHTML = '';
+    document.body.appendChild(biosOverlay);
+
+    // Detect browser
+    const ua = navigator.userAgent;
+    let browser = 'Unknown';
+    if (ua.includes('Firefox')) browser = 'Mozilla Firefox';
+    else if (ua.includes('Edg')) browser = 'Microsoft Edge';
+    else if (ua.includes('Chrome')) browser = 'Google Chrome';
+    else if (ua.includes('Safari')) browser = 'Apple Safari';
+    else if (ua.includes('Opera')) browser = 'Opera';
+    document.getElementById('biosBrowser').textContent = browser;
+
+    // Calculate localStorage size
+    let totalSize = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        totalSize += localStorage[key].length * 2; // UTF-16 = 2 bytes per char
+      }
+    }
+    document.getElementById('biosLocalStorage').textContent = (totalSize / 1024).toFixed(2) + ' KB';
+
+    // ESC to exit
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        location.reload();
+      }
+    });
+  }
+
+  // Global BIOS functions
+  window.toggleBiosSetting = function (setting) {
+    const key = 'nautilusOS_' + setting;
+    const current = localStorage.getItem(key) === 'true';
+    localStorage.setItem(key, (!current).toString());
+    location.reload();
+  };
+
+  window.biosResetAll = function () {
+    if (confirm('Are you sure you want to reset all NautilusOS settings? This cannot be undone.')) {
+      const keys = Object.keys(localStorage).filter(k => k.startsWith('nautilusOS_'));
+      keys.forEach(k => localStorage.removeItem(k));
+      alert('Settings reset. The system will now reload.');
+      location.reload();
+    }
+  };
+
+  window.biosClearData = function () {
+    if (confirm('WARNING: This will delete ALL NautilusOS data including files, settings, and accounts. Continue?')) {
+      if (confirm('Are you ABSOLUTELY sure? This cannot be undone!')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        indexedDB.deleteDatabase('NautilusFS');
+        alert('All data cleared. The system will now reload.');
+        location.reload();
+      }
+    }
+  };
+})();
+
+// ==================== END BIOS SYSTEM ====================
+
 class db {
   constructor(dbName, storeName) {
     this.dbName = dbName;
@@ -712,6 +990,16 @@ const appMetadata = {
   "nautilus-ai": {
     name: "Nautilus AI Assistant",
     icon: "fa-robot",
+    preinstalled: true,
+  },
+  "about": {
+    name: "About NautilusOS",
+    icon: "fa-info-circle",
+    preinstalled: true,
+  },
+  "web-app-creator": {
+    name: "Web App Creator",
+    icon: "fa-puzzle-piece",
     preinstalled: true,
   },
 };
@@ -1859,7 +2147,7 @@ function handleCLIInput(e) {
         "The bootloader menu will appear on next page reload.";
     } else if (command === "clear") {
       terminal.innerHTML = `
-                      <div class="cli-line" style="color: var(--accent);">NautilusOS Command Line Interface v1.0</div>
+                      <div class="cli-line" style="color: var(--accent);">NautilusOS Command Line Interface v1.5</div>
                       <div class="cli-line" style="color: #888; margin-bottom: 1rem;">Type 'help' for available commands, 'gui' to switch to graphical mode</div>
                   `;
     } else if (command === "date") {
@@ -2077,6 +2365,19 @@ function login() {
         installedApps.forEach((appName) => {
           addDesktopIcon(appName);
         });
+
+        // Bloatless mode: hide all pre-installed apps except App Store and Settings
+        if (bloatlessMode) {
+          const bloatlessKeep = ["appstore", "settings"];
+          const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
+          allIcons.forEach((icon) => {
+            const appName = icon.getAttribute("data-app");
+            // Keep only appstore, settings, and any user-installed apps
+            if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName)) {
+              icon.style.display = "none";
+            }
+          });
+        }
       }
 
       initDesktopIconDragging();
@@ -2180,16 +2481,7 @@ function addDynamicTaskbarIcon(appName, icon) {
   );
   iconEl.innerHTML = `<i class="${icon}"></i>`;
   iconEl.onclick = () => {
-    if (windows[appName]) {
-      const win = windows[appName];
-      if (win.style.display === "none") {
-        win.style.display = "block";
-        win.classList.remove("minimized");
-      }
-      focusWindow(win);
-      focusedWindow = appName;
-      updateTaskbarIndicators();
-    }
+    toggleApp(appName);
   };
 
   const allIcons = taskbar.querySelectorAll(".taskbar-icon[data-app]");
@@ -2386,6 +2678,22 @@ function createWindow(
   windowEl.style.top =
     window.innerHeight / 2 - height / 2 - 30 + Math.random() * 20 + "px";
   windowEl.style.zIndex = ++zIndexCounter;
+
+  // Check if content is primarily an iframe and clean it up
+  if (content && typeof content === 'string' && content.includes('<iframe')) {
+    // Create temp parser
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const iframe = doc.querySelector('iframe');
+    if (iframe) {
+      const src = iframe.getAttribute('src');
+      if (src) {
+        // Replace content with a full-size iframe
+        content = `<iframe src="${src}" style="width: 100%; height: 100%; border: none; display: block;" allow="${iframe.getAttribute('allow') || 'fullscreen; camera; microphone'}" referrerpolicy="no-referrer"></iframe>`;
+        noPadding = true;
+      }
+    }
+  }
 
   const contentClass = noPadding
     ? "window-content"
@@ -2645,6 +2953,35 @@ function closeWindowByAppName(appName) {
   const windowEl = windows[appName];
   const closeBtn = windowEl.querySelector(".window-btn.close");
   if (closeBtn) closeWindow(closeBtn, appName);
+}
+
+// Toggle app visibility from taskbar - minimize if visible, restore if minimized, open if not running
+function toggleApp(appName) {
+  if (windows[appName]) {
+    const win = windows[appName];
+    const isMinimized = win.style.display === "none" || win.classList.contains("minimized");
+    const isFocused = focusedWindow === appName;
+
+    if (isMinimized) {
+      // Restore the window
+      win.style.display = "block";
+      win.classList.remove("minimized");
+      focusWindow(win);
+      focusedWindow = appName;
+      updateTaskbarIndicators();
+    } else if (isFocused) {
+      // Minimize the window (it's visible and focused)
+      minimizeWindowByAppName(appName);
+    } else {
+      // Window is open but not focused, just focus it
+      focusWindow(win);
+      focusedWindow = appName;
+      updateTaskbarIndicators();
+    }
+  } else {
+    // App not open, open it
+    openApp(appName);
+  }
 }
 
 function makeDraggable(element) {
@@ -2967,6 +3304,21 @@ function openApp(appName, editorContent = "", filename = "") {
     return;
   }
 
+  // Handle custom web apps
+  if (appName.startsWith("webapp_")) {
+    launchCustomWebApp(appName);
+    return;
+  }
+
+  // Handle installed community apps
+  const communityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+  if (communityApps[appName]) {
+    const appData = communityApps[appName];
+    // Create a floating window for the installed app
+    createWindow(appData.name, appData.icon || 'fas fa-box', appData.content, 800, 600);
+    return;
+  }
+
   const menu = document.getElementById("startMenu");
   if (menu.classList.contains("active")) {
     toggleStartMenu();
@@ -3060,7 +3412,7 @@ function openApp(appName, editorContent = "", filename = "") {
       icon: "fas fa-terminal",
       content: `
               <div class="terminal" id="terminalContent">
-                  <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.0</div>
+                  <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.5</div>
                   <div class="terminal-line" style="color: #888; margin-bottom: 1rem;">Type 'help' for available commands</div>
                   <div class="terminal-line">
                       <span class="terminal-prompt">user@nautilusos:~$ </span><input type="text" class="terminal-input" id="terminalInput" onkeypress="handleTerminalInput(event)">
@@ -3703,6 +4055,23 @@ alt="favicon">
                 
                 <div class="settings-card">
                     <div class="settings-card-header">
+                        <i class="fas fa-columns"></i>
+                        <span>Taskbar</span>
+                    </div>
+                    <div class="settings-card-body">
+                         <div class="settings-item">
+                            <div class="settings-item-text">
+                                <div class="settings-item-title">Full Taskbar</div>
+                                <div class="settings-item-desc">Stretch the taskbar to the full width of the screen (Windows style)</div>
+                            </div>
+                            <div class="toggle-switch ${localStorage.getItem('nautilusOS_taskbarStyle') === 'full' ? 'active' : ''}" 
+                                onclick="toggleTaskbarStyle(); this.classList.toggle('active');"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
                         <i class="fas fa-palette"></i>
                         <span>Themes</span>
                     </div>
@@ -4157,8 +4526,8 @@ alt="favicon">
               <div class="whats-new-content">
                   <center>
                   <div class="whats-new-header">
-                      <h1 style="text-align: center !important; font-size: 2rem; margin-bottom: 0.5rem; line-height: 1.2;">Welcome to NautilusOS <br>v1.0! What's new?</h1>
-                      <p>Discover the latest features and improvements</p>
+                      <h1 style="text-align: center !important; font-size: 2rem; margin-bottom: 0.5rem; line-height: 1.2;">Welcome to NautilusOS <br>v1.5! What's new?</h1>
+                      <p>AI Assistant, 3 Browsers, More Themes, VS Code, Window Snapping, Games, and more!</p>
                   </div>
                   </center>
 
@@ -4480,6 +4849,125 @@ alt="favicon">
     </div>
 </div>
 
+<!-- v1.5 New Features -->
+<div class="carousel-slide" data-slide="16">
+    <div class="carousel-illustration">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+            <div style="width: 120px; height: 120px; background: linear-gradient(135deg, rgba(125, 211, 192, 0.3), rgba(125, 211, 192, 0.1)); border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; color: var(--accent); animation: float 3s ease-in-out infinite; box-shadow: 0 8px 24px rgba(125, 211, 192, 0.3);">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <div style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: float 1s ease-in-out infinite;"></div>
+                <div style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: float 1s ease-in-out infinite 0.2s;"></div>
+                <div style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: float 1s ease-in-out infinite 0.4s;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Nautilus AI Assistant</h2>
+        <p>Meet your new intelligent companion! The Nautilus AI Assistant helps you with tasks, answers questions, and makes your NautilusOS experience smarter. Powered by advanced AI technology right in your browser.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="17">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <div style="width: 80px; height: 80px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); animation: float 3s ease-in-out infinite;">
+                <i class="fas fa-globe"></i>
+            </div>
+            <div style="width: 80px; height: 80px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); animation: float 3s ease-in-out infinite 0.3s;">
+                <i class="fas fa-sun"></i>
+            </div>
+            <div style="width: 80px; height: 80px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); animation: float 3s ease-in-out infinite 0.6s;">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>3 Browser Options</h2>
+        <p>Choose your browsing experience! Nautilus Browser for quick access, Helios Browser for a premium experience, and UV for advanced unblocking. Each browser offers unique features tailored to your needs.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="18">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; max-width: 250px;">
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #7dd3c0; border-radius: 8px; animation: float 3s ease-in-out infinite;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f5f5f5, #e0e0e0); border: 2px solid #333; border-radius: 8px; animation: float 3s ease-in-out infinite 0.2s;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea, #764ba2); border: 2px solid #fff; border-radius: 8px; animation: float 3s ease-in-out infinite 0.4s;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #11998e, #38ef7d); border: 2px solid #fff; border-radius: 8px; animation: float 3s ease-in-out infinite 0.6s;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ff6b6b, #feca57); border: 2px solid #fff; border-radius: 8px; animation: float 3s ease-in-out infinite 0.8s;"></div>
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #a8edea, #fed6e3); border: 2px solid #333; border-radius: 8px; animation: float 3s ease-in-out infinite 1s;"></div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>More Themes</h2>
+        <p>Express yourself with an expanded collection of beautiful themes! From sleek dark modes to vibrant colors, find the perfect look that matches your style. Install themes from the App Store with one click.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="19">
+    <div class="carousel-illustration">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+            <div style="width: 200px; height: 130px; background: rgba(21, 25, 35, 0.95); border: 2px solid #007acc; border-radius: 8px; overflow: hidden; animation: float 3s ease-in-out infinite;">
+                <div style="height: 25px; background: #1e1e1e; display: flex; align-items: center; padding: 0 0.5rem; gap: 0.5rem;">
+                    <i class="fas fa-code" style="color: #007acc; font-size: 0.75rem;"></i>
+                    <div style="height: 8px; width: 60px; background: rgba(255,255,255,0.2); border-radius: 4px;"></div>
+                </div>
+                <div style="padding: 0.5rem; display: flex; gap: 0.5rem;">
+                    <div style="width: 40px; background: rgba(255,255,255,0.05); height: 80px; border-radius: 4px;"></div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="height: 8px; background: #569cd6; border-radius: 2px; width: 80%;"></div>
+                        <div style="height: 8px; background: #ce9178; border-radius: 2px; width: 60%;"></div>
+                        <div style="height: 8px; background: #4ec9b0; border-radius: 2px; width: 90%;"></div>
+                        <div style="height: 8px; background: #dcdcaa; border-radius: 2px; width: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Visual Studio Code</h2>
+        <p>Code like a pro with VS Code integration! Write, edit, and manage code with syntax highlighting, file explorer, and all the features you love from the world's most popular code editor.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="20">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 0.5rem; align-items: flex-start;">
+            <div style="width: 100px; height: 100px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 8px; animation: float 3s ease-in-out infinite;"></div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div style="width: 100px; height: 47px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 8px; animation: float 3s ease-in-out infinite 0.2s;"></div>
+                <div style="width: 100px; height: 47px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 8px; animation: float 3s ease-in-out infinite 0.4s;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Window Snapping</h2>
+        <p>Organize your workspace like a power user! Drag windows to screen edges to snap them into place. Create custom layouts, use keyboard shortcuts, and manage multiple windows with ease using the Snap Manager.</p>
+    </div>
+</div>
+
+<div class="carousel-slide" data-slide="21">
+    <div class="carousel-illustration">
+        <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <div style="width: 70px; height: 70px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent); animation: float 3s ease-in-out infinite;">
+                <i class="fas fa-gamepad"></i>
+            </div>
+            <div style="width: 70px; height: 70px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent); animation: float 3s ease-in-out infinite 0.3s;">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div style="width: 70px; height: 70px; background: rgba(125, 211, 192, 0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent); animation: float 3s ease-in-out infinite 0.6s;">
+                <i class="fas fa-puzzle-piece"></i>
+            </div>
+        </div>
+    </div>
+    <div class="carousel-content">
+        <h2>Games & More!</h2>
+        <p>Take a break with built-in games! Watch AI learn to play Snake in real-time, challenge yourself with 2048, play Tic-Tac-Toe, and discover more entertainment. Perfect for those moments when you need a fun distraction.</p>
+    </div>
+</div>
+
 <div class="carousel-controls">
                           <div class="carousel-btn" onclick="changeSlide(-1)">
                               <i class="fas fa-chevron-left"></i>
@@ -4506,6 +4994,12 @@ alt="favicon">
           <div class="carousel-dot" onclick="goToSlide(13)"></div>
           <div class="carousel-dot" onclick="goToSlide(14)"></div>
           <div class="carousel-dot" onclick="goToSlide(15)"></div>
+          <div class="carousel-dot" onclick="goToSlide(16)"></div>
+          <div class="carousel-dot" onclick="goToSlide(17)"></div>
+          <div class="carousel-dot" onclick="goToSlide(18)"></div>
+          <div class="carousel-dot" onclick="goToSlide(19)"></div>
+          <div class="carousel-dot" onclick="goToSlide(20)"></div>
+          <div class="carousel-dot" onclick="goToSlide(21)"></div>
 
       </div>
                           </div>
@@ -4531,6 +5025,256 @@ alt="favicon">
       noPadding: true,
       width: 900,
       height: 600,
+    },
+    about: {
+      title: "About NautilusOS",
+      icon: "fas fa-info-circle",
+      content: `
+        <div class="about-app-container" style="padding: 2rem; max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; min-height: 100%;">
+          <div class="about-header" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 2rem;">
+            <div style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: float 3s ease-in-out infinite;">
+              <i class="fas fa-fish" style="font-size: 3rem; color: var(--bg-primary);"></i>
+            </div>
+            <h1 style="font-size: 2rem; margin-bottom: 0; color: var(--text-primary); font-family: fontb; text-align: center; width: 100%;">NautilusOS</h1>
+            <p style="color: var(--text-secondary); font-size: 1rem; margin: 0; text-align: center; width: 100%;">Version 1.5</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 500px; margin: 1rem auto 0; line-height: 1.6; text-align: center;">
+              A beautiful, fully-featured web-based operating system experience. Built with vanilla HTML, CSS, and JavaScript — no frameworks needed! 
+              NautilusOS brings you a complete desktop environment right in your browser, with file management, multiple apps, themes, and more.
+            </p>
+          </div>
+
+          <div class="about-section" style="margin-bottom: 2rem; flex: 1;">
+            <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: fontb;">
+              <i class="fas fa-users" style="color: var(--accent);"></i> Developers & Contributors
+            </h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+              Click on a developer's card to learn more about them and support their work.
+            </p>
+
+            <div class="developers-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+              
+              <!-- Developer: dinguschan -->
+              <div class="developer-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s ease;">
+                <div class="dev-header" onclick="toggleDevInfo('dinguschan')" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s ease;" 
+                     onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'" onmouseout="this.style.background='transparent'">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--bg-primary); flex-shrink: 0;">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1.1rem;">dinguschan</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Lead Developer & Creator</div>
+                  </div>
+                  <i class="fas fa-chevron-down dev-chevron" id="chevron-dinguschan" style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
+                </div>
+                <div class="dev-info" id="devinfo-dinguschan" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(21, 25, 35, 0.5);">
+                  <div style="padding: 1rem; border-top: 1px solid var(--border);">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">
+                    REMINDER: dinguschan, add your info here (along with XMR wallet if avalible)
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                      <a href="https://github.com/dinguschan-owo" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
+                           onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                        <i class="fab fa-github"></i> GitHub
+                      </a>
+                    </div>
+                    <!-- XMR Wallet Placeholder - Uncomment and add address when available
+                    <div style="background: rgba(255, 107, 53, 0.1); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+                      <h4 style="color: #ff6b35; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-donate"></i> Support with Monero (XMR)
+                      </h4>
+                      <div style="flex: 1;">
+                        <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Monero Address:</p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; word-break: break-all; font-family: monospace; font-size: 0.7rem; color: var(--text-primary); margin-bottom: 0.75rem;">
+                          YOUR_XMR_ADDRESS_HERE
+                        </div>
+                        <a href="monero:YOUR_XMR_ADDRESS_HERE" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #ff6b35, #f7931e); border: none; border-radius: 8px; color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                          <i class="fas fa-wallet"></i> Open in Wallet
+                        </a>
+                      </div>
+                    </div>
+                    -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Developer: X8r -->
+              <div class="developer-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s ease;">
+                <div class="dev-header" onclick="toggleDevInfo('x8r')" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s ease;" 
+                     onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'" onmouseout="this.style.background='transparent'">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #8b5cf6, #6366f1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; flex-shrink: 0;">
+                    <i class="fas fa-laptop-code"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1.1rem;">X8r</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Developer</div>
+                  </div>
+                  <i class="fas fa-chevron-down dev-chevron" id="chevron-x8r" style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
+                </div>
+                <div class="dev-info" id="devinfo-x8r" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(21, 25, 35, 0.5);">
+                  <div style="padding: 1rem; border-top: 1px solid var(--border);">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">
+                      REMINDER: x8r, add your info here (along with XMR wallet if avalible)
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                      <a href="https://github.com/X8r" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
+                           onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                        <i class="fab fa-github"></i> GitHub
+                      </a>
+                    </div>
+                    <!-- XMR Wallet Placeholder - Uncomment and add address when available
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+                      <h4 style="color: #8b5cf6; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-donate"></i> Support with Monero (XMR)
+                      </h4>
+                      <div style="flex: 1;">
+                        <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Monero Address:</p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; word-break: break-all; font-family: monospace; font-size: 0.7rem; color: var(--text-primary); margin-bottom: 0.75rem;">
+                          YOUR_XMR_ADDRESS_HERE
+                        </div>
+                        <a href="monero:YOUR_XMR_ADDRESS_HERE" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); border: none; border-radius: 8px; color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                          <i class="fas fa-wallet"></i> Open in Wallet
+                        </a>
+                      </div>
+                    </div>
+                    -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Developer: lanefiedler731-gif -->
+              <div class="developer-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s ease;">
+                <div class="dev-header" onclick="toggleDevInfo('lanefiedler731')" style="padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s ease;" 
+                     onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'" onmouseout="this.style.background='transparent'">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #ff6b35, #f7931e); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; flex-shrink: 0;">
+                    <i class="fas fa-code"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1.1rem;">lanefiedler731-gif</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Contributor & Developer</div>
+                  </div>
+                  <i class="fas fa-chevron-down dev-chevron" id="chevron-lanefiedler731" style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
+                </div>
+                <div class="dev-info" id="devinfo-lanefiedler731" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(21, 25, 35, 0.5);">
+                  <div style="padding: 1rem; border-top: 1px solid var(--border);">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">
+                      A talented contributor who has helped expand NautilusOS with new features, improvements, and bug fixes. 
+                      Passionate about creating great user experiences and pushing the boundaries of web-based applications.
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                      <a href="https://github.com/lanefiedler731-gif" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
+                           onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                        <i class="fab fa-github"></i> GitHub
+                      </a>
+                    </div>
+                    
+                    <!-- Crypto Donation Section -->
+                    <div style="background: rgba(255, 107, 53, 0.1); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 10px; padding: 1rem; margin-top: 0.5rem;">
+                      <h4 style="color: #ff6b35; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-donate"></i> Support with Monero (XMR)
+                      </h4>
+                      <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start;">
+                        <div style="flex-shrink: 0;">
+                          <img src="/Assets/LFPaymentMonero.png" alt="XMR QR Code" style="width: 100px; height: 100px; border-radius: 8px; background: white; padding: 4px;">
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                          <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Monero Address:</p>
+                          <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; word-break: break-all; font-family: monospace; font-size: 0.7rem; color: var(--text-primary); margin-bottom: 0.75rem;">
+                            47T7eTcAXKGRqVRXAbxqsah8JSTYVUsUQgoe1bD1S4rwigc8EEaTkniBUPkcGwzjQZWNcd6AucPxSh4rceUAjG1o1uQiexu
+                          </div>
+                          <a href="monero:47T7eTcAXKGRqVRXAbxqsah8JSTYVUsUQgoe1bD1S4rwigc8EEaTkniBUPkcGwzjQZWNcd6AucPxSh4rceUAjG1o1uQiexu" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #ff6b35, #f7931e); border: none; border-radius: 8px; color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);"
+                               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(255, 107, 53, 0.4)';" 
+                               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(255, 107, 53, 0.3)';">
+                            <i class="fas fa-wallet"></i> Open in Wallet
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Contributors Section -->
+          <div class="about-section" style="margin-bottom: 2rem;">
+            <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: fontb;">
+              <i class="fas fa-hands-helping" style="color: var(--accent);"></i> Contributors
+            </h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+              Special thanks to our contributors who help improve NautilusOS!
+            </p>
+
+            <div class="contributors-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+              
+              <!-- Contributor: rhenryw (RHW) -->
+              <div class="contributor-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; transition: all 0.3s ease;"
+                   onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'; this.style.borderColor='var(--accent)'" 
+                   onmouseout="this.style.background='rgba(30, 35, 48, 0.6)'; this.style.borderColor='var(--border)'">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                  <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; flex-shrink: 0;">
+                    <i class="fas fa-user-check"></i>
+                  </div>
+                  <div>
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1rem;">RHW</div>
+                    <div style="color: var(--text-secondary); font-size: 0.75rem;">Contributor</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <a href="https://github.com/rhenryw" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 6px; color: var(--text-primary); text-decoration: none; font-size: 0.8rem; transition: all 0.2s ease;" 
+                       onmouseover="this.style.background='rgba(125, 211, 192, 0.3)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                    <i class="fab fa-github"></i> GitHub
+                  </a>
+                  <a href="https://rhw.one/" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; color: var(--text-primary); text-decoration: none; font-size: 0.8rem; transition: all 0.2s ease;" 
+                       onmouseover="this.style.background='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.15)'">
+                    <i class="fas fa-globe"></i> Website
+                  </a>
+                </div>
+              </div>
+
+              <!-- Contributor: derpman1483 -->
+              <div class="contributor-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; transition: all 0.3s ease;"
+                   onmouseover="this.style.background='rgba(125, 211, 192, 0.1)'; this.style.borderColor='var(--accent)'" 
+                   onmouseout="this.style.background='rgba(30, 35, 48, 0.6)'; this.style.borderColor='var(--border)'">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                  <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; flex-shrink: 0;">
+                    <i class="fas fa-user-check"></i>
+                  </div>
+                  <div>
+                    <div style="font-family: fontb; color: var(--text-primary); font-size: 1rem;">derpman1483</div>
+                    <div style="color: var(--text-secondary); font-size: 0.75rem;">Contributor</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <a href="https://github.com/derpman1483" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.75rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 6px; color: var(--text-primary); text-decoration: none; font-size: 0.8rem; transition: all 0.2s ease;" 
+                       onmouseover="this.style.background='rgba(125, 211, 192, 0.3)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                    <i class="fab fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="about-footer" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: auto;">
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.75rem; text-align: center;">
+              Made with <i class="fas fa-heart" style="color: #ef4444;"></i> by the NautilusOS team
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+              <a href="https://github.com/nautilus-os/NautilusOS" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;"
+                   onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                <i class="fab fa-github"></i> View on GitHub
+              </a>
+              <a href="#" onclick="event.preventDefault(); openApp('whatsnew');" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;"
+                   onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
+                <i class="fas fa-star"></i> What's New
+              </a>
+            </div>
+          </div>
+        </div>
+      `,
+      width: 550,
+      height: 850,
     },
     calculator: {
       title: "Calculator",
@@ -4750,6 +5494,10 @@ print(f'Sum: {sum(numbers)}')
         <div class="appstore-section" onclick="switchAppStoreSection('games', this)">
             <i class="fas fa-gamepad"></i>
             <span>Games</span>
+        </div>
+        <div class="appstore-section" onclick="switchAppStoreSection('community', this)">
+            <i class="fas fa-users"></i>
+            <span>Community</span>
         </div>
     </div>
     <div class="appstore-main" id="appstoreMain">
@@ -5215,6 +5963,90 @@ print(f'Sum: {sum(numbers)}')
       width: 700,
       height: 600,
     },
+    "web-app-creator": {
+      title: "Web App Creator",
+      icon: "fas fa-puzzle-piece",
+      content: `
+        <div style="padding: 2rem; height: 100%; overflow-y: auto; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+          <div style="max-width: 500px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: float 3s ease-in-out infinite;">
+                <i class="fas fa-puzzle-piece" style="font-size: 2.5rem; color: var(--bg-primary);"></i>
+              </div>
+              <h1 style="color: var(--text-primary); font-family: fontb; font-size: 1.5rem; margin-bottom: 0.5rem;">Web App Creator</h1>
+              <p style="color: var(--text-secondary); font-size: 0.9rem;">Create custom web apps that run like native apps</p>
+            </div>
+            
+            <div style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">
+                  <i class="fas fa-tag" style="color: var(--accent); margin-right: 0.5rem;"></i>App Name
+                </label>
+                <input type="text" id="webAppName" placeholder="My Custom App" 
+                  style="width: 100%; padding: 0.75rem 1rem; background: rgba(21, 25, 35, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem;"
+                  onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+              </div>
+              
+              <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">
+                  <i class="fas fa-globe" style="color: var(--accent); margin-right: 0.5rem;"></i>Website URL
+                </label>
+                <input type="url" id="webAppUrl" placeholder="https://example.com" 
+                  style="width: 100%; padding: 0.75rem 1rem; background: rgba(21, 25, 35, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem;"
+                  onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+              </div>
+              
+              <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; color: var(--text-primary); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500;">
+                  <i class="fas fa-icons" style="color: var(--accent); margin-right: 0.5rem;"></i>Icon (FontAwesome)
+                </label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="text" id="webAppIcon" placeholder="fa-globe" value="fa-globe"
+                    style="flex: 1; padding: 0.75rem 1rem; background: rgba(21, 25, 35, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem;"
+                    onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+                    oninput="document.getElementById('webAppIconPreview').className = 'fas ' + this.value">
+                  <div style="width: 48px; height: 48px; background: rgba(21, 25, 35, 0.8); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <i id="webAppIconPreview" class="fas fa-globe" style="font-size: 1.5rem; color: var(--accent);"></i>
+                  </div>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 0.5rem;">
+                  Examples: fa-music, fa-gamepad, fa-video, fa-shopping-cart
+                </p>
+              </div>
+              
+              <div style="margin-bottom: 1.25rem;">
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; color: var(--text-primary); font-size: 0.9rem;">
+                  <input type="checkbox" id="webAppDesktopIcon" checked style="width: 18px; height: 18px; cursor: pointer;">
+                  <span>Add icon to desktop</span>
+                </label>
+              </div>
+            </div>
+            
+            <button onclick="createCustomWebApp()" 
+              style="width: 100%; padding: 0.875rem; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border: none; border-radius: 10px; color: var(--bg-primary); font-size: 1rem; font-family: fontb; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+              onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(125, 211, 192, 0.3)'"
+              onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+              <i class="fas fa-plus-circle"></i> Create Web App
+            </button>
+            
+            <div style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+              <h3 style="color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-list" style="color: var(--accent);"></i> Your Web Apps
+              </h3>
+              <div id="customWebAppsList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 1rem;">Loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+      noPadding: true,
+      width: 550,
+      height: 650,
+      onOpen: function () {
+        setTimeout(refreshCustomWebAppsList, 100);
+      }
+    },
   };
 
   if (appName === "achievements") {
@@ -5298,6 +6130,12 @@ print(f'Sum: {sum(numbers)}')
         initializeNautilusAI();
       }, 50);
     }
+
+    if (appName === "web-app-creator") {
+      setTimeout(() => {
+        refreshCustomWebAppsList();
+      }, 50);
+    }
   }
 }
 
@@ -5326,6 +6164,7 @@ function handleTerminalInput(e) {
         "date - Show current date and time<br>" +
         "whoami - Display current username<br>" +
         "reset-boot - Reset bootloader preferences<br>" +
+        "refresh-cache - Purge jsDelivr cache for community apps<br>" +
         "echo [text] - Display text";
     } else if (command === "ls") {
       const tree = ".\n" + generateFileTree(fileSystem);
@@ -5366,9 +6205,20 @@ function handleTerminalInput(e) {
       output.innerHTML =
         '<span style="color: #4ade80;">✓ Bootloader preferences reset successfully</span><br>' +
         "The bootloader menu will appear on next page reload.";
+    } else if (command === "refresh-cache") {
+      output.innerHTML = "Submitting purge request to jsDelivr...<br>";
+
+      // Asynchronously purge key files
+      fetch('https://purge.jsdelivr.net/gh/nautilus-os/community@main/files/info.json').catch(e => { });
+      fetch('https://purge.jsdelivr.net/gh/nautilus-os/community@main/apps').catch(e => { });
+
+      // We can't actually verify purge easily from client without CORS issues sometimes?
+      // But the request fires.
+      output.innerHTML += '<span style="color: #4ade80;">✓ Purge request sent.</span><br>' +
+        "Please wait a few moments and try reloading the store.";
     } else if (command === "clear") {
       terminal.innerHTML = `
-                      <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.0</div>
+                      <div class="terminal-line" style="color: var(--accent);">NautilusOS Terminal v1.5</div>
                       <div class="terminal-line" style="color: #888; margin-bottom: 1rem;">Type 'help' for available commands</div>
                   `;
     } else if (command === "date") {
@@ -6206,6 +7056,23 @@ function goToSlide(index) {
   dots[currentSlide].classList.add("active");
 }
 
+function toggleDevInfo(devId) {
+  const infoEl = document.getElementById('devinfo-' + devId);
+  const chevronEl = document.getElementById('chevron-' + devId);
+
+  if (!infoEl) return;
+
+  const isExpanded = infoEl.style.maxHeight && infoEl.style.maxHeight !== '0px';
+
+  if (isExpanded) {
+    infoEl.style.maxHeight = '0px';
+    if (chevronEl) chevronEl.style.transform = 'rotate(0deg)';
+  } else {
+    infoEl.style.maxHeight = infoEl.scrollHeight + 'px';
+    if (chevronEl) chevronEl.style.transform = 'rotate(180deg)';
+  }
+}
+
 function initScrollIndicator() {
   const indicator = document.getElementById("scrollIndicator");
   if (!indicator) return;
@@ -6372,457 +7239,219 @@ function switchAppStoreSection(section, element) {
 
   const mainContent = document.getElementById("appstoreMain");
 
-  if (section === "themes") {
-    const lightThemeInstalled = installedThemes.includes("light");
+  if (section === 'community') {
     mainContent.innerHTML = `
-              <div class="appstore-header">
-                  <h2>Themes</h2>
-                  <p>Customize your NautilusOS experience</p>
-              </div>
-              <div class="appstore-grid">
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-dark-theme">
-                              <div class="illustration-dark-window">
-                                  <div class="illustration-dark-header"></div>
-                                  <div class="illustration-dark-content">
-                                      <div class="illustration-dark-line" style="width: 80%;"></div>
-                                      <div class="illustration-dark-line" style="width: 60%;"></div>
-                                      <div class="illustration-dark-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Dark Theme by dinguschan</div>
-                      <div class="appstore-item-desc">The default NautilusOS theme. Sleek dark interface with teal accents,
-                          perfect for extended use and reducing eye strain.</div>
-                      <button class="appstore-item-btn installed" style="opacity: 0.6; cursor: not-allowed;" disabled>
-                          Installed (Default)
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-light-theme">
-                              <div class="illustration-light-window">
-                                  <div class="illustration-light-header"></div>
-                                  <div class="illustration-light-content">
-                                      <div class="illustration-light-line" style="width: 80%;"></div>
-                                      <div class="illustration-light-line" style="width: 60%;"></div>
-                                      <div class="illustration-light-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Light Theme by dinguschan</div>
-                      <div class="appstore-item-desc">A bright and clean theme perfect for daytime use. Easy on the eyes with
-                          light backgrounds and dark text.</div>
-                      <button class="appstore-item-btn ${lightThemeInstalled ? "installed" : ""
-      }" onclick="${lightThemeInstalled
-        ? " uninstallTheme('light')"
-        : "installTheme('light')"
-      }">
-                          ${lightThemeInstalled ? "Uninstall" : "Install"}
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-golden-theme">
-                              <div class="illustration-golden-window">
-                                  <div class="illustration-golden-header"></div>
-                                  <div class="illustration-golden-content">
-                                      <div class="illustration-golden-line" style="width: 80%;"></div>
-                                      <div class="illustration-golden-line" style="width: 60%;"></div>
-                                      <div class="illustration-golden-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Golden Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Elegant golden accents with warm, luxurious dark backgrounds. Perfect
-                          for a premium look.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("golden") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("golden")
-        ? "uninstallTheme('golden')"
-        : "installTheme('golden')"
-      }">
-                          ${installedThemes.includes("golden")
-        ? "Uninstall"
-        : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-red-theme">
-                              <div class="illustration-red-window">
-                                  <div class="illustration-red-header"></div>
-                                  <div class="illustration-red-content">
-                                      <div class="illustration-red-line" style="width: 80%;"></div>
-                                      <div class="illustration-red-line" style="width: 60%;"></div>
-                                      <div class="illustration-red-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Red Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Bold and vibrant red accents for those who want to stand out. Energy
-                          meets elegance.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("red") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("red")
-        ? "uninstallTheme('red')"
-        : "installTheme('red')"
-      }">
-                          ${installedThemes.includes("red") ? "Uninstall" : "Install"}
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-blue-theme">
-                              <div class="illustration-blue-window">
-                                  <div class="illustration-blue-header"></div>
-                                  <div class="illustration-blue-content">
-                                      <div class="illustration-blue-line" style="width: 80%;"></div>
-                                      <div class="illustration-blue-line" style="width: 60%;"></div>
-                                      <div class="illustration-blue-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Blue Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Cool and calming blue tones. Professional and soothing for extended use.
-                      </div>
-                      <button class="appstore-item-btn ${installedThemes.includes("blue") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("blue")
-        ? "uninstallTheme('blue')"
-        : "installTheme('blue')"
-      }">
-                          ${installedThemes.includes("blue") ? "Uninstall" : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-purple-theme">
-                              <div class="illustration-purple-window">
-                                  <div class="illustration-purple-header"></div>
-                                  <div class="illustration-purple-content">
-                                      <div class="illustration-purple-line" style="width: 80%;"></div>
-                                      <div class="illustration-purple-line" style="width: 60%;"></div>
-                                      <div class="illustration-purple-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Purple Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Deep shades combined with royal hues, crafted together for the perfect purple theme.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("purple") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("purple")
-        ? "uninstallTheme('purple')"
-        : "installTheme('purple')"
-      }">
-                          ${installedThemes.includes("purple")
-        ? "Uninstall"
-        : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-green-theme">
-                              <div class="illustration-green-window">
-                                  <div class="illustration-green-header"></div>
-                                  <div class="illustration-green-content">
-                                      <div class="illustration-green-line" style="width: 80%;"></div>
-                                      <div class="illustration-green-line" style="width: 60%;"></div>
-                                      <div class="illustration-green-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Green Theme by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("green") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("green")
-        ? "uninstallTheme('green')"
-        : "installTheme('green')"
-      }">
-                          ${installedThemes.includes("green")
-        ? "Uninstall"
-        : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                          <div class="illustration-liquidglass-theme">
-                              <div class="illustration-liquidglass-window">
-                                  <div class="illustration-liquidglass-header"></div>
-                                  <div class="illustration-liquidglass-content">
-                                      <div class="illustration-liquidglass-line" style="width: 80%;"></div>
-                                      <div class="illustration-liquidglass-line" style="width: 60%;"></div>
-                                      <div class="illustration-liquidglass-line" style="width: 90%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="appstore-item-name">Liquid Glass by $xor</div>
-                      <div class="appstore-item-desc">An Apple insipired theme with a beautiful translucent look.</div>
-                      <button class="appstore-item-btn ${installedThemes.includes("liquidGlass") ? "installed" : ""
-      }"
-                          onclick="${installedThemes.includes("liquidGlass")
-        ? "uninstallTheme('liquidGlass')"
-        : "installTheme('liquidGlass')"
-      }">
-                          ${installedThemes.includes("liquidGlass")
-        ? "Uninstall"
-        : "Install"
-      }
-                      </button>
-                  </div>
-              </div>
-          `;
-  } else if (section === "apps") {
-    const startupInstalled = installedApps.includes("startup-apps");
-    const taskmanagerInstalled = installedApps.includes("task-manager");
-    const snapManagerInstalled = installedApps.includes("snap-manager");
-    const uvInstalled = installedApps.includes("uv");
-    const heliosInstalled = installedApps.includes("helios");
-    const vscInstalled = installedApps.includes("vsc");
-    const v86Installed = installedApps.includes("v86-emulator");
-
-    mainContent.innerHTML = `
-                  <div class="appstore-header">
-                      <h2>Apps</h2>
-                      <p>Discover and install new applications</p>
-                  </div>
-                  <div class="appstore-grid">
-                      <div class="appstore-item">
-                          <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-    <div class="illustration-startup-window">
-        <div class="illustration-startup-header">Startup Apps</div>
-        <div class="illustration-startup-items">
-            <div class="illustration-startup-item">
-                <div class="illustration-startup-checkbox"></div>
-                <div class="illustration-startup-icon"></div>
-                <div class="illustration-startup-label"></div>
-            </div>
-            <div class="illustration-startup-item">
-                <div class="illustration-startup-checkbox"></div>
-                <div class="illustration-startup-icon"></div>
-                <div class="illustration-startup-label"></div>
-            </div>
-            <div class="illustration-startup-item">
-                <div class="illustration-startup-checkbox" style="background: rgba(125, 211, 192, 0.3);"></div>
-                <div class="illustration-startup-icon"></div>
-                <div class="illustration-startup-label"></div>
+        <div class="appstore-header">
+            <h2>Community</h2>
+            <p>Apps & themes from the community</p>
+        </div>
+        <div id="communityAppsGrid" class="appstore-grid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--accent);"></i>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">Loading community repo...</p>
             </div>
         </div>
-    </div>
-</div>
-                          <div class="appstore-item-name">Startup Apps by dinguschan</div>
-<div class="appstore-item-desc">Control which applications launch automatically on login with this convenient this built-in app.</div>
-<button class="appstore-item-btn ${startupInstalled ? "installed" : ""
-      }" onclick="${startupInstalled
-        ? "uninstallApp('startup-apps')"
-        : "installApp('startup-apps')"
-      }">
-${startupInstalled ? "Uninstall" : "Install"}
-</button>
-<div class="offline-support" style="top: -90%;"><i class="fa-solid fa-file"></i> OFFLINE SUPPORT</div>
-</div>
-<div class="appstore-item">
-   <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
-      <div class="illustration-taskmanager">
-         <div class="illustration-taskmanager-header">
-            <div class="illustration-taskmanager-title">Task Manager</div>
-            <div class="illustration-taskmanager-stat">CPU: 45%</div>
-         </div>
-         <div class="illustration-taskmanager-processes">
-            <div class="illustration-taskmanager-process">
-               <div class="illustration-taskmanager-process-icon"></div>
-               <div class="illustration-taskmanager-process-name"></div>
-               <div class="illustration-taskmanager-process-bar">
-                  <div class="illustration-taskmanager-process-fill" style="width: 60%;"></div>
-               </div>
-            </div>
-            <div class="illustration-taskmanager-process">
-               <div class="illustration-taskmanager-process-icon"></div>
-               <div class="illustration-taskmanager-process-name"></div>
-               <div class="illustration-taskmanager-process-bar">
-                  <div class="illustration-taskmanager-process-fill" style="width: 35%;"></div>
-               </div>
-            </div>
-            <div class="illustration-taskmanager-process">
-               <div class="illustration-taskmanager-process-icon"></div>
-               <div class="illustration-taskmanager-process-name"></div>
-               <div class="illustration-taskmanager-process-bar">
-                  <div class="illustration-taskmanager-process-fill" style="width: 80%;"></div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-   <div class="appstore-item-name">Task Manager by dinguschan</div>
-   <div class="appstore-item-desc">Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.</div>
-   <button class="appstore-item-btn ${taskmanagerInstalled ? "installed" : ""
-      }" onclick="${taskmanagerInstalled
-        ? "uninstallApp('task-manager')"
-        : "installApp('task-manager')"
-      }">
-   ${taskmanagerInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-border-all"></i>
-   </div>
-   <div class="appstore-item-name">Snap Manager by lanefiedler-731</div>
-   <div class="appstore-item-desc">Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.</div>
-   <button class="appstore-item-btn ${snapManagerInstalled ? "installed" : ""
-      }" onclick="${snapManagerInstalled
-        ? "uninstallApp('snap-manager')"
-        : "installApp('snap-manager')"
-      }">
-   ${snapManagerInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-globe"></i>
-   </div>
-   <div class="appstore-item-name">Ultraviolet by $xor</div>
-   <div class="appstore-item-desc">Open up a whole new browsing experience, powered by Ultraviolet.</div>
-   <button class="appstore-item-btn ${uvInstalled ? "installed" : ""
-      }" onclick="${uvInstalled ? "uninstallApp('uv')" : "installApp('uv')"}">
-   ${uvInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-globe"></i>
-   </div>
-   <div class="appstore-item-name">Helios by dinguschan</div>
-   <div class="appstore-item-desc">The classic CORS proxy you know and love, fit in to one single file.</div>
-   <button class="appstore-item-btn ${heliosInstalled ? "installed" : ""
-      }" onclick="${heliosInstalled ? "uninstallApp('helios')" : "installApp('helios')"
-      }">
-   ${heliosInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-globe"></i>
-   </div>
-   <div class="appstore-item-name">Visual Studio Code</div>
-   <div class="appstore-item-desc">The developer's choice for text editing, now on NautilusOS.</div>
-   <button class="appstore-item-btn ${vscInstalled ? "installed" : ""
-      }" onclick="${vscInstalled ? "uninstallApp('vsc')" : "installApp('vsc')"}">
-   ${vscInstalled ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-microchip"></i>
-   </div>
-   <div class="appstore-item-name">V86 Emulator by lanefiedler-731</div>
-   <div class="appstore-item-desc">Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.</div>
-   <button class="appstore-item-btn ${v86Installed ? "installed" : ""
-      }" onclick="${v86Installed
-        ? "uninstallApp('v86-emulator')"
-        : "installApp('v86-emulator')"
-      }">
-   ${v86Installed ? "Uninstall" : "Install"}
-   </button>
-</div>
-<div class="appstore-item">
-   <div class="appstore-item-icon">
-      <i class="fas fa-robot"></i>
-   </div>
-   <div class="appstore-item-name">Nautilus AI Assistant by lanefiedler-731</div>
-   <div class="appstore-item-desc">Your personal AI assistant powered by WebLLM. Get instant help with NautilusOS features, apps, settings, and more. Runs entirely in your browser with no server required!</div>
-   <button class="appstore-item-btn installed" onclick="openApp('nautilus-ai')">
-      Open
-   </button>
-</div>
-</div>
-</div>
-</div>
-              `;
-  } else if (section === "games") {
+    `;
+    fetchCommunityApps();
+    return;
+  }
+
+  if (section === "themes") {
+    // Helper for theme items
+    const getTheme = (name, author, desc, key, className) => ({
+      name: name,
+      author: author,
+      desc: desc,
+      customPreviewHtml: `<div class="${className}"><div class="${className.replace('theme', 'window')}"><div class="${className.replace('theme', 'header')}"></div><div class="${className.replace('theme', 'content')}"><div class="${className.replace('theme', 'line')}" style="width: 80%;"></div><div class="${className.replace('theme', 'line')}" style="width: 60%;"></div><div class="${className.replace('theme', 'line')}" style="width: 90%;"></div></div></div></div>`,
+      isInstalled: installedThemes.includes(key),
+      installAction: `installTheme('${key}')`,
+      uninstallAction: `uninstallTheme('${key}')`,
+      type: "theme"
+    });
+
+    const items = [
+      {
+        name: "Dark Theme",
+        author: "dinguschan",
+        desc: "The default NautilusOS theme. Sleek dark interface with teal accents, perfect for extended use and reducing eye strain.",
+        customPreviewHtml: `<div class="illustration-dark-theme"><div class="illustration-dark-window"><div class="illustration-dark-header"></div><div class="illustration-dark-content"><div class="illustration-dark-line" style="width: 80%;"></div><div class="illustration-dark-line" style="width: 60%;"></div><div class="illustration-dark-line" style="width: 90%;"></div></div></div></div>`,
+        isInstalled: true,
+        installButtonText: "Installed (Default)",
+        installButtonDisabled: true,
+        type: "theme"
+      },
+      getTheme("Light Theme", "dinguschan", "A bright and clean theme perfect for daytime use. Easy on the eyes with light backgrounds and dark text.", "light", "illustration-light-theme"),
+      getTheme("Golden Theme", "lanefiedler-731", "Elegant golden accents with warm, luxurious dark backgrounds. Perfect for a premium look.", "golden", "illustration-golden-theme"),
+      getTheme("Red Theme", "lanefiedler-731", "Bold and vibrant red accents for those who want to stand out. Energy meets elegance.", "red", "illustration-red-theme"),
+      getTheme("Blue Theme", "lanefiedler-731", "Cool and calming blue tones. Professional and soothing for extended use.", "blue", "illustration-blue-theme"),
+      getTheme("Purple Theme", "lanefiedler-731", "Deep shades combined with royal hues, crafted together for the perfect purple theme.", "purple", "illustration-purple-theme"),
+      getTheme("Green Theme", "lanefiedler-731", "Rich shades of green with splashes of lime and seaweed, this is quite the exquisite theme.", "green", "illustration-green-theme"),
+      getTheme("Liquid Glass", "$xor", "An Apple insipired theme with a beautiful translucent look.", "liquidGlass", "illustration-liquidglass-theme")
+    ];
+
     mainContent.innerHTML = `
-              <div class="appstore-header">
-                  <h2>Games</h2>
-                  <p>Play and enjoy games on NautilusOS</p>
-              </div>
-              <div class="appstore-grid">
-                  <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-gamepad"></i>
-                      </div>
-                      <div class="appstore-item-name">Snake by lanefiedler-731</div>
-                      <div class="appstore-item-desc">A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!</div>
-                      <button class="appstore-item-btn ${installedGames.includes("snake") ? "installed" : ""
-      }" onclick="${installedGames.includes("snake")
-        ? "openApp('snake')"
-        : "installGame('snake')"
-      }">
-                          ${installedGames.includes("snake")
-        ? "Play"
-        : "Install"
+        <div class="appstore-header">
+            <h2>Themes</h2>
+            <p>Customize your NautilusOS experience</p>
+        </div>
+        <div class="appstore-grid">
+            ${items.map(item => renderAppItem(item)).join('')}
+        </div>
+    `;
+
+  } else if (section === "apps") {
+    const items = [
+      {
+        name: "Startup Apps",
+        author: "dinguschan",
+        desc: "Control which applications launch automatically on login with this convenient this built-in app.",
+        customPreviewHtml: `<div class="illustration-startup-window"> <div class="illustration-startup-header">Startup Apps</div> <div class="illustration-startup-items"> <div class="illustration-startup-item"> <div class="illustration-startup-checkbox"></div> <div class="illustration-startup-icon"></div> <div class="illustration-startup-label"></div> </div> <div class="illustration-startup-item"> <div class="illustration-startup-checkbox"></div> <div class="illustration-startup-icon"></div> <div class="illustration-startup-label"></div> </div> <div class="illustration-startup-item"> <div class="illustration-startup-checkbox" style="background: rgba(125, 211, 192, 0.3);"></div> <div class="illustration-startup-icon"></div> <div class="illustration-startup-label"></div> </div> </div> </div><div class="offline-support" style="top: -90%;"><i class="fa-solid fa-file"></i> OFFLINE SUPPORT</div>`,
+        isInstalled: installedApps.includes("startup-apps"),
+        installAction: "installApp('startup-apps')",
+        uninstallAction: "uninstallApp('startup-apps')",
+        type: "app"
+      },
+      {
+        name: "Task Manager",
+        author: "dinguschan",
+        desc: "Monitor and manage running applications and windows. View system statistics and close unresponsive apps with ease.",
+        customPreviewHtml: `<div class="illustration-taskmanager"> <div class="illustration-taskmanager-header"> <div class="illustration-taskmanager-title">Task Manager</div> <div class="illustration-taskmanager-stat">CPU: 45%</div> </div> <div class="illustration-taskmanager-processes"> <div class="illustration-taskmanager-process"> <div class="illustration-taskmanager-process-icon"></div> <div class="illustration-taskmanager-process-name"></div> <div class="illustration-taskmanager-process-bar"> <div class="illustration-taskmanager-process-fill" style="width: 60%;"></div> </div> </div> <div class="illustration-taskmanager-process"> <div class="illustration-taskmanager-process-icon"></div> <div class="illustration-taskmanager-process-name"></div> <div class="illustration-taskmanager-process-bar"> <div class="illustration-taskmanager-process-fill" style="width: 35%;"></div> </div> </div> <div class="illustration-taskmanager-process"> <div class="illustration-taskmanager-process-icon"></div> <div class="illustration-taskmanager-process-name"></div> <div class="illustration-taskmanager-process-bar"> <div class="illustration-taskmanager-process-fill" style="width: 80%;"></div> </div> </div> </div> </div>`,
+        isInstalled: installedApps.includes("task-manager"),
+        installAction: "installApp('task-manager')",
+        uninstallAction: "uninstallApp('task-manager')",
+        type: "app"
+      },
+      {
+        name: "Snap Manager",
+        author: "lanefiedler-731",
+        desc: "Add window snapping with animated previews. Customize layouts, assign shortcuts, and drag to see live guides.",
+        customPreviewHtml: `<div class="illustration-snap"> <div class="illustration-snap-zone"></div> <div class="illustration-snap-zone"></div> </div>`,
+        isInstalled: installedApps.includes("snap-manager"),
+        installAction: "installApp('snap-manager')",
+        uninstallAction: "uninstallApp('snap-manager')",
+        type: "app"
+      },
+      {
+        name: "Ultraviolet",
+        author: "$xor",
+        desc: "Open up a whole new browsing experience, powered by Ultraviolet.",
+        customPreviewHtml: `<div class="illustration-uv"> <div class="illustration-uv-header"> <div class="illustration-uv-logo"></div> </div> </div>`,
+        isInstalled: installedApps.includes("uv"),
+        installAction: "installApp('uv')",
+        uninstallAction: "uninstallApp('uv')",
+        type: "app"
+      },
+      {
+        name: "Helios",
+        author: "dinguschan",
+        desc: "The classic CORS proxy you know and love, fit in to one single file.",
+        customPreviewHtml: `<div class="illustration-helios"> <div class="illustration-helios-header"> <div class="illustration-helios-logo"></div> </div> </div>`,
+        isInstalled: installedApps.includes("helios"),
+        installAction: "installApp('helios')",
+        uninstallAction: "uninstallApp('helios')",
+        type: "app"
+      },
+      {
+        name: "Visual Studio Code",
+        author: "Microsoft",
+        desc: "The developer's choice for text editing, now on NautilusOS.",
+        customPreviewHtml: `<div class="illustration-vscode"> <div class="illustration-vscode-header"></div> <div class="illustration-vscode-content"> <div class="illustration-vscode-line"></div> <div class="illustration-vscode-line" style="width: 80%;"></div> <div class="illustration-vscode-line" style="width: 60%;"></div> </div> </div>`,
+        isInstalled: installedApps.includes("vsc"),
+        installAction: "installApp('vsc')",
+        uninstallAction: "uninstallApp('vsc')",
+        type: "app"
+      },
+      {
+        name: "V86 Emulator",
+        author: "lanefiedler-731",
+        desc: "Run x86 operating systems and software within NautilusOS. Experience virtualized computing with full system emulation.",
+        customPreviewHtml: `<div class="illustration-v86"> <div class="illustration-v86-line"></div> <div class="illustration-v86-line" style="width: 60%;"></div> <div class="illustration-v86-cursor"></div> </div>`,
+        isInstalled: installedApps.includes("v86-emulator"),
+        installAction: "installApp('v86-emulator')",
+        uninstallAction: "uninstallApp('v86-emulator')",
+        type: "app"
+      },
+      {
+        name: "Nautilus AI Assistant",
+        author: "lanefiedler-731",
+        desc: "Your personal AI assistant powered by WebLLM. Get instant help with NautilusOS features, apps, settings, and more. Runs entirely in your browser with no server required!",
+        customPreviewHtml: `<div class="illustration-nautilus-ai"> <div class="illustration-nautilus-ai-header"> <div class="illustration-nautilus-ai-icon"><i class="fas fa-robot"></i></div> <div class="illustration-nautilus-ai-title">Nautilus AI</div> </div> <div class="illustration-nautilus-ai-content"> <div class="illustration-nautilus-ai-msg-ai"> <div class="illustration-nautilus-ai-line" style="width: 90%;"></div> <div class="illustration-nautilus-ai-line" style="width: 60%;"></div> </div> <div class="illustration-nautilus-ai-msg-user"> <div class="illustration-nautilus-ai-line" style="width: 80%;"></div> </div> </div> </div>`,
+        isInstalled: true,
+        installButtonText: "Open",
+        installAction: "openApp('nautilus-ai')",
+        uninstallAction: "",
+        type: "app"
       }
-                      </button>
-                  </div>
-                  
-                  <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-th"></i>
-                      </div>
-                      <div class="appstore-item-name">2048 by dinguschan</div>
-                      <div class="appstore-item-desc">Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.</div>
-                      <button class="appstore-item-btn ${installedGames.includes("2048") ? "installed" : ""
-      }" onclick="${installedGames.includes("2048")
-        ? "openApp('2048')"
-        : "installGame('2048')"
-      }">
-                          ${installedGames.includes("2048") ? "Play" : "Install"
+    ];
+
+    mainContent.innerHTML = `
+          <div class="appstore-header">
+              <h2>Apps</h2>
+              <p>Discover and install new applications</p>
+          </div>
+          <div class="appstore-grid">
+              ${items.map(item => renderAppItem(item)).join('')}
+          </div>
+      `;
+
+  } else if (section === "games") {
+    const items = [
+      {
+        name: "Snake",
+        author: "lanefiedler-731",
+        desc: "A classic snake game. Eat food, grow longer, and try to beat your high score without hitting the walls or yourself!",
+        customPreviewHtml: `<div class="illustration-snake"> <div class="illustration-snake-grid"> ${Array(64).fill(0).map((_, i) => `<div class="illustration-snake-cell${[27, 28, 29].includes(i) ? " snake" : i === 35 ? " food" : ""}"></div>`).join("")} </div> </div>`,
+        isInstalled: installedGames.includes("snake"),
+        installAction: "installGame('snake')",
+        uninstallAction: "", // No uninstall needed? Original didn't show uninstall logic for games properly or handled it?
+        // Original: installedGames.includes("snake") ? "openApp('snake')" : "installGame('snake')"
+        // If installed, it shows "Play".
+        installButtonText: installedGames.includes("snake") ? "Play" : "Install",
+        installAction: installedGames.includes("snake") ? "openApp('snake')" : "installGame('snake')",
+        uninstallAction: "", // Original doesn't seem to support uninstalling games?
+        type: "game"
+      },
+      {
+        name: "2048",
+        author: "dinguschan",
+        desc: "Slide tiles to combine numbers and reach 2048! A addictive puzzle game that's easy to learn but hard to master.",
+        customPreviewHtml: `<div class="illustration-2048"> <div class="illustration-2048-tile">2</div> <div class="illustration-2048-tile">4</div> <div class="illustration-2048-tile">8</div> <div class="illustration-2048-tile">16</div> <div class="illustration-2048-tile">32</div> <div class="illustration-2048-tile">64</div> <div class="illustration-2048-tile">128</div> ${Array(9).fill('<div class="illustration-2048-tile"></div>').join("")} </div>`,
+        isInstalled: installedGames.includes("2048"),
+        installButtonText: installedGames.includes("2048") ? "Play" : "Install",
+        installAction: installedGames.includes("2048") ? "openApp('2048')" : "installGame('2048')",
+        type: "game"
+      },
+      {
+        name: "Tic-Tac-Toe",
+        author: "dinguschan",
+        desc: "Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?",
+        customPreviewHtml: `<div class="illustration-tictactoe"> <div class="illustration-tictactoe-cell">X</div> <div class="illustration-tictactoe-cell">O</div> <div class="illustration-tictactoe-cell">X</div> <div class="illustration-tictactoe-cell"></div> <div class="illustration-tictactoe-cell">O</div> <div class="illustration-tictactoe-cell"></div> <div class="illustration-tictactoe-cell"></div> <div class="illustration-tictactoe-cell"></div> <div class="illustration-tictactoe-cell"></div> </div>`,
+        isInstalled: installedGames.includes("tictactoe"),
+        installButtonText: installedGames.includes("tictactoe") ? "Play" : "Install",
+        installAction: installedGames.includes("tictactoe") ? "openApp('tictactoe')" : "installGame('tictactoe')",
+        type: "game"
+      },
+      {
+        name: "AI Snake Learning",
+        author: "lanefiedler-731",
+        desc: "Train an AI neural network to play Snake using Deep Q-Learning. Watch it learn and improve with GPU acceleration, customizable concurrency, game speed, and training speed controls.",
+        customPreviewHtml: `<div class="illustration-ai-snake"> <div class="illustration-ai-snake-stats"> <div class="illustration-ai-snake-stat"> <div class="illustration-ai-snake-stat-icon"></div> <div class="illustration-ai-snake-stat-line"></div> </div> <div class="illustration-ai-snake-stat"> <div class="illustration-ai-snake-stat-icon"></div> <div class="illustration-ai-snake-stat-line" style="width: 60%"></div> </div> <div class="illustration-ai-snake-stat"> <div class="illustration-ai-snake-stat-icon"></div> <div class="illustration-ai-snake-stat-line" style="width: 40%"></div> </div> <div class="illustration-ai-snake-stat"> <div class="illustration-ai-snake-stat-icon"></div> <div class="illustration-ai-snake-stat-line" style="width: 80%"></div> </div> </div> <div class="illustration-ai-snake-board"> ${Array(25).fill(0).map((_, i) => `<div class="illustration-ai-snake-cell${[12, 13].includes(i) ? " snake" : ""}"></div>`).join("")} </div> </div>`,
+        isInstalled: true,
+        installButtonText: "Play",
+        installAction: "openApp('ai-snake')",
+        type: "game"
       }
-                      </button>
-                  </div>
-                  
-                  <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-circle"></i>
-                      </div>
-                      <div class="appstore-item-name">Tic-Tac-Toe by dinguschan</div>
-                      <div class="appstore-item-desc">Classic Tic-Tac-Toe against an AI opponent. Can you outsmart the computer and get three in a row?</div>
-                      <button class="appstore-item-btn ${installedGames.includes("tictactoe") ? "installed" : ""
-      }" onclick="${installedGames.includes("tictactoe")
-        ? "openApp('tictactoe')"
-        : "installGame('tictactoe')"
-      }">
-                          ${installedGames.includes("tictactoe")
-        ? "Play"
-        : "Install"
-      }
-                      </button>
-                  </div>
-                  <div class="appstore-item">
-                      <div class="appstore-item-icon">
-                          <i class="fas fa-brain"></i>
-                      </div>
-                      <div class="appstore-item-name">AI Snake Learning by lanefiedler-731</div>
-                      <div class="appstore-item-desc">Train an AI neural network to play Snake using Deep Q-Learning. Watch it learn and improve with GPU acceleration, customizable concurrency, game speed, and training speed controls.</div>
-                      <button class="appstore-item-btn installed" onclick="openApp('ai-snake')">
-                          Play
-                      </button>
-                  </div>
-              </div>
-          `;
+    ];
+
+    mainContent.innerHTML = `
+          <div class="appstore-header">
+              <h2>Games</h2>
+              <p>Play and enjoy games on NautilusOS</p>
+          </div>
+          <div class="appstore-grid">
+              ${items.map(item => renderAppItem(item)).join('')}
+          </div>
+      `;
   }
 }
 function installTheme(themeName) {
@@ -8044,6 +8673,7 @@ document.addEventListener("click", (e) => {
 function setupStep1Next() {
   const username = document.getElementById("setupUsername").value.trim();
   const isPasswordless = document.getElementById("setupPasswordless").checked;
+  const isBloatless = document.getElementById("setupBloatless").checked;
 
   if (!username) {
     showToast("Please enter a username", "fa-exclamation-circle");
@@ -8059,6 +8689,7 @@ function setupStep1Next() {
   }
 
   window.setupIsPasswordless = isPasswordless;
+  window.setupIsBloatless = isBloatless;
 
   document.getElementById("setupStep1").style.display = "none";
 
@@ -8120,6 +8751,7 @@ function togglePasswordless() {
 function setupComplete() {
   const username = document.getElementById("setupUsername").value.trim();
   const isPasswordless = window.setupIsPasswordless || false;
+  const isBloatless = window.setupIsBloatless || false;
   const password = isPasswordless
     ? ""
     : document.getElementById("setupPassword").value;
@@ -8155,6 +8787,7 @@ function setupComplete() {
     localStorage.setItem("nautilusOS_isPasswordless", "false");
   }
   localStorage.setItem("nautilusOS_setupComplete", "true");
+  localStorage.setItem("nautilusOS_bloatlessMode", isBloatless ? "true" : "false");
   localStorage.setItem(
     "nautilusOS_installedThemes",
     JSON.stringify(installedThemes)
@@ -8170,6 +8803,39 @@ function setupComplete() {
   saveSettingsToLocalStorage();
 
   currentUsername = username;
+
+  // Set global bloatlessMode and apply filtering immediately
+  bloatlessMode = isBloatless;
+  if (bloatlessMode) {
+    const bloatlessKeep = ["appstore", "settings"];
+    const iconsContainer = document.getElementById("desktopIcons");
+    if (iconsContainer) {
+      const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
+      allIcons.forEach((icon) => {
+        const appName = icon.getAttribute("data-app");
+        if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName)) {
+          icon.style.display = "none";
+        }
+      });
+    }
+    // Also hide from start menu
+    const appGrid = document.querySelector(".app-grid");
+    if (appGrid) {
+      const allAppItems = appGrid.querySelectorAll(".app-item");
+      allAppItems.forEach((item) => {
+        const onclickAttr = item.getAttribute("onclick");
+        if (onclickAttr) {
+          const match = onclickAttr.match(/openApp\(['"]([^'"]+)['"]\)/);
+          if (match) {
+            const appName = match[1];
+            if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName)) {
+              item.style.display = "none";
+            }
+          }
+        }
+      });
+    }
+  }
 
   if (selectedThemes.length > 0) {
     setTimeout(() => {
@@ -8340,6 +9006,30 @@ window.addEventListener("DOMContentLoaded", () => {
   installedGames.forEach((gameName) => {
     addDesktopIcon(gameName);
   });
+
+  // Restore Community Apps
+  const savedCommunityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+  Object.keys(savedCommunityApps).forEach(appId => {
+    const appData = savedCommunityApps[appId];
+    createDesktopIcon(appId, appData.name, appData.icon || 'fas fa-box');
+  });
+
+  // Apply bloatless mode: hide pre-installed desktop icons except App Store and Settings
+  if (bloatlessMode) {
+    const bloatlessKeep = ["appstore", "settings"];
+    const iconsContainer = document.getElementById("desktopIcons");
+    if (iconsContainer) {
+      const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
+      allIcons.forEach((icon) => {
+        const appName = icon.getAttribute("data-app");
+        // Keep only appstore, settings, and any user-installed apps/games
+        if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName) && !installedGames.includes(appName)) {
+          icon.style.display = "none";
+        }
+      });
+    }
+  }
+
   applyUserBackgrounds();
   applyProfilePicture();
 });
@@ -8547,6 +9237,7 @@ window.prompt = async (message, defaultValue = "") => {
 let installedApps = [];
 let startupApps = [];
 let installedGames = [];
+let bloatlessMode = false;
 
 function hashPassword(password) {
   const salt = "NautilusOS_Salt_2024"; // Simple salt for demo
@@ -8578,6 +9269,9 @@ function loadInstalledApps() {
       console.error("Failed to load startup apps:", e);
     }
   }
+
+  // Load bloatless mode setting
+  bloatlessMode = localStorage.getItem("nautilusOS_bloatlessMode") === "true";
 }
 
 function installApp(appName) {
@@ -10136,6 +10830,34 @@ function updateStartMenu() {
   );
   existingInstalledGames.forEach((el) => el.remove());
 
+  // Bloatless mode: hide pre-installed apps except App Store and Settings in start menu
+  if (bloatlessMode) {
+    const bloatlessKeep = ["appstore", "settings"];
+    const allAppItems = appGrid.querySelectorAll(".app-item");
+    allAppItems.forEach((item) => {
+      const onclickAttr = item.getAttribute("onclick");
+      if (onclickAttr) {
+        // Extract app name from onclick="openApp('appname')"
+        const match = onclickAttr.match(/openApp\(['"]([^'"]+)['"]\)/);
+        if (match) {
+          const appName = match[1];
+          // Hide pre-installed apps not in bloatlessKeep and not user-installed
+          if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName) && !installedGames.includes(appName)) {
+            item.style.display = "none";
+          } else {
+            item.style.display = "";
+          }
+        }
+      }
+    });
+  } else {
+    // Reset visibility for non-bloatless mode
+    const allAppItems = appGrid.querySelectorAll(".app-item");
+    allAppItems.forEach((item) => {
+      item.style.display = "";
+    });
+  }
+
   installedApps.forEach((appName) => {
     let appConfig = {};
     if (appName === "startup-apps") {
@@ -10193,6 +10915,7 @@ async function exportProfile() {
     username: localStorage.getItem("nautilusOS_username"),
     password: localStorage.getItem("nautilusOS_password"),
     isPasswordless: localStorage.getItem("nautilusOS_isPasswordless") === "true",
+    bloatlessMode: localStorage.getItem("nautilusOS_bloatlessMode") === "true",
     settings: settings,
     installedThemes: installedThemes,
     installedApps: installedApps,
@@ -10460,6 +11183,10 @@ async function importProfile(event) {
         ? String(profile.isPasswordless)
         : (profile.password === "" ? "true" : "false");
       localStorage.setItem("nautilusOS_isPasswordless", isPasswordless);
+
+      // Restore bloatless mode setting
+      bloatlessMode = profile.bloatlessMode || false;
+      localStorage.setItem("nautilusOS_bloatlessMode", bloatlessMode ? "true" : "false");
 
       localStorage.setItem("nautilusOS_setupComplete", "true");
 
@@ -16012,3 +16739,617 @@ function resetWispUrl() {
   if (input) input.value = defaultUrl;
   showToast('Wisp URL reset to default', 'fa-undo');
 }
+
+// ==================== WEB APP CREATOR FUNCTIONS ====================
+
+function getCustomWebApps() {
+  const appsJson = localStorage.getItem('nautilusOS_customWebApps');
+  return appsJson ? JSON.parse(appsJson) : [];
+}
+
+function saveCustomWebApps(apps) {
+  localStorage.setItem('nautilusOS_customWebApps', JSON.stringify(apps));
+}
+
+function createCustomWebApp() {
+  const nameInput = document.getElementById('webAppName');
+  const urlInput = document.getElementById('webAppUrl');
+  const iconInput = document.getElementById('webAppIcon');
+  const desktopIconInput = document.getElementById('webAppDesktopIcon');
+
+  const name = nameInput.value.trim();
+  let url = urlInput.value.trim();
+  const icon = 'fas ' + (iconInput.value.trim() || 'fa-globe');
+  const addToDesktop = desktopIconInput.checked;
+
+  if (!name || !url) {
+    showToast('Please enter an app name and URL', 'fa-exclamation-circle');
+    return;
+  }
+
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = 'https://' + url;
+  }
+
+  const appId = 'webapp_' + Date.now();
+  const newApp = {
+    id: appId,
+    name: name,
+    url: url,
+    icon: icon,
+    created: Date.now()
+  };
+
+  // Save to storage
+  const apps = getCustomWebApps();
+  apps.push(newApp);
+  saveCustomWebApps(apps);
+
+  // Add to desktop if requested
+  if (addToDesktop) {
+    createDesktopIcon(appId, name, icon);
+    saveDesktopIconOrder(); // Should enable persistence
+  }
+
+  showToast(`App "${name}" created successfully!`, 'fa-check');
+
+  // Reset inputs
+  nameInput.value = '';
+  urlInput.value = '';
+
+  // Refresh list
+  refreshCustomWebAppsList();
+}
+
+function refreshCustomWebAppsList() {
+  const listEl = document.getElementById('customWebAppsList');
+  if (!listEl) return;
+
+  const apps = getCustomWebApps();
+
+  if (apps.length === 0) {
+    listEl.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 1rem; background: rgba(30, 35, 48, 0.4); border-radius: 8px;">No custom apps created yet.</p>';
+    return;
+  }
+
+  listEl.innerHTML = apps.map(app => `
+    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 10px; transition: all 0.2s ease;">
+      <div style="width: 40px; height: 40px; background: rgba(125, 211, 192, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--accent);">
+        <i class="${app.icon}"></i>
+      </div>
+      <div style="flex: 1;">
+        <div style="color: var(--text-primary); font-family: fontb; font-size: 0.95rem; margin-bottom: 0.25rem;">${app.name}</div>
+        <div style="color: var(--text-secondary); font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">${app.url}</div>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <button onclick="launchCustomWebApp('${app.id}')" title="Launch" 
+          style="padding: 0.5rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 6px; color: var(--accent); cursor: pointer;">
+          <i class="fas fa-play"></i>
+        </button>
+        <button onclick="deleteCustomWebApp('${app.id}')" title="Delete" 
+          style="padding: 0.5rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; color: #ef4444; cursor: pointer;">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteCustomWebApp(appId) {
+  if (!confirm('Are you sure you want to delete this app?')) return;
+
+  let apps = getCustomWebApps();
+  apps = apps.filter(a => a.id !== appId);
+  saveCustomWebApps(apps);
+
+  // Remove desktop icon if it exists
+  const desktopIcon = document.querySelector(`.desktop-icon[data-app="${appId}"]`);
+  if (desktopIcon) {
+    desktopIcon.remove();
+    saveDesktopIconOrder(); // Update persistence
+  }
+
+  refreshCustomWebAppsList();
+  showToast('App deleted', 'fa-trash');
+}
+
+function launchCustomWebApp(appId) {
+  const apps = getCustomWebApps();
+  const app = apps.find(a => a.id === appId);
+
+  if (!app) {
+    showToast('App not found', 'fa-exclamation-circle');
+    return;
+  }
+
+  // Force open the app using the specialized launcher
+  openCustomWebAppWindow(app);
+}
+
+function openCustomWebAppWindow(app) {
+  // Use UV proxy for seamless embedding like the main browser
+  // Construct proxy URL
+  let proxyUrl = app.url;
+  if (window.__uv$config) {
+    proxyUrl = window.__uv$config.prefix + window.__uv$config.encodeUrl(app.url);
+  } else {
+    // Fallback if UV not ready (shouldn't happen usually)
+    console.warn("UV config not found, using direct URL");
+  }
+
+  const content = `
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; background: #fff;">
+      <iframe src="${proxyUrl}" style="flex: 1; width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+    </div>
+  `;
+
+  createWindow(
+    app.name,
+    app.icon,
+    content,
+    1000,
+    700,
+    app.id,
+    true // noPadding
+  );
+}
+
+// Helper to create desktop icon dynamically
+function createDesktopIcon(appId, name, iconClass) {
+  const desktopIcons = document.getElementById('desktopIcons');
+  if (!desktopIcons) return;
+
+  // Check duplicate
+  if (document.querySelector(`.desktop-icon[data-app="${appId}"]`)) return;
+
+  const iconDiv = document.createElement('div');
+  iconDiv.className = 'desktop-icon';
+  iconDiv.setAttribute('ondblclick', `openApp('${appId}')`);
+  iconDiv.setAttribute('data-app', appId);
+
+  iconDiv.innerHTML = `
+    <i class="${iconClass}"></i> <span>${name}</span>
+  `;
+
+  desktopIcons.appendChild(iconDiv);
+
+  // Re-init dragging
+  if (typeof initDesktopIconDragging === 'function') {
+    initDesktopIconDragging();
+  }
+}
+
+// Initialize custom apps on startup
+window.addEventListener('DOMContentLoaded', () => {
+  const apps = getCustomWebApps();
+  apps.forEach(app => {
+    appMetadata[app.id] = {
+      name: app.name,
+      icon: app.icon.replace('fas ', '').replace('fa-solid ', ''),
+      preinstalled: false,
+      type: 'custom-web-app'
+    };
+  });
+});
+
+// ================= COMMUNITY STORE & UI IMPROVEMENTS =================
+
+let communityAppsCache = null;
+
+async function fetchCommunityApps() {
+  const container = document.getElementById('communityAppsGrid');
+  if (!container) return; // Not in community tab
+
+  if (communityAppsCache) {
+    renderCommunityApps(communityAppsCache);
+    return;
+  }
+
+  try {
+    // Fetch recursive tree
+    const treeUrl = `https://api.github.com/repos/nautilus-os/community/git/trees/main?recursive=1&v=${Date.now()}`;
+    const treeResp = await fetch(treeUrl);
+
+    if (!treeResp.ok) throw new Error("Failed to fetch repository tree");
+
+    const treeData = await treeResp.json();
+    const infoFiles = treeData.tree.filter(node => node.path.endsWith('appinfo.json'));
+
+    const fetchedItems = await Promise.all(infoFiles.map(async (node) => {
+      try {
+        // Path structure: [category]/[author]/[project]/appinfo.json
+        const parts = node.path.split('/');
+        // Expect at least: category/author/project/appinfo.json (4 parts)
+        if (parts.length < 4) return null;
+
+        const category = parts[0];
+        // categories: apps, games, themes
+        if (!['apps', 'games', 'themes'].includes(category)) return null;
+
+        const cdnUrl = `https://cdn.jsdelivr.net/gh/nautilus-os/community@main/${node.path}?v=${Date.now()}`;
+        const metaResp = await fetch(cdnUrl);
+        if (!metaResp.ok) return null;
+
+        let metaArr = await metaResp.json();
+        if (!Array.isArray(metaArr)) metaArr = [metaArr]; // Handle if not array
+        const meta = metaArr[0]; // Take first item
+
+        if (!meta) return null;
+
+        return {
+          ...meta,
+          category: category,
+          // normalize category name for display if needed
+          type: category === 'games' ? 'game' : (category === 'themes' ? 'theme' : 'app'),
+          // Map img to icon if icon is missing
+          icon: meta.img || meta.icon,
+          isCommunity: true
+        };
+      } catch (e) {
+        console.error("Failed to process", node.path, e);
+        return null;
+      }
+    }));
+
+    const allItems = fetchedItems.filter(i => i !== null);
+
+    communityAppsCache = allItems;
+    renderCommunityApps(allItems);
+
+  } catch (error) {
+    console.error("Failed to fetch community apps:", error);
+    container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; color: var(--error-red);">
+            <i class="fas fa-exclamation-circle" style="font-size: 2rem;"></i>
+            <p>Failed to load community apps. Check your connection.</p>
+            <button onclick="fetchCommunityApps()" class="editor-btn" style="margin-top: 1rem;">Retry</button>
+        </div>
+    `;
+  }
+}
+
+function renderAppItem(app) {
+  const isInstalled = app.isInstalled || false;
+  // Escape app object for HTML attribute
+  const appString = JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+
+  const iconHtml = app.customPreviewHtml
+    ? `<div style="margin-bottom: 1rem; display: flex; justify-content: center;">${app.customPreviewHtml}</div>`
+    : `<div class="appstore-item-icon"><i class="${app.icon || 'fas fa-box'}"></i></div>`;
+
+  const installBtnText = app.installButtonText || (isInstalled ? 'Uninstall' : 'Install');
+  const installBtnDisabled = app.installButtonDisabled ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : '';
+  const installAction = isInstalled && app.uninstallAction ? app.uninstallAction : (app.installAction || `installCommunityApp(${appString})`);
+
+  return `
+    <div class="appstore-item">
+        ${iconHtml}
+        <div class="appstore-item-name">${app.name}</div>
+        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fas fa-user-circle" style="font-size: 0.8rem;"></i> ${app.author || 'Unknown'}
+        </div>
+        <div class="appstore-item-desc">${app.desc || 'No description provided.'}</div>
+        <button class="appstore-item-btn ${isInstalled ? 'installed' : ''}" 
+            ${installBtnDisabled}
+            onclick='event.stopPropagation(); ${installAction}'>
+            ${installBtnText}
+        </button>
+    </div>
+  `;
+}
+
+function renderCommunityApps(apps) {
+  const container = document.getElementById('communityAppsGrid');
+  if (!container) return;
+
+  if (apps.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">No community apps found. Please try again later.</div>`;
+    return;
+  }
+
+  // Check installed status
+  const installedCommunityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+  const installedThemesList = JSON.parse(localStorage.getItem('nautilusOS_installedThemes') || '[]');
+
+  const processedApps = apps.map(app => {
+    const appId = app.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    const isInstalled = (app.type === 'themes' || app.type === 'theme')
+      ? installedThemesList.includes(app.name)
+      : !!installedCommunityApps[appId];
+
+    return {
+      ...app,
+      isInstalled: isInstalled,
+      installButtonText: isInstalled ? 'Open' : 'Install',
+      // Themes don't technically "open" in the same way, but we can set it to 'Installed' or disabled
+      // actually, renderAppItem handles generic isInstalled.
+      // For community apps specifically, if installed, action should be openApp(id)
+      installAction: isInstalled
+        ? ((app.type === 'themes' || app.type === 'theme') ? "showToast('Theme is installed', 'fa-check')" : `openApp('${appId}')`)
+        : `installCommunityApp(${JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;")})`
+    };
+  });
+
+  // Re-categorize processed apps
+  const categories = {};
+  processedApps.forEach(app => {
+    const cat = app.category || app.type || 'Other';
+    const displayCat = cat.charAt(0).toUpperCase() + cat.slice(1);
+    if (!categories[displayCat]) categories[displayCat] = [];
+    categories[displayCat].push(app);
+  });
+
+  let html = '';
+
+  for (const [cat, items] of Object.entries(categories)) {
+    html += `<div style="grid-column: 1/-1; margin-top: 1rem; margin-bottom: 0.5rem; font-family: fontb; color: var(--accent); text-transform: capitalize;">${cat}</div>`;
+
+    items.forEach(app => {
+      html += renderAppItem(app);
+    });
+  }
+
+  container.innerHTML = html;
+}
+
+function viewAppDetails(app) {
+  // Fullscreen/Modal view
+  const modal = document.createElement('div');
+  modal.style.position = 'fixed';
+  modal.style.inset = '0';
+  modal.style.background = 'rgba(10, 14, 26, 0.95)';
+  modal.style.zIndex = '10000';
+  modal.style.display = 'flex';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.padding = '1rem';
+  modal.style.animation = 'fadeIn 0.2s ease';
+  modal.onclick = (e) => {
+    if (e.target === modal) modal.remove();
+  }
+
+  const isInstalled = app.isInstalled || false;
+  // Escape app object for HTML attribute
+  const appString = JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+
+  const iconHtml = app.customPreviewHtml
+    ? `<div style="margin-bottom: 1.5rem; transform: scale(1.2); display: flex; justify-content: center;">${app.customPreviewHtml}</div>`
+    : `<div style="width: 80px; height: 80px; background: rgba(125, 211, 192, 0.1); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 1.5rem;"><i class="${app.icon || 'fas fa-box'}"></i></div>`;
+
+  const installBtnText = app.installButtonText || (isInstalled ? 'Uninstall' : 'Install');
+  const installBtnDisabled = app.installButtonDisabled ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : '';
+  const installAction = isInstalled && app.uninstallAction ? app.uninstallAction : (app.installAction || `installCommunityApp(${appString})`);
+
+  modal.innerHTML = `
+        <div style="background: rgba(21, 25, 35, 0.95); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; position: relative; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; z-index: 10;">
+                <i class="fas fa-times"></i>
+            </button>
+            <div style="padding: 2rem; display: flex; flex-direction: column; align-items: center;">
+                ${iconHtml}
+                <h2 style="color: var(--text-primary); margin-bottom: 0.25rem; text-align: center;">${app.name}</h2>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <span style="color: var(--text-secondary); font-size: 0.9rem;"><i class="fas fa-user-circle"></i> ${app.author || 'Unknown'}</span>
+                    ${app.type ? `<span style="background: rgba(125, 211, 192, 0.1); color: var(--accent); padding: 0.1rem 0.5rem; border-radius: 12px; font-size: 0.75rem; text-transform: capitalize;">${app.type}</span>` : ''}
+                </div>
+                
+                <div style="background: rgba(30, 35, 48, 0.4); padding: 1rem; border-radius: 10px; width: 100%; margin-bottom: 1.5rem;">
+                    <p style="line-height: 1.5; color: var(--text-primary); font-size: 0.95rem;">${app.desc || 'No description available.'}</p>
+                </div>
+
+                <div style="display: flex; gap: 1rem; width: 100%;">
+                    <button class="editor-btn" style="flex: 1; padding: 0.875rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-primary);" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
+                        Close
+                    </button>
+                    <button class="editor-btn" style="flex: 1; padding: 0.875rem; background: var(--accent); color: var(--bg-primary); font-weight: bold; ${isInstalled ? 'opacity: 0.8;' : ''}"
+                        ${installBtnDisabled}
+                        onclick='event.stopPropagation(); ${installAction}; this.parentElement.parentElement.parentElement.parentElement.remove();'>
+                        ${installBtnText}
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+  document.body.appendChild(modal);
+}
+
+async function installCommunityApp(app) {
+  showToast(`Installing ${app.name}...`, 'fa-download');
+
+  try {
+    if (app.type === 'theme' || app.type === 'themes') {
+      // Theme logic - assuming we just mark it as installed for now or would need to fetch CSS
+      // The user prompt focuses on apps/games content installation.
+      showToast(`${app.name} installed!`, 'fa-check');
+      if (!installedThemes.includes(app.name)) {
+        installedThemes.push(app.name);
+        localStorage.setItem("nautilusOS_installedThemes", JSON.stringify(installedThemes));
+      }
+      refreshAppStore();
+      return;
+    }
+
+    // App/Game installation
+    let content = '';
+    // If content is a path (starts with /), fetch it
+    if (app.content && typeof app.content === 'string' && app.content.startsWith('/')) {
+      const contentUrl = `https://cdn.jsdelivr.net/gh/nautilus-os/community@main${app.content}`;
+      const resp = await fetch(contentUrl);
+      if (!resp.ok) throw new Error(`Failed to fetch content from ${contentUrl}`);
+      content = await resp.text();
+    } else {
+      // Fallback or raw content if it was somehow inline (though user said it is a file path)
+      content = app.content || '<div style="padding:2rem;">No content found.</div>';
+    }
+
+    const appId = app.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+    // Save to localStorage
+    const communityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+    communityApps[appId] = {
+      name: app.name,
+      icon: app.icon || app.img || 'fas fa-box',
+      content: content,
+      author: app.author,
+      type: 'community-app'
+    };
+    localStorage.setItem('nautilusOS_communityApps', JSON.stringify(communityApps));
+
+    // Create desktop icon
+    createDesktopIcon(appId, app.name, app.icon || app.img || 'fas fa-box');
+
+    // Update global installedApps list just in case
+    // Note: global installedApps array might not be persisted directly in all cases in this code base, 
+    // but usually checking `nautilusOS_installedApps`
+    // We'll rely on our custom registry `nautilusOS_communityApps`
+
+    showToast(`${app.name} installed!`, 'fa-check');
+
+    // Refresh UI to show "Uninstall"
+    // We need to reload the metadata to reflect 'isInstalled'
+    // This is tricky without a full reload, but refreshAppStore might help if it fetches again
+    // For now, simple toast is good.
+    refreshAppStore();
+
+  } catch (e) {
+    console.error("Installation failed", e);
+    showToast(`Failed to install ${app.name}`, 'fa-times');
+  }
+}
+
+// ================= DESKTOP SELECTION BOX =================
+
+let selectionBox = {
+  active: false,
+  startX: 0,
+  startY: 0,
+  element: null
+};
+
+function enableDesktopSelection() {
+  const desktop = document.getElementById('desktop');
+  if (!desktop) return;
+
+  // Create element if not exists
+  if (!document.querySelector('.selection-box')) {
+    const box = document.createElement('div');
+    box.className = 'selection-box';
+    document.body.appendChild(box);
+    selectionBox.element = box;
+  } else {
+    selectionBox.element = document.querySelector('.selection-box');
+  }
+
+  desktop.addEventListener('mousedown', (e) => {
+    // Return if clicking taskbar, or if NOT clicking desktop/icons/wallpaper
+    // Allow start drag if target is desktop (ID), desktop-icons (class), or wallpaper
+    if (e.target.closest('.taskbar') || e.target.closest('.start-menu') || e.target.closest('.window')) return;
+
+    // If e.target is desktop, wallpaper, or desktop-icons container, allow.
+    // Assuming .desktop-icons has pointer-events: auto, clicking empty space in it returns .desktop-icons as target.
+    const isDesktop = e.target.id === 'desktop';
+    const isWallpaper = e.target.closest('.wallpaper');
+    const isDesktopIcons = e.target.classList.contains('desktop-icons');
+
+    if (!isDesktop && !isWallpaper && !isDesktopIcons) return;
+
+    selectionBox.active = true;
+    selectionBox.startX = e.clientX;
+    selectionBox.startY = e.clientY;
+
+    selectionBox.element.style.left = e.clientX + 'px';
+    selectionBox.element.style.top = e.clientY + 'px';
+    selectionBox.element.style.width = '0px';
+    selectionBox.element.style.height = '0px';
+    selectionBox.element.style.display = 'block';
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!selectionBox.active) return;
+
+    const currentX = e.clientX;
+    const currentY = e.clientY;
+
+    const width = Math.abs(currentX - selectionBox.startX);
+    const height = Math.abs(currentY - selectionBox.startY);
+    const left = Math.min(currentX, selectionBox.startX);
+    const top = Math.min(currentY, selectionBox.startY);
+
+    selectionBox.element.style.width = width + 'px';
+    selectionBox.element.style.height = height + 'px';
+    selectionBox.element.style.left = left + 'px';
+    selectionBox.element.style.top = top + 'px';
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (selectionBox.active) {
+      selectionBox.active = false;
+      selectionBox.element.style.display = 'none';
+    }
+  });
+}
+
+// ================= TASKBAR SETTINGS =================
+
+function updateTaskbarStyle() {
+  const style = localStorage.getItem('nautilusOS_taskbarStyle') || 'floating';
+  const taskbar = document.getElementById('taskbar');
+  const startMenu = document.getElementById('startMenu');
+  const desktop = document.getElementById('desktop');
+  const systemTray = document.querySelector('.system-tray');
+
+  if (taskbar) {
+    if (style === 'full') {
+      taskbar.classList.add('full');
+      if (startMenu) startMenu.classList.add('full-mode');
+      if (desktop) desktop.classList.add('full-taskbar-offset');
+      if (systemTray) systemTray.classList.add('full-mode');
+    } else {
+      taskbar.classList.remove('full');
+      if (startMenu) startMenu.classList.remove('full-mode');
+      if (desktop) desktop.classList.remove('full-taskbar-offset');
+      if (systemTray) systemTray.classList.remove('full-mode');
+    }
+  }
+}
+
+function toggleTaskbarStyle() {
+  const current = localStorage.getItem('nautilusOS_taskbarStyle') || 'floating';
+  const next = current === 'floating' ? 'full' : 'floating';
+  localStorage.setItem('nautilusOS_taskbarStyle', next);
+  updateTaskbarStyle();
+  showToast(`Taskbar set to ${next}`, 'fa-cog');
+}
+
+// Add taskbar setting to Context Menu (Right Click on Taskbar)
+// We'll hook into the global context menu or add a specific listener
+document.addEventListener('contextmenu', (e) => {
+  if (e.target.closest('#taskbar')) {
+    e.preventDefault();
+    const menu = document.getElementById('contextMenu');
+    menu.style.display = 'block';
+    menu.style.left = e.pageX + 'px';
+    menu.style.top = (e.pageY - 100) + 'px';
+
+    const style = localStorage.getItem('nautilusOS_taskbarStyle') || 'floating';
+    const nextLabel = style === 'floating' ? 'Switch to Full Mode' : 'Switch to Floating Mode';
+
+    menu.innerHTML = `
+            <div class="context-item" onclick="toggleTaskbarStyle()">
+                <i class="fas fa-columns"></i> ${nextLabel}
+            </div>
+            <div class="context-item" onclick="openApp('settings')">
+                <i class="fas fa-cog"></i> Taskbar Settings
+            </div>
+        `;
+
+    // Close on click elsewhere (handled by existing main.js usually)
+  }
+});
+
+
+// Init new features
+enableDesktopSelection();
+updateTaskbarStyle();
+

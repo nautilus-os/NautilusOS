@@ -57,6 +57,7 @@ body {
     overflow: hidden;
     background: var(--bg-primary);
     color: var(--text-primary);
+    user-select: none;
 }
 
 button,
@@ -1346,6 +1347,7 @@ select:focus {
     opacity: 0;
     transition: opacity 0.5s ease;
     font-family: font, "font" !important;
+    z-index: 1;
 }
 
 #desktop.active {
@@ -1506,6 +1508,35 @@ select:focus {
 
     to {
         transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.taskbar.full {
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    justify-content: flex-start;
+    border-top: 1px solid var(--border);
+    background: rgba(21, 25, 35, 0.85);
+    /* Slightly more opaque */
+    animation: slideUpFull 0.5s ease;
+}
+
+@keyframes slideUpFull {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
         opacity: 1;
     }
 }
@@ -7213,4 +7244,190 @@ select {
     margin-bottom: 0.25rem;
     white-space: pre-wrap;
     word-wrap: break-word;
+}
+
+/* Nautilus AI Illustration */
+.illustration-nautilus-ai {
+    width: 260px;
+    height: 160px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.illustration-nautilus-ai-header {
+    height: 35px;
+    background: rgba(15, 23, 42, 0.9);
+    border-bottom: 1px solid rgba(125, 211, 192, 0.3);
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    gap: 0.5rem;
+}
+
+.illustration-nautilus-ai-icon {
+    font-size: 14px;
+    color: var(--accent);
+}
+
+.illustration-nautilus-ai-title {
+    font-size: 10px;
+    color: var(--accent);
+    font-family: fontb;
+}
+
+.illustration-nautilus-ai-content {
+    flex: 1;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.illustration-nautilus-ai-msg-ai {
+    background: rgba(125, 211, 192, 0.1);
+    border: 1px solid rgba(125, 211, 192, 0.3);
+    border-radius: 8px 8px 8px 0;
+    padding: 6px;
+    width: 80%;
+    align-self: flex-start;
+}
+
+.illustration-nautilus-ai-line {
+    height: 4px;
+    background: rgba(125, 211, 192, 0.4);
+    border-radius: 2px;
+    margin-bottom: 3px;
+}
+
+.illustration-nautilus-ai-msg-user {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 8px 8px 0 8px;
+    padding: 6px;
+    width: 70%;
+    align-self: flex-end;
+}
+
+/* AI Snake Illustration */
+.illustration-ai-snake {
+    width: 260px;
+    height: 160px;
+    background: rgba(10, 14, 26, 0.9);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 0.75rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.illustration-ai-snake-stats {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    justify-content: center;
+}
+
+.illustration-ai-snake-stat {
+    height: 20px;
+    background: rgba(30, 35, 48, 0.6);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    gap: 4px;
+}
+
+.illustration-ai-snake-stat-icon {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+}
+
+.illustration-ai-snake-stat-line {
+    height: 4px;
+    background: rgba(125, 211, 192, 0.3);
+    border-radius: 2px;
+    flex: 1;
+}
+
+.illustration-ai-snake-board {
+    width: 100px;
+    height: 100px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.5);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    align-self: center;
+    padding: 2px;
+}
+
+.illustration-ai-snake-cell {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1px;
+    width: 100%;
+    height: 100%;
+}
+
+.illustration-ai-snake-cell.snake {
+    background: var(--accent);
+}
+
+/* Desktop Selection Box */
+.selection-box {
+    position: fixed;
+    border: 1px solid var(--accent);
+    background: rgba(125, 211, 192, 0.2);
+    display: none;
+    z-index: 999;
+    pointer-events: none;
+}
+/* Start Menu Full Mode */
+.start-menu.full-mode {
+    bottom: 55px; /* Just above taskbar */
+    left: 10px;
+    transform: none !important;
+    transform-origin: bottom left;
+    -webkit-transform: none !important;
+}
+
+.start-menu.full-mode.active {
+    animation: menuSlideInFull 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes menuSlideInFull {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* System Tray Full Mode Adjustment */
+.system-tray.full-mode {
+   /* Push to the right in flex-start container */
+   margin-left: auto; 
+   padding-right: 1rem;
+}
+
+/* Desktop Offset for Full Taskbar */
+#desktop.full-taskbar-offset {
+    bottom: 48px; /* Height of full taskbar */
+}
+
+/* Adjust Full Taskbar Layout */
+.taskbar.full {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
