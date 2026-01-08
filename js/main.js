@@ -16933,6 +16933,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 let communityAppsCache = null;
 
+// Global registry to store app data for safe onclick handling
+let communityAppRegistry = {};
+
 async function fetchCommunityApps() {
   const container = document.getElementById('communityAppsGrid');
   if (!container) return; // Not in community tab
@@ -17007,8 +17010,10 @@ async function fetchCommunityApps() {
 
 function renderAppItem(app) {
   const isInstalled = app.isInstalled || false;
-  // Escape app object for HTML attribute
-  const appString = JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+  // Generate a unique registry key for this app
+  const registryKey = 'app_' + (app.name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  // Store app data in registry for safe retrieval
+  communityAppRegistry[registryKey] = app;
 
   const iconHtml = app.customPreviewHtml
     ? `<div style="margin-bottom: 1rem; display: flex; justify-content: center;">${app.customPreviewHtml}</div>`
@@ -17016,7 +17021,8 @@ function renderAppItem(app) {
 
   const installBtnText = app.installButtonText || (isInstalled ? 'Uninstall' : 'Install');
   const installBtnDisabled = app.installButtonDisabled ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : '';
-  const installAction = isInstalled && app.uninstallAction ? app.uninstallAction : (app.installAction || `installCommunityApp(${appString})`);
+  // Use registry key instead of inline JSON
+  const installAction = isInstalled && app.uninstallAction ? app.uninstallAction : (app.installAction || `installCommunityAppByKey('${registryKey}')`);
 
   return `
     <div class="appstore-item">
@@ -17028,7 +17034,7 @@ function renderAppItem(app) {
         <div class="appstore-item-desc">${app.desc || 'No description provided.'}</div>
         <button class="appstore-item-btn ${isInstalled ? 'installed' : ''}" 
             ${installBtnDisabled}
-            onclick='event.stopPropagation(); ${installAction}'>
+            onclick="event.stopPropagation(); ${installAction}">
             ${installBtnText}
         </button>
     </div>
@@ -17061,9 +17067,11 @@ function renderCommunityApps(apps) {
       // Themes don't technically "open" in the same way, but we can set it to 'Installed' or disabled
       // actually, renderAppItem handles generic isInstalled.
       // For community apps specifically, if installed, action should be openApp(id)
+      // Generate a unique registry key for this app
+      registryKey: 'app_' + (app.name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
       installAction: isInstalled
         ? ((app.type === 'themes' || app.type === 'theme') ? "showToast('Theme is installed', 'fa-check')" : `openApp('${appId}')`)
-        : `installCommunityApp(${JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;")})`
+        : null // Will be set after registry key is stored
     };
   });
 
@@ -17106,8 +17114,10 @@ function viewAppDetails(app) {
   }
 
   const isInstalled = app.isInstalled || false;
-  // Escape app object for HTML attribute
-  const appString = JSON.stringify(app).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+  // Generate a unique registry key for this app (for modal use)
+  const registryKey = 'modal_' + (app.name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  // Store app data in registry for safe retrieval
+  communityAppRegistry[registryKey] = app;
 
   const iconHtml = app.customPreviewHtml
     ? `<div style="margin-bottom: 1.5rem; transform: scale(1.2); display: flex; justify-content: center;">${app.customPreviewHtml}</div>`
@@ -17115,7 +17125,7 @@ function viewAppDetails(app) {
 
   const installBtnText = app.installButtonText || (isInstalled ? 'Uninstall' : 'Install');
   const installBtnDisabled = app.installButtonDisabled ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : '';
-  const installAction = isInstalled && app.uninstallAction ? app.uninstallAction : (app.installAction || `installCommunityApp(${appString})`);
+  const installAction = isInstalled && app.uninstallAction ? app.uninstallAction : (app.installAction || `installCommunityAppByKey('${registryKey}')`);
 
   modal.innerHTML = `
         <div style="background: rgba(21, 25, 35, 0.95); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; position: relative; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
@@ -17140,7 +17150,7 @@ function viewAppDetails(app) {
                     </button>
                     <button class="editor-btn" style="flex: 1; padding: 0.875rem; background: var(--accent); color: var(--bg-primary); font-weight: bold; ${isInstalled ? 'opacity: 0.8;' : ''}"
                         ${installBtnDisabled}
-                        onclick='event.stopPropagation(); ${installAction}; this.parentElement.parentElement.parentElement.parentElement.remove();'>
+                        onclick="event.stopPropagation(); ${installAction}; this.parentElement.parentElement.parentElement.parentElement.remove();">
                         ${installBtnText}
                     </button>
                 </div>
@@ -17149,6 +17159,17 @@ function viewAppDetails(app) {
     `;
 
   document.body.appendChild(modal);
+}
+
+// Helper function to install from registry key
+function installCommunityAppByKey(registryKey) {
+  const app = communityAppRegistry[registryKey];
+  if (!app) {
+    showToast('Error: App not found in registry', 'fa-exclamation-circle');
+    console.error('App not found for registry key:', registryKey);
+    return;
+  }
+  installCommunityApp(app);
 }
 
 async function installCommunityApp(app) {
