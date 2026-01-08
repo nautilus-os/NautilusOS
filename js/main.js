@@ -1,5 +1,5 @@
 // ==================== NAUTILUS BIOS SYSTEM ====================
-// Press Delete, F2, or Shift during boot to enter BIOS
+// Press Delete, ~, or ` during boot to enter BIOS
 (function () {
   const bootloader = document.getElementById('bootloader');
   let biosTriggered = false;
@@ -8,32 +8,28 @@
   if (bootloader) {
     const hint = document.createElement('div');
     hint.style.position = 'absolute';
-    hint.style.bottom = '10px';
-    hint.style.right = '10px';
-    hint.style.color = '#555';
-    hint.style.fontSize = '12px';
+    hint.style.bottom = '0.5rem';
+    hint.style.right = '0.75rem';
+    hint.style.color = 'var(--gray-dark)';
+    hint.style.fontSize = '0.75rem';
     hint.style.fontFamily = 'monospace';
-    hint.innerText = 'Press DEL or F2 to enter BIOS';
+    hint.innerHTML = 'Press DEL or ~ to enter BIOS';
     bootloader.appendChild(hint);
   }
 
-  // Listen for keys during boot
-  window.addEventListener('keydown', function checkBiosKey(e) {
-    // Only if bootloader is still visible (check for hidden class and display style)
-    if (bootloader && !bootloader.classList.contains('hidden') && bootloader.style.display !== 'none') {
-      if (e.key === 'Delete' || e.key === 'F2' || e.key === 'Shift') {
-        e.preventDefault();
-        showBIOS();
-        // Stop checking
-        window.removeEventListener('keydown', checkBiosKey);
-      }
-    }
-  });
+window.addEventListener('keydown', function checkBiosKey(e) {
+  if (!bootloader || bootloader.classList.contains('hidden') || bootloader.style.display === 'none') return;
 
-  // Also check if Shift is held right at load (for reloads)
-  if (bootloader && !bootloader.classList.contains('hidden') && (window.event && window.event.shiftKey)) {
+  const key = e.key;
+
+  // Trigger on Delete or ~ (backtick / tilde key)
+  if (key === 'Delete' || key === '`' || key === '~') {
+    e.preventDefault();
     showBIOS();
+    window.removeEventListener('keydown', checkBiosKey);
   }
+});
+
 
   function showBIOS() {
     // Create BIOS overlay
@@ -209,7 +205,8 @@
       </div>
       
       <div class="bios-footer">
-        <span>↑↓ Navigate | Enter Select | ESC Exit</span>
+        <span><i class="fa fa-mouse-pointer"></i>
+ Navigate | Enter Select | ESC Exit</span>
         <span>NautilusOS BIOS ${new Date().toLocaleString()}</span>
       </div>
     `;
