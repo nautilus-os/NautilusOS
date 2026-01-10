@@ -93,7 +93,7 @@
                 </div>
             </div>
 
-            <div class="login-container" style="padding: 3rem 2.5rem 1.5rem 2.5rem;">
+            <div class="login-container">
                 <div class="login-avatar"><i class="fas fa-user"></i></div>
                 <h2 class="login-title" id="loginGreeting">Welcome Back</h2>
                 <p class="login-subtitle" id="loginSubtitle">Sign in to continue</p>
@@ -140,7 +140,7 @@
         </div>
 
         <div
-            style="background: rgba(21, 25, 35, 0.7); backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 3rem 2.5rem; width: 520px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); font-family: 'font' !important;">
+            style="background: rgba(21, 25, 35, 0.7); backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 1.5rem 1.25rem; width: min(96%, 520px); box-sizing: border-box; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); font-family: 'font' !important;">
             <div style="text-align: center; margin-bottom: 2.5rem;">
                 <div
                     style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; animation: float 3s ease-in-out infinite;">
@@ -187,32 +187,29 @@
                         </label>
                     </label>
                     <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem;">
-                        Minimal install with only App Store and Settings pre-installed
+                        Minimal install with only App Store, Settings, Files, About, and Terminal pre-installed
                     </p>
                 </div>
 
-                <button onclick="setupStep1Next()"
-                    style="width: 100%; padding: 0.875rem; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border: none; border-radius: 10px; color: var(--bg-primary); font-size: 0.95rem; font-family: fontb; cursor: pointer; transition: all 0.2s ease; margin-bottom: 1rem;"
-                    onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(125, 211, 192, 0.3)'"
-                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                    Continue
-                </button>
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <label for="importProfileInput"
+                        style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 10px; color: var(--text-primary); font-size: 0.95rem; font-family: fontb; cursor: pointer; transition: all 0.2s ease; text-align: center;"
+                        onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'; this.style.borderColor='rgba(125, 211, 192, 0.5)'"
+                        onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'; this.style.borderColor='rgba(125, 211, 192, 0.3)'">
+                        <i class="fas fa-file-import"></i> Import Profile
+                        <input type="file" id="importProfileInput" accept=".nautilusprofile" onchange="importProfile(event)"
+                            style="display: none;">
+                    </label>
 
-                <div style="display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;">
-                    <div style="flex: 1; height: 1px; background: var(--border);"></div>
-                    <span style="color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap;">OR</span>
-                    <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                    <button onclick="setupStep1Next()"
+                        style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border: none; border-radius: 10px; color: var(--bg-primary); font-size: 0.95rem; font-family: fontb; cursor: pointer; transition: all 0.2s ease;"
+                        onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(125, 211, 192, 0.3)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        Continue
+                    </button>
                 </div>
 
-                <label for="importProfileInput"
-                    style="display: block; width: 100%;  padding: 0.875rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 10px; color: var(--text-primary); font-size: 0.95rem; font-family: fontb; cursor: pointer; transition: all 0.2s ease; text-align: center;"
-                    onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'; this.style.borderColor='rgba(125, 211, 192, 0.5)'"
-                    onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'; this.style.borderColor='rgba(125, 211, 192, 0.3)'">
-                    <i class="fas fa-file-import"></i>&nbsp;&nbsp;Import Profile
-                    <input type="file" id="importProfileInput" accept=".nautilusprofile" onchange="importProfile(event)"
-                        style="display: none;">
-                </label>
-                <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.75rem; text-align: center;">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0; text-align: center;">
                     Import a previously exported profile to restore your settings and data
                 </p>
             </div>
@@ -583,7 +580,7 @@
             </div>
         </div>
         <div class="quick-action-item"
-            onclick="hideQuickActions(); window.open('https://raw.githubusercontent.com/nautilus-os/NautilusOS/refs/heads/main/NautilusOS-OneFile/index.html', '_blank')">
+            onclick="hideQuickActions(); const link = document.createElement('a'); link.href = 'https://raw.githubusercontent.com/nautilus-os/NautilusOS/refs/heads/main/NautilusOS-OneFile/index.html'; link.download = 'NautilusOS-OneFile.html'; link.click();">
             <i class="fas fa-download"></i>
             <div class="quick-action-content">
                 <div class="quick-action-title">Get OneFile</div>

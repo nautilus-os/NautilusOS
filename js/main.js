@@ -904,7 +904,11 @@ let toastQueue = [];
 let isSystemLoggedIn = false;
 
 function showToast(message, icon = "fa-info-circle") {
-  if (!isSystemLoggedIn) {
+  // Show immediately during setup or login screens
+  const isSetupVisible = document.getElementById('setup') && document.getElementById('setup').style.display !== 'none';
+  const isLoginVisible = document.getElementById('login') && document.getElementById('login').style.display !== 'none';
+
+  if (!isSystemLoggedIn && !isSetupVisible && !isLoginVisible) {
     toastQueue.push({ message, icon });
     return;
   }
@@ -1950,6 +1954,13 @@ document.addEventListener("keydown", function (e) {
 function selectBoot() {
   localStorage.setItem("nautilusOS_bootChoice", bootSelectedIndex);
 
+  // Request fullscreen on boot
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(err => {
+      console.log('Fullscreen request failed:', err);
+    });
+  }
+
   document.getElementById("bootOptions").style.display = "none";
   document.querySelector(".boot-hint").style.display = "none";
   document.getElementById("bootLoading").classList.add("active");
@@ -2363,9 +2374,9 @@ function login() {
           addDesktopIcon(appName);
         });
 
-        // Bloatless mode: hide all pre-installed apps except App Store and Settings
+        // Bloatless mode: hide all pre-installed apps except App Store, Settings, Files, About, and Terminal
         if (bloatlessMode) {
-          const bloatlessKeep = ["appstore", "settings"];
+          const bloatlessKeep = ["appstore", "settings", "files", "about", "terminal"];
           const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
           allIcons.forEach((icon) => {
             const appName = icon.getAttribute("data-app");
@@ -2665,6 +2676,12 @@ function createWindow(
     focusWindow(windows[appName]);
     return windows[appName];
   }
+
+  // Constrain requested window size to viewport with sensible minimums
+  const maxW = Math.max(300, window.innerWidth - 80);
+  const maxH = Math.max(200, window.innerHeight - 80);
+  width = Math.min(width, maxW);
+  height = Math.min(height, maxH);
 
   const windowEl = document.createElement("div");
   windowEl.className = "window";
@@ -3163,6 +3180,10 @@ function openFile(filename) {
         currentFile = filename;
         openApp("python", item, filename);
       } else {
+        if (!installedApps.includes("editor")) {
+          showToast("Text editor app required to open this file type", "fa-exclamation-triangle");
+          return;
+        }
         currentFile = filename;
         openApp("editor", item, filename);
       }
@@ -5027,28 +5048,27 @@ alt="favicon">
       title: "About NautilusOS",
       icon: "fas fa-info-circle",
       content: `
-        <div class="about-app-container" style="padding: 2rem; max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; min-height: 100%;">
-          <div class="about-header" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 2rem;">
+        <div class="about-app-container" style="padding: 1.75rem 1.25rem 4rem; max-height: 80vh; overflow: auto; display: flex; flex-direction: column; box-sizing: border-box;">
+          <div class="about-header" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 2rem; padding-top: 0.25rem;">
             <div style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: float 3s ease-in-out infinite;">
               <i class="fas fa-fish" style="font-size: 3rem; color: var(--bg-primary);"></i>
             </div>
             <h1 style="font-size: 2rem; margin-bottom: 0; color: var(--text-primary); font-family: fontb; text-align: center; width: 100%;">NautilusOS</h1>
             <p style="color: var(--text-secondary); font-size: 1rem; margin: 0; text-align: center; width: 100%;">Version 1.5</p>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 500px; margin: 1rem auto 0; line-height: 1.6; text-align: center;">
-              A beautiful, fully-featured web-based operating system experience. Built with vanilla HTML, CSS, and JavaScript — no frameworks needed! 
-              NautilusOS brings you a complete desktop environment right in your browser, with file management, multiple apps, themes, and more.
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width:700px; margin: 1rem auto 0; line-height:1.6; text-align: center;">
+              A beautiful, fully-featured web-based operating system experience. Built with vanilla HTML, CSS, and JavaScript — no frameworks needed! NautilusOS brings you a complete desktop environment right in your browser, with file management, multiple apps, themes, and more.
             </p>
           </div>
 
-          <div class="about-section" style="margin-bottom: 2rem; flex: 1;">
+          <div class="about-section" style="margin-bottom: 2rem;">
             <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: fontb;">
-              <i class="fas fa-users" style="color: var(--accent);"></i> Developers & Contributors
+              <i class="fas fa-users" style="color: var(--accent);"></i> Developers
             </h2>
             <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
               Click on a developer's card to learn more about them and support their work.
             </p>
 
-            <div class="developers-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="developers-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; align-items: start;">
               
               <!-- Developer: dinguschan -->
               <div class="developer-card" style="background: rgba(30, 35, 48, 0.6); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s ease;">
@@ -5066,7 +5086,7 @@ alt="favicon">
                 <div class="dev-info" id="devinfo-dinguschan" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(21, 25, 35, 0.5);">
                   <div style="padding: 1rem; border-top: 1px solid var(--border);">
                     <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">
-                    REMINDER: dinguschan, add your info here (along with XMR wallet if avalible)
+                      i make proxies, tools, and most importantly, silly websites :D
                     </p>
                     <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                       <a href="https://github.com/dinguschan-owo" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
@@ -5179,7 +5199,7 @@ alt="favicon">
 
           <!-- Contributors Section -->
           <div class="about-section" style="margin-bottom: 2rem;">
-            <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: fontb;">
+            <h2 id="contributors" style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: fontb;">
               <i class="fas fa-hands-helping" style="color: var(--accent);"></i> Contributors
             </h2>
             <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
@@ -5237,7 +5257,7 @@ alt="favicon">
             </div>
           </div>
 
-          <div class="about-footer" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: auto;">
+          <div class="about-footer" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 1rem 1rem 0.5rem; border-top: 1px solid var(--border); margin-top: auto; background: transparent;">
             <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.75rem; text-align: center;">
               Made with <i class="fas fa-heart" style="color: #ef4444;"></i> by the NautilusOS team
             </p>
@@ -5254,8 +5274,8 @@ alt="favicon">
           </div>
         </div>
       `,
-      width: 550,
-      height: 850,
+      width: 920,
+      height: 600,
     },
     calculator: {
       title: "Calculator",
@@ -6967,7 +6987,7 @@ function initContextMenu() {
         {
           icon: "fa-sync",
           label: "Refresh",
-          action: "refreshDesktop()",
+          action: "hideContextMenu(); refreshDesktop()",
         },
         {
           divider: true,
@@ -6975,12 +6995,12 @@ function initContextMenu() {
         {
           icon: "fa-file",
           label: "New Text File",
-          action: "openNewTextFile()",
+          action: "hideContextMenu(); openNewTextFile()",
         },
         {
           icon: "fa-folder-plus",
           label: "New Folder",
-          action: "openNewFolder()",
+          action: "hideContextMenu(); openNewFolder()",
         },
         {
           divider: true,
@@ -7038,9 +7058,24 @@ function goToSlide(index) {
 }
 
 function toggleDevInfo(devId) {
-  const infoEl = document.getElementById('devinfo-' + devId);
-  const chevronEl = document.getElementById('chevron-' + devId);
+  // Find the current about app container
+  const currentDevHeader = document.querySelector(`[onclick="toggleDevInfo('${devId}')"]`);
+  if (!currentDevHeader) return;
+  const currentContainer = currentDevHeader.closest('.about-app-container');
+  if (!currentContainer) return;
 
+  // Collapse all other dev-info panels in this container first so only one is open at a time
+  const allInfo = currentContainer.querySelectorAll('.dev-info');
+  allInfo.forEach(el => {
+    if (el && el.id !== 'devinfo-' + devId) {
+      el.style.maxHeight = '0px';
+      const otherChevron = currentContainer.querySelector('#' + el.id.replace('devinfo-', 'chevron-'));
+      if (otherChevron) otherChevron.style.transform = 'rotate(0deg)';
+    }
+  });
+
+  const infoEl = currentContainer.querySelector('#devinfo-' + devId);
+  const chevronEl = currentContainer.querySelector('#chevron-' + devId);
   if (!infoEl) return;
 
   const isExpanded = infoEl.style.maxHeight && infoEl.style.maxHeight !== '0px';
@@ -7049,7 +7084,9 @@ function toggleDevInfo(devId) {
     infoEl.style.maxHeight = '0px';
     if (chevronEl) chevronEl.style.transform = 'rotate(0deg)';
   } else {
+    // compute natural height then set; allow inner overflow if content is long
     infoEl.style.maxHeight = infoEl.scrollHeight + 'px';
+    infoEl.style.overflow = 'hidden';
     if (chevronEl) chevronEl.style.transform = 'rotate(180deg)';
   }
 }
@@ -7362,6 +7399,114 @@ function switchAppStoreSection(section, element) {
         installAction: "openApp('nautilus-ai')",
         uninstallAction: "",
         type: "app"
+      },
+      {
+        name: "Text Editor",
+        author: "dinguschan and Nautilus Labs",
+        desc: "A simple text editor for creating and editing text files.",
+        isInstalled: installedApps.includes("editor"),
+        installAction: "installApp('editor')",
+        uninstallAction: "uninstallApp('editor')",
+        type: "app"
+      },
+      {
+        name: "Files",
+        author: "dinguschan and Nautilus Labs",
+        desc: "File manager for browsing and managing your files.",
+        isInstalled: installedApps.includes("files"),
+        installAction: "installApp('files')",
+        uninstallAction: "uninstallApp('files')",
+        type: "app"
+      },
+      {
+        name: "About NautilusOS",
+        author: "dinguschan and Nautilus Labs",
+        desc: "Learn more about NautilusOS and its features.",
+        isInstalled: installedApps.includes("about"),
+        installAction: "installApp('about')",
+        uninstallAction: "uninstallApp('about')",
+        type: "app"
+      },
+      {
+        name: "Settings",
+        author: "dinguschan and Nautilus Labs",
+        desc: "Customize your NautilusOS experience.",
+        isInstalled: installedApps.includes("settings"),
+        installAction: "installApp('settings')",
+        uninstallAction: "uninstallApp('settings')",
+        type: "app"
+      },
+      {
+        name: "App Store",
+        author: "dinguschan and Nautilus Labs",
+        desc: "Discover and install new apps and themes.",
+        isInstalled: installedApps.includes("appstore"),
+        installAction: "installApp('appstore')",
+        uninstallAction: "uninstallApp('appstore')",
+        type: "app"
+      },
+      {
+        name: "Calculator",
+        author: "dinguschan and Nautilus Labs",
+        desc: "A simple calculator for basic math operations.",
+        isInstalled: installedApps.includes("calculator"),
+        installAction: "installApp('calculator')",
+        uninstallAction: "uninstallApp('calculator')",
+        type: "app"
+      },
+      {
+        name: "Nautilus Browser",
+        author: "dinguschan and Nautilus Labs",
+        desc: "Browse the web with this built-in browser.",
+        isInstalled: installedApps.includes("browser"),
+        installAction: "installApp('browser')",
+        uninstallAction: "uninstallApp('browser')",
+        type: "app"
+      },
+      {
+        name: "Music",
+        author: "dinguschan and Nautilus Labs",
+        desc: "Play and manage your music files.",
+        isInstalled: installedApps.includes("music"),
+        installAction: "installApp('music')",
+        uninstallAction: "uninstallApp('music')",
+        type: "app"
+      },
+      {
+        name: "Photos",
+        author: "dinguschan and Nautilus Labs",
+        desc: "View and manage your photos.",
+        isInstalled: installedApps.includes("photos"),
+        installAction: "installApp('photos')",
+        uninstallAction: "uninstallApp('photos')",
+        type: "app"
+      },
+      {
+        name: "Terminal",
+        author: "dinguschan and Nautilus Labs",
+        desc: "Command line interface for advanced users.",
+        isInstalled: installedApps.includes("terminal"),
+        installAction: "installApp('terminal')",
+        uninstallAction: "uninstallApp('terminal')",
+        type: "app"
+      },
+      {
+        name: "Python Interpreter",
+        author: "dinguschan and Nautilus Labs",
+        desc: "Run Python code interactively.",
+        isInstalled: installedApps.includes("python"),
+        installAction: "installApp('python')",
+        uninstallAction: "uninstallApp('python')",
+        type: "app"
+      },
+      {
+        name: "Achievements",
+        author: "dinguschan and Nautilus Labs",
+        desc: "Track your progress and unlock achievements.",
+        isInstalled: installedApps.includes("achievements"),
+        installAction: "installApp('achievements')",
+        uninstallAction: "uninstallApp('achievements')",
+        type: "app"
       }
     ];
 
@@ -7493,6 +7638,10 @@ function refreshAppStore() {
   if (!activeSection) return;
 
   const sectionText = activeSection.textContent.trim().toLowerCase();
+  if (sectionText.includes("community")) {
+    switchAppStoreSection("community", activeSection);
+    return;
+  }
   if (sectionText.includes("themes")) {
     switchAppStoreSection("themes", activeSection);
   } else if (sectionText.includes("apps")) {
@@ -8788,7 +8937,7 @@ function setupComplete() {
   // Set global bloatlessMode and apply filtering immediately
   bloatlessMode = isBloatless;
   if (bloatlessMode) {
-    const bloatlessKeep = ["appstore", "settings"];
+    const bloatlessKeep = ["appstore", "settings", "files", "about", "terminal"];
     const iconsContainer = document.getElementById("desktopIcons");
     if (iconsContainer) {
       const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
@@ -8813,6 +8962,17 @@ function setupComplete() {
               item.style.display = "none";
             }
           }
+        }
+      });
+    }
+    // Also hide from taskbar
+    const taskbar = document.querySelector(".taskbar");
+    if (taskbar) {
+      const allTaskbarIcons = taskbar.querySelectorAll(".taskbar-icon[data-app]");
+      allTaskbarIcons.forEach((icon) => {
+        const appName = icon.getAttribute("data-app");
+        if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName)) {
+          icon.style.display = "none";
         }
       });
     }
@@ -17047,7 +17207,7 @@ function renderCommunityApps(apps) {
     return {
       ...app,
       isInstalled: isInstalled,
-      installButtonText: isInstalled ? 'Open' : 'Install',
+      installButtonText: isInstalled ? ((app.type && app.type.toLowerCase().includes('game')) ? 'Play' : 'Open') : 'Install',
       // Themes don't technically "open" in the same way, but we can set it to 'Installed' or disabled
       // actually, renderAppItem handles generic isInstalled.
       // For community apps specifically, if installed, action should be openApp(id)

@@ -215,7 +215,7 @@ input {
 
 .login-wrapper {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 3rem;
     max-width: 1200px;
 }
@@ -1234,10 +1234,13 @@ input {
     box-shadow: 0 8px 32px var(--overlay-dark);
     backdrop-filter: blur(40px) saturate(180%);
     border-radius: 20px;
-    padding: 3rem 2.5rem;
-    width: 380px;
+    padding: 1.75rem 1.5rem;
+    width: 360px;
     font-family: font, "font" !important;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .login-avatar {
@@ -1413,10 +1416,10 @@ select:focus {
 
 .desktop-icons {
     position: absolute;
-    top: 20px;
+    top: 30px;
     left: 20px;
     right: 20px;
-    bottom: 10px;
+    bottom: 80px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -1818,7 +1821,7 @@ select:focus {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     z-index: 100;
-    animation: windowOpen 0.25s ease;
+    animation: windowOpen 0.1s ease;
     min-width: 400px;
     min-height: 300px;
 }
@@ -3656,7 +3659,7 @@ select:focus {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
-    margin-top: 2rem;
+    margin-top: 0.5rem;
 }
 
 .footer-card {
@@ -7430,4 +7433,46 @@ select {
 .taskbar.full {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+}
+
+/* About window tweaks */
+.about-app-container {
+    -webkit-overflow-scrolling: touch;
+}
+.about-app-container::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+.about-app-container::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.02);
+}
+.about-app-container details summary {
+    list-style: none;
+}
+.about-app-container details summary::-webkit-details-marker { display:none; }
+
+/* Prevent scroll chaining on the outer About container so it handles top/bottom scrolling */
+.about-app-container {
+    overscroll-behavior: contain;
+    /* ensure footer (which uses margin-top:auto) is reachable at the bottom */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure dev-info panels can scroll internally but allow scroll chaining to outer container */
+.dev-info {
+    overflow: hidden;
+}
+.dev-info > div {
+        overflow: auto;
+        max-height: 40vh;
+        overscroll-behavior: auto;
+}
+
+/* make footer a normal block inside the about container */
+.about-footer {
+    position: relative;
+    z-index: 1;
 }
