@@ -4167,7 +4167,7 @@ alt="favicon">
                                     class="searchEngineI" 
                                     style="margin-left: 0; width: 100%;" 
                                     id="wispUrlInput" 
-                                    value="${localStorage.getItem('nOS_wispUrl') || 'wss://webmath.help/wisp/'}"
+                                    value="${localStorage.getItem('nOS_wispUrl') || 'wss://wisp.rhw.one/'}"
                                     placeholder="wss://..."
                                     onchange="changeWispUrl(this.value)">
                                 <button class="settings-action-btn" onclick="resetWispUrl()" style="padding: 0 1rem; margin-left: 0.5rem;">
@@ -5110,30 +5110,14 @@ alt="favicon">
                 <div class="dev-info" id="devinfo-x8r" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(21, 25, 35, 0.5);">
                   <div style="padding: 1rem; border-top: 1px solid var(--border);">
                     <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">
-                      REMINDER: x8r, add your info here (along with XMR wallet if avalible)
+                      A front end developer who really likes working on projects involving proxying, unblocking, games, and more.
                     </p>
                     <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                      <a href="https://github.com/X8r" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
+                      <a href="https://github.com/x8r" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
                            onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
                         <i class="fab fa-github"></i> GitHub
                       </a>
                     </div>
-                    <!-- XMR Wallet Placeholder - Uncomment and add address when available
-                    <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
-                      <h4 style="color: #8b5cf6; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fas fa-donate"></i> Support with Monero (XMR)
-                      </h4>
-                      <div style="flex: 1;">
-                        <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Monero Address:</p>
-                        <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; word-break: break-all; font-family: monospace; font-size: 0.7rem; color: var(--text-primary); margin-bottom: 0.75rem;">
-                          YOUR_XMR_ADDRESS_HERE
-                        </div>
-                        <a href="monero:YOUR_XMR_ADDRESS_HERE" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); border: none; border-radius: 8px; color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
-                          <i class="fas fa-wallet"></i> Open in Wallet
-                        </a>
-                      </div>
-                    </div>
-                    -->
                   </div>
                 </div>
               </div>
@@ -5171,7 +5155,7 @@ alt="favicon">
                       </h4>
                       <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start;">
                         <div style="flex-shrink: 0;">
-                          <img src="/Assets/LFPaymentMonero.png" alt="XMR QR Code" style="width: 100px; height: 100px; border-radius: 8px; background: white; padding: 4px;">
+                          <img src="/assets/LFPaymentMonero.png" alt="XMR QR Code" style="width: 100px; height: 100px; border-radius: 8px; background: white; padding: 4px;">
                         </div>
                         <div style="flex: 1; min-width: 200px;">
                           <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Monero Address:</p>
@@ -16452,7 +16436,7 @@ function executeTool_GetAvailableOptions(params) {
       },
       urls: {
         wispUrl: {
-          current: localStorage.getItem('nOS_wispUrl') || 'wss://webmath.help/wisp/',
+          current: localStorage.getItem('nOS_wispUrl') || 'wss://wisp.rhw.one/',
           description: 'Wisp proxy URL for browser'
         },
         bareUrl: {
@@ -16730,7 +16714,7 @@ function changeWispUrl(url) {
 }
 
 function resetWispUrl() {
-  const defaultUrl = 'wss://webmath.help/wisp/';
+  const defaultUrl = 'wss://wisp.rhw.one/';
   localStorage.setItem('nOS_wispUrl', defaultUrl);
   const input = document.getElementById('wispUrlInput');
   if (input) input.value = defaultUrl;
@@ -16966,7 +16950,7 @@ async function fetchCommunityApps() {
         // categories: apps, games, themes
         if (!['apps', 'games', 'themes'].includes(category)) return null;
 
-        const cdnUrl = `https://cdn.jsdelivr.net/gh/nautilus-os/community@main/${node.path}?v=${Date.now()}`;
+        const cdnUrl = `https://cdn.jsdelivr.net/gh/nautilus-os/community@latest/${node.path}?v=${Date.now()}`;
         const metaResp = await fetch(cdnUrl);
         if (!metaResp.ok) return null;
 
@@ -17174,6 +17158,7 @@ function installCommunityAppByKey(registryKey) {
 
 async function installCommunityApp(app) {
   showToast(`Installing ${app.name}...`, 'fa-download');
+  console.log(app.content)
 
   try {
     if (app.type === 'theme' || app.type === 'themes') {
@@ -17192,7 +17177,7 @@ async function installCommunityApp(app) {
     let content = '';
     // If content is a path (starts with /), fetch it
     if (app.content && typeof app.content === 'string' && app.content.startsWith('/')) {
-      const contentUrl = `https://cdn.jsdelivr.net/gh/nautilus-os/community@main${app.content}`;
+      const contentUrl = `https://cdn.jsdelivr.net/gh/nautilus-os/community@latest${app.content}`;
       const resp = await fetch(contentUrl);
       if (!resp.ok) throw new Error(`Failed to fetch content from ${contentUrl}`);
       content = await resp.text();
