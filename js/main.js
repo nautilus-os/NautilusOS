@@ -12860,6 +12860,8 @@ function expandHelpTopic(topicId) {
                     <li><strong>Calculator</strong> - Perform calculations with basic operations</li>
                     <li><strong>Settings</strong> - Customize clock format, desktop icons, and themes</li>
                     <li><strong>App Store</strong> - Browse and install themes and apps</li>
+                    <li><strong>About NautilusOS</strong> - Learn about the system and its features</li>
+                    <li><strong>Python Interpreter</strong> - Run Python code interactively</li>
                     <li><strong>Achievements</strong> - Track your progress with achievements and Easter eggs</li>
                     <li><strong>Cloaking</strong> - Disguise your browser tab</li>
                 </ul>
@@ -13007,6 +13009,247 @@ function expandHelpTopic(topicId) {
                     <li>Organize files into folders for easier navigation</li>
                     <li>Use Startup Apps to automatically launch favorite programs</li>
                     <li>Install Task Manager to monitor running applications</li>
+                </ul>
+            `,
+    },
+    'app-files': {
+      title: "Files",
+      icon: "fa-folder",
+      content: `
+                <h2><i class="fas fa-folder"></i> Files</h2>
+                <p>The Files app is your file manager for browsing and organizing your virtual file system.</p>
+                <h3>Features</h3>
+                <ul>
+                    <li><strong>Tree Navigation</strong> - Browse folders in a hierarchical tree view</li>
+                    <li><strong>File Operations</strong> - Create, delete, and rename files and folders</li>
+                    <li><strong>Drag & Drop</strong> - Move files between folders by dragging</li>
+                    <li><strong>Double-click</strong> to open files with appropriate applications</li>
+                    <li><strong>Right-click</strong> for context menus with file actions</li>
+                </ul>
+                <h3>Supported File Types</h3>
+                <ul>
+                    <li><strong>.txt</strong> - Text files (opens in Text Editor)</li>
+                    <li><strong>.py</strong> - Python files (opens in Python Interpreter)</li>
+                    <li><strong>Images</strong> - Photos and screenshots</li>
+                </ul>
+            `,
+    },
+    'app-terminal': {
+      title: "Terminal",
+      icon: "fa-terminal",
+      content: `
+                <h2><i class="fas fa-terminal"></i> Terminal</h2>
+                <p>The Terminal provides a command-line interface for advanced operations.</p>
+                <h3>Available Commands</h3>
+                <ul>
+                    <li><strong>ls</strong> - List files in current directory</li>
+                    <li><strong>cd</strong> - Change directory</li>
+                    <li><strong>cat</strong> - Display file contents</li>
+                    <li><strong>mkdir</strong> - Create new directory</li>
+                    <li><strong>rm</strong> - Remove files or directories</li>
+                    <li><strong>help</strong> - Show available commands</li>
+                    <li><strong>clear</strong> - Clear terminal screen</li>
+                </ul>
+                <h3>Tips</h3>
+                <ul>
+                    <li>Use <strong>Tab</strong> for command completion</li>
+                    <li>Use <strong>Up/Down arrows</strong> to navigate command history</li>
+                    <li>Commands are case-sensitive</li>
+                </ul>
+            `,
+    },
+    'app-editor': {
+      title: "Text Editor",
+      icon: "fa-edit",
+      content: `
+                <h2><i class="fas fa-edit"></i> Text Editor</h2>
+                <p>Create and edit text files with this simple but powerful editor.</p>
+                <h3>Features</h3>
+                <ul>
+                    <li><strong>New File</strong> - Start with a blank document</li>
+                    <li><strong>Open</strong> - Load existing text files</li>
+                    <li><strong>Save</strong> - Save current file</li>
+                    <li><strong>Save As</strong> - Save with a new filename</li>
+                    <li><strong>Save to Device</strong> - Download file to your computer</li>
+                </ul>
+                <h3>Keyboard Shortcuts</h3>
+                <ul>
+                    <li><strong>Ctrl+S</strong> - Save file</li>
+                    <li><strong>Ctrl+N</strong> - New file</li>
+                </ul>
+            `,
+    },
+    'app-about': {
+      title: "About NautilusOS",
+      icon: "fa-info-circle",
+      content: `
+                <h2><i class="fas fa-info-circle"></i> About NautilusOS</h2>
+                <p>Learn more about NautilusOS, its features, and development.</p>
+                <h3>Information</h3>
+                <ul>
+                    <li><strong>Version</strong> - Current version information</li>
+                    <li><strong>Developer</strong> - dinguschan and Nautilus Labs</li>
+                    <li><strong>Features</strong> - Complete overview of capabilities</li>
+                    <li><strong>Credits</strong> - Contributors and acknowledgments</li>
+                </ul>
+            `,
+    },
+    'app-settings': {
+      title: "Settings",
+      icon: "fa-cog",
+      content: `
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <p>Customize your NautilusOS experience with various options.</p>
+                <h3>Available Settings</h3>
+                <ul>
+                    <li><strong>Clock Format</strong> - 12-hour or 24-hour time</li>
+                    <li><strong>Show Seconds</strong> - Display seconds in clock</li>
+                    <li><strong>Desktop Icons</strong> - Show or hide desktop icons</li>
+                    <li><strong>What's New</strong> - Control startup behavior</li>
+                    <li><strong>Themes</strong> - Install and apply custom themes</li>
+                    <li><strong>System Reset</strong> - Reset boot preferences</li>
+                </ul>
+            `,
+    },
+    'app-appstore': {
+      title: "App Store",
+      icon: "fa-store",
+      content: `
+                <h2><i class="fas fa-store"></i> App Store</h2>
+                <p>Browse and install additional apps and themes for NautilusOS.</p>
+                <h3>Sections</h3>
+                <ul>
+                    <li><strong>Themes</strong> - Custom color schemes and visual styles</li>
+                    <li><strong>Apps</strong> - Additional applications and tools</li>
+                    <li><strong>Games</strong> - Fun games to play</li>
+                    <li><strong>Community</strong> - User-contributed content</li>
+                </ul>
+                <h3>Installation</h3>
+                <ul>
+                    <li>Click <strong>Install</strong> to add apps or themes</li>
+                    <li>Installed items appear on desktop and in start menu</li>
+                    <li>Uninstall option available for user-installed items</li>
+                </ul>
+            `,
+    },
+    'app-calculator': {
+      title: "Calculator",
+      icon: "fa-calculator",
+      content: `
+                <h2><i class="fas fa-calculator"></i> Calculator</h2>
+                <p>Perform basic mathematical calculations.</p>
+                <h3>Operations</h3>
+                <ul>
+                    <li><strong>Addition (+)</strong> - Add numbers</li>
+                    <li><strong>Subtraction (-)</strong> - Subtract numbers</li>
+                    <li><strong>Multiplication (*)</strong> - Multiply numbers</li>
+                    <li><strong>Division (/)</strong> - Divide numbers</li>
+                    <li><strong>Equals (=)</strong> - Calculate result</li>
+                    <li><strong>Clear</strong> - Reset calculator</li>
+                    <li><strong>Backspace</strong> - Delete last digit</li>
+                </ul>
+            `,
+    },
+    'app-browser': {
+      title: "Nautilus Browser",
+      icon: "fa-globe",
+      content: `
+                <h2><i class="fas fa-globe"></i> Nautilus Browser</h2>
+                <p>Browse the web with multiple tabs and full navigation controls.</p>
+                <h3>Features</h3>
+                <ul>
+                    <li><strong>Multiple Tabs</strong> - Open multiple websites simultaneously</li>
+                    <li><strong>Navigation</strong> - Back, forward, and refresh buttons</li>
+                    <li><strong>Address Bar</strong> - Enter URLs or search terms</li>
+                    <li><strong>Tab Management</strong> - Close tabs with middle-click or close button</li>
+                </ul>
+                <h3>Tips</h3>
+                <ul>
+                    <li>Right-click tabs for additional options</li>
+                    <li>Use Ctrl+T to open new tabs quickly</li>
+                </ul>
+            `,
+    },
+    'app-music': {
+      title: "Music",
+      icon: "fa-music",
+      content: `
+                <h2><i class="fas fa-music"></i> Music</h2>
+                <p>Play and manage your audio files.</p>
+                <h3>Features</h3>
+                <ul>
+                    <li><strong>File Upload</strong> - Load audio files from your device</li>
+                    <li><strong>Playback Controls</strong> - Play, pause, skip forward/backward</li>
+                    <li><strong>Progress Bar</strong> - Seek to any position in the track</li>
+                    <li><strong>Volume Control</strong> - Adjust playback volume</li>
+                    <li><strong>Loop Mode</strong> - Repeat current track</li>
+                </ul>
+                <h3>Supported Formats</h3>
+                <ul>
+                    <li>MP3, WAV, OGG, and other common audio formats</li>
+                </ul>
+            `,
+    },
+    'app-photos': {
+      title: "Photos",
+      icon: "fa-images",
+      content: `
+                <h2><i class="fas fa-images"></i> Photos</h2>
+                <p>View and manage your images and screenshots.</p>
+                <h3>Features</h3>
+                <ul>
+                    <li><strong>Image Upload</strong> - Load images from your device</li>
+                    <li><strong>Gallery View</strong> - Browse all uploaded images</li>
+                    <li><strong>Full View</strong> - View images in full size</li>
+                    <li><strong>Screenshot Capture</strong> - Take screenshots of NautilusOS</li>
+                    <li><strong>Delete</strong> - Remove unwanted images</li>
+                </ul>
+                <h3>Supported Formats</h3>
+                <ul>
+                    <li>JPG, PNG, GIF, and other common image formats</li>
+                </ul>
+            `,
+    },
+    'app-python': {
+      title: "Python Interpreter",
+      icon: "fa-code",
+      content: `
+                <h2><i class="fas fa-code"></i> Python Interpreter</h2>
+                <p>Run Python code interactively or execute Python files.</p>
+                <h3>Features</h3>
+                <ul>
+                    <li><strong>Interactive Mode</strong> - Execute Python commands line by line</li>
+                    <li><strong>File Execution</strong> - Run complete Python scripts</li>
+                    <li><strong>Output Display</strong> - View results and error messages</li>
+                    <li><strong>Save/Load</strong> - Save and load Python files</li>
+                    <li><strong>Clear Output</strong> - Reset the interpreter</li>
+                </ul>
+                <h3>Example Code</h3>
+                <pre><code>print('Hello from NautilusOS!')
+x = 10
+y = 20
+result = x + y
+print(f'Result: {result}')</code></pre>
+            `,
+    },
+    'app-achievements': {
+      title: "Achievements",
+      icon: "fa-trophy",
+      content: `
+                <h2><i class="fas fa-trophy"></i> Achievements</h2>
+                <p>Track your progress and unlock achievements as you explore NautilusOS.</p>
+                <h3>Features</h3>
+                <ul>
+                    <li><strong>Achievement List</strong> - View all available achievements</li>
+                    <li><strong>Progress Tracking</strong> - See your completion status</li>
+                    <li><strong>Easter Eggs</strong> - Discover hidden features</li>
+                    <li><strong>Categories</strong> - Productivity, Exploration, Time-Based, Easter Eggs</li>
+                </ul>
+                <h3>Tips</h3>
+                <ul>
+                    <li>Achievements unlock automatically as you use features</li>
+                    <li>Some achievements require specific actions or times</li>
+                    <li>Easter eggs are hidden throughout the system</li>
                 </ul>
             `,
     },
