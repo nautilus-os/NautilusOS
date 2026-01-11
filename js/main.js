@@ -983,6 +983,21 @@ const appMetadata = {
     icon: "fa-microchip",
     preinstalled: false,
   },
+  "uv": {
+    name: "Ultraviolet",
+    icon: "fa-globe",
+    preinstalled: false,
+  },
+  "helios": {
+    name: "Helios",
+    icon: "fa-server",
+    preinstalled: false,
+  },
+  "vsc": {
+    name: "Visual Studio Code",
+    icon: "fa-code",
+    preinstalled: false,
+  },
   "ai-snake": {
     name: "AI Snake Learning",
     icon: "fa-brain",
@@ -9155,15 +9170,15 @@ window.addEventListener("DOMContentLoaded", () => {
     createDesktopIcon(appId, appData.name, appData.icon || 'fas fa-box');
   });
 
-  // Apply bloatless mode: hide pre-installed desktop icons except App Store and Settings
+  // Apply bloatless mode: hide pre-installed desktop icons except App Store, Settings, Files, About, and Terminal
   if (bloatlessMode) {
-    const bloatlessKeep = ["appstore", "settings"];
+    const bloatlessKeep = ["appstore", "settings", "files", "about", "terminal"];
     const iconsContainer = document.getElementById("desktopIcons");
     if (iconsContainer) {
       const allIcons = iconsContainer.querySelectorAll(".desktop-icon[data-app]");
       allIcons.forEach((icon) => {
         const appName = icon.getAttribute("data-app");
-        // Keep only appstore, settings, and any user-installed apps/games
+        // Keep only appstore, settings, files, about, terminal, and any user-installed apps/games
         if (!bloatlessKeep.includes(appName) && !installedApps.includes(appName) && !installedGames.includes(appName)) {
           icon.style.display = "none";
         }
@@ -10971,9 +10986,9 @@ function updateStartMenu() {
   );
   existingInstalledGames.forEach((el) => el.remove());
 
-  // Bloatless mode: hide pre-installed apps except App Store and Settings in start menu
+  // Bloatless mode: hide pre-installed apps except App Store, Settings, Files, About, and Terminal in start menu
   if (bloatlessMode) {
-    const bloatlessKeep = ["appstore", "settings"];
+    const bloatlessKeep = ["appstore", "settings", "files", "about", "terminal"];
     const allAppItems = appGrid.querySelectorAll(".app-item");
     allAppItems.forEach((item) => {
       const onclickAttr = item.getAttribute("onclick");
@@ -11000,24 +11015,17 @@ function updateStartMenu() {
   }
 
   installedApps.forEach((appName) => {
-    let appConfig = {};
-    if (appName === "startup-apps") {
-      appConfig = { icon: "fa-rocket", label: "Startup Apps" };
-    } else if (appName === "task-manager") {
-      appConfig = { icon: "fa-tasks", label: "Task Manager" };
-    } else if (appName === "snap-manager") {
-      appConfig = { icon: "fa-border-all", label: "Snap Manager" };
-    } else {
-      return;
-    }
+    // Get app metadata
+    const metadata = appMetadata[appName];
+    if (!metadata) return;
 
     const appItem = document.createElement("div");
     appItem.className = "app-item";
     appItem.setAttribute("data-installed", "true");
     appItem.onclick = () => openApp(appName);
     appItem.innerHTML = `
-            <i class="fas ${appConfig.icon}"></i>
-            <span>${appConfig.label}</span>
+            <i class="fas ${metadata.icon}"></i>
+            <span>${metadata.name}</span>
         `;
 
     appGrid.appendChild(appItem);
@@ -12850,6 +12858,7 @@ function expandHelpTopic(topicId) {
       icon: "fa-th",
       content: `
                 <h2><i class="fas fa-th"></i> Applications</h2>
+                <h3>Pre-installed Apps</h3>
                 <ul>
                     <li><strong>Files</strong> - Browse and manage your virtual file system with tree navigation</li>
                     <li><strong>Terminal</strong> - Access command-line interface with Unix commands</li>
@@ -12864,6 +12873,18 @@ function expandHelpTopic(topicId) {
                     <li><strong>Python Interpreter</strong> - Run Python code interactively</li>
                     <li><strong>Achievements</strong> - Track your progress with achievements and Easter eggs</li>
                     <li><strong>Cloaking</strong> - Disguise your browser tab</li>
+                    <li><strong>What's New</strong> - View latest features and updates</li>
+                    <li><strong>AI Snake Learning</strong> - Watch AI learn to play Snake</li>
+                    <li><strong>Nautilus AI Assistant</strong> - Get help from an AI assistant</li>
+                    <li><strong>Web App Creator</strong> - Create and customize web applications</li>
+                    <li><strong>Help</strong> - System help and documentation</li>
+                </ul>
+                <h3>Optional Apps (Available in App Store)</h3>
+                <ul>
+                    <li><strong>Startup Apps</strong> - Configure apps that launch automatically</li>
+                    <li><strong>Task Manager</strong> - Monitor and manage running applications</li>
+                    <li><strong>Snap Manager</strong> - Configure window snapping layouts</li>
+                    <li><strong>V86 Emulator</strong> - Run legacy operating systems</li>
                 </ul>
             `,
     },
@@ -13251,6 +13272,23 @@ print(f'Result: {result}')</code></pre>
                     <li>Some achievements require specific actions or times</li>
                     <li>Easter eggs are hidden throughout the system</li>
                 </ul>
+            `,
+    },
+    'app-whatsnew': {
+      title: "What's New",
+      icon: "fa-star",
+      content: `
+                <h2><i class="fas fa-star"></i> What's New</h2>
+                <p>Stay updated with the latest features and improvements in NautilusOS.</p>
+                <h3>Features</h3>
+                <ul>
+                    <li><strong>Feature Carousel</strong> - Interactive slideshow of new features</li>
+                    <li><strong>Version Information</strong> - Current version and release notes</li>
+                    <li><strong>Navigation Controls</strong> - Browse through different slides</li>
+                    <li><strong>Auto-play</strong> - Automatic progression through features</li>
+                </ul>
+                <h3>Current Version</h3>
+                <p>NautilusOS v1.5 includes AI Assistant, multiple browsers, more themes, VS Code integration, window snapping, games, and more!</p>
             `,
     },
   };
