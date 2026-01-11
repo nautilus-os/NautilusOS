@@ -66,6 +66,7 @@ Basically... a whole little OS in your browser :D
 - [ ] App store improvements (right now it can only install built-in apps not stuff from community repo)
 - [ ] add pfps from github to contributers and devs in about app
 - [ ] fix light theme gosh it sucks
+- [ ] very minor visual bugs (full width taskbar move desktop icon container down, some other junk)
 - [ ] fix bug where if too many apps are open it randomly flashes black
 - [ ] if u hit login in without choosing an existing accoutnit just picks the first one, should ask u to pick an acc
 - [ ] Add an option to increase or decrease window transparency 
