@@ -64,6 +64,7 @@ Basically... a whole little OS in your browser :D
 ## 🚧 todos (devs view dev discord for more)
 
 - [ ] App store improvements (right now it can only install built-in apps not stuff from community repo)
+- [ ] change stealth master achievment to work for any cloaking function not jsut basic cloak 
 - [ ] add pfps from github to contributers and devs in about app
 - [ ] fix light theme gosh it sucks
 - [ ] very minor visual bugs (full width taskbar move desktop icon container down, some other junk)
