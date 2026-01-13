@@ -67,6 +67,7 @@ Basically... a whole little OS in your browser :D
 - [ ] change stealth master achievment to work for any cloaking function not jsut basic cloak 
 - [ ] add pfps from github to contributers and devs in about app
 - [ ] fix light theme gosh it sucks
+- [ ] fix bug where cancel delete photo doesnt work and it just deletes it
 - [ ] very minor visual bugs (full width taskbar move desktop icon container down, some other junk)
 - [ ] fix bug where if too many apps are open it randomly flashes black
 - [ ] if u hit login in without choosing an existing accoutnit just picks the first one, should ask u to pick an acc
