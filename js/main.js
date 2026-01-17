@@ -729,6 +729,9 @@ let settings = {
   bypassFileProtocolWarnings: false,
 };
 let bootSelectedIndex = 0;
+let bootCountdownTimer = null;
+let bootCountdownValue = 10;
+let bootCountdownStarted = false;
 let snapSettings = null;
 let snapOverlay = null;
 let snapCandidate = null;
@@ -946,6 +949,8 @@ window.addEventListener("DOMContentLoaded", () => {
   if (savedBootChoice !== null) {
     bootSelectedIndex = parseInt(savedBootChoice, 10);
     selectBoot();
+  } else {
+    startBootCountdown();
   }
 });
 const appMetadata = {
@@ -1948,23 +1953,60 @@ document.addEventListener("keydown", function (e) {
   ) {
     const options = document.querySelectorAll(".boot-option");
 
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
+      if (bootCountdownTimer) {
+        clearInterval(bootCountdownTimer);
+        bootCountdownTimer = null;
+      }
+      const countdownEl = document.getElementById("bootCountdown");
+      if (countdownEl) {
+        countdownEl.style.display = "none";
+      }
       options[bootSelectedIndex].classList.remove("selected");
-      bootSelectedIndex = (bootSelectedIndex + 1) % options.length;
-      options[bootSelectedIndex].classList.add("selected");
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      options[bootSelectedIndex].classList.remove("selected");
-      bootSelectedIndex =
-        (bootSelectedIndex - 1 + options.length) % options.length;
+      if (e.key === "ArrowDown") {
+        bootSelectedIndex = (bootSelectedIndex + 1) % options.length;
+      } else {
+        bootSelectedIndex =
+          (bootSelectedIndex - 1 + options.length) % options.length;
+      }
       options[bootSelectedIndex].classList.add("selected");
     } else if (e.key === "Enter") {
       e.preventDefault();
+      if (bootCountdownTimer) {
+        clearInterval(bootCountdownTimer);
+        bootCountdownTimer = null;
+      }
+      const countdownEl = document.getElementById("bootCountdown");
+      if (countdownEl) {
+        countdownEl.style.display = "none";
+      }
       selectBoot();
     }
   }
 });
+
+function startBootCountdown() {
+  const countdownEl = document.getElementById("bootCountdown");
+  if (!countdownEl) return;
+  
+  bootCountdownValue = 10;
+  bootCountdownStarted = true;
+  countdownEl.style.display = "block";
+  countdownEl.textContent = `Booting to selected option in ${bootCountdownValue} seconds.`;
+  
+  bootCountdownTimer = setInterval(() => {
+    bootCountdownValue--;
+    if (bootCountdownValue <= 0) {
+      clearInterval(bootCountdownTimer);
+      bootCountdownTimer = null;
+      countdownEl.style.display = "none";
+      selectBoot();
+    } else {
+      countdownEl.textContent = `Booting to selected option in ${bootCountdownValue} seconds.`;
+    }
+  }, 1000);
+}
 
 function selectBoot() {
   localStorage.setItem("nautilusOS_bootChoice", bootSelectedIndex);
