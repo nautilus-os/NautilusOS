@@ -83,13 +83,9 @@ Basically... a whole little OS in your browser :D
 - [ ] add default coverup, chrome unsafe pages page failed to load etc
 - [ ] add achivement for opening bootloader (Power User)
 - [ ] add documentation in help for all apps (community as well) and update whats new carosel
-- [x] fix bug where toasts dont show on setup screens
-- [x] fix multiple apps opening too large
-- [x] dude why doies the bloatless install not install files and settings and terminal and about apps lol
-- [x] bloatless install does not have a bloatless taskbar
-- [x] fix desktop app icons going behind taskbar
 - [ ] add option to chaneg desktop icon size in settings
 - [ ] a lot of apps dont appear in the start menu (??)
+- [ ] add noodlelover to contributes in about app
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
