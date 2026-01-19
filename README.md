@@ -31,6 +31,7 @@ You can also deploy NautilusOS in a Github Codespace:
 5. click the "Make Public" option in the popup that shows up, or go to the Ports tab, right click on 8080, hover on "Port Visiblity" and click "Public"
 6. click on the Forwarded Address in the Ports tab. it should look something like `https://<your-repo-name>-<random-id>.<your-username>.github.dev`
 7. boom! use your temorary link for its full 30 minute lifetime!
+8. to change the port, just run `python3 -m http.server <your port number>`
 
 *To extend the life of your codespace link visit your profile settings, go to the Codespaces tab, and change the "Default idle timeout" time from 30 minutes to 240 minutes, which is the maximum time.
 
