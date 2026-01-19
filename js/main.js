@@ -5190,7 +5190,7 @@ alt="favicon">
                       A front end developer who really likes working on projects involving proxying, unblocking, games, and more.
                     </p>
                     <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                      <a href="https://github.com/x8r" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
+                      <a href="https://github.com/x8rr" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(125, 211, 192, 0.15); border: 1px solid rgba(125, 211, 192, 0.3); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: all 0.2s ease;" 
                            onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'" onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'">
                         <i class="fab fa-github"></i> GitHub
                       </a>
