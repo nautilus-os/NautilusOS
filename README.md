@@ -65,7 +65,7 @@ Basically... a whole little OS in your browser :D
 
 ## 🚧 todos (devs view dev discord for more)
 
-- [x] App store improvements (right now it can only install built-in apps not stuff from community repo)
+- [ ] add swimmign fishes in setup screen from NautilusOS-Web insted of odd flaoting orbs (lane)
 - [ ] change stealth master achievment to work for any cloaking function not jsut basic cloak 
 - [ ] add pfps from github to contributers and devs in about app
 - [ ] fix light theme gosh it sucks
