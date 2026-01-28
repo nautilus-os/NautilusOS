@@ -66,6 +66,7 @@ Basically... a whole little OS in your browser :D
 ## 🚧 todos (devs view dev discord for more)
 
 - [ ] add swimmign fishes in setup screen from NautilusOS-Web insted of odd flaoting orbs (lane)
+- [ ] add b;ank favicon and name (i saw this somewherei t was neat)
 - [ ] change stealth master achievment to work for any cloaking function not jsut basic cloak 
 - [ ] add pfps from github to contributers and devs in about app
 - [ ] fix light theme gosh it sucks
