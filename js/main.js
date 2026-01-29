@@ -3907,14 +3907,6 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-presets-grid">
-                    <div class="cloaking-preset-card" onclick="applyPreset('blank')">
-        <div class="cloaking-preset-icon" style="background: #333333;">
-            <i class="fas fa-eye-slash"></i>
-        </div>
-        <div class="cloaking-preset-name">Blank</div>
-        <div class="cloaking-preset-url">(Empty Tab)</div>
-    </div>
-    
                         <div class="cloaking-preset-card" onclick="applyPreset('google')">
                             <div class="cloaking-preset-icon" style="background: #ffad33;">
                                 <i class="fab fa-google"></i>
@@ -13377,11 +13369,8 @@ function switchCloakingTab(tabName, element) {
 function updateCloakPreview() {
   const titleInput = document.getElementById("cloakTitle");
   const faviconInput = document.getElementById("cloakFavicon");
-document.getElementById('previewTitle').textContent = title;
-    
-    if (faviconUrl === 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>' || faviconUrl.trim() === '') {
-        document.getElementById('previewFavicon').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"/>';
-    } else {  const previewFavicon = document.getElementById("previewFavicon");
+  const previewTitle = document.getElementById("previewTitle");
+  const previewFavicon = document.getElementById("previewFavicon");
 
   if (!titleInput || !previewTitle) return;
 
@@ -13571,11 +13560,6 @@ function changeSearchEngine(value) {
 
 function applyPreset(presetName) {
   const presets = {
-    blank: {
-      title: "‎", 
-      url: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>", 
-      customIcon: true 
-    },
     google: {
       title: "Google",
       url: "https://www.google.com",
@@ -17854,4 +17838,3 @@ document.addEventListener('contextmenu', (e) => {
 // Init new features
 enableDesktopSelection();
 updateTaskbarStyle();
-
