@@ -3907,6 +3907,13 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-presets-grid">
+                    <div class="cloaking-preset-card" onclick="applyPreset('blank')">
+    <div class="cloaking-preset-icon" style="background: #333333;">
+        <i class="fas fa-eye-slash"></i>
+    </div>
+    <div class="cloaking-preset-name">Blank</div>
+    <div class="cloaking-preset-url">(Empty Tab)</div>
+</div>
                         <div class="cloaking-preset-card" onclick="applyPreset('google')">
                             <div class="cloaking-preset-icon" style="background: #ffad33;">
                                 <i class="fab fa-google"></i>
@@ -13560,6 +13567,10 @@ function changeSearchEngine(value) {
 
 function applyPreset(presetName) {
   const presets = {
+    blank: {
+  title: "‎", 
+  url: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>",
+},
     google: {
       title: "Google",
       url: "https://www.google.com",
@@ -13598,7 +13609,13 @@ function applyPreset(presetName) {
   if (!preset) return;
 
   document.title = preset.title;
-  setFavicon(preset.url);
+  
+  if (presetName === 'blank') {
+    const blankFavicon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+    setFavicon(blankFavicon);
+  } else {
+    setFavicon(preset.url);
+  }
 
   showToast(`Applied ${preset.title} preset!`, "fa-check-circle");
   unlockAchievement("stealth-mode");
