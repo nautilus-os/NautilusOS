@@ -3818,7 +3818,7 @@ alt="favicon">
                                 type="text" 
                                 id="panicUrl" 
                                 class="cloaking-input" 
-                                placeholder="e.g., https://classroom.google.com"
+                                placeholder="e.g., https://mail.google.com"
                                 value="${cloakingConfig.panicUrl || ""}"
                             >
                             <div class="cloaking-hint">The website to instantly redirect to when panic key is pressed</div>
@@ -3908,7 +3908,7 @@ alt="favicon">
                     
                     <div class="cloaking-presets-grid">
                         <div class="cloaking-preset-card" onclick="applyPreset('google')">
-                            <div class="cloaking-preset-icon" style="background: linear-gradient(135deg, #4285F4, #34A853);">
+                            <div class="cloaking-preset-icon" style="background: #ffad33;">
                                 <i class="fab fa-google"></i>
                             </div>
                             <div class="cloaking-preset-name">Google</div>
@@ -3916,7 +3916,7 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('gmail')">
-                            <div class="cloaking-preset-icon" style="background: linear-gradient(135deg, #EA4335, #FBBC05);">
+                            <div class="cloaking-preset-icon" style="background: #cc0000;">
                                 <i class="fas fa-envelope"></i>
                             </div>
                             <div class="cloaking-preset-name">Gmail</div>
@@ -3924,7 +3924,7 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('drive')">
-                            <div class="cloaking-preset-icon" style="background: linear-gradient(135deg, #4285F4, #0F9D58);">
+                            <div class="cloaking-preset-icon" style="background: #11bb69;">
                                 <i class="fab fa-google-drive"></i>
                             </div>
                             <div class="cloaking-preset-name">Google Drive</div>
@@ -3932,15 +3932,15 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('classroom')">
-                            <div class="cloaking-preset-icon" style="background: linear-gradient(135deg, #0F9D58, #F4B400);">
+                            <div class="cloaking-preset-icon" style="background: #11bb69;">
                                 <i class="fas fa-chalkboard-teacher"></i>
                             </div>
                             <div class="cloaking-preset-name">Classroom</div>
-                            <div class="cloaking-preset-url">classroom.google.com</div>
+                            <div class="cloaking-preset-url">https://ssl.gstatic.com/classroom/favicon.png</div>
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('docs')">
-                            <div class="cloaking-preset-icon" style="background: linear-gradient(135deg, #4285F4, #4285F4);">
+                            <div class="cloaking-preset-icon" style="background: #4285F4;">
                                 <i class="fas fa-file-alt"></i>
                             </div>
                             <div class="cloaking-preset-name">Google Docs</div>
@@ -3948,7 +3948,7 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('youtube')">
-                            <div class="cloaking-preset-icon" style="background: linear-gradient(135deg, #FF0000, #CC0000);">
+                            <div class="cloaking-preset-icon" style="background: #ff1a1a;">
                                 <i class="fab fa-youtube"></i>
                             </div>
                             <div class="cloaking-preset-name">YouTube</div>
@@ -3956,7 +3956,7 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('wikipedia')">
-                            <div class="cloaking-preset-icon" style="background: linear-gradient(135deg, #000000, #333333);">
+                            <div class="cloaking-preset-icon" style="background: #595959;">
                                 <i class="fab fa-wikipedia-w"></i>
                             </div>
                             <div class="cloaking-preset-name">Wikipedia</div>
@@ -3964,7 +3964,7 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('github')">
-                            <div class="cloaking-preset-icon" style="background: linear-gradient(135deg, #333333, #24292e);">
+                            <div class="cloaking-preset-icon" style="background: #0d0d0d;">
                                 <i class="fab fa-github"></i>
                             </div>
                             <div class="cloaking-preset-name">GitHub</div>
