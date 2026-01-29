@@ -3956,7 +3956,7 @@ alt="favicon">
                                 <i class="fas fa-chalkboard-teacher"></i>
                             </div>
                             <div class="cloaking-preset-name">Classroom</div>
-                            <div class="cloaking-preset-url">https://ssl.gstatic.com/classroom/favicon.png</div>
+                            <div class="cloaking-preset-url">https://ssl.gstatic.co...</div>
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('docs')">
