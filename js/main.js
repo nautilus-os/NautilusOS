@@ -3916,7 +3916,7 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('gmail')">
-                            <div class="cloaking-preset-icon" style="background: #cc0000;">
+                            <div class="cloaking-preset-icon" style="background: #800000;">
                                 <i class="fas fa-envelope"></i>
                             </div>
                             <div class="cloaking-preset-name">Gmail</div>
@@ -3924,7 +3924,7 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('drive')">
-                            <div class="cloaking-preset-icon" style="background: #11bb69;">
+                            <div class="cloaking-preset-icon" style="background: #1ec89d;">
                                 <i class="fab fa-google-drive"></i>
                             </div>
                             <div class="cloaking-preset-name">Google Drive</div>
@@ -3964,7 +3964,7 @@ alt="favicon">
                         </div>
                         
                         <div class="cloaking-preset-card" onclick="applyPreset('github')">
-                            <div class="cloaking-preset-icon" style="background: #0d0d0d;">
+                            <div class="cloaking-preset-icon" style="background: #262626;">
                                 <i class="fab fa-github"></i>
                             </div>
                             <div class="cloaking-preset-name">GitHub</div>
