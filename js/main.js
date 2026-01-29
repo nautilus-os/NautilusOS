@@ -3907,8 +3907,21 @@ alt="favicon">
                     </div>
                     
                     <div class="cloaking-presets-grid">
-                    <div class="cloaking-preset-card" onclick="applyPreset('blank')">
-    <div class="cloaking-preset-icon" style="background: #333333;">
+<div class="cloaking-preset-card" onclick="applyPreset('blank')">
+    <div class="cloaking-preset-icon" style="
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.25) 0%, 
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 100%
+        );
+        backdrop-filter: blur(12px) saturate(180%);
+        -webkit-backdrop-filter: blur(12px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    ">
         <i class="fas fa-eye-slash"></i>
     </div>
     <div class="cloaking-preset-name">Blank</div>
