@@ -887,10 +887,10 @@ font-weight: 700;
 
 .desktop-icons {
     position: absolute;
-    top: 20px;
+    top: 30px;
     left: 20px;
     right: 20px;
-    bottom: 10px;
+    bottom: 80px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
