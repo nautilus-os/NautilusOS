@@ -13624,7 +13624,7 @@ function applyPreset(presetName) {
   document.title = preset.title;
   
 if (presetName === 'blank') {
-    const blankFavicon = 'data:,';
+    const blankFavicon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='';
     setFavicon(blankFavicon);
   } else {
     setFavicon(preset.url);
