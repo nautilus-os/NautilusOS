@@ -13582,7 +13582,7 @@ function applyPreset(presetName) {
   const presets = {
     blank: {
   title: "‎", 
-  url: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>",
+  url: "",
 },
     google: {
       title: "Google",
@@ -13623,8 +13623,8 @@ function applyPreset(presetName) {
 
   document.title = preset.title;
   
-  if (presetName === 'blank') {
-    const blankFavicon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+if (presetName === 'blank') {
+    const blankFavicon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiI+PC9zdmc+';
     setFavicon(blankFavicon);
   } else {
     setFavicon(preset.url);
