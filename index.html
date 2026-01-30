@@ -49,7 +49,8 @@
             switch entry, Enter <i class="fas fa-level-down-alt"></i> to select and
             boot
         </div>
-        <div id="bootCountdown" style="position: absolute; bottom: 4rem; color: var(--accent); font-size: 0.9rem; display: none;"></div>
+        <div id="bootCountdown"
+            style="position: absolute; bottom: 4rem; color: var(--accent); font-size: 0.9rem; display: none;"></div>
         <div id="bottom-text" style="position: absolute; bottom: 0.5rem; color: #888;">
             made with <i class="fa-solid fa-heart"></i> by dinguschan
         </div>
@@ -198,8 +199,8 @@
                         onmouseover="this.style.background='rgba(125, 211, 192, 0.25)'; this.style.borderColor='rgba(125, 211, 192, 0.5)'"
                         onmouseout="this.style.background='rgba(125, 211, 192, 0.15)'; this.style.borderColor='rgba(125, 211, 192, 0.3)'">
                         <i class="fas fa-file-import"></i> Import Profile
-                        <input type="file" id="importProfileInput" accept=".nautilusprofile" onchange="importProfile(event)"
-                            style="display: none;">
+                        <input type="file" id="importProfileInput" accept=".nautilusprofile"
+                            onchange="importProfile(event)" style="display: none;">
                     </label>
 
                     <button onclick="setupStep1Next()"
@@ -580,8 +581,7 @@
                 <div class="quick-action-desc">Close all windows</div>
             </div>
         </div>
-        <div class="quick-action-item"
-            onclick="hideQuickActions(); const link = document.createElement('a'); link.href = 'https://raw.githubusercontent.com/nautilus-os/NautilusOS/refs/heads/main/NautilusOS-OneFile/index.html'; link.download = 'NautilusOS-OneFile.html'; link.click();">
+        <div class="quick-action-item" onclick="hideQuickActions(); downloadOneFile();">
             <i class="fas fa-download"></i>
             <div class="quick-action-content">
                 <div class="quick-action-title">Get OneFile</div>
