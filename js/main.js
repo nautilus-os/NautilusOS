@@ -17,21 +17,22 @@
     bootloader.appendChild(hint);
   }
 
-window.addEventListener('keydown', function checkBiosKey(e) {
-  if (!bootloader || bootloader.classList.contains('hidden') || bootloader.style.display === 'none') return;
+  window.addEventListener('keydown', function checkBiosKey(e) {
+    if (!bootloader || bootloader.classList.contains('hidden') || bootloader.style.display === 'none') return;
 
-  const key = e.key;
+    const key = e.key;
 
-  // Trigger on Delete or ~ (backtick / tilde key)
-  if (key === 'Delete' || key === '`' || key === '~') {
-    e.preventDefault();
-    showBIOS();
-    window.removeEventListener('keydown', checkBiosKey);
-  }
-});
+    // Trigger on Delete or ~ (backtick / tilde key)
+    if (key === 'Delete' || key === '`' || key === '~') {
+      e.preventDefault();
+      showBIOS();
+      window.removeEventListener('keydown', checkBiosKey);
+    }
+  });
 
 
   function showBIOS() {
+    unlockAchievement("power-user");
     // Create BIOS overlay
     const biosOverlay = document.createElement('div');
     biosOverlay.id = 'nautilusBIOS';
@@ -727,6 +728,7 @@ let settings = {
   showSeconds: false,
   showDesktopIcons: true,
   bypassFileProtocolWarnings: false,
+  desktopIconSize: 'medium',
 };
 let bootSelectedIndex = 0;
 let bootCountdownTimer = null;
@@ -907,6 +909,13 @@ let toastQueue = [];
 let isSystemLoggedIn = false;
 
 function showToast(message, icon = "fa-info-circle") {
+  // Suppress during bootloader
+  const bootloader = document.getElementById('bootloader');
+  if (bootloader && !bootloader.classList.contains('hidden')) {
+    toastQueue.push({ message, icon });
+    return;
+  }
+
   // Show immediately during setup or login screens
   const isSetupVisible = document.getElementById('setup') && document.getElementById('setup').style.display !== 'none';
   const isLoginVisible = document.getElementById('login') && document.getElementById('login').style.display !== 'none';
@@ -1989,12 +1998,12 @@ document.addEventListener("keydown", function (e) {
 function startBootCountdown() {
   const countdownEl = document.getElementById("bootCountdown");
   if (!countdownEl) return;
-  
+
   bootCountdownValue = 10;
   bootCountdownStarted = true;
   countdownEl.style.display = "block";
   countdownEl.textContent = `Booting to selected option in ${bootCountdownValue} seconds.`;
-  
+
   bootCountdownTimer = setInterval(() => {
     bootCountdownValue--;
     if (bootCountdownValue <= 0) {
@@ -3628,6 +3637,10 @@ function openApp(appName, editorContent = "", filename = "") {
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Panic Key</span>
                 </div>
+                <div class="cloaking-nav-item" onclick="switchCloakingTab('clickoff', this)">
+                    <i class="fas fa-eye-slash"></i>
+                    <span>Clickoff</span>
+                </div>
                 <div class="cloaking-nav-item" onclick="switchCloakingTab('anti-monitor', this)">
                     <i class="fas fa-shield-alt"></i>
                     <span>Anti-Monitoring</span>
@@ -3697,6 +3710,80 @@ alt="favicon">
                             </button>
                             <button class="cloaking-btn secondary" onclick="resetCloaking()">
                                 <i class="fas fa-undo"></i> Reset to Default
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cloaking-tab" data-tab="clickoff">
+                    <div class="cloaking-header">
+                        <h2><i class="fas fa-eye-slash"></i> Clickoff Cloaking</h2>
+                        <p>Automatically disguise your tab when you switch to another window</p>
+                    </div>
+
+                    <div class="cloaking-preview-card">
+                        <div class="cloaking-preview-header">
+                            <div class="cloaking-preview-label">Clickoff Preview</div>
+                        </div>
+                        <div class="cloaking-preview-tab" id="clickoffPreview">
+                            <i class="fas fa-globe" style="font-size: 1.2rem; color: var(--accent); margin-right: 0.5rem;"></i>
+                            <img class="cloaking-preview-favicon" id="clickoffPreviewFavicon"
+                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' font-size='85' fill='white'%3E🌐︎%3C/text%3E%3C/svg%3E"
+                                alt="favicon">
+                            <span class="cloaking-preview-title" id="clickoffPreviewTitle">NautilusOS</span>
+                        </div>
+                    </div>
+
+                    <div class="cloaking-form-card">
+                        <div style="margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);">
+                            <div class="cloaking-status-indicator ${cloakingConfig.cloakOnClickoff ? "active" : ""}" style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="cloaking-status-icon" style="width: 40px; height: 40px; background: rgba(125, 211, 192, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                                    <i class="fas fa-eye-slash"></i>
+                                </div>
+                                <div class="cloaking-status-text" style="flex: 1;">
+                                    <div class="cloaking-status-title" style="font-weight: bold; color: var(--text-primary); font-size: 0.95rem;">Enable Clickoff Cloak</div>
+                                    <div class="cloaking-status-desc" id="cloakOnClickoffDesc" style="font-size: 0.8rem; color: var(--text-secondary);">${cloakingConfig.cloakOnClickoff ? "Currently Active" : "Currently Inactive"}</div>
+                                </div>
+                                <div class="toggle-switch ${cloakingConfig.cloakOnClickoff ? "active" : ""}" id="cloakOnClickoffToggle" onclick="toggleCloakOnClickoff()"></div>
+                            </div>
+                        </div>
+
+                        <div class="cloaking-form-group">
+                            <label class="cloaking-label">
+                                <i class="fas fa-heading"></i> Clickoff Title
+                            </label>
+                            <input 
+                                type="text" 
+                                id="clickoffTitle" 
+                                class="cloaking-input" 
+                                placeholder="e.g., Google" 
+                                value="${cloakingConfig.clickoffTitle || ''}"
+                                oninput="updateClickoffPreview()"
+                            >
+                            <div class="cloaking-hint">Disguise title used ONLY when clicking away</div>
+                        </div>
+                        
+                        <div class="cloaking-form-group">
+                            <label class="cloaking-label">
+                                <i class="fas fa-image"></i> Clickoff Favicon URL
+                            </label>
+                            <input 
+                                type="text" 
+                                id="clickoffFavicon" 
+                                class="cloaking-input" 
+                                placeholder="e.g., https://www.google.com"
+                                value="${cloakingConfig.clickoffFavicon || ''}"
+                                oninput="updateClickoffPreview()"
+                            >
+                            <div class="cloaking-hint">Disguise favicon used ONLY when clicking away</div>
+                        </div>
+
+                        <div class="cloaking-actions">
+                            <button class="cloaking-btn primary" onclick="applyClickoffSettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                            <button class="cloaking-btn secondary" onclick="resetClickoffCloak()">
+                                <i class="fas fa-undo"></i> Reset Clickoff
                             </button>
                         </div>
                     </div>
@@ -3773,7 +3860,7 @@ alt="favicon">
                 <div class="cloaking-tab" data-tab="panic">
                     <div class="cloaking-header">
                         <h2><i class="fas fa-exclamation-triangle"></i> Panic Key</h2>
-                        <p>Instantly switch to a safe tab when you need to hide quickly</p>
+                        <p>Instantly switch to a safe tab or hide your screen when you need to act quickly</p>
                     </div>
                     
                     <div class="cloaking-status-card">
@@ -3800,7 +3887,7 @@ alt="favicon">
                     <div class="cloaking-form-card">
                         <div class="cloaking-form-group">
                             <label class="cloaking-label">
-                                <i class="fas fa-keyboard"></i> Panic Hotkey
+                                <i class="fas fa-keyboard"></i> Global Panic Hotkey
                             </label>
                             <div class="cloaking-hotkey-display" id="panicHotkeyDisplay" onclick="recordPanicKey()">
                                 ${cloakingConfig.panicKey ||
@@ -3809,26 +3896,77 @@ alt="favicon">
                             </div>
                             <div class="cloaking-hint">Press any key combination to set it as your panic hotkey</div>
                         </div>
-                        
-                        <div class="cloaking-form-group">
-                            <label class="cloaking-label">
-                                <i class="fas fa-external-link-alt"></i> Panic URL
-                            </label>
-                            <input 
-                                type="text" 
-                                id="panicUrl" 
-                                class="cloaking-input" 
-                                placeholder="e.g., https://mail.google.com"
-                                value="${cloakingConfig.panicUrl || ""}"
-                            >
-                            <div class="cloaking-hint">The website to instantly redirect to when panic key is pressed</div>
+                    </div>
+
+                    <!-- Independent Safe Redirect Container -->
+                    <div class="cloaking-form-card" style="margin-top: 1rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <i class="fas fa-external-link-alt" style="color: var(--accent); font-size: 1.1rem;"></i>
+                                <span style="font-weight: bold; color: var(--text-primary);">Safe Redirect</span>
+                            </div>
+                            <div class="toggle-switch ${cloakingConfig.panicRedirectEnabled ? "active" : ""}" 
+                                 id="panicRedirectToggle" 
+                                 onclick="togglePanicModeFlag('panicRedirectEnabled')"></div>
                         </div>
                         
-                        <div class="cloaking-panic-test">
-                            <button class="cloaking-btn warning" onclick="testPanicKey()">
-                                <i class="fas fa-vial"></i> Test Panic Key
-                            </button>
-                            <div class="cloaking-hint">This will trigger the panic redirect as a test</div>
+                        <div id="panicRedirectSettings" style="opacity: ${cloakingConfig.panicRedirectEnabled ? '1' : '0.5'}; pointer-events: ${cloakingConfig.panicRedirectEnabled ? 'auto' : 'none'};">
+                            <div class="cloaking-form-group">
+                                <label class="cloaking-label">Redirect URL</label>
+                                <input 
+                                    type="text" 
+                                    id="panicUrl" 
+                                    class="cloaking-input" 
+                                    placeholder="e.g., https://mail.google.com"
+                                    value="${cloakingConfig.panicUrl || ""}"
+                                >
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                                <button class="cloaking-btn warning" onclick="testPanicKey()" style="width: 100%;">
+                                    <i class="fas fa-vial"></i> Test
+                                </button>
+                                <button class="cloaking-btn primary" onclick="savePanicSettings()" style="width: 100%;">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Independent Overlay Image Container -->
+                    <div class="cloaking-form-card" style="margin-top: 1rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <i class="fas fa-image" style="color: var(--accent); font-size: 1.1rem;"></i>
+                                <span style="font-weight: bold; color: var(--text-primary);">Overlay Image</span>
+                            </div>
+                            <div class="toggle-switch ${cloakingConfig.panicImageEnabled ? "active" : ""}" 
+                                 id="panicImageToggle" 
+                                 onclick="togglePanicModeFlag('panicImageEnabled')"></div>
+                        </div>
+                        
+                        <div id="panicImageSettingsContainer" style="opacity: ${cloakingConfig.panicImageEnabled ? '1' : '0.5'}; pointer-events: ${cloakingConfig.panicImageEnabled ? 'auto' : 'none'};">
+                            <input type="file" id="panicImageInput" accept="image/*" style="display: none;" onchange="handlePanicImageUpload(event)">
+                            <div class="cloaking-form-group">
+                                <label class="cloaking-label">Overlay Image URL</label>
+                                <input 
+                                    type="text" 
+                                    id="panicImage" 
+                                    class="cloaking-input" 
+                                    placeholder="e.g., https://example.com/homework.png"
+                                    value="${cloakingConfig.panicImage || ""}"
+                                >
+                                <div class="cloaking-hint">Enter a URL or upload an image below</div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                                <button class="cloaking-btn secondary" onclick="document.getElementById('panicImageInput').click()" style="width: 100%;">
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                                <button class="cloaking-btn primary" onclick="savePanicSettings()" style="width: 100%;">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4161,6 +4299,40 @@ alt="favicon">
                             </div>
                             <div class="toggle-switch ${localStorage.getItem('nautilusOS_taskbarStyle') === 'full' ? 'active' : ''}" 
                                 onclick="toggleTaskbarStyle(); this.classList.toggle('active');"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-th-large"></i>
+                        <span>Desktop Icons</span>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-item" style="flex-direction: column; align-items: flex-start;">
+                            <div class="settings-item-title" style="margin-bottom: 0.25rem;">Icon Size</div>
+                            <p class="settings-description" style="margin-bottom: 0.5rem;">Choose the display size for desktop application icons.</p>
+                            
+                            <div class="custom-select" id="desktopIconSizeSelect">
+                                <div class="select-trigger" onclick="toggleSearchDropdown(this)">
+                                    <span id="currentIconSize">${settings.desktopIconSize ? settings.desktopIconSize.charAt(0).toUpperCase() + settings.desktopIconSize.slice(1).replace('-', ' ') : 'Medium'}</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="select-options">
+                                    <div class="select-option" onclick="selectDesktopIconSize('Small', 'small')">
+                                        Small
+                                    </div>
+                                    <div class="select-option" onclick="selectDesktopIconSize('Medium', 'medium')">
+                                        Medium
+                                    </div>
+                                    <div class="select-option" onclick="selectDesktopIconSize('Large', 'large')">
+                                        Large
+                                    </div>
+                                    <div class="select-option" onclick="selectDesktopIconSize('Extra Large', 'extra-large')">
+                                        Extra Large
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -6347,8 +6519,6 @@ function toggleSetting(setting) {
   }
 
   settings[setting] = !settings[setting];
-  saveSettingsToLocalStorage();
-  trackSettingChanged(setting);
 
   if (setting === "showDesktopIcons") {
     const icons = document.getElementById("desktopIcons");
@@ -6511,6 +6681,43 @@ function initializeAppearanceSettings() {
     profileButton.innerHTML = `<i class="fas fa-upload"></i> ${hasProfile ? "Change Profile Picture" : "Set Profile Picture"
       }`;
   }
+
+  // Update Icon Size setting in UI
+  const iconSizeSelect = document.getElementById("desktopIconSizeSelect");
+  if (iconSizeSelect) {
+    const currentSize = settings.desktopIconSize || 'medium';
+    const trigger = iconSizeSelect.querySelector('.select-trigger span');
+    if (trigger) {
+      const sizeNames = {
+        'small': 'Small',
+        'medium': 'Medium',
+        'large': 'Large',
+        'extra-large': 'Extra Large'
+      };
+      trigger.textContent = sizeNames[currentSize] || 'Medium';
+    }
+  }
+}
+
+function setDesktopIconSize(size) {
+  settings.desktopIconSize = size;
+  let multiplier = 1;
+  if (size === 'small') multiplier = 0.8;
+  if (size === 'medium') multiplier = 1;
+  if (size === 'large') multiplier = 1.2;
+  if (size === 'extra-large') multiplier = 1.5;
+
+  document.documentElement.style.setProperty('--icon-size-multiplier', multiplier);
+  saveSettingsToLocalStorage();
+
+  // Update UI if open
+  initializeAppearanceSettings();
+}
+
+function selectDesktopIconSize(name, size) {
+  setDesktopIconSize(size);
+  const dropdown = document.querySelector('#desktopIconSizeSelect .select-options');
+  if (dropdown) dropdown.classList.remove('active');
 }
 
 function handleWallpaperUpload(event) {
@@ -7279,8 +7486,8 @@ function handleGlobalDragEnd() {
 
 document.addEventListener("dragend", handleGlobalDragEnd);
 
-function deleteFile(filename) {
-  const confirmed = confirm(`Are you sure you want to delete "${filename}"?`);
+async function deleteFile(filename) {
+  const confirmed = await confirm(`Are you sure you want to delete "${filename}"?`);
   if (!confirmed) return;
 
   let current = getFileSystemAtPath(currentPath);
@@ -8786,8 +8993,8 @@ function viewPhoto(name) {
   document.body.appendChild(modal);
 }
 
-function deletePhoto(name) {
-  const confirmed = confirm(`Delete ${name}?`);
+async function deletePhoto(name) {
+  const confirmed = await confirm(`Delete ${name}?`);
   if (!confirmed) return;
 
   const photos = fileSystem["Photos"] || {};
@@ -10453,7 +10660,8 @@ function pauseAISnakeTraining() {
 
 // Reset model
 async function resetAISnakeModel() {
-  if (confirm('Reset AI model? All training progress will be lost.')) {
+  const confirmed = await confirm('Reset AI model? All training progress will be lost.');
+  if (confirmed) {
     aiSnake.isTraining = false;
     aiSnake.isPaused = false;
 
@@ -11048,6 +11256,11 @@ function updateStartMenu() {
   );
   existingInstalledGames.forEach((el) => el.remove());
 
+  const existingCommunityApps = appGrid.querySelectorAll(
+    '.app-item[data-community-app="true"]'
+  );
+  existingCommunityApps.forEach((el) => el.remove());
+
   // Bloatless mode: hide pre-installed apps except App Store, Settings, Files, About, and Terminal in start menu
   if (bloatlessMode) {
     const bloatlessKeep = ["appstore", "settings", "files", "about", "terminal"];
@@ -11075,6 +11288,21 @@ function updateStartMenu() {
       item.style.display = "";
     });
   }
+
+  // Restore Community Apps in Start Menu
+  const savedCommunityApps = JSON.parse(localStorage.getItem('nautilusOS_communityApps') || '{}');
+  Object.keys(savedCommunityApps).forEach(appId => {
+    const appData = savedCommunityApps[appId];
+    const appItem = document.createElement("div");
+    appItem.className = "app-item";
+    appItem.setAttribute("data-community-app", "true");
+    appItem.onclick = () => openApp(appId);
+    appItem.innerHTML = `
+            <i class="fas ${appData.icon || 'fa-box'}"></i>
+            <span>${appData.name}</span>
+        `;
+    appGrid.appendChild(appItem);
+  });
 
   installedApps.forEach((appName) => {
     // Get app metadata
@@ -11517,11 +11745,17 @@ let cloakingConfig = {
   currentRotationIndex: 0,
   panicKeyEnabled: false,
   panicKey: "Escape",
+  panicRedirectEnabled: true,
   panicUrl: "https://classroom.google.com",
+  panicImageEnabled: false,
+  panicImage: "",
   antiScreenMonitoring: true,
   antiMonitorDelay: 1000,
   useAntiMonitorDelay: false,
   confirmPageClosing: true,
+  cloakOnClickoff: false,
+  clickoffTitle: "",
+  clickoffFavicon: "",
 };
 let rotationInterval = null;
 const originalTitle = document.title;
@@ -11588,13 +11822,21 @@ let achievementsData = {
     },
     "stealth-mode": {
       id: "stealth-mode",
-      name: "Stealth Mode",
+      name: "Stealth Master",
       description: "Apply any cloaking setting to disguise your tab",
       icon: "fa-user-secret",
       unlocked: false,
       unlockedDate: null,
     },
-    screenshot: {
+    "power-user": {
+      id: "power-user",
+      name: "Power User",
+      description: "Access the NautilusOS BIOS setup utility",
+      icon: "fa-microchip",
+      unlocked: false,
+      unlockedDate: null,
+    },
+    "screenshot": {
       id: "screenshot",
       name: "Shutterbug",
       description: "Take your first screenshot",
@@ -12147,10 +12389,12 @@ function applyCloaking() {
 
   if (title) {
     document.title = title;
+    localStorage.setItem("nautilusOS_cloakTitle", title);
   }
 
   if (faviconUrl) {
     setFavicon(faviconUrl);
+    localStorage.setItem("nautilusOS_cloakFavicon", faviconUrl);
   }
 
   showToast("Cloaking applied!", "fa-check-circle");
@@ -12190,13 +12434,6 @@ function resetCloaking() {
   const existingFavicons = document.querySelectorAll('link[rel="icon"]');
   existingFavicons.forEach((favicon) => favicon.remove());
 
-  if (originalFavicon) {
-    const faviconLink = document.createElement("link");
-    faviconLink.rel = "icon";
-    faviconLink.href = originalFavicon;
-    document.head.appendChild(faviconLink);
-  }
-
   const titleInput = document.getElementById("cloakTitle");
   const faviconInput = document.getElementById("cloakFavicon");
   if (titleInput) titleInput.value = originalTitle;
@@ -12204,6 +12441,92 @@ function resetCloaking() {
 
   showToast("Cloaking reset to default", "fa-undo");
 }
+
+function toggleCloakOnClickoff() {
+  cloakingConfig.cloakOnClickoff = !cloakingConfig.cloakOnClickoff;
+  saveCloakingConfig();
+
+  const toggle = document.getElementById("cloakOnClickoffToggle");
+  const desc = document.getElementById("cloakOnClickoffDesc");
+  const indicator = document.querySelector('.cloaking-tab[data-tab="clickoff"] .cloaking-status-indicator');
+
+  if (toggle) toggle.classList.toggle("active", cloakingConfig.cloakOnClickoff);
+  if (desc) desc.textContent = cloakingConfig.cloakOnClickoff ? "Currently Active" : "Currently Inactive";
+  if (indicator) indicator.classList.toggle("active", cloakingConfig.cloakOnClickoff);
+
+  if (!cloakingConfig.cloakOnClickoff) {
+    resetCloaking();
+  }
+
+  showToast(`Clickoff Cloak ${cloakingConfig.cloakOnClickoff ? 'enabled' : 'disabled'}`, cloakingConfig.cloakOnClickoff ? "fa-check-circle" : "fa-info-circle");
+}
+
+function applyClickoffSettings() {
+  const title = document.getElementById("clickoffTitle").value.trim();
+  const faviconUrl = document.getElementById("clickoffFavicon").value.trim();
+
+  cloakingConfig.clickoffTitle = title;
+  cloakingConfig.clickoffFavicon = faviconUrl;
+  saveCloakingConfig();
+
+  showToast("Clickoff settings saved!", "fa-save");
+}
+
+function resetClickoffCloak() {
+  cloakingConfig.clickoffTitle = "";
+  cloakingConfig.clickoffFavicon = "";
+  saveCloakingConfig();
+
+  const titleInput = document.getElementById("clickoffTitle");
+  const faviconInput = document.getElementById("clickoffFavicon");
+  if (titleInput) titleInput.value = "";
+  if (faviconInput) faviconInput.value = "";
+
+  updateClickoffPreview();
+
+  if (cloakingConfig.cloakOnClickoff) {
+    resetCloaking();
+  }
+
+  showToast("Clickoff settings reset", "fa-undo");
+}
+
+function updateClickoffPreview() {
+  const title = document.getElementById("clickoffTitle").value.trim() || "NautilusOS";
+  const faviconUrl = document.getElementById("clickoffFavicon").value.trim();
+  const previewTitle = document.getElementById("clickoffPreviewTitle");
+  const previewFavicon = document.getElementById("clickoffPreviewFavicon");
+
+  if (previewTitle) previewTitle.textContent = title;
+  if (previewFavicon) {
+    if (faviconUrl) {
+      previewFavicon.src = faviconUrl;
+    } else {
+      previewFavicon.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' font-size='85' fill='white'%3E🌐︎%3C/text%3E%3C/svg%3E";
+    }
+  }
+}
+
+window.addEventListener('blur', () => {
+  if (cloakingConfig.cloakOnClickoff) {
+    const clickoffTitle = cloakingConfig.clickoffTitle;
+    const clickoffFavicon = cloakingConfig.clickoffFavicon;
+
+    if (clickoffTitle || clickoffFavicon) {
+      if (clickoffTitle) document.title = clickoffTitle;
+      if (clickoffFavicon) setFavicon(clickoffFavicon);
+    } else {
+      document.title = "Google";
+      setFavicon("https://www.google.com");
+    }
+  }
+});
+
+window.addEventListener('focus', () => {
+  if (cloakingConfig.cloakOnClickoff) {
+    resetCloaking();
+  }
+});
 
 function toggleAutoRotate() {
   cloakingConfig.autoRotate = !cloakingConfig.autoRotate;
@@ -12225,6 +12548,7 @@ function toggleAutoRotate() {
     if (indicator) indicator.classList.add("active");
     if (statusDesc) statusDesc.textContent = "Currently Active";
     startRotation();
+    unlockAchievement("stealth-mode");
     showToast("Auto-rotate enabled", "fa-sync-alt");
   } else {
     if (toggle) toggle.classList.remove("active");
@@ -12507,6 +12831,7 @@ function toggleAntiScreenMonitoring() {
       antiMonitorSettings.style.opacity = "1";
       antiMonitorSettings.style.pointerEvents = "auto";
     }
+    unlockAchievement("stealth-mode");
     showToast("Anti-screen monitoring enabled!", "fa-shield-alt");
     setupScreenMonitoringListener();
   } else {
@@ -13439,6 +13764,7 @@ function togglePanicKey() {
     if (toggle) toggle.classList.add("active");
     if (indicator) indicator.classList.add("active");
     if (statusDesc) statusDesc.textContent = "Armed and Ready";
+    unlockAchievement("stealth-mode");
     showToast(
       "Panic key enabled! Press " + cloakingConfig.panicKey + " to activate",
       "fa-shield-alt"
@@ -13535,41 +13861,146 @@ function removePanicKeyListener() {
 }
 
 function testPanicKey() {
-  const url = document.getElementById("panicUrl")?.value.trim();
-  if (!url) {
-    showToast("Please enter a panic URL first", "fa-exclamation-circle");
-    return;
-  }
-
-  showToast("Testing panic redirect in 2 seconds...", "fa-vial");
+  showToast("Testing panic mode in 2 seconds...", "fa-vial");
   setTimeout(() => {
     triggerPanicMode();
   }, 2000);
 }
 
-function triggerPanicMode() {
-  const url = cloakingConfig.panicUrl || "https://classroom.google.com";
+function togglePanicModeFlag(prop) {
+  const otherProp = prop === 'panicRedirectEnabled' ? 'panicImageEnabled' : 'panicRedirectEnabled';
 
-  Object.keys(windows).forEach((appName) => {
-    const win = windows[appName];
-    if (win) {
-      win.style.display = "none";
-    }
-  });
-
-  let domain = url;
-  try {
-    const urlObj = new URL(url.startsWith("http") ? url : "https://" + url);
-    domain = urlObj.origin;
-    document.title = urlObj.hostname;
-  } catch (e) {
-    domain = "https://" + url.replace(/^https?:\/\//, "");
-    document.title = url.replace(/^https?:\/\//, "").split("/")[0];
+  // Mutual exclusion
+  if (!cloakingConfig[prop]) {
+    cloakingConfig[prop] = true;
+    cloakingConfig[otherProp] = false;
+  } else {
+    cloakingConfig[prop] = false;
   }
 
-  setFavicon(domain);
+  // Update UI
+  const toggle = document.getElementById(prop === 'panicRedirectEnabled' ? 'panicRedirectToggle' : 'panicImageToggle');
+  const settings = document.getElementById(prop === 'panicRedirectEnabled' ? 'panicRedirectSettings' : 'panicImageSettingsContainer');
+  const otherToggle = document.getElementById(otherProp === 'panicRedirectEnabled' ? 'panicRedirectToggle' : 'panicImageToggle');
+  const otherSettings = document.getElementById(otherProp === 'panicRedirectEnabled' ? 'panicRedirectSettings' : 'panicImageSettingsContainer');
 
-  window.location.href = url.startsWith("http") ? url : "https://" + url;
+  if (toggle) {
+    if (cloakingConfig[prop]) toggle.classList.add('active');
+    else toggle.classList.remove('active');
+  }
+
+  if (settings) {
+    settings.style.opacity = cloakingConfig[prop] ? '1' : '0.5';
+    settings.style.pointerEvents = cloakingConfig[prop] ? 'auto' : 'none';
+  }
+
+  if (otherToggle) {
+    if (cloakingConfig[otherProp]) otherToggle.classList.add('active');
+    else otherToggle.classList.remove('active');
+  }
+
+  if (otherSettings) {
+    otherSettings.style.opacity = cloakingConfig[otherProp] ? '1' : '0.5';
+    otherSettings.style.pointerEvents = cloakingConfig[otherProp] ? 'auto' : 'none';
+  }
+
+  saveCloakingConfig();
+}
+
+function handlePanicImageUpload(event) {
+  const file = event.target.files[0];
+  if (!readImageFile(file, (data) => {
+    cloakingConfig.panicImage = data;
+    const input = document.getElementById("panicImage");
+    if (input) input.value = "Local File Uploaded";
+    saveCloakingConfig();
+    showToast("Panic image uploaded!", "fa-check-circle");
+  })) {
+    return;
+  }
+}
+
+function savePanicSettings() {
+  const urlInput = document.getElementById("panicUrl");
+  const imageInput = document.getElementById("panicImage");
+
+  if (urlInput) cloakingConfig.panicUrl = urlInput.value.trim();
+  if (imageInput && imageInput.value !== "Local File Uploaded") {
+    cloakingConfig.panicImage = imageInput.value.trim();
+  }
+
+  saveCloakingConfig();
+  showToast("Panic settings saved!", "fa-save");
+}
+
+function triggerPanicMode() {
+  // If Image Overlay is enabled, prioritize it
+  if (cloakingConfig.panicImageEnabled && cloakingConfig.panicImage) {
+    togglePanicOverlay();
+    return;
+  }
+
+  // If Safe Redirect is enabled
+  if (cloakingConfig.panicRedirectEnabled) {
+    const url = cloakingConfig.panicUrl || "https://classroom.google.com";
+
+    Object.keys(windows).forEach((appName) => {
+      const win = windows[appName];
+      if (win) {
+        win.style.display = "none";
+      }
+    });
+
+    let domain = url;
+    try {
+      const urlObj = new URL(url.startsWith("http") ? url : "https://" + url);
+      domain = urlObj.origin;
+      document.title = urlObj.hostname;
+    } catch (e) {
+      domain = "https://" + url.replace(/^https?:\/\//, "");
+      document.title = url.replace(/^https?:\/\//, "").split("/")[0];
+    }
+
+    setFavicon(domain);
+    window.location.href = url.startsWith("http") ? url : "https://" + url;
+  }
+}
+
+function togglePanicOverlay() {
+  let overlay = document.getElementById("panicOverlay");
+  if (overlay) {
+    overlay.remove();
+    return;
+  }
+
+  overlay = document.createElement("div");
+  overlay.id = "panicOverlay";
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100vw";
+  overlay.style.height = "100vh";
+  overlay.style.zIndex = "99999999"; // Increased z-index
+  overlay.style.backgroundColor = "black";
+  overlay.style.cursor = "none";
+
+  if (cloakingConfig.panicImage) {
+    overlay.style.backgroundImage = `url(${cloakingConfig.panicImage})`;
+    overlay.style.backgroundSize = "contain";
+    overlay.style.backgroundPosition = "center";
+    overlay.style.backgroundRepeat = "no-repeat";
+
+    // Ensure the image fills the screen
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+
+    // Log for debugging (will be visible in devtools)
+    console.log('[DEBUG] Overlay triggered with image:', cloakingConfig.panicImage.substring(0, 50) + '...');
+  } else {
+    console.warn('[WARNING] No panic image set!');
+  }
+
+  document.body.appendChild(overlay);
 }
 
 function changeSearchEngine(value) {
@@ -13581,9 +14012,9 @@ function changeSearchEngine(value) {
 function applyPreset(presetName) {
   const presets = {
     blank: {
-  title: "‎", 
-  url: "",
-},
+      title: "‎",
+      url: "",
+    },
     google: {
       title: "Google",
       url: "https://www.google.com",
@@ -13622,8 +14053,8 @@ function applyPreset(presetName) {
   if (!preset) return;
 
   document.title = preset.title;
-  
-if (presetName === 'blank') {
+
+  if (presetName === 'blank') {
     const blankFavicon = 'data:image/x-icon;base64,AAABAAEAEBAQAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAsC8qAP+EAACzh1cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAACAAAAAAAAACAAAAAAAAEiAAAAADAAAiAAAAAAMzAiAAAAAAAAMzAAAAAAAAAiMzMAAAAAAAADAzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA';
     setFavicon(blankFavicon);
   } else {
@@ -17329,8 +17760,9 @@ function refreshCustomWebAppsList() {
   `).join('');
 }
 
-function deleteCustomWebApp(appId) {
-  if (!confirm('Are you sure you want to delete this app?')) return;
+async function deleteCustomWebApp(appId) {
+  const confirmed = await confirm('Are you sure you want to delete this app?');
+  if (!confirmed) return;
 
   let apps = getCustomWebApps();
   apps = apps.filter(a => a.id !== appId);
