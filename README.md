@@ -65,6 +65,7 @@ Basically... a whole little OS in your browser :D
 
 ## 🚧 todos (devs view dev discord for more)
 
+- [x] fix bug where the downlaoad onefile button in the quick menu didnt actually fownload, it just opened the raw github link
 - [ ] automaqitcally lower the margin bottom on desktop icons when switching to small icons and large icons. for medium and extra large it just looks fine idk
 - [x] EDIT ALL THEMES TO MATCH DARK THEME. A BUCN HFO VISUAL BUGS I ONLY FIXED IN DARK (oops)
 - [x] the right lcick menu doesnt go away after u click on an option or lcick off it??? when did this happen :sob: (but only sometimes???) (what?????)
