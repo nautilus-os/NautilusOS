@@ -7153,7 +7153,111 @@ function showContextMenu(x, y, items) {
 
 function hideContextMenu() {
   const menu = document.getElementById("contextMenu");
-  menu.classList.remove("active");
+  if (menu) {
+    menu.style.display = "none";
+    menu.classList.remove("active");
+  }
+}
+
+// Global click/mousedown listener for context menu dismissal
+window.addEventListener("mousedown", (e) => {
+  const menu = document.getElementById("contextMenu");
+  if (menu && !menu.contains(e.target)) {
+    hideContextMenu();
+  }
+});
+
+// Full Name mapping for tooltips
+const APP_NAMES = {
+  files: "Files",
+  terminal: "Terminal",
+  settings: "Settings",
+  editor: "Text Editor",
+  music: "Music",
+  photos: "Photos",
+  help: "Help",
+  whatsnew: "What's New",
+  appstore: "App Store",
+  calculator: "Calculator",
+  cloaking: "Cloaking",
+  achievements: "Achievements",
+  browser: "Nautilus Browser",
+  "ai-snake": "AI Snake Learning",
+  "nautilus-ai": "Nautilus AI Assistant",
+  python: "Python Interpreter",
+  "web-app-creator": "Web App Creator",
+  about: "About NautilusOS"
+};
+
+function initTaskbarTooltips() {
+  const taskbarIcons = document.querySelectorAll(".taskbar-icon[data-app], .system-tray .taskbar-icon");
+  const tooltip = document.createElement("div");
+  tooltip.className = "taskbar-tooltip";
+  document.body.appendChild(tooltip);
+
+  taskbarIcons.forEach(icon => {
+    icon.addEventListener("mouseenter", (e) => {
+      // Clear title immediately so browser tooltip doesn't show
+      if (icon.hasAttribute("title")) {
+        icon.setAttribute("data-old-title", icon.getAttribute("title"));
+        icon.removeAttribute("title");
+      }
+
+      hoverTimeout = setTimeout(() => {
+        const appName = icon.getAttribute("data-app");
+        const title = APP_NAMES[appName] || icon.getAttribute("data-old-title");
+
+        if (!title) return;
+
+        tooltip.innerText = title;
+        tooltip.classList.add("active");
+
+        const rect = icon.getBoundingClientRect();
+        tooltip.style.left = `${rect.left + rect.width / 2}px`;
+      }, 1000);
+    });
+
+    icon.addEventListener("mouseleave", () => {
+      clearTimeout(hoverTimeout);
+      tooltip.classList.remove("active");
+      if (icon.hasAttribute("data-old-title")) {
+        icon.setAttribute("title", icon.getAttribute("data-old-title"));
+        icon.removeAttribute("data-old-title");
+      }
+    });
+
+    icon.addEventListener("click", () => {
+      clearTimeout(hoverTimeout);
+      tooltip.classList.remove("active");
+      if (icon.hasAttribute("data-old-title")) {
+        icon.setAttribute("title", icon.getAttribute("data-old-title"));
+        icon.removeAttribute("data-old-title");
+      }
+    });
+  });
+}
+
+async function downloadOneFile() {
+  try {
+    showToast("Preparing download...", "fa-download");
+    const response = await fetch('https://raw.githubusercontent.com/nautilus-os/NautilusOS/refs/heads/main/NautilusOS-OneFile/index.html');
+    if (!response.ok) throw new Error("Network response was not ok");
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'NautilusOS-OneFile.html';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    showToast("Downloading OneFile...", "fa-check-circle");
+  } catch (error) {
+    console.error("Download failed:", error);
+    showToast("Download failed! Opening link instead.", "fa-exclamation-triangle");
+    window.open('https://raw.githubusercontent.com/nautilus-os/NautilusOS/refs/heads/main/NautilusOS-OneFile/index.html', '_blank');
+  }
 }
 
 function refreshDesktop() {
@@ -17630,6 +17734,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   });
+
+  initTaskbarTooltips();
 });
 
 // Proxy Settings Helpers
