@@ -68,27 +68,27 @@ Basically... a whole little OS in your browser :D
 - [x] EDIT ALL THEMES TO MATCH DARK THEME. A BUCN HFO VISUAL BUGS I ONLY FIXED IN DARK (oops)
 - [x] the right lcick menu doesnt go away after u click on an option or lcick off it??? when did this happen :sob: (but only sometimes???) (what?????)
 - [ ] add swimmign fishes in setup screen from NautilusOS-Web insted of odd flaoting orbs (lane)
-- [ ] add empty favicon and name (i saw this somewhere it was neat)
-- [ ] change stealth master achievment to work for any cloaking function not jsut basic cloak 
+- [x] add empty favicon and name (i saw this somewhere it was neat)
+- [x] change stealth master achievment to work for any cloaking function not jsut basic cloak 
 - [ ] add pfps from github to contributers and devs in about app
 - [ ] fix light theme gosh it sucks
-- [ ] fix bug where cancel delete screenshot in photos app doesnt work and it just deletes it
-- [ ] very minor visual bugs (full width taskbar move desktop icon container down, some other junk)
+- [x] fix bug where cancel delete screenshot in photos app doesnt work and it just deletes it
+- [x] very minor visual bugs (full width taskbar move desktop icon container down, some other junk)
 - [ ] fix bug where if too many apps are open it randomly flashes black
 - [ ] if u hit login in without choosing an existing accoutnit just picks the first one, should ask u to pick an acc
 - [ ] Add an option to increase or decrease window transparency 
 - [ ] Window animation settings
-- [ ] add option to cloak on clickpoff in basic cloaking
+- [x] add option to cloak on clickpoff in basic cloaking
 - [ ] Make music player search and download via spotify (maybe use the recent annas archive spotify leak?)
 - [ ] Add a scramjet proxy (xor)
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 - [ ] add option to upload custom image to tab blackout for monitering extensions
-- [ ] add option to do a panic image instead of a panic redirect
+- [x] add option to do a panic image instead of a panic redirect
 - [ ] add default coverup option in cloaking, chrome unsafe pages, page failed to load etc
-- [ ] add achivement for opening bootloader (Power User)
+- [x] add achivement for opening bootloader (Power User)
 - [ ] add documentation in help for all apps (community as well) and update whats new carosel
-- [ ] add option to chaneg desktop icon size in settings
-- [ ] a lot of apps dont appear in the start menu (??)
+- [x] add option to chaneg desktop icon size in settings
+- [x] a lot of apps dont appear in the start menu (??)
 - [ ] add noodlelover to contributers in about app!!!
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
