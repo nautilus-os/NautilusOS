@@ -936,6 +936,31 @@ select:focus {
     animation: slideUp 0.5s ease;
 }
 
+.taskbar-tooltip {
+    position: fixed;
+    bottom: 85px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-secondary);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-family: fontb;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 2000;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.taskbar-tooltip.active {
+    opacity: 1;
+}
+
 @keyframes slideUp {
     from {
         transform: translateX(-50%) translateY(100px);
