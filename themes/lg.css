@@ -246,7 +246,7 @@ input {
     color: var(--accent);
     font-size: 0.8rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.75rem;
     text-align: center;
     margin-top: -0.3rem;
@@ -313,7 +313,7 @@ font-weight: 700;
     color: var(--accent);
     font-size: 0.8rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .illustration-taskmanager-stat {
@@ -388,7 +388,7 @@ font-weight: 700;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(40px) saturate(180%);
-    
+
     border-radius: 16px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     opacity: 0;
@@ -408,7 +408,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
@@ -420,7 +420,7 @@ font-weight: 700;
     gap: 1rem;
     padding: 0.875rem;
     background: var(--bg-secondary);
-    
+
     border-radius: 10px;
     margin-bottom: 0.5rem;
     cursor: pointer;
@@ -453,7 +453,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.15rem;
 }
 
@@ -475,7 +475,7 @@ font-weight: 700;
     margin-bottom: 0.875rem;
     font-size: 1.1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .startup-item {
@@ -515,7 +515,7 @@ font-weight: 700;
 .startup-item-name {
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.15rem;
 }
 
@@ -554,7 +554,7 @@ font-weight: 700;
     color: var(--accent);
     font-size: 1.8rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .taskmanager-section {
@@ -565,7 +565,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 1.1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -579,7 +579,7 @@ font-weight: 700;
     padding: 1rem;
     background: var(--bg-secondary);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
-    
+
     border-radius: 25px;
     margin-bottom: 0.5rem;
 }
@@ -604,7 +604,7 @@ font-weight: 700;
 .taskmanager-process-name {
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.25rem;
 }
 
@@ -631,7 +631,7 @@ font-weight: 700;
 .login-time-main {
     font-size: 5rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.5rem;
     letter-spacing: -0.02em;
     margin-left: -6px;
@@ -646,11 +646,11 @@ font-weight: 700;
 
 .login-info-card {
     background: var(--bg-secondary);
-box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
-border: 2px solid transparent;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: 2px solid transparent;
     backdrop-filter: blur(40px) saturate(180%);
-    
-    
+
+
     border-radius: 35px;
     padding: 2.3rem;
     font-family: "Inter" !important;
@@ -663,7 +663,7 @@ border: 2px solid transparent;
     color: var(--accent);
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 1rem;
 }
 
@@ -695,8 +695,9 @@ font-weight: 700;
 
 .login-container {
     background: var(--bg-secondary);
-box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);;
-border: 2px solid transparent;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    ;
+    border: 2px solid transparent;
     backdrop-filter: blur(40px) saturate(180%);
     border-radius: 35px;
     padding: 3rem 2.5rem;
@@ -729,7 +730,7 @@ border: 2px solid transparent;
     margin-bottom: 0.3rem;
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .login-subtitle {
@@ -743,9 +744,9 @@ font-weight: 700;
     width: 100%;
     padding: 0.875rem 1rem;
     background: var(--bg-secondary);
-box-shadow: var(--glass-shadow);
-border: 2px solid transparent;
-    
+    box-shadow: var(--glass-shadow);
+    border: 2px solid transparent;
+
     border-radius: 20px;
     color: var(--text-primary);
     font-size: 0.95rem;
@@ -801,7 +802,7 @@ select:focus {
     color: var(--accent);
     font-size: 0.95rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     margin-top: 0.5rem;
@@ -852,7 +853,7 @@ font-weight: 700;
 .wallpaper-text {
     font-size: 6rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     background: linear-gradient(135deg, rgba(64, 64, 64, 0.04) 0%, rgba(107, 179, 160, 0.06) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -875,7 +876,7 @@ font-weight: 700;
 .wallpaper-byline {
     font-size: 2rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     background: linear-gradient(135deg, rgba(64, 64, 64, 0.04) 0%, rgba(107, 179, 160, 0.06) 100%);
     background-clip: text;
     -webkit-background-clip: text;
@@ -956,6 +957,31 @@ font-weight: 700;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     z-index: 1000;
     animation: slideUp 0.5s ease;
+}
+
+.taskbar-tooltip {
+    position: fixed;
+    bottom: 85px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-secondary);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-family: fontb;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 2000;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.taskbar-tooltip.active {
+    opacity: 1;
 }
 
 @keyframes slideUp {
@@ -1044,10 +1070,11 @@ font-weight: 700;
     height: 520px;
     background: var(--bg-secondary);
     backdrop-filter: blur(50px) saturate(180%);
-    
+
     border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    ;
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s ease;
@@ -1114,7 +1141,7 @@ font-weight: 700;
     margin-bottom: 0.15rem;
     font-size: 1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .start-user p {
@@ -1162,7 +1189,7 @@ font-weight: 700;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
-.start-search-input:focus ~ .start-search-icon {
+.start-search-input:focus~.start-search-icon {
     transform: translateY(-12px);
 }
 
@@ -1203,7 +1230,7 @@ font-weight: 700;
 .app-item {
     background: var(--bg-secondary);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
-    
+
     border-radius: 25px;
     padding: 1.25rem 0.875rem;
     text-align: center;
@@ -1251,7 +1278,7 @@ font-weight: 700;
     position: absolute;
     background: var(--bg-secondary);
     backdrop-filter: blur(40px) saturate(180%);
-    
+
     border-radius: 12px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     overflow: hidden;
@@ -1341,7 +1368,7 @@ font-weight: 700;
 .snap-section-title h2 {
     font-size: 1.35rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.25rem;
 }
 
@@ -1381,7 +1408,7 @@ font-weight: 700;
 .snap-section-heading h3 {
     font-size: 1.05rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.3rem;
 }
 
@@ -1434,7 +1461,7 @@ font-weight: 700;
     padding: 0.5rem 0.75rem;
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 1rem;
     outline: none;
     transition: border 0.2s ease, background 0.2s ease;
@@ -1617,7 +1644,7 @@ font-weight: 700;
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -1679,7 +1706,7 @@ font-weight: 700;
     gap: 0.625rem;
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 0.9rem;
 }
 
@@ -1874,7 +1901,7 @@ font-weight: 700;
     margin-bottom: 0.875rem;
     font-size: 1.1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .settings-item {
@@ -1983,7 +2010,7 @@ font-weight: 700;
     transition: transform 0.2s ease;
 }
 
-.file-tree-item.folder.expanded > i.fa-chevron-down {
+.file-tree-item.folder.expanded>i.fa-chevron-down {
     transform: rotate(90deg);
 }
 
@@ -2047,7 +2074,7 @@ font-weight: 700;
     text-align: center;
     padding: 1rem;
     border-radius: 20px !important;
-    cursor: pointer; 
+    cursor: pointer;
     transition: all 0.2s ease;
     height: fit-content;
 }
@@ -2212,7 +2239,7 @@ font-weight: 700;
 .toast {
     background: var(--bg-secondary);
     backdrop-filter: blur(40px) saturate(180%);
-    
+
     border-radius: 22px;
     padding: 1rem 1.25rem;
     min-width: 300px;
@@ -2285,7 +2312,7 @@ font-weight: 700;
     position: fixed;
     background: var(--bg-secondary);
     backdrop-filter: blur(40px) saturate(180%);
-    
+
     border-radius: 22px;
     padding: 0.5rem;
     min-width: 200px;
@@ -2367,7 +2394,7 @@ font-weight: 700;
     color: var(--accent);
     margin-bottom: 0.5rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     line-height: 1.3;
     text-align: center;
 }
@@ -2387,7 +2414,7 @@ font-weight: 700;
     margin-bottom: 3rem;
     min-height: 340px;
     overflow: hidden;
-    
+
 }
 
 .carousel-container h2 {
@@ -3156,7 +3183,7 @@ font-weight: 700;
     color: var(--accent);
     text-decoration: none;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -3379,7 +3406,7 @@ font-weight: 700;
     font-size: 1.1rem;
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
@@ -3398,7 +3425,7 @@ font-weight: 700;
     color: var(--bg-primary);
     font-size: 0.85rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
@@ -3473,7 +3500,7 @@ font-weight: 700;
 .music-title {
     font-size: 1.3rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
@@ -3527,7 +3554,7 @@ font-weight: 700;
     border-radius: 50%;
     background: var(--bg-secondary);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
-    
+
     color: var(--text-primary);
     font-size: 1.2rem;
     cursor: pointer;
@@ -3623,7 +3650,7 @@ font-weight: 700;
     transition: all 0.2s ease;
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -4075,7 +4102,7 @@ font-weight: 700;
     border-radius: 10px;
     font-size: 0.85rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -4105,7 +4132,7 @@ font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .browser-error-message {
@@ -4169,7 +4196,7 @@ font-weight: 700;
 .achievements-stat-value {
     font-size: 2rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     color: var(--accent);
 }
 
@@ -4260,7 +4287,7 @@ font-weight: 700;
     font-size: 0.75rem;
     color: var(--bg-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
@@ -4269,7 +4296,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
@@ -4311,7 +4338,7 @@ font-weight: 700;
     font-size: 0.75rem;
     margin-top: 0.5rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .achievement-card.locked .achievement-date {
@@ -4425,7 +4452,7 @@ font-weight: 700;
 
 .calculator-display {
     background: rgba(0, 0, 0, 0.5);
-    
+
     border-radius: 12px;
     padding: 1rem 1.5rem 0.8rem 1.5rem;
     text-align: right;
@@ -4455,12 +4482,12 @@ font-weight: 700;
 
 .calculator-btn {
     background: var(--bg-secondary);
-    
+
     border-radius: 10px;
     color: var(--text-primary);
     font-size: 1.5rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -4476,7 +4503,7 @@ font-weight: 700;
     border-color: var(--accent);
     transform: scale(1.05);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
-    
+
 }
 
 .calculator-btn:active {
@@ -4628,7 +4655,7 @@ font-weight: 700;
     max-height: 500px;
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(40px) saturate(180%);
-    
+
     border-radius: 16px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     z-index: 10001;
@@ -4657,7 +4684,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 1.1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin: 0;
 }
 
@@ -4697,7 +4724,7 @@ font-weight: 700;
 
 .notification-item {
     background: var(--bg-secondary);
-    
+
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 0.5rem;
@@ -4733,7 +4760,7 @@ font-weight: 700;
 .notification-item-title {
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
 }
@@ -4775,7 +4802,7 @@ font-weight: 700;
 
 .illustration-calc-btn {
     background: rgba(30, 35, 48, 0.8);
-    
+
     border-radius: 6px;
 }
 
@@ -4818,7 +4845,7 @@ font-weight: 700;
     right: 20px;
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(40px) saturate(180%);
-    
+
     border-radius: 16px;
     padding: 1rem 1rem 0.5rem 1rem;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
@@ -4840,7 +4867,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
@@ -4852,7 +4879,7 @@ font-weight: 700;
     gap: 1rem;
     padding: 0.875rem;
     background: var(--bg-secondary);
-    
+
     border-radius: 10px;
     margin-bottom: 0.5rem;
     cursor: pointer;
@@ -4885,7 +4912,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.15rem;
 }
 
@@ -4953,7 +4980,7 @@ font-weight: 700;
     color: #ef4444;
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -5057,7 +5084,7 @@ font-weight: 700;
 .modal-content {
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(40px) saturate(180%);
-    
+
     border-radius: 16px;
     padding: 2rem;
     max-width: 500px;
@@ -5110,7 +5137,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 1.3rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .modal-body {
@@ -5124,7 +5151,7 @@ font-weight: 700;
     width: 100%;
     padding: 0.875rem 1rem;
     background: rgba(30, 35, 48, 0.8);
-    
+
     border-radius: 10px;
     color: var(--text-primary);
     font-size: 0.95rem;
@@ -5148,7 +5175,7 @@ font-weight: 700;
     border-radius: 10px;
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -5186,7 +5213,7 @@ font-weight: 700;
     position: fixed;
     background: rgba(21, 25, 35, 0.98);
     backdrop-filter: blur(40px) saturate(180%);
-    
+
     border-radius: 12px;
     padding: 1.25rem;
     min-width: 280px;
@@ -5244,7 +5271,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 1.1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.25rem;
 }
 
@@ -5283,7 +5310,7 @@ font-weight: 700;
     border-radius: 20px;
     font-size: 0.75rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .properties-badge.preinstalled {
@@ -5410,7 +5437,7 @@ font-weight: 700;
     gap: 0.75rem;
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 1rem;
 }
 
@@ -5429,7 +5456,7 @@ font-weight: 700;
 .settings-item-title {
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.25rem;
     font-size: 0.95rem;
 }
@@ -5442,7 +5469,7 @@ font-weight: 700;
 .settings-item-value {
     color: var(--accent);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 0.95rem;
 }
 
@@ -5464,7 +5491,7 @@ font-weight: 700;
     transition: all 0.2s ease;
     font-size: 0.9rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -5565,7 +5592,7 @@ font-weight: 700;
 .theme-name {
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.75rem;
     font-size: 0.9rem;
 }
@@ -5588,7 +5615,8 @@ font-weight: 700;
 .help-topic-card {
     background: var(--bg-secondary);
     border: 2px solid transparent;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    ;
     border-radius: 22px;
     padding: 2rem 1.5rem;
     text-align: center;
@@ -5628,7 +5656,7 @@ font-weight: 700;
     color: var(--text-primary);
     font-size: 1.1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
@@ -5737,7 +5765,7 @@ font-weight: 700;
 .help-expanded-content strong {
     color: var(--accent);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
 }
 
 .cloaking-container {
@@ -5822,7 +5850,7 @@ font-weight: 700;
 
 .cloaking-preview-card {
     background: var(--bg-secondary);
-    
+
     border-radius: 22px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     padding: 1.5rem;
@@ -5839,7 +5867,7 @@ font-weight: 700;
 .cloaking-preview-label {
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 0.9rem;
 }
 
@@ -6044,7 +6072,7 @@ font-weight: 700;
 .cloaking-status-title {
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 1.1rem;
     margin-bottom: 0.25rem;
 }
@@ -6096,7 +6124,7 @@ font-weight: 700;
 .cloaking-slider-value {
     color: var(--accent);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 1rem;
     min-width: 50px;
     text-align: right;
@@ -6148,7 +6176,7 @@ font-weight: 700;
     color: var(--accent);
     font-size: 1.1rem;
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -6194,7 +6222,7 @@ font-weight: 700;
 
 .cloaking-preset-card {
     background: var(--bg-secondary);
-    
+
     border-radius: 22px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     padding: 1.5rem;
@@ -6225,7 +6253,7 @@ font-weight: 700;
 .cloaking-preset-name {
     color: var(--text-primary);
     font-family: "Inter";
-font-weight: 700;
+    font-weight: 700;
     font-size: 1rem;
     margin-bottom: 0.5rem;
 }
@@ -6390,8 +6418,8 @@ select {
 
     /* removing open props normalize styles */
     background: var(--bg-secondary) !important;
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3),
-        0 16px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 16px 32px rgba(0, 0, 0, 0.12);
 
     /* enable transitions in the drop down */
     &::picker(select) {
@@ -6623,7 +6651,8 @@ select {
 
 .offline-support {
     background: rgba(106, 211, 92, 0.226);
-    box-shadow: 0 0 0 1px rgba(126, 187, 114, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);;
+    box-shadow: 0 0 0 1px rgba(126, 187, 114, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    ;
     border: 2px solid transparent;
     padding: 5px 7px;
     border-radius: 100px;
