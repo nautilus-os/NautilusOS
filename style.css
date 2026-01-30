@@ -50,6 +50,11 @@
     --transparent-white-2: rgba(255, 255, 255, 0.2);
     --transparent-white-5: rgba(255, 255, 255, 0.05);
     --transparent-white-8: rgba(255, 255, 255, 0.08);
+
+    --icon-size-multiplier: 1;
+    --desktop-icon-width: calc(90px * var(--icon-size-multiplier));
+    --desktop-icon-i-font-size: calc(2.3rem * var(--icon-size-multiplier));
+    --desktop-icon-span-font-size: calc(0.75rem * var(--icon-size-multiplier));
 }
 
 body {
@@ -1437,11 +1442,11 @@ select:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 90px;
+    width: var(--desktop-icon-width);
     cursor: move;
     padding: 0.6rem;
     border-radius: 12px;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, width 0.3s ease;
     position: relative;
 }
 
@@ -1455,14 +1460,15 @@ select:focus {
 }
 
 .desktop-icon i {
-    font-size: 2.3rem;
+    font-size: var(--desktop-icon-i-font-size);
     color: var(--accent);
     margin-bottom: 0.5rem;
     pointer-events: none;
+    transition: font-size 0.3s ease;
 }
 
 .desktop-icon span {
-    font-size: 0.75rem;
+    font-size: var(--desktop-icon-span-font-size);
     color: var(--text-primary);
     text-align: center;
     font-weight: 500;
@@ -4109,10 +4115,12 @@ select:focus {
     border-radius: 3px;
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .music-volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
+    appearance: none;
     width: 16px;
     height: 16px;
     background: var(--accent);
@@ -6519,11 +6527,13 @@ select:focus {
     border-radius: 3px;
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
     cursor: pointer;
 }
 
 .cloaking-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
+    appearance: none;
     width: 20px;
     height: 20px;
     background: var(--accent);
@@ -7393,9 +7403,11 @@ select {
     z-index: 999;
     pointer-events: none;
 }
+
 /* Start Menu Full Mode */
 .start-menu.full-mode {
-    bottom: 55px; /* Just above taskbar */
+    bottom: 58px;
+    /* Just above taskbar with 10px gap */
     left: 10px;
     transform: none !important;
     transform-origin: bottom left;
@@ -7411,6 +7423,7 @@ select {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -7419,14 +7432,20 @@ select {
 
 /* System Tray Full Mode Adjustment */
 .system-tray.full-mode {
-   /* Push to the right in flex-start container */
-   margin-left: auto; 
-   padding-right: 1rem;
+    /* Push to the right in flex-start container */
+    margin-left: auto;
+    padding-right: 1rem;
 }
 
 /* Desktop Offset for Full Taskbar */
 #desktop.full-taskbar-offset {
-    bottom: 48px; /* Height of full taskbar */
+    bottom: 48px;
+    /* Height of full taskbar */
+}
+
+/* Allow icons to extend further down in full taskbar mode */
+#desktop.full-taskbar-offset .desktop-icons {
+    bottom: 20px;
 }
 
 /* Adjust Full Taskbar Layout */
@@ -7439,19 +7458,25 @@ select {
 .about-app-container {
     -webkit-overflow-scrolling: touch;
 }
+
 .about-app-container::-webkit-scrollbar {
     width: 10px;
     height: 10px;
 }
+
 .about-app-container::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.06);
     border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.02);
+    border: 1px solid rgba(255, 255, 255, 0.02);
 }
+
 .about-app-container details summary {
     list-style: none;
 }
-.about-app-container details summary::-webkit-details-marker { display:none; }
+
+.about-app-container details summary::-webkit-details-marker {
+    display: none;
+}
 
 /* Prevent scroll chaining on the outer About container so it handles top/bottom scrolling */
 .about-app-container {
@@ -7465,10 +7490,11 @@ select {
 .dev-info {
     overflow: hidden;
 }
-.dev-info > div {
-        overflow: auto;
-        max-height: 40vh;
-        overscroll-behavior: auto;
+
+.dev-info>div {
+    overflow: auto;
+    max-height: 40vh;
+    overscroll-behavior: auto;
 }
 
 /* make footer a normal block inside the about container */
