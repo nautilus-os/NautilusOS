@@ -1286,6 +1286,10 @@ select:focus {
     animation: windowOpen 0.25s ease;
     min-width: 400px;
     min-height: 300px;
+    /* Force GPU acceleration to prevent black flashes */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
 }
 
 .snap-overlay {
