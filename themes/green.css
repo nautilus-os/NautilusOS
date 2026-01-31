@@ -4,35 +4,15 @@
     box-sizing: border-box;
 }
 
-@font-face {
-    font-family: font;
-    src: url('font/font.ttf');
-}
-
-@font-face {
-    font-family: fonti;
-    src: url('font/fonti.ttf');
-}
-
-@font-face {
-    font-family: fontb;
-    src: url('font/fontb.ttf');
-}
-
-@font-face {
-    font-family: fontbi;
-    src: url('font/fontbi.ttf');
-}
-
 :root {
-    --accent: #10b981;
-    --accent-hover: #059669;
-    --accent-dark: #047857;
-    --bg-primary: #0f2e1b;
-    --bg-secondary: #1a3d2a;
-    --text-primary: #d1fae5;
-    --text-secondary: #a7f3d0;
-    --border: #10b981;
+    --accent: #ffffff;
+    --accent-hover: #acacac;
+    --accent-dark: #9e9e9e;
+    --bg-primary: #000000;
+    --bg-secondary: #36363638;
+    --text-primary: #ffffff;
+    --text-secondary: #cacaca;
+    --border: #ffffff00;
     --error-red: #ef4444;
     --error-red-hover: #dc2626;
     --error-red-bg: rgba(239, 68, 68, 0.15);
@@ -40,16 +20,29 @@
     --success-green: #4ade80;
     --overlay-dark: rgba(0, 0, 0, 0.8);
     --overlay-darker: rgba(0, 0, 0, 0.9);
-    --glass-bg: rgba(21, 25, 35, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-bg: rgba(44, 44, 44, 0.7);
+    --glass-border: rgba(43, 43, 43, 0.08);
     --pure-black: #000;
     --pure-white: #fff;
     --gray-dark: #888;
     --gray-light: #222;
     --transparent-white-1: rgba(255, 255, 255, 0.1);
     --transparent-white-2: rgba(255, 255, 255, 0.2);
-    --transparent-white-5: rgba(255, 255, 255, 0.05);
+    --transparent-white-5: var(--bg-secondary);
     --transparent-white-8: rgba(255, 255, 255, 0.08);
+    --glass-shadow: box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+}
+
+.window-content {
+    background: var(--bg-secondary) !important;
+}
+
+button:hover {
+    background: var(--bg-secondary) !important;
+}
+
+#snakeCanvas {
+    transition: 0s !important;
 }
 
 body {
@@ -61,7 +54,7 @@ body {
 
 button,
 input {
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
 }
 
 #bootloader {
@@ -229,7 +222,7 @@ input {
 .login-time {
     text-align: left;
     color: var(--text-primary);
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
 }
 
 .illustration-startup {
@@ -242,8 +235,9 @@ input {
 .illustration-startup-window {
     width: 260px;
     height: 160px;
-    background: rgba(15, 19, 21, 0.95);
-    border: 2px solid var(--accent);
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     border-radius: 12px;
     padding: 1rem;
 }
@@ -251,7 +245,8 @@ input {
 .illustration-startup-header {
     color: var(--accent);
     font-size: 0.8rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.75rem;
     text-align: center;
     margin-top: -0.3rem;
@@ -268,7 +263,7 @@ input {
     align-items: center;
     gap: 0.5rem;
     padding: 0.4rem;
-    background: rgba(15, 19, 21, 0.6);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 6px;
 }
 
@@ -283,7 +278,7 @@ input {
 .illustration-startup-icon {
     width: 16px;
     height: 16px;
-    background: rgba(107, 179, 160, 0.3);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     flex-shrink: 0;
 }
@@ -291,15 +286,16 @@ input {
 .illustration-startup-label {
     flex: 1;
     height: 6px;
-    background: rgba(107, 179, 160, 0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 2px;
 }
 
 .illustration-taskmanager {
     width: 260px;
     height: 160px;
-    background: rgba(15, 19, 21, 0.95);
-    border: 2px solid var(--accent);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: 2px solid transparent;
     border-radius: 12px;
     padding: 1rem;
 }
@@ -316,7 +312,8 @@ input {
 .illustration-taskmanager-title {
     color: var(--accent);
     font-size: 0.8rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .illustration-taskmanager-stat {
@@ -335,7 +332,7 @@ input {
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.3rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(51, 51, 51, 0.6);
     border-radius: 4px;
     animation: fadeInStore 0s ease forwards;
     opacity: 0;
@@ -356,7 +353,7 @@ input {
 .illustration-taskmanager-process-icon {
     width: 12px;
     height: 12px;
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(209, 209, 209, 0.3);
     border-radius: 3px;
     flex-shrink: 0;
 }
@@ -364,7 +361,7 @@ input {
 .illustration-taskmanager-process-name {
     flex: 1;
     height: 6px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(219, 219, 219, 0.2);
     border-radius: 2px;
 }
 
@@ -389,11 +386,11 @@ input {
     right: 20px;
     width: 300px;
     padding: 1rem;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
+
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     opacity: 0;
     pointer-events: none;
     transform: scale(0.95);
@@ -410,7 +407,8 @@ input {
 .tools-panel-header {
     color: var(--text-primary);
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
@@ -421,8 +419,8 @@ input {
     align-items: center;
     gap: 1rem;
     padding: 0.875rem;
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+
     border-radius: 10px;
     margin-bottom: 0.5rem;
     cursor: pointer;
@@ -430,7 +428,7 @@ input {
 }
 
 .tool-item:hover {
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary);
     border-color: var(--accent);
     transform: translateX(2px);
 }
@@ -438,7 +436,7 @@ input {
 .tool-item i {
     width: 40px;
     height: 40px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -454,7 +452,8 @@ input {
 .tool-title {
     color: var(--text-primary);
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.15rem;
 }
 
@@ -475,7 +474,8 @@ input {
     color: var(--text-primary);
     margin-bottom: 0.875rem;
     font-size: 1.1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .startup-item {
@@ -483,8 +483,9 @@ input {
     align-items: center;
     gap: 1rem;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.6);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 25px;
     margin-bottom: 0.5rem;
 }
 
@@ -496,8 +497,10 @@ input {
 .startup-item-icon {
     width: 40px;
     height: 40px;
-    background: rgba(125, 211, 192, 0.2);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: 2px solid transparent;
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -511,7 +514,8 @@ input {
 
 .startup-item-name {
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.15rem;
 }
 
@@ -534,9 +538,9 @@ input {
 }
 
 .taskmanager-stat-card {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 22px;
     padding: 1.25rem;
 }
 
@@ -549,7 +553,8 @@ input {
 .taskmanager-stat-value {
     color: var(--accent);
     font-size: 1.8rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .taskmanager-section {
@@ -559,7 +564,8 @@ input {
 .taskmanager-section h3 {
     color: var(--text-primary);
     font-size: 1.1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -571,17 +577,19 @@ input {
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+
+    border-radius: 25px;
     margin-bottom: 0.5rem;
 }
 
 .taskmanager-process-icon {
     width: 40px;
     height: 40px;
-    background: rgba(125, 211, 192, 0.2);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -595,7 +603,8 @@ input {
 
 .taskmanager-process-name {
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.25rem;
 }
 
@@ -606,10 +615,10 @@ input {
 
 .taskmanager-process-action {
     padding: 0.5rem 1rem;
-    border-radius: 8px;
+    border-radius: 15px;
     background: var(--error-red-bg);
-    border: 1px solid var(--error-red-border);
     color: var(--error-red);
+    box-shadow: none;
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.85rem;
@@ -617,12 +626,12 @@ input {
 
 .taskmanager-process-action:hover {
     background: rgba(239, 68, 68, 0.25);
-    border-color: rgba(239, 68, 68, 0.5);
 }
 
 .login-time-main {
     font-size: 5rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.5rem;
     letter-spacing: -0.02em;
     margin-left: -6px;
@@ -637,12 +646,14 @@ input {
 
 .login-info-card {
     background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: 2px solid transparent;
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
-    box-shadow: 0 8px 32px var(--overlay-dark);
-    border-radius: 20px;
+
+
+    border-radius: 35px;
     padding: 2.3rem;
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
 }
 
 .info-card-title {
@@ -651,7 +662,8 @@ input {
     gap: 0.5rem;
     color: var(--accent);
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 1rem;
 }
 
@@ -665,7 +677,7 @@ input {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--bg-secondary);
 }
 
 .info-stat:last-child {
@@ -683,13 +695,14 @@ input {
 
 .login-container {
     background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    box-shadow: 0 8px 32px var(--overlay-dark);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    ;
+    border: 2px solid transparent;
     backdrop-filter: blur(40px) saturate(180%);
-    border-radius: 20px;
+    border-radius: 35px;
     padding: 3rem 2.5rem;
     width: 380px;
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
     z-index: 2;
 }
 
@@ -708,6 +721,7 @@ input {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .login-title {
@@ -715,7 +729,8 @@ input {
     font-size: 1.5rem;
     margin-bottom: 0.3rem;
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .login-subtitle {
@@ -728,20 +743,24 @@ input {
 .login-input {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: var(--glass-shadow);
+    border: 2px solid transparent;
+
+    border-radius: 20px;
     color: var(--text-primary);
     font-size: 0.95rem;
     margin-bottom: 0.875rem;
     transition: all 0.2s ease;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .login-input:focus {
     outline: none !important;
     border-color: var(--accent);
-    background: rgba(30, 35, 48, 0.95);
-    box-shadow: none !important;
+    border: 2px solid transparent;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 input:focus,
@@ -776,30 +795,32 @@ select:focus {
 .login-btn {
     width: 100%;
     padding: 0.875rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     border: none;
-    border-radius: 10px;
-    color: var(--bg-primary);
+    border-radius: 20px;
+    color: var(--accent);
     font-size: 0.95rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     margin-top: 0.5rem;
 }
 
 .login-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(107, 179, 160, 0.3);
+    filter: brightness(0.8);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 #desktop {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(107, 179, 160, 0.1) 50%, var(--bg-primary) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(182, 182, 182, 0.1) 50%, var(--bg-primary) 100%);
     display: none;
     opacity: 0;
     transition: opacity 0.5s ease;
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
 }
 
 #desktop.active {
@@ -810,7 +831,7 @@ select:focus {
 .wallpaper {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(107, 179, 160, 0.1) 50%, var(--bg-primary) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(173, 173, 173, 0.1) 50%, var(--bg-primary) 100%);
     z-index: 0;
     display: flex;
     flex-direction: column;
@@ -831,7 +852,8 @@ select:focus {
 
 .wallpaper-text {
     font-size: 6rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     background: linear-gradient(135deg, rgba(64, 64, 64, 0.04) 0%, rgba(107, 179, 160, 0.06) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -853,7 +875,8 @@ select:focus {
 
 .wallpaper-byline {
     font-size: 2rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     background: linear-gradient(135deg, rgba(64, 64, 64, 0.04) 0%, rgba(107, 179, 160, 0.06) 100%);
     background-clip: text;
     -webkit-background-clip: text;
@@ -865,10 +888,10 @@ select:focus {
 
 .desktop-icons {
     position: absolute;
-    top: 20px;
+    top: 30px;
     left: 20px;
     right: 20px;
-    bottom: 10px;
+    bottom: 80px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -889,13 +912,14 @@ select:focus {
     width: 90px;
     cursor: move;
     padding: 0.6rem;
-    border-radius: 12px;
-    transition: background 0.2s ease;
+    border-radius: 20px;
+    transition: 0.2s ease;
     position: relative;
 }
 
 .desktop-icon:hover {
-    background: rgba(107, 179, 160, 0.1);
+    background: rgba(180, 180, 180, 0.1);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .desktop-icon.dragging {
@@ -923,15 +947,14 @@ select:focus {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(21, 25, 35, 0.7);
+    background: var(--bg-secondary);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 0.4rem 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     z-index: 1000;
     animation: slideUp 0.5s ease;
 }
@@ -954,7 +977,7 @@ select:focus {
     transition: opacity 0.2s ease;
     z-index: 2000;
     white-space: nowrap;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .taskbar-tooltip.active {
@@ -988,7 +1011,8 @@ select:focus {
 }
 
 .taskbar-icon:hover {
-    background: rgba(107, 179, 160, 0.15);
+    background: rgba(153, 153, 153, 0.15);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .taskbar-icon::after {
@@ -1020,9 +1044,10 @@ select:focus {
 }
 
 .taskbar-divider {
-    width: 1px;
+    width: 4px;
+    border-radius: 1000px;
     height: 28px;
-    background: var(--border);
+    background: rgba(255, 255, 255, 0.274);
     margin: 0 0.5rem;
 }
 
@@ -1043,12 +1068,13 @@ select:focus {
     transform: translateX(-50%) scale(0.95);
     width: 650px;
     height: 520px;
-    background: rgba(21, 25, 35, 0.9);
+    background: var(--bg-secondary);
     backdrop-filter: blur(50px) saturate(180%);
-    border: 1px solid var(--border);
+
     border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    ;
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s ease;
@@ -1114,7 +1140,8 @@ select:focus {
     color: var(--text-primary);
     margin-bottom: 0.15rem;
     font-size: 1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .start-user p {
@@ -1143,23 +1170,27 @@ select:focus {
 .start-search-input {
     width: 100%;
     padding: 1rem 3.5rem 1rem 1.25rem;
-    background: linear-gradient(135deg, rgba(30, 35, 48, 0.9), rgba(21, 25, 35, 0.8));
+    background: var(--bg-secondary);
     border: 2px solid var(--border);
-    border-radius: 16px;
+    border-radius: 26px;
     color: var(--text-primary);
     font-size: 1rem;
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     backdrop-filter: blur(10px);
 }
 
 .start-search-input:focus {
     outline: none;
-    border-color: var(--accent);
-    background: linear-gradient(135deg, rgba(30, 35, 48, 0.95), rgba(21, 25, 35, 0.9));
-    box-shadow: 0 0 0 4px rgba(125, 211, 192, 0.2), 0 8px 24px rgba(0, 0, 0, 0.3);
     transform: translateY(-2px);
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
+}
+
+.start-search-input:focus~.start-search-icon {
+    transform: translateY(-12px);
 }
 
 .start-search-input::placeholder {
@@ -1169,7 +1200,7 @@ select:focus {
 
 .start-search-icon {
     position: absolute;
-    right: 1.75rem;
+    right: 2.75rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--accent);
@@ -1197,9 +1228,10 @@ select:focus {
 }
 
 .app-item {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+
+    border-radius: 25px;
     padding: 1.25rem 0.875rem;
     text-align: center;
     cursor: pointer;
@@ -1213,9 +1245,9 @@ select:focus {
 }
 
 .app-item:hover {
-    background: rgba(107, 179, 160, 0.1);
-    border-color: rgba(107, 179, 160, 0.3);
     transform: translateY(-2px);
+    background: var(--bg-secondary) !important;
+    border: 2px solid transparent !important;
 }
 
 .app-item i {
@@ -1244,11 +1276,11 @@ select:focus {
 
 .window {
     position: absolute;
-    background: rgba(21, 25, 35, var(--window-opacity, 0.85));
+    background: var(--bg-secondary);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
+
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     overflow: hidden;
     z-index: 100;
     animation: windowOpen 0.25s ease;
@@ -1263,14 +1295,14 @@ select:focus {
 .snap-overlay {
     position: absolute;
     pointer-events: none;
-    border: 2px solid rgba(59, 130, 246, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.6);
     border-radius: 14px;
-    background: rgba(59, 130, 246, 0.35);
+    background: rgba(255, 255, 255, 0.35);
     opacity: 0;
     transform: scale(0.96);
     transition: opacity 0.15s ease, transform 0.15s ease;
     z-index: 5000;
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25);
 }
 
 .snap-overlay.visible {
@@ -1284,11 +1316,11 @@ select:focus {
 
 @keyframes snapPulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25);
     }
 
     100% {
-        box-shadow: 0 0 24px 0 rgba(59, 130, 246, 0.45);
+        box-shadow: 0 0 24px 0 rgba(255, 255, 255, 0.45);
     }
 }
 
@@ -1301,9 +1333,9 @@ select:focus {
 }
 
 .snap-section {
-    background: rgba(16, 20, 32, 0.8);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 26px;
     padding: 1.25rem 1.5rem;
     display: flex;
     flex-direction: column;
@@ -1327,8 +1359,9 @@ select:focus {
 .snap-section-title i {
     width: 44px;
     height: 44px;
-    border-radius: 12px;
-    background: rgba(125, 211, 192, 0.18);
+    border-radius: 15px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1338,7 +1371,8 @@ select:focus {
 
 .snap-section-title h2 {
     font-size: 1.35rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.25rem;
 }
 
@@ -1377,7 +1411,8 @@ select:focus {
 
 .snap-section-heading h3 {
     font-size: 1.05rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.3rem;
 }
 
@@ -1400,9 +1435,9 @@ select:focus {
 }
 
 .snap-layout-card {
-    background: rgba(10, 14, 26, 0.75);
-    border: 1px solid var(--glass-border);
-    border-radius: 14px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 24px;
     padding: 1.1rem 1.25rem;
     display: flex;
     flex-direction: column;
@@ -1423,20 +1458,24 @@ select:focus {
 }
 
 .snap-layout-title input {
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--bg-secondary);
     border: 1px solid transparent;
-    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 15px;
     padding: 0.5rem 0.75rem;
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 1rem;
     outline: none;
     transition: border 0.2s ease, background 0.2s ease;
 }
 
 .snap-layout-title input:focus {
-    border-color: var(--accent);
-    background: rgba(125, 211, 192, 0.12);
+    border-color: none !important;
+    border: none !important;
+    background: var(--bg-secondary) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .snap-layout-title span {
@@ -1447,7 +1486,7 @@ select:focus {
 .snap-remove-btn {
     width: 38px;
     height: 38px;
-    border-radius: 10px;
+    border-radius: 15px;
     border: 1px solid rgba(239, 68, 68, 0.4);
     background: rgba(239, 68, 68, 0.08);
     color: var(--text-primary);
@@ -1487,9 +1526,9 @@ select:focus {
 }
 
 .snap-field input {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-secondary);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    border-radius: 15px;
     padding: 0.5rem 0.6rem;
     color: var(--text-primary);
     font-size: 0.9rem;
@@ -1499,7 +1538,9 @@ select:focus {
 
 .snap-field input:focus {
     border-color: var(--accent);
-    background: rgba(125, 211, 192, 0.12);
+    border: none !important;
+    background: var(--bg-secondary) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .snap-layout-actions {
@@ -1510,9 +1551,9 @@ select:focus {
 }
 
 .snap-layout-actions select {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-secondary);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    border-radius: 15px;
     padding: 0.55rem 0.75rem;
     color: var(--text-primary);
     font-size: 0.9rem;
@@ -1532,9 +1573,9 @@ select:focus {
 }
 
 .snap-hotkey-input {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-secondary);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    border-radius: 15px;
     padding: 0.5rem 0.75rem;
     color: var(--text-primary);
     font-size: 0.9rem;
@@ -1546,14 +1587,17 @@ select:focus {
 
 .snap-hotkey-input.capturing {
     border-color: var(--accent);
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
+    border: none !important;
 }
 
 .snap-clear-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     padding: 0.45rem 0.75rem;
+    border: none;
     color: var(--text-secondary);
     font-size: 0.85rem;
     cursor: pointer;
@@ -1567,8 +1611,7 @@ select:focus {
 
 .snap-clear-btn:not(:disabled):hover {
     color: var(--text-primary);
-    background: rgba(125, 211, 192, 0.18);
-    border-color: rgba(125, 211, 192, 0.35);
+    background: var(--bg-secondary) !important;
 }
 
 .snap-add-grid {
@@ -1580,9 +1623,8 @@ select:focus {
 
 .snap-add-grid input,
 .snap-add-grid select {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    border-radius: 15px;
     padding: 0.5rem 0.75rem;
     color: var(--text-primary);
     font-size: 0.9rem;
@@ -1592,18 +1634,21 @@ select:focus {
 
 .snap-add-grid input:focus,
 .snap-add-grid select:focus {
-    border-color: var(--accent);
-    background: rgba(125, 211, 192, 0.12);
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
+    background: var(--bg-secondary) !important;
 }
 
 .snap-add-btn {
-    background: var(--accent);
-    color: var(--bg-primary);
+    background: var(--bg-secondary);
+    color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -1614,7 +1659,7 @@ select:focus {
 
 .snap-add-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(125, 211, 192, 0.25);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .snap-empty {
@@ -1643,20 +1688,20 @@ select:focus {
 
 @keyframes windowMinimize {
     to {
-        transform: scale(0.1);
+        transform: scale(0.2);
         opacity: 0;
     }
 }
 
 .window-header {
-    background: rgba(30, 35, 48, var(--window-opacity, 0.6));
+    background: var(--bg-secondary);
     padding: 0.625rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: move;
     user-select: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.226);
 }
 
 .window-title {
@@ -1664,7 +1709,8 @@ select:focus {
     align-items: center;
     gap: 0.625rem;
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 0.9rem;
 }
 
@@ -1706,7 +1752,7 @@ select:focus {
     height: calc(100% - 48px);
     overflow: auto;
     color: var(--text-primary);
-    background: rgba(10, 14, 26, 0.6);
+    background: var(--bg-secondary);
 }
 
 .window-content.has-padding {
@@ -1825,7 +1871,7 @@ select:focus {
 
 .cli-terminal {
     height: 100%;
-    background: var(--pure-black);
+    background: var(--bg-secondary);
     color: var(--accent);
     font-family: 'SUSE Mono', monospace !important;
     padding: 2rem;
@@ -1858,7 +1904,8 @@ select:focus {
     color: var(--text-primary);
     margin-bottom: 0.875rem;
     font-size: 1.1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .settings-item {
@@ -1866,15 +1913,15 @@ select:focus {
     align-items: center;
     justify-content: space-between;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.6);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    border-radius: 20px;
     margin-bottom: 0.5rem;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .settings-btn {
     padding: 0.875rem 1rem;
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid rgba(125, 211, 192, 0.3);
+    background: var(--bg-secondary);
     border-radius: 10px;
     color: var(--text-primary);
     cursor: pointer;
@@ -1885,7 +1932,7 @@ select:focus {
 }
 
 .settings-btn:hover {
-    background: rgba(125, 211, 192, 0.25);
+    background: var(--_bg) !important;
     border-color: rgba(125, 211, 192, 0.5);
 }
 
@@ -1913,7 +1960,6 @@ select:focus {
     top: 3px;
     left: 3px;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .toggle-switch.active::after {
@@ -1923,12 +1969,12 @@ select:focus {
 .file-explorer {
     display: flex;
     height: 100%;
-    background: rgba(10, 14, 26, 0.6);
+    background: var(--bg-secondary);
 }
 
 .file-sidebar {
     width: 250px;
-    background: rgba(21, 25, 35, 0.8);
+    background: var(--bg-secondary);
     border-right: 1px solid var(--border);
     overflow-y: auto;
     padding: 1rem;
@@ -1940,19 +1986,21 @@ select:focus {
     gap: 0.5rem;
     padding: 0.5rem;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 16px;
     transition: all 0.2s ease;
     color: var(--text-primary);
     font-size: 0.85rem;
     user-select: none;
+    margin-top: 5px;
 }
 
 .file-tree-item:hover {
-    background: rgba(125, 211, 192, 0.1);
+    background: rgba(197, 197, 197, 0.1);
 }
 
 .file-tree-item.active {
-    background: rgba(125, 211, 192, 0.2);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     color: var(--accent);
 }
 
@@ -1966,7 +2014,7 @@ select:focus {
     transition: transform 0.2s ease;
 }
 
-.file-tree-item.folder.expanded>i {
+.file-tree-item.folder.expanded>i.fa-chevron-down {
     transform: rotate(90deg);
 }
 
@@ -1990,7 +2038,7 @@ select:focus {
     align-items: center;
     gap: 0.5rem;
     padding: 0.875rem 1rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
 }
 
@@ -2023,23 +2071,24 @@ select:focus {
     padding: 1.5rem;
     overflow-y: auto;
     flex: 1;
+    border-radius: 15px !important;
 }
 
 .file-item {
     text-align: center;
     padding: 1rem;
-    border-radius: 10px;
+    border-radius: 20px !important;
     cursor: pointer;
     transition: all 0.2s ease;
     height: fit-content;
 }
 
 .file-item:hover {
-    background: rgba(125, 211, 192, 0.1);
+    background: rgba(216, 216, 216, 0.1);
 }
 
 .file-item i {
-    font-size: 3rem;
+    font-size: 2.8rem;
     color: var(--accent);
     margin-bottom: 0.5rem;
 }
@@ -2056,15 +2105,16 @@ select:focus {
     gap: 0.5rem;
     padding: 0.875rem 1rem;
     border-bottom: 1px solid var(--border);
-    background: rgba(30, 35, 48, 0.6);
+    background: var(--bg-secondary);
     align-items: center;
 }
 
 .editor-btn {
     padding: 0.5rem 1rem;
-    background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: none !important;
+    border-radius: 15px;
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--text-primary);
@@ -2073,29 +2123,32 @@ select:focus {
 }
 
 .editor-btn:hover {
-    background: rgba(125, 211, 192, 0.15);
-    border-color: rgba(125, 211, 192, 0.3);
+    background: var(--bg-secondary);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .editor-filename {
     flex: 1;
     padding: 0.5rem 0.875rem;
-    background: rgba(10, 14, 26, 0.8);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 15px;
     color: var(--text-primary);
     font-size: 0.85rem;
+    border: none !important;
 }
 
 .editor-filename:focus {
     outline: none;
     border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .editor-textarea {
     width: 100%;
     height: calc(100% - 54px);
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
     border: none;
     padding: 1.5rem;
     color: var(--text-primary);
@@ -2116,7 +2169,7 @@ select:focus {
 .browser-placeholder {
     width: 100%;
     height: 100%;
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
 }
 
 .browser-frame {
@@ -2188,20 +2241,20 @@ select:focus {
 }
 
 .toast {
-    background: rgba(21, 25, 35, 0.95);
+    background: var(--bg-secondary);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+
+    border-radius: 22px;
     padding: 1rem 1.25rem;
     min-width: 300px;
     max-width: 400px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
     gap: 0.75rem;
     animation: toastSlideIn 0.3s ease;
     pointer-events: all;
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
 }
 
 .toast.hiding {
@@ -2241,13 +2294,14 @@ select:focus {
 }
 
 .toast-close {
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
+    width: 29px;
+    height: 29px;
+    border-radius: 126px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    padding: 5px;
     transition: all 0.2s ease;
     color: var(--text-secondary);
     flex-shrink: 0;
@@ -2260,16 +2314,16 @@ select:focus {
 
 .context-menu {
     position: fixed;
-    background: rgba(21, 25, 35, 0.95);
+    background: var(--bg-secondary);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+
+    border-radius: 22px;
     padding: 0.5rem;
     min-width: 200px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     z-index: 10002;
     display: none;
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
 }
 
 .context-menu.active {
@@ -2296,13 +2350,13 @@ select:focus {
     padding: 0.625rem 1rem;
     color: var(--text-primary);
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 18px;
     transition: all 0.15s ease;
     font-size: 0.9rem;
 }
 
 .context-menu-item:hover {
-    background: rgba(125, 211, 192, 0.15);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--accent);
 }
 
@@ -2343,7 +2397,8 @@ select:focus {
     font-size: 2.2rem;
     color: var(--accent);
     margin-bottom: 0.5rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     line-height: 1.3;
     text-align: center;
 }
@@ -2356,13 +2411,14 @@ select:focus {
 
 .carousel-container {
     position: relative;
-    background: rgba(30, 35, 48, 0.6);
-    border-radius: 16px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 26px;
     padding: 2.5rem 2rem;
     margin-bottom: 3rem;
     min-height: 340px;
     overflow: hidden;
-    border: 1px solid var(--border);
+
 }
 
 .carousel-container h2 {
@@ -2431,7 +2487,7 @@ select:focus {
 .illustration-tree-item {
     width: 80px;
     height: 80px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border: 2px solid var(--accent);
     border-radius: 8px;
     position: relative;
@@ -2457,7 +2513,7 @@ select:focus {
 .illustration-context-box {
     width: 100%;
     height: 100%;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(255, 255, 255, 0.3);
     border: 2px solid var(--accent);
     border-radius: 12px;
     padding: 1rem;
@@ -2466,7 +2522,7 @@ select:focus {
 
 .illustration-context-item {
     height: 20px;
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     margin-bottom: 0.5rem;
 }
@@ -2491,7 +2547,7 @@ select:focus {
 .illustration-taskbar {
     width: 280px;
     height: 56px;
-    background: rgba(21, 25, 35, 0.9);
+    background: var(--bg-secondary);
     border: 2px solid var(--accent);
     border-radius: 16px;
     display: flex;
@@ -2513,7 +2569,7 @@ select:focus {
 .illustration-taskbar-divider {
     width: 2px;
     height: 28px;
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .illustration-taskbar-circles {
@@ -2524,7 +2580,7 @@ select:focus {
 .illustration-taskbar-circle {
     width: 28px;
     height: 28px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     position: relative;
     animation: taskbarPulse 2s ease-in-out infinite;
@@ -2569,11 +2625,11 @@ select:focus {
 
     0%,
     100% {
-        background: rgba(125, 211, 192, 0.2);
+        background: rgba(255, 255, 255, 0.3);
     }
 
     50% {
-        background: rgba(125, 211, 192, 0.4);
+        background: rgba(255, 255, 255, 0.7);
     }
 }
 
@@ -2586,7 +2642,7 @@ select:focus {
 .illustration-boot-icon {
     width: 80px;
     height: 80px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border: 2px solid var(--accent);
     border-radius: 12px;
     display: flex;
@@ -2612,7 +2668,7 @@ select:focus {
 .illustration-store {
     width: 230px;
     height: 150px;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(255, 255, 255, 0.3);
     border: 2px solid var(--accent);
     border-radius: 16px;
     padding: 1rem;
@@ -2627,13 +2683,13 @@ select:focus {
     align-items: center;
     gap: 0.75rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(125, 211, 192, 0.3);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .illustration-store-title-bar {
     flex: 1;
     height: 10px;
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
 }
 
@@ -2660,7 +2716,7 @@ select:focus {
     align-items: center;
     gap: 0.75rem;
     padding: 0.5rem;
-    background: rgba(30, 35, 48, 0.6);
+    background: var(--bg-secondary);
     border-radius: 8px;
     animation: fadeInStore 0.5s ease forwards;
     opacity: 0;
@@ -2679,7 +2735,7 @@ select:focus {
 .illustration-store-item-icon {
     width: 32px;
     height: 32px;
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(255, 255, 255, 0.3);
     border: 1px solid var(--accent);
     border-radius: 8px;
     flex-shrink: 0;
@@ -2694,14 +2750,14 @@ select:focus {
 
 .illustration-store-item-name {
     height: 8px;
-    background: rgba(125, 211, 192, 0.4);
+    background: rgba(255, 255, 255, 0.4);
     border-radius: 2px;
     width: 80%;
 }
 
 .illustration-store-item-desc {
     height: 6px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 2px;
     width: 60%;
 }
@@ -2766,7 +2822,7 @@ select:focus {
 .illustration-input {
     width: 180px;
     height: 40px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(255, 255, 255, 0.8);
     border: 2px solid var(--accent);
     border-radius: 10px;
     animation: float 3s ease-in-out infinite;
@@ -2775,7 +2831,7 @@ select:focus {
 
 .illustration-window-header {
     height: 30px;
-    background: rgba(30, 35, 48, 0.8);
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 10px 10px 0 0;
     border-bottom: 2px solid var(--accent);
 }
@@ -2783,7 +2839,7 @@ select:focus {
 .illustration-tree-item {
     width: 80px;
     height: 80px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.2);
     border: 2px solid var(--accent);
     border-radius: 8px;
     position: relative;
@@ -2821,7 +2877,7 @@ select:focus {
 .scroll-indicator-circle {
     width: 50px;
     height: 50px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.2);
     border: 2px solid var(--accent);
     border-radius: 50%;
     display: flex;
@@ -3050,7 +3106,7 @@ select:focus {
 .carousel-btn {
     width: 40px;
     height: 40px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border: 1px solid var(--accent);
     border-radius: 50%;
     display: flex;
@@ -3077,7 +3133,7 @@ select:focus {
 .carousel-dot {
     width: 10px;
     height: 10px;
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -3097,16 +3153,17 @@ select:focus {
 }
 
 .footer-card {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 22px;
     padding: 1.5rem;
     transition: all 0.3s ease;
+    border: none !important;
 }
 
 .footer-card:hover {
-    background: rgba(125, 211, 192, 0.1);
-    border-color: rgba(125, 211, 192, 0.3);
+    background: var(--bg-secondary);
+    border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
 }
 
@@ -3129,7 +3186,8 @@ select:focus {
 .footer-card a {
     color: var(--accent);
     text-decoration: none;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -3150,7 +3208,7 @@ select:focus {
 .illustration-apps-icon {
     width: 56px;
     height: 56px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border: 2px solid var(--accent);
     border-radius: 12px;
     display: flex;
@@ -3200,9 +3258,9 @@ select:focus {
     transform: translateX(-50%) translateY(-10px);
     display: none;
     gap: 0.5rem;
-    background: rgba(21, 25, 35, 0.95);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     backdrop-filter: blur(20px);
-    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.5rem;
     z-index: 10;
@@ -3210,8 +3268,9 @@ select:focus {
 }
 
 .file-item.selected {
-    background: rgba(125, 211, 192, 0.2);
-    border: 2px solid var(--accent);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: none !important;
     padding: calc(1rem - 2px);
 }
 
@@ -3221,8 +3280,8 @@ select:focus {
 
 .file-action-btn {
     padding: 0.4rem 0.8rem;
-    background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     border-radius: 6px;
     color: var(--text-primary);
     font-size: 0.75rem;
@@ -3234,7 +3293,7 @@ select:focus {
 }
 
 .file-action-btn:hover {
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary);
     border-color: var(--accent);
 }
 
@@ -3245,20 +3304,21 @@ select:focus {
 }
 
 .file-item.drag-over {
-    background: rgba(125, 211, 192, 0.3);
-    border: 2px dashed var(--accent);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: none !important;
     padding: calc(1rem - 2px);
 }
 
 .appstore-content {
     display: flex;
     height: 100%;
-    background: rgba(10, 14, 26, 0.6);
+    background: var(--bg-secondary);
 }
 
 .appstore-sidebar {
     width: 200px;
-    background: rgba(21, 25, 35, 0.8);
+    background: var(--bg-secondary);
     border-right: 1px solid var(--border);
     padding: 1rem;
 }
@@ -3266,7 +3326,7 @@ select:focus {
 .appstore-section {
     padding: 0.75rem 1rem;
     margin-bottom: 0.5rem;
-    border-radius: 8px;
+    border-radius: 18px;
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--text-primary);
@@ -3277,11 +3337,12 @@ select:focus {
 }
 
 .appstore-section:hover {
-    background: rgba(125, 211, 192, 0.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .appstore-section.active {
-    background: rgba(125, 211, 192, 0.2);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     color: var(--accent);
 }
 
@@ -3318,25 +3379,25 @@ select:focus {
 }
 
 .appstore-item {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: none !important;
+    border-radius: 22px;
     padding: 1.5rem;
     transition: all 0.2s ease;
     cursor: pointer;
 }
 
 .appstore-item:hover {
-    background: rgba(125, 211, 192, 0.1);
-    border-color: rgba(125, 211, 192, 0.3);
+    background: var(--bg-secondary) !important;
     transform: translateY(-2px);
 }
 
 .appstore-item-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-    border-radius: 12px;
+    background: white !important;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3348,7 +3409,8 @@ select:focus {
 .appstore-item-name {
     font-size: 1.1rem;
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
@@ -3363,10 +3425,11 @@ select:focus {
     padding: 0.6rem 1.2rem;
     background: var(--accent);
     border: none;
-    border-radius: 8px;
+    border-radius: 15px;
     color: var(--bg-primary);
     font-size: 0.85rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
@@ -3378,9 +3441,10 @@ select:focus {
 }
 
 .appstore-item-btn.installed {
-    background: rgba(125, 211, 192, 0.2);
+    background: var(--bg-secondary);
     color: var(--accent);
-    border: 1px solid var(--accent);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: none !important;
 }
 
 .appstore-empty {
@@ -3390,7 +3454,7 @@ select:focus {
 
 .appstore-empty i {
     font-size: 4rem;
-    color: rgba(125, 211, 192, 0.3);
+    color: rgba(255, 255, 255, 0.3);
     margin-bottom: 1.5rem;
 }
 
@@ -3406,7 +3470,7 @@ select:focus {
 }
 
 .music-player {
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -3423,8 +3487,8 @@ select:focus {
 .music-artwork {
     width: 120px;
     height: 120px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-    border-radius: 12px;
+    background: white;
+    border-radius: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3439,7 +3503,8 @@ select:focus {
 
 .music-title {
     font-size: 1.3rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
@@ -3491,19 +3556,22 @@ select:focus {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+
     color: var(--text-primary);
     font-size: 1.2rem;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
+    border: none;
     justify-content: center;
 }
 
 .music-control-btn:hover {
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
     border-color: var(--accent);
     transform: scale(1.05);
 }
@@ -3511,14 +3579,16 @@ select:focus {
 .music-control-btn.play-btn {
     width: 65px;
     height: 65px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-    border: none;
+    background: white;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: none !important;
     color: var(--bg-primary);
     font-size: 1.5rem;
 }
 
 .music-control-btn.play-btn:hover {
     transform: scale(1.1);
+    background: white !important;
 }
 
 .music-volume-section {
@@ -3575,14 +3645,16 @@ select:focus {
 
 .music-load-btn {
     padding: 0.75rem 1.25rem;
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid rgba(125, 211, 192, 0.3);
+    background: var(--bg-secondary);
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     border-radius: 10px;
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -3590,13 +3662,12 @@ select:focus {
 }
 
 .music-load-btn:hover {
-    background: rgba(125, 211, 192, 0.25);
-    border-color: rgba(125, 211, 192, 0.5);
+    background: var(--bg-secondary);
     transform: translateY(-2px);
 }
 
 .music-control-btn.active {
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(255, 255, 255, 0.3);
     border-color: var(--accent);
     color: var(--accent);
 }
@@ -3605,15 +3676,18 @@ select:focus {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
 }
 
 .browser-header {
-    background: rgba(21, 25, 35, 0.9);
+    background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
     padding: 0.5rem;
 }
 
+.browser-tabs {
+    padding: 2px;
+}
 
 .browser-tabs::-webkit-scrollbar {
     height: 4px;
@@ -3628,10 +3702,11 @@ select:focus {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    border: none !important;
     padding: 0.5rem 0.75rem;
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 18px;
     min-width: 150px;
     max-width: 200px;
     cursor: pointer;
@@ -3644,7 +3719,7 @@ select:focus {
 }
 
 .browser-tab.active {
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary);
     border-color: var(--accent);
 }
 
@@ -3687,9 +3762,10 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
+    border: none !important;
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--accent);
@@ -3699,7 +3775,7 @@ select:focus {
 }
 
 .browser-new-tab:hover {
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary);
     border-color: var(--accent);
 }
 
@@ -3715,10 +3791,11 @@ select:focus {
     height: 32px;
     display: flex;
     align-items: center;
+    border: none !important;
     justify-content: center;
-    background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--text-primary);
@@ -3726,7 +3803,7 @@ select:focus {
 }
 
 .browser-nav-btn:hover:not(:disabled) {
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary);
     border-color: var(--accent);
 }
 
@@ -3740,11 +3817,12 @@ select:focus {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(10, 14, 26, 0.8);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 18px;
     padding: 0 0.75rem;
     height: 36px;
+    border: none !important;
 }
 
 .browser-url-bar:focus-within {
@@ -3787,7 +3865,7 @@ select:focus {
     justify-content: center;
     height: 100%;
     padding: 2rem;
-    background: linear-gradient(135deg, #404040 0%, rgba(107, 179, 160, 0.1) 50%, #404040 100%);
+    background: black;
 }
 
 .browser-landing-logo {
@@ -3802,17 +3880,18 @@ select:focus {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    background: rgba(21, 25, 35, 0.8);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     border-radius: 50px;
     padding: 0 1.5rem;
     height: 56px;
     transition: all 0.2s ease;
+    border: none !important;
 }
 
 .browser-landing-search:focus-within {
     border-color: var(--accent);
-    box-shadow: 0 4px 20px rgba(125, 211, 192, 0.2);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .browser-landing-search i {
@@ -3839,7 +3918,7 @@ select:focus {
     left: 0;
     right: 0;
     height: 3px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
@@ -3852,7 +3931,7 @@ select:focus {
 }
 
 .browser-header {
-    background: rgba(21, 25, 35, 0.9);
+    background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
     padding: 0.5rem;
     position: relative;
@@ -3861,7 +3940,7 @@ select:focus {
 .browser-tabs {
     display: flex;
     gap: 0.25rem;
-    padding: 0 0.5rem 0.5rem;
+    padding: 01px 0.5rem 0.5rem;
     overflow-x: auto;
     scrollbar-width: thin;
     position: relative;
@@ -4015,7 +4094,7 @@ select:focus {
     height: 100%;
     padding: 2rem;
     text-align: center;
-    background: rgba(10, 14, 26, 0.8);
+    background: black;
 }
 
 .start-signout-btn {
@@ -4026,7 +4105,8 @@ select:focus {
     color: var(--error-red);
     border-radius: 10px;
     font-size: 0.85rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -4055,7 +4135,8 @@ select:focus {
     font-size: 1.5rem;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .browser-error-message {
@@ -4066,18 +4147,20 @@ select:focus {
 
 .browser-error-btn {
     padding: 0.75rem 1.5rem;
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid var(--accent);
+    background: var(--bg-secondary);
+    border: none !important;
     border-radius: 8px;
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.95rem;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .browser-error-btn:hover {
     background: rgba(125, 211, 192, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .achievements-content {
@@ -4116,7 +4199,8 @@ select:focus {
 
 .achievements-stat-value {
     font-size: 2rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     color: var(--accent);
 }
 
@@ -4146,9 +4230,9 @@ select:focus {
 }
 
 .achievement-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: var(--bg-secondary);
     border: 2px solid var(--border);
-    border-radius: 12px;
+    border-radius: 22px;
     padding: 1.25rem;
     transition: all 0.3s ease;
     position: relative;
@@ -4157,16 +4241,17 @@ select:focus {
 
 .achievement-card.unlocked {
     border-color: var(--accent);
-    background: rgba(125, 211, 192, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .achievement-card.locked {
     opacity: 0.6;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .achievement-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(125, 211, 192, 0.2);
 }
 
 .achievement-icon {
@@ -4184,7 +4269,7 @@ select:focus {
 .achievement-card.unlocked .achievement-icon {
     background: linear-gradient(135deg, var(--accent), var(--accent-hover));
     color: var(--bg-primary);
-    box-shadow: 0 4px 12px rgba(125, 211, 192, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.4);
 }
 
 .achievement-card.locked .achievement-icon {
@@ -4205,15 +4290,17 @@ select:focus {
     justify-content: center;
     font-size: 0.75rem;
     color: var(--bg-primary);
-    font-family: fontb;
-    box-shadow: 0 2px 8px rgba(125, 211, 192, 0.6);
+    font-family: "Inter";
+    font-weight: 700;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .achievement-name {
     text-align: center;
     color: var(--text-primary);
     font-size: 1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
@@ -4227,6 +4314,10 @@ select:focus {
     font-size: 0.85rem;
     line-height: 1.5;
     margin-bottom: 0.75rem;
+}
+
+.achievement-card.locked:hover {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .achievement-progress {
@@ -4250,7 +4341,8 @@ select:focus {
     color: var(--accent);
     font-size: 0.75rem;
     margin-top: 0.5rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .achievement-card.locked .achievement-date {
@@ -4258,9 +4350,9 @@ select:focus {
 }
 
 .easter-egg-card {
-    background: rgba(30, 35, 48, 0.6);
+    background: var(--bg-secondary);
     border: 2px solid rgba(138, 43, 226, 0.5);
-    border-radius: 12px;
+    border-radius: 22px;
     padding: 1.25rem;
     transition: all 0.3s ease;
     position: relative;
@@ -4274,6 +4366,10 @@ select:focus {
 
 .easter-egg-card.locked {
     opacity: 0.6;
+}
+
+.easter-egg-card.locked:hover {
+    box-shadow: none !important;
 }
 
 .easter-egg-card:hover {
@@ -4353,14 +4449,14 @@ select:focus {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
     padding: 1.5rem;
     gap: 1rem;
 }
 
 .calculator-display {
     background: rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--border);
+
     border-radius: 12px;
     padding: 1rem 1.5rem 0.8rem 1.5rem;
     text-align: right;
@@ -4389,24 +4485,29 @@ select:focus {
 }
 
 .calculator-btn {
-    background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+
     border-radius: 10px;
     color: var(--text-primary);
     font-size: 1.5rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 60px;
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .calculator-btn:hover {
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary);
     border-color: var(--accent);
     transform: scale(1.05);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+
 }
 
 .calculator-btn:active {
@@ -4414,38 +4515,41 @@ select:focus {
 }
 
 .calculator-btn.operator {
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(84, 166, 221, 0.2);
+    box-shadow: 0 0 0 1px rgba(106, 156, 185, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     color: var(--accent);
 }
 
 .calculator-btn.operator:hover {
-    background: rgba(125, 211, 192, 0.3);
+    background: rgba(84, 166, 221, 0.2) !important;
 }
 
 .calculator-btn.equals {
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    background: white;
     color: var(--bg-primary);
     grid-column: span 2;
 }
 
 .calculator-btn.equals:hover {
     transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(125, 211, 192, 0.3);
+    background: white !important;
+    box-shadow: none !important;
 }
 
 .calculator-btn.clear {
     background: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 0 1px rgba(255, 124, 124, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     color: var(--error-red);
 }
 
 .calculator-btn.clear:hover {
-    background: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.3) !important;
 }
 
 .illustration-browser-window {
     width: 240px;
     height: 160px;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(255, 255, 255, 0.3);
     border: 2px solid var(--accent);
     border-radius: 12px;
     overflow: hidden;
@@ -4479,7 +4583,7 @@ select:focus {
 .illustration-browser-url {
     flex: 1;
     height: 18px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border: 1px solid var(--accent);
     border-radius: 4px;
 }
@@ -4504,7 +4608,7 @@ select:focus {
 .illustration-calculator {
     width: 200px;
     height: 160px;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(255, 255, 255, 0.3);
     border: 2px solid var(--accent);
     border-radius: 12px;
     padding: 1rem;
@@ -4553,11 +4657,11 @@ select:focus {
     width: 350px;
     padding: 0rem 0.5rem 0.1rem 0.5rem;
     max-height: 500px;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
+
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     z-index: 10001;
     opacity: 0;
     pointer-events: none;
@@ -4583,7 +4687,8 @@ select:focus {
 .notification-center-header h3 {
     color: var(--text-primary);
     font-size: 1.1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin: 0;
 }
 
@@ -4622,8 +4727,8 @@ select:focus {
 }
 
 .notification-item {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 0.5rem;
@@ -4641,7 +4746,7 @@ select:focus {
 .notification-item-icon {
     width: 40px;
     height: 40px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -4658,7 +4763,8 @@ select:focus {
 
 .notification-item-title {
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
 }
@@ -4682,7 +4788,7 @@ select:focus {
 
 .notification-center-empty i {
     font-size: 3rem;
-    color: rgba(125, 211, 192, 0.3);
+    color: rgba(255, 255, 255, 0.3);
     margin-bottom: 1rem;
 }
 
@@ -4700,7 +4806,7 @@ select:focus {
 
 .illustration-calc-btn {
     background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
+
     border-radius: 6px;
 }
 
@@ -4729,7 +4835,7 @@ select:focus {
 }
 
 .illustration-calc-btn.accent {
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border-color: var(--accent);
 }
 
@@ -4741,12 +4847,12 @@ select:focus {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
+
     border-radius: 16px;
     padding: 1rem 1rem 0.5rem 1rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     opacity: 0;
     pointer-events: none;
     transform: scale(0.95);
@@ -4764,7 +4870,8 @@ select:focus {
 .quick-actions-header {
     color: var(--text-primary);
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
@@ -4775,8 +4882,8 @@ select:focus {
     align-items: center;
     gap: 1rem;
     padding: 0.875rem;
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+
     border-radius: 10px;
     margin-bottom: 0.5rem;
     cursor: pointer;
@@ -4784,7 +4891,7 @@ select:focus {
 }
 
 .quick-action-item:hover {
-    background: rgba(125, 211, 192, 0.15);
+    background: var(--bg-secondary);
     border-color: var(--accent);
     transform: translateX(2px);
 }
@@ -4792,7 +4899,7 @@ select:focus {
 .quick-action-item i {
     width: 40px;
     height: 40px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -4808,7 +4915,8 @@ select:focus {
 .quick-action-title {
     color: var(--text-primary);
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.15rem;
 }
 
@@ -4875,7 +4983,8 @@ select:focus {
     border-radius: 10px;
     color: #ef4444;
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -4901,16 +5010,17 @@ select:focus {
 
 .photo-item {
     position: relative;
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 22px;
     padding: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    border: none !important;
 }
 
 .photo-item:hover {
-    background: rgba(125, 211, 192, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     border-color: var(--accent);
     transform: translateY(-2px);
 }
@@ -4966,7 +5076,7 @@ select:focus {
     z-index: 10005;
     display: none;
     align-items: center;
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
     justify-content: center;
     animation: fadeIn 0.2s ease;
 }
@@ -4976,14 +5086,14 @@ select:focus {
 }
 
 .modal-content {
-    background: rgba(21, 25, 35, 0.95);
+    background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
+
     border-radius: 16px;
     padding: 2rem;
     max-width: 500px;
     width: 90%;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     animation: scaleIn 0.2s ease;
 }
 
@@ -5023,14 +5133,15 @@ select:focus {
 }
 
 .modal-icon.info {
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     color: var(--accent);
 }
 
 .modal-title {
     color: var(--text-primary);
     font-size: 1.3rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .modal-body {
@@ -5044,7 +5155,7 @@ select:focus {
     width: 100%;
     padding: 0.875rem 1rem;
     background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
+
     border-radius: 10px;
     color: var(--text-primary);
     font-size: 0.95rem;
@@ -5067,7 +5178,8 @@ select:focus {
     border: none;
     border-radius: 10px;
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -5079,12 +5191,11 @@ select:focus {
 
 .modal-btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(125, 211, 192, 0.3);
 }
 
 .modal-btn-secondary {
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid rgba(125, 211, 192, 0.3);
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     color: var(--text-primary);
 }
 
@@ -5106,15 +5217,15 @@ select:focus {
     position: fixed;
     background: rgba(21, 25, 35, 0.98);
     backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
+
     border-radius: 12px;
     padding: 1.25rem;
     min-width: 280px;
     max-width: 350px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     z-index: 10003;
     display: none;
-    font-family: font, "font" !important;
+    font-family: "Inter" !important;
     animation: tooltipAppear 0.2s ease;
 }
 
@@ -5146,7 +5257,7 @@ select:focus {
 .properties-icon {
     width: 50px;
     height: 50px;
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -5163,7 +5274,8 @@ select:focus {
 .properties-name {
     color: var(--text-primary);
     font-size: 1.1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.25rem;
 }
 
@@ -5201,11 +5313,12 @@ select:focus {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.75rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .properties-badge.preinstalled {
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     color: var(--accent);
     border: 1px solid var(--accent);
 }
@@ -5239,12 +5352,12 @@ select:focus {
 .settings-container {
     display: flex;
     height: 100%;
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
 }
 
 .settings-sidebar {
     width: 200px;
-    background: rgba(21, 25, 35, 0.9);
+    background: var(--bg-secondary);
     border-right: 1px solid var(--border);
     padding: 1rem 0.5rem;
     overflow-y: auto;
@@ -5255,7 +5368,7 @@ select:focus {
     align-items: center;
     gap: 0.75rem;
     padding: 0.875rem 1rem;
-    border-radius: 10px;
+    border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--text-secondary);
@@ -5264,14 +5377,16 @@ select:focus {
 }
 
 .settings-nav-item:hover {
-    background: rgba(125, 211, 192, 0.1);
+    background: rgba(207, 207, 207, 0.1);
     color: var(--text-primary);
+    border: none !important;
 }
 
 .settings-nav-item.active {
-    background: rgba(125, 211, 192, 0.2);
+    background: var(--bg-secondary);
     color: var(--accent);
-    border: 1px solid var(--accent);
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
     padding-left: calc(1rem - 3px);
 }
 
@@ -5306,9 +5421,9 @@ select:focus {
 }
 
 .settings-card {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 22px;
     margin-bottom: 1.5rem;
     overflow: hidden;
 }
@@ -5318,14 +5433,15 @@ select:focus {
 }
 
 .settings-card-header {
-    background: rgba(21, 25, 35, 0.8);
+    background: var(--bg-secondary);
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 0.75rem;
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 1rem;
 }
 
@@ -5343,7 +5459,8 @@ select:focus {
 
 .settings-item-title {
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.25rem;
     font-size: 0.95rem;
 }
@@ -5355,7 +5472,8 @@ select:focus {
 
 .settings-item-value {
     color: var(--accent);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 0.95rem;
 }
 
@@ -5368,43 +5486,49 @@ select:focus {
 
 .settings-action-btn {
     padding: 0.75rem 1.5rem;
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid rgba(125, 211, 192, 0.3);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .settings-action-btn:hover {
-    background: rgba(125, 211, 192, 0.25);
-    border-color: rgba(125, 211, 192, 0.5);
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
     transform: translateY(-1px);
 }
 
 .settings-danger-btn {
     padding: 0.75rem 1.5rem;
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: #58242438 !important;
+    box-shadow: 0 0 0 1px rgba(212, 74, 74, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
+    border: none;
     border-radius: 10px;
     color: var(--error-red);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .settings-danger-btn:hover {
-    background: rgba(239, 68, 68, 0.25);
-    border-color: rgba(239, 68, 68, 0.5);
+    background: #58242438 !important;
+    border-color: none !important;
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(212, 74, 74, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
     transform: translateY(-1px);
 }
 
@@ -5415,7 +5539,7 @@ select:focus {
 
 .settings-empty i {
     font-size: 4rem;
-    color: rgba(125, 211, 192, 0.3);
+    color: rgba(255, 255, 255, 0.3);
     margin-bottom: 1.5rem;
 }
 
@@ -5438,24 +5562,26 @@ select:focus {
 }
 
 .theme-card {
-    background: rgba(21, 25, 35, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
     padding: 1rem;
     text-align: center;
     transition: all 0.2s ease;
+    border: none !important;
 }
 
 .theme-card:hover {
-    border-color: var(--accent);
     transform: translateY(-2px);
+    outline: none !important;
+    border: none !important;
 }
 
 .theme-preview {
     width: 100%;
     height: 80px;
-    background: linear-gradient(135deg, rgba(125, 211, 192, 0.2), rgba(125, 211, 192, 0.1));
-    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(191, 211, 206, 0.2), rgba(77, 77, 77, 0.1));
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5469,7 +5595,8 @@ select:focus {
 
 .theme-name {
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.75rem;
     font-size: 0.9rem;
 }
@@ -5477,7 +5604,7 @@ select:focus {
 .help-topics-container {
     height: 100%;
     position: relative;
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
 }
 
 .help-topics-grid {
@@ -5490,9 +5617,11 @@ select:focus {
 }
 
 .help-topic-card {
-    background: rgba(30, 35, 48, 0.8);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    ;
+    border-radius: 22px;
     padding: 2rem 1.5rem;
     text-align: center;
     cursor: pointer;
@@ -5502,19 +5631,19 @@ select:focus {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: none !important;
 }
 
 .help-topic-card:hover {
-    background: rgba(125, 211, 192, 0.15);
-    border-color: var(--accent);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
     transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(125, 211, 192, 0.2);
 }
 
 .help-topic-icon {
     width: 70px;
     height: 70px;
-    background: rgba(125, 211, 192, 0.2);
+    background: none;
     border-radius: 11px;
     display: flex;
     align-items: center;
@@ -5530,7 +5659,8 @@ select:focus {
 .help-topic-title {
     color: var(--text-primary);
     font-size: 1.1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
@@ -5545,7 +5675,7 @@ select:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(10, 14, 26, 0.95);
+    background: var(--bg-primary);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
@@ -5561,26 +5691,27 @@ select:focus {
 .help-expanded-header {
     padding: 1.5rem 2rem;
     border-bottom: 1px solid var(--border);
-    background: rgba(21, 25, 35, 0.9);
+    background: var(--bg-secondary);
 }
 
 .help-back-btn {
     padding: 0.75rem 1.5rem;
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid rgba(125, 211, 192, 0.3);
+    background: var(--bg-secondary);
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     border-radius: 10px;
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .help-back-btn:hover {
-    background: rgba(125, 211, 192, 0.25);
     transform: translateX(-3px);
 }
 
@@ -5637,18 +5768,19 @@ select:focus {
 
 .help-expanded-content strong {
     color: var(--accent);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
 }
 
 .cloaking-container {
     display: flex;
     height: 100%;
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
 }
 
 .cloaking-sidebar {
     width: 180px;
-    background: rgba(21, 25, 35, 0.9);
+    background: var(--bg-secondary);
     border-right: 1px solid var(--border);
     padding: 1rem 0.5rem;
     overflow-y: auto;
@@ -5659,7 +5791,7 @@ select:focus {
     align-items: center;
     gap: 0.75rem;
     padding: 0.875rem 1rem;
-    border-radius: 10px;
+    border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--text-secondary);
@@ -5669,14 +5801,15 @@ select:focus {
 }
 
 .cloaking-nav-item:hover {
-    background: rgba(125, 211, 192, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
 }
 
 .cloaking-nav-item.active {
-    background: rgba(125, 211, 192, 0.2);
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
     color: var(--accent);
-    border: 1px solid var(--accent);
+    border: none !important;
     padding-left: calc(1rem - 3px);
 }
 
@@ -5720,9 +5853,10 @@ select:focus {
 }
 
 .cloaking-preview-card {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+
+    border-radius: 22px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
@@ -5736,15 +5870,17 @@ select:focus {
 
 .cloaking-preview-label {
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 0.9rem;
 }
 
 .cloaking-preview-btn {
     padding: 0.5rem 1rem;
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid rgba(125, 211, 192, 0.3);
-    border-radius: 8px;
+    background: var(--bg-secondary);
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 15px;
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -5755,13 +5891,13 @@ select:focus {
 }
 
 .cloaking-preview-btn:hover {
-    background: rgba(125, 211, 192, 0.25);
+    transform: translateY(-2px);
 }
 
 .cloaking-preview-tab {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-secondary);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 9px 9px 0 0;
+    border-radius: 15px 15px 3px 3px;
     padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
@@ -5785,9 +5921,9 @@ select:focus {
 }
 
 .cloaking-form-card {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    border-radius: 22px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
@@ -5803,7 +5939,8 @@ select:focus {
 .cloaking-label {
     display: block;
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     margin-bottom: 0.75rem;
     font-size: 0.95rem;
     display: flex;
@@ -5814,18 +5951,22 @@ select:focus {
 .cloaking-input {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: rgba(10, 14, 26, 0.8);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
     color: var(--text-primary);
     font-size: 0.95rem;
     transition: all 0.2s ease;
+    outline: none !important;
+    border: none !important;
 }
 
 .cloaking-input:focus {
     outline: none;
     border-color: var(--accent);
-    background: rgba(10, 14, 26, 0.95);
+    color: white;
+    background: var(--bg-secondary) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .cloaking-hint {
@@ -5843,9 +5984,10 @@ select:focus {
 .cloaking-btn {
     padding: 0.875rem 1.5rem;
     border: none;
-    border-radius: 10px;
+    border-radius: 20px;
     font-size: 0.95rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -5855,25 +5997,30 @@ select:focus {
 }
 
 .cloaking-btn.primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-    color: var(--bg-primary);
+    background: #61b3cc38;
+    color: white;
+    color: white;
+    box-shadow: 0 0 0 1px rgba(118, 205, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border: none !important;
     flex: 1;
 }
 
 .cloaking-btn.primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(125, 211, 192, 0.3);
+    background: #61b3cc38 !important;
+    box-shadow: 0 0 0 1px rgba(118, 205, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
 .cloaking-btn.secondary {
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid rgba(125, 211, 192, 0.3);
+    background: var(--bg-secondary);
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     color: var(--text-primary);
     flex: 1;
 }
 
 .cloaking-btn.secondary:hover {
-    background: rgba(125, 211, 192, 0.25);
+    transform: translateY(-2px);
 }
 
 .cloaking-btn.warning {
@@ -5884,14 +6031,15 @@ select:focus {
 }
 
 .cloaking-btn.warning:hover {
-    background: rgba(255, 165, 0, 0.25);
+    background: rgba(255, 165, 0, 0.25) !important;
     transform: translateY(-2px);
+    box-shadow: none !important;
 }
 
 .cloaking-status-card {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 22px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
@@ -5903,7 +6051,8 @@ select:focus {
 }
 
 .cloaking-status-indicator.active .cloaking-status-icon {
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(55, 208, 255, 0.219);
+    box-shadow: 0 0 0 1px rgba(0, 183, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     color: var(--accent);
 }
 
@@ -5926,7 +6075,8 @@ select:focus {
 
 .cloaking-status-title {
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 1.1rem;
     margin-bottom: 0.25rem;
 }
@@ -5977,7 +6127,8 @@ select:focus {
 
 .cloaking-slider-value {
     color: var(--accent);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 1rem;
     min-width: 50px;
     text-align: right;
@@ -5992,21 +6143,23 @@ select:focus {
 
 .cloaking-add-btn {
     padding: 0.5rem 1rem;
-    background: rgba(125, 211, 192, 0.15);
-    border: 1px solid rgba(125, 211, 192, 0.3);
-    border-radius: 8px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    background: var(--bg-secondary);
+    border: none !important;
+    border-radius: 15px;
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.85rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .cloaking-add-btn:hover {
-    background: rgba(125, 211, 192, 0.25);
+    transform: translateY(-2px);
 }
 
 .cloaking-rotation-list {
@@ -6015,30 +6168,35 @@ select:focus {
     gap: 0.75rem;
     max-height: 300px;
     overflow-y: auto;
+    padding: 5px;
 }
 
 .cloaking-hotkey-display {
     padding: 1rem 1.5rem;
-    background: rgba(10, 14, 26, 0.8);
+    background: var(--bg-secondary);
     border: 2px dashed var(--border);
-    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
     color: var(--accent);
     font-size: 1.1rem;
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: 'Courier New', monospace;
+    font-family: 'SUSE Mono', monospace;
+    border: none !important;
 }
 
 .cloaking-hotkey-display:hover {
-    border-color: var(--accent);
-    background: rgba(125, 211, 192, 0.1);
+    border: none !important;
+    background: var(--bg-secondary) !important;
+    transform: translateY(-2px);
 }
 
 .cloaking-hotkey-display.recording {
     border-color: var(--accent);
-    background: rgba(125, 211, 192, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     animation: pulse 1s infinite;
 }
 
@@ -6067,19 +6225,21 @@ select:focus {
 }
 
 .cloaking-preset-card {
-    background: rgba(30, 35, 48, 0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+
+    border-radius: 22px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
     padding: 1.5rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    border: none !important;
 }
 
 .cloaking-preset-card:hover {
     border-color: var(--accent);
     transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(125, 211, 192, 0.2);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 .cloaking-preset-icon {
@@ -6096,7 +6256,8 @@ select:focus {
 
 .cloaking-preset-name {
     color: var(--text-primary);
-    font-family: fontb;
+    font-family: "Inter";
+    font-weight: 700;
     font-size: 1rem;
     margin-bottom: 0.5rem;
 }
@@ -6247,31 +6408,6 @@ select:focus {
     background: transparent;
 }
 
-.searchEngineI {
-    height: 40px;
-    width: 350px;
-    margin-left: 20px;
-    padding: 10px 20px;
-    border-radius: 15px;
-    border: none;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    transition: 0.2s;
-    font-family: font !important;
-    font-size: 14px;
-}
-
-.searchEngineI:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--accent);
-    background: var(--bg-secondary);
-}
-
-@import "https://unpkg.com/open-props";
-@import "https://unpkg.com/open-props/normalize.min.css";
-@import "https://unpkg.com/open-props/buttons.min.css";
-
-
 select {
 
     /* opt into customizing select */
@@ -6281,10 +6417,13 @@ select {
     }
 
     font-size: 14px;
+    height: 40px;
+    border-radius: 15px;
 
     /* removing open props normalize styles */
-    background: none;
-    padding: 0;
+    background: var(--bg-secondary) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 16px 32px rgba(0, 0, 0, 0.12);
 
     /* enable transitions in the drop down */
     &::picker(select) {
@@ -6324,6 +6463,7 @@ select {
         }
 
         opacity: 1;
+        margin-left: 15px;
     }
 
     /* customize the invoking button */
@@ -6370,8 +6510,9 @@ select {
 
     /* reset some picker styles */
     &::picker(select) {
-        background: light-dark(white, var(--surface-2));
+        background: light-dark(white, var(--bg-secondary));
         border-radius: 15px;
+        backdrop-filter: blur(40px);
         padding: 0;
         margin-block: 5px;
         box-shadow: var(--shadow-5);
@@ -6400,7 +6541,8 @@ select {
             position: sticky;
             top: 0;
             z-index: 1;
-            background: var(--surface-3);
+            background: var(--bg-secondary);
+            backdrop-filter: blur(40px);
             font-size: var(--font-size-0);
             color: var(--text-2);
             font-weight: var(--font-weight-7);
@@ -6512,15 +6654,17 @@ select {
 }
 
 .offline-support {
-    background: var(--bg-secondary);
+    background: rgba(106, 211, 92, 0.226);
+    box-shadow: 0 0 0 1px rgba(126, 187, 114, 0.3), 0 16px 32px rgba(0, 0, 0, 0.12);
+    ;
+    border: 2px solid transparent;
     padding: 5px 7px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 100px;
     text-align: center;
-    width: 100%;
+    width: fit-content;
     font-size: 12px;
-    margin: 5px;
-    margin-left: 0;
-    margin-top: 17px;
-    margin-bottom: -5px;
+    position: relative;
+    top: -94%;
+    right: -48%;
+    backdrop-filter: blur(40px);
 }
