@@ -1252,7 +1252,7 @@ select:focus {
 
 .window {
     position: absolute;
-    background: rgba(21, 25, 35, 0.85);
+    background: rgba(21, 25, 35, var(--window-opacity, 0.85));
     backdrop-filter: blur(40px) saturate(180%);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -1262,6 +1262,10 @@ select:focus {
     animation: windowOpen 0.25s ease;
     min-width: 400px;
     min-height: 300px;
+    /* Force GPU acceleration to prevent black flashes */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
 }
 
 .snap-overlay {
@@ -1653,7 +1657,7 @@ select:focus {
 }
 
 .window-header {
-    background: rgba(30, 35, 48, 0.6);
+    background: rgba(30, 35, 48, var(--window-opacity, 0.6));
     padding: 0.625rem 1rem;
     display: flex;
     align-items: center;
