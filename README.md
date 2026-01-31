@@ -76,9 +76,9 @@ Basically... a whole little OS in your browser :D
 - [ ] fix light theme gosh it sucks
 - [x] fix bug where cancel delete screenshot in photos app doesnt work and it just deletes it
 - [x] very minor visual bugs (full width taskbar move desktop icon container down, some other junk)
-- [ ] fix bug where if too many apps are open it randomly flashes black
+- [x] fix bug where if too many apps are open it randomly flashes black
 - [ ] if u hit login in without choosing an existing accoutnit just picks the first one, should ask u to pick an acc
-- [ ] Add an option to increase or decrease window transparency 
+- [x] Add an option to increase or decrease window transparency 
 - [ ] Window animation settings
 - [x] add option to cloak on clickpoff in basic cloaking
 - [ ] Make music player search and download via spotify (maybe use the recent annas archive spotify leak?)
