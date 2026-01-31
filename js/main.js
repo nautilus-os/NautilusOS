@@ -18442,7 +18442,7 @@ document.addEventListener('contextmenu', (e) => {
     // Close on click elsewhere (handled by existing main.js usually)
   }
 });
-
+ 
 
 // Init new features
 enableDesktopSelection();
