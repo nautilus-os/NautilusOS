@@ -729,6 +729,7 @@ let settings = {
   showDesktopIcons: true,
   bypassFileProtocolWarnings: false,
   desktopIconSize: 'medium',
+  windowOpacity: 0.85,
 };
 let bootSelectedIndex = 0;
 let bootCountdownTimer = null;
@@ -4288,6 +4289,26 @@ alt="favicon">
                 
                 <div class="settings-card">
                     <div class="settings-card-header">
+                        <i class="fas fa-window-restore"></i>
+                        <span>Windows</span>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="settings-item" style="flex-direction: column; align-items: flex-start;">
+                            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div class="settings-item-title">Window Transparency</div>
+                                <div id="windowOpacityValue" style="color: var(--accent); font-weight: 600;">${Math.round((settings.windowOpacity || 0.85) * 100)}%</div>
+                            </div>
+                            <p class="settings-description" style="margin-bottom: 1rem;">Adjust the background transparency level for all windows.</p>
+                            <input type="range" id="windowOpacitySlider" min="0.1" max="1.0" step="0.05" 
+                                value="${settings.windowOpacity || 0.85}" 
+                                style="width: 100%; accent-color: var(--accent); cursor: pointer;"
+                                oninput="setWindowOpacity(this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
                         <i class="fas fa-columns"></i>
                         <span>Taskbar</span>
                     </div>
@@ -6696,6 +6717,25 @@ function initializeAppearanceSettings() {
       };
       trigger.textContent = sizeNames[currentSize] || 'Medium';
     }
+  }
+
+  // Update Window Opacity slider in UI
+  const opacitySlider = document.getElementById("windowOpacitySlider");
+  const opacityValue = document.getElementById("windowOpacityValue");
+  if (opacitySlider && opacityValue) {
+    const val = settings.windowOpacity || 0.85;
+    opacitySlider.value = val;
+    opacityValue.textContent = Math.round(val * 100) + "%";
+  }
+}
+
+function setWindowOpacity(value) {
+  settings.windowOpacity = parseFloat(value);
+  document.documentElement.style.setProperty('--window-opacity', settings.windowOpacity);
+  saveSettingsToLocalStorage();
+  const valDisplay = document.getElementById("windowOpacityValue");
+  if (valDisplay) {
+    valDisplay.textContent = Math.round(settings.windowOpacity * 100) + "%";
   }
 }
 
@@ -9515,6 +9555,7 @@ window.addEventListener("DOMContentLoaded", () => {
   loadSettingsFromLocalStorage();
   loadInstalledThemes();
   loadAndApplyTheme();
+  document.documentElement.style.setProperty('--window-opacity', settings.windowOpacity || 0.85);
   loadInstalledApps();
   loadInstalledGames();
   loadAchievements();
