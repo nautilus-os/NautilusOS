@@ -65,32 +65,19 @@ Basically... a whole little OS in your browser :D
 
 ## 🚧 todos (devs view dev discord for more)
 
-- [x] fix bug where the downlaoad onefile button in the quick menu didnt actually fownload, it just opened the raw github link
+- [ ] RIGHT CLICK MEN U IS BROKEN :((((((
 - [ ] automaqitcally lower the margin bottom on desktop icons when switching to small icons and large icons. for medium and extra large it just looks fine idk
-- [x] EDIT ALL THEMES TO MATCH DARK THEME. A BUCN HFO VISUAL BUGS I ONLY FIXED IN DARK (oops)
-- [x] the right lcick menu doesnt go away after u click on an option or lcick off it??? when did this happen :sob: (but only sometimes???) (what?????)
 - [ ] add swimmign fishes in setup screen from NautilusOS-Web insted of odd flaoting orbs (lane)
-- [x] add empty favicon and name (i saw this somewhere it was neat)
-- [x] change stealth master achievment to work for any cloaking function not jsut basic cloak 
 - [ ] add pfps from github to contributers and devs in about app
 - [ ] fix light theme gosh it sucks
-- [x] fix bug where cancel delete screenshot in photos app doesnt work and it just deletes it
-- [x] very minor visual bugs (full width taskbar move desktop icon container down, some other junk)
-- [x] fix bug where if too many apps are open it randomly flashes black
 - [ ] if u hit login in without choosing an existing accoutnit just picks the first one, should ask u to pick an acc
-- [x] Add an option to increase or decrease window transparency 
 - [ ] Window animation settings
-- [x] add option to cloak on clickpoff in basic cloaking
 - [ ] Make music player search and download via spotify (maybe use the recent annas archive spotify leak?)
 - [ ] Add a scramjet proxy (xor)
 - [ ] Add illustrations already in css to js for apps and games. themes already added
 - [ ] add option to upload custom image to tab blackout for monitering extensions
-- [x] add option to do a panic image instead of a panic redirect
 - [ ] add default coverup option in cloaking, chrome unsafe pages, page failed to load etc
-- [x] add achivement for opening bootloader (Power User)
 - [ ] add documentation in help for all apps (community as well) and update whats new carosel
-- [x] add option to chaneg desktop icon size in settings
-- [x] a lot of apps dont appear in the start menu (??)
 - [ ] add noodlelover to contributers in about app!!!
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
