@@ -2456,6 +2456,7 @@ function login() {
       }
 
       initDesktopIconDragging();
+      // desktop selection is initialized globally later
       initContextMenu();
       initScrollIndicator();
 
@@ -7161,6 +7162,15 @@ async function createNewFolder() {
 
 function showContextMenu(x, y, items) {
   const menu = document.getElementById("contextMenu");
+  if (!menu) return;
+
+  // hide first in case a previous menu is still lingering
+  hideContextMenu();
+
+  // make sure any previous inline display:none doesn't prevent it from showing
+  menu.style.display = "block";
+  menu.classList.add("active");
+
   menu.innerHTML = items
     .map((item) => {
       if (item.divider) {
@@ -7178,8 +7188,8 @@ function showContextMenu(x, y, items) {
 
   menu.style.left = x + "px";
   menu.style.top = y + "px";
-  menu.classList.add("active");
 
+  // reposition if it would overflow the viewport
   setTimeout(() => {
     const rect = menu.getBoundingClientRect();
     if (rect.right > window.innerWidth) {
@@ -7194,8 +7204,10 @@ function showContextMenu(x, y, items) {
 function hideContextMenu() {
   const menu = document.getElementById("contextMenu");
   if (menu) {
-    menu.style.display = "none";
     menu.classList.remove("active");
+    // remove inline display so future calls to showContextMenu can rely on
+    // class-based visibility rather than a stubborn inline value
+    menu.style.display = "";
   }
 }
 
@@ -18337,6 +18349,9 @@ function enableDesktopSelection() {
   }
 
   desktop.addEventListener('mousedown', (e) => {
+    // hide any context menu before starting a selection
+    hideContextMenu();
+
     // Return if clicking taskbar, or if NOT clicking desktop/icons/wallpaper
     // Allow start drag if target is desktop (ID), desktop-icons (class), or wallpaper
     if (e.target.closest('.taskbar') || e.target.closest('.start-menu') || e.target.closest('.window')) return;
@@ -18377,10 +18392,35 @@ function enableDesktopSelection() {
     selectionBox.element.style.top = top + 'px';
   });
 
-  window.addEventListener('mouseup', () => {
+  window.addEventListener('mouseup', (e) => {
     if (selectionBox.active) {
       selectionBox.active = false;
+
+      // highlight any icons intersecting the selection box
+      const selRect = selectionBox.element.getBoundingClientRect();
+      document.querySelectorAll('.desktop-icon').forEach((icon) => {
+        const iconRect = icon.getBoundingClientRect();
+        const intersects = !(
+          iconRect.right < selRect.left ||
+          iconRect.left > selRect.right ||
+          iconRect.bottom < selRect.top ||
+          iconRect.top > selRect.bottom
+        );
+        if (intersects) {
+          icon.classList.add('selected');
+        }
+      });
+
       selectionBox.element.style.display = 'none';
+    }
+  });
+
+  // clicking anywhere else on desktop removes selection
+  desktop.addEventListener('click', (e) => {
+    if (!e.target.closest('.desktop-icon')) {
+      document.querySelectorAll('.desktop-icon.selected').forEach((i) =>
+        i.classList.remove('selected')
+      );
     }
   });
 }
@@ -18422,24 +18462,22 @@ function toggleTaskbarStyle() {
 document.addEventListener('contextmenu', (e) => {
   if (e.target.closest('#taskbar')) {
     e.preventDefault();
-    const menu = document.getElementById('contextMenu');
-    menu.style.display = 'block';
-    menu.style.left = e.pageX + 'px';
-    menu.style.top = (e.pageY - 100) + 'px';
-
     const style = localStorage.getItem('nautilusOS_taskbarStyle') || 'floating';
     const nextLabel = style === 'floating' ? 'Switch to Full Mode' : 'Switch to Floating Mode';
 
-    menu.innerHTML = `
-            <div class="context-item" onclick="toggleTaskbarStyle()">
-                <i class="fas fa-columns"></i> ${nextLabel}
-            </div>
-            <div class="context-item" onclick="openApp('settings')">
-                <i class="fas fa-cog"></i> Taskbar Settings
-            </div>
-        `;
-
-    // Close on click elsewhere (handled by existing main.js usually)
+    // construct items array similar to other menus
+    showContextMenu(e.pageX, e.pageY - 100, [
+      {
+        icon: 'fa-columns',
+        label: nextLabel,
+        action: 'hideContextMenu(); toggleTaskbarStyle()',
+      },
+      {
+        icon: 'fa-cog',
+        label: 'Taskbar Settings',
+        action: "hideContextMenu(); openApp('settings')",
+      },
+    ]);
   }
 });
  

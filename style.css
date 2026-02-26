@@ -51,6 +51,18 @@
     --transparent-white-5: rgba(255, 255, 255, 0.05);
     --transparent-white-8: rgba(255, 255, 255, 0.08);
 
+    /* standardized animation timings */
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* common drop shadows */
+    --shadow-default: 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-heavy: 0 8px 32px rgba(0,0,0,0.5);
+    /* outline/focus shadows used in inputs and controls */
+    --shadow-outline: 0 0 0 2px rgba(125, 211, 192, 0.2);
+    --shadow-focus: 0 0 0 4px rgba(16, 185, 129, 0.1);
+
     --icon-size-multiplier: 1;
     --desktop-icon-width: calc(90px * var(--icon-size-multiplier));
     --desktop-icon-i-font-size: calc(2.3rem * var(--icon-size-multiplier));
@@ -63,6 +75,22 @@ body {
     background: var(--bg-primary);
     color: var(--text-primary);
     user-select: none;
+}
+
+/* global transition/shadow normalization for interactive UI elements */
+a, button, input, select, textarea, .btn, .boot-option, .login-input,
+.login-btn, .taskmanager-process-action, .tool-item, .desktop-icon,
+.v86-btn, .v86-scale-btn, .v86-retry-btn, .quick-links a, .tabs button,
+.nav a {
+    transition: var(--transition-fast);
+}
+
+a:hover, button:hover, .btn:hover, .boot-option:hover,
+.taskmanager-process-action:hover, .tool-item:hover, .login-btn:hover,
+.desktop-icon:hover, .v86-btn:hover, .v86-scale-btn:hover,
+.v86-retry-btn:hover, .quick-links a:hover, .tabs button:hover,
+.nav a:hover {
+    box-shadow: var(--shadow-default);
 }
 
 button,
@@ -80,7 +108,7 @@ input {
     justify-content: center;
     z-index: 10000;
     opacity: 1;
-    transition: opacity 0.5s ease;
+    transition: opacity var(--transition-slow);
     cursor: none;
     font-family: "SUSE Mono" !important;
 }
@@ -179,7 +207,7 @@ input {
     height: 100%;
     background: var(--accent);
     width: 0%;
-    transition: width 0.3s ease;
+    transition: width var(--transition-medium);
     border-radius: 1px;
 }
 
@@ -209,7 +237,7 @@ input {
     justify-content: center;
     z-index: 9999;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity var(--transition-slow);
     padding: 2rem;
 }
 
@@ -945,11 +973,11 @@ input {
     backdrop-filter: blur(40px) saturate(180%);
     border: 1px solid var(--border);
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-heavy);
     opacity: 0;
     pointer-events: none;
     transform: scale(0.95);
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     z-index: 999;
 }
 
@@ -978,7 +1006,7 @@ input {
     border-radius: 10px;
     margin-bottom: 0.5rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .tool-item:hover {
@@ -1321,7 +1349,7 @@ select:focus {
     transform: translateY(-50%);
     cursor: pointer;
     color: var(--text-secondary);
-    transition: color 0.2s ease;
+    transition: color var(--transition-fast);
 }
 
 .password-toggle:hover {
@@ -1338,7 +1366,7 @@ select:focus {
     font-size: 0.95rem;
     font-family: fontb;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     margin-top: 0.5rem;
 }
 
@@ -1353,7 +1381,7 @@ select:focus {
     background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(107, 179, 160, 0.1) 50%, var(--bg-primary) 100%);
     display: none;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity var(--transition-slow);
     font-family: font, "font" !important;
     z-index: 1;
 }
@@ -1446,7 +1474,7 @@ select:focus {
     cursor: move;
     padding: 0.6rem;
     border-radius: 12px;
-    transition: background 0.2s ease, width 0.3s ease;
+    transition: background var(--transition-fast), width var(--transition-medium);
     position: relative;
 }
 
@@ -1459,12 +1487,26 @@ select:focus {
     z-index: 1000;
 }
 
+/* desktop click‑and‑drag selection rectangle */
+.selection-box, .selection-rect {
+    /* both class names supported for backwards compatibility */
+    position: absolute;
+    border: 1px dashed var(--accent);
+    background: rgba(125, 211, 192, 0.2);
+    pointer-events: none;
+    z-index: 10001;
+}
+
+.desktop-icon.selected {
+    background: rgba(125, 211, 192, 0.2);
+}
+
 .desktop-icon i {
     font-size: var(--desktop-icon-i-font-size);
     color: var(--accent);
     margin-bottom: 0.5rem;
     pointer-events: none;
-    transition: font-size 0.3s ease;
+    transition: font-size var(--transition-medium);
 }
 
 .desktop-icon span {

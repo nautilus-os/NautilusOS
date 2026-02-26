@@ -33,7 +33,7 @@
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -199,7 +199,7 @@
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: block !important;
     margin: 0 !important;
     position: static !important;
@@ -392,7 +392,7 @@ body.v86-input-active * {
     border-radius: 6px;
     padding: 4px;
     opacity: 1;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--transition-fast);
     z-index: 10;
 }
 
@@ -413,7 +413,7 @@ body.v86-input-active * {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .v86-scale-btn:hover {
@@ -616,16 +616,16 @@ body.v86-input-active * {
 
 /* Animation for smooth transitions */
 .v86-config-content {
-    transition: all 0.3s ease;
+    transition: all var(--transition-medium);
     overflow: hidden;
 }
 
 .v86-btn {
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .v86-status-indicator {
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-medium);
 }
 
 /*
@@ -641,7 +641,7 @@ body.v86-input-active * {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--transition-medium);
 }
 
 .v86-loading-content {
@@ -685,7 +685,7 @@ body.v86-input-active * {
     height: 100%;
     background: linear-gradient(90deg, var(--accent), var(--accent-hover));
     border-radius: 4px;
-    transition: width 0.3s ease;
+    transition: width var(--transition-medium);
     position: relative;
 }
 
@@ -721,7 +721,7 @@ body.v86-input-active * {
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -796,7 +796,7 @@ nfiguration Panel Improvements */
     margin-right: 0.75rem;
     cursor: pointer;
     font-weight: 500;
-    transition: background 0.2s ease;
+    transition: background var(--transition-fast);
 }
 
 .v86-config-row input[type="file"]::file-selector-button:hover {
