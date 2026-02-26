@@ -1,6 +1,11 @@
 :root{
 --bg:#0b0b0f; --bg2:#121219; --text:#e9edf1; --muted:#9aa3ad; --brand:#ff6a00; --brand-2:#f9a826; --card:#171922; --glass:#2a2f3a; --border:#2a2f3a; --success:#22c55e;
 --shadow:0 4px 12px rgba(0,0,0,.2);
+
+/* timing variables for consistent animations */
+--transition-fast: 0.2s ease;
+--transition-medium: 0.3s ease;
+--transition-slow: 0.5s ease;
 }
 *{box-sizing:border-box}
 html,body{height:100%}

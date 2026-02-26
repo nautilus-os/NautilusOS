@@ -911,6 +911,19 @@ select:focus {
     z-index: 1000;
 }
 
+/* selection rectangle for desktop drag selection */
+.selection-box, .selection-rect {
+    position: absolute;
+    border: 1px dashed var(--accent);
+    background: rgba(125, 211, 192, 0.2);
+    pointer-events: none;
+    z-index: 10001;
+}
+
+.desktop-icon.selected {
+    background: rgba(125, 211, 192, 0.2);
+}
+
 .desktop-icon i {
     font-size: 2.3rem;
     color: var(--accent);
