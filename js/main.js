@@ -4417,7 +4417,7 @@ alt="favicon">
                             
                             <div class="custom-select" id="searchEngineSelect">
                                 <div class="select-trigger" onclick="toggleSearchDropdown(this)">
-                                    <span id="currentSearchEngine">Brave Search</span>
+                                    <span id="currentSearchEngine">${(() => { const engineMap = {'https://search.brave.com/search?q=':'Brave Search','https://duckduckgo.com/search?q=':'Duck Duck Go','https://www.google.com/search?q=':'Google Search','https://www.bing.com/search?q=':'Bing','https://www.startpage.com/search?q=':'Startpage','https://www.qwant.com/search?q=':'Qwant'}; return engineMap[localStorage.getItem('nOS_searchEngine')] || 'Brave Search'; })()}</span>
                                     <i class="fas fa-chevron-down"></i>
                                 </div>
                                 <div class="select-options">
