@@ -79,6 +79,7 @@ Basically... a whole little OS in your browser :D
 - [ ] add default coverup option in cloaking, chrome unsafe pages, page failed to load etc
 - [ ] add documentation in help for all apps (community as well) and update whats new carosel
 - [ ] add noodlelover to contributers in about app!!!
+- [ ] v2 rewrite (x8r)
 
 *Completed tasks remain visible for ~24 hours before being manully cleared.*
 
