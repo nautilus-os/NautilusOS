@@ -332,7 +332,7 @@
 
         // actual uv handling
         const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
-        const wispUrl = "wss://wisp.rhw.one/" // rhw wisp, super speedy
+        const wispUrl = "wss://construction.services.codd70.ru/socket/" // rhw wisp, super speedy
         const bareUrl = "https://useclassplay.vercel.app/fq/" // old site i have
 
         connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }])
