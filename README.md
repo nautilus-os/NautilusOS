@@ -1,5 +1,5 @@
 
-### `WE NEED TO SEEK FUNDING FOR DOMAIN! SEE DOMAIN IDEAS FOR MORE DETAILS`
+### `DAWG CHECK OUT GUST (https://github.com/nautilus-os/GUST)!! NAUTILUS LABS's FLAGSHIP PROXY! (ITS ALSO UNBLOCKABLE, WHICH NO OTHER PROXY CAN BOAST)`
 ## NautilusOS
 
 NautilusOS is a web-based operating system built entirely in HTML, CSS, and JS.
